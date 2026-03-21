@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>System Management Overview | MO Recruitment System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F8FAFC;
+    }
+
+    .sidebar-item-active {
+      background-color: #EFF6FF;
+      border-right: 4px solid #3B82F6;
+      color: #1D4ED8;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body class="flex min-h-screen text-slate-700">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-50">
+    <div class="p-6 flex items-center gap-3">
+      <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+        <span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
+      </div>
+      <span class="text-xl font-bold tracking-tight text-blue-900">MO Admin</span>
+    </div>
+    <nav class="mt-4 flex-1">
+      <div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
+      <a class="sidebar-item-active flex items-center px-6 py-3 gap-3 transition-all" href="admin-dashboard.html">
+        <span class="iconify w-5 h-5" data-icon="heroicons:squares-2x2-20-solid"></span>
+        <span class="font-medium">Dashboard</span>
+      </a>
+      <a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="job-supervision.html">
+        <span class="iconify w-5 h-5" data-icon="heroicons:briefcase"></span>
+        <span>Job Supervision</span>
+      </a>
+      <a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="workload-overview.html">
+        <span class="iconify w-5 h-5" data-icon="heroicons:chart-bar"></span>
+        <span>Workload Stats</span>
+      </a>
+      <a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="user-management.html">
+        <span class="iconify w-5 h-5" data-icon="heroicons:users"></span>
+        <span>User Management</span>
+      </a>
+      <a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="basic-statistics.html">
+        <span class="iconify w-5 h-5" data-icon="heroicons:presentation-chart-line"></span>
+        <span>Basic Statistics</span>
+      </a>
+      <div class="px-4 py-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">System Config</div>
+      <a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="system-settings.html">
+        <span class="iconify w-5 h-5" data-icon="heroicons:cog-6-tooth"></span>
+        <span>Settings</span>
+      </a>
+      <a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="audit-logs.html">
+        <span class="iconify w-5 h-5" data-icon="heroicons:shield-check"></span>
+        <span>Audit Logs</span>
+      </a>
+    </nav>
+    <div class="p-4 border-t border-slate-100">
+      <div class="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+        <img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin">
+        <div class="flex-1 overflow-hidden">
+          <p class="text-xs font-bold truncate">Admin Mr. Chen</p>
+          <p class="text-[10px] text-slate-500 uppercase">Super Administrator</p>
+        </div>
+        <button class="text-slate-400 hover:text-red-500">
+          <span class="iconify w-4 h-4" data-icon="heroicons:arrow-right-start-on-rectangle"></span>
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- Main Content -->
+  <main class="ml-64 flex-1 flex flex-col min-h-screen">
+    <!-- Top Navigation -->
+    <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40">
+      <div class="flex items-center gap-4">
+        <nav aria-label="Breadcrumb" class="flex items-center text-sm text-slate-500">
+          <div class="flex items-center">
+            <span class="iconify w-4 h-4 mr-2" data-icon="heroicons:home"></span>
+            <a class="hover:text-blue-600" href="#">Home</a>
+          </div>
+          <span class="iconify w-4 h-4 mx-2" data-icon="heroicons:chevron-right"></span>
+          <span class="font-medium text-slate-900">System Dashboard</span>
+        </nav>
+      </div>
+      <div class="flex items-center gap-6">
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 iconify w-4 h-4 text-slate-400" data-icon="heroicons:magnifying-glass"></span>
+          <input class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400 transition-all" placeholder="Search data, logs..." type="text">
+        </div>
+        <div class="flex items-center gap-2 text-slate-400">
+          <button class="relative p-2 hover:bg-slate-50 rounded-lg transition-colors">
+            <span class="iconify w-5 h-5" data-icon="heroicons:bell"></span>
+            <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          </button>
+          <div class="h-6 w-[1px] bg-slate-200"></div>
+          <div class="text-xs font-medium text-slate-500">
+            Date: <span class="text-slate-900">2026-03-21</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- Main Dashboard Content -->
+    <div class="p-8 space-y-8">
+      <!-- Page Header & Global Filters -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 mb-1">System Overview</h1>
+          <p class="text-slate-500 italic">Real-time monitoring of campus recruitment status.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex flex-col">
+            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Semester</label>
+            <select class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer">
+              <option>2025-2026 Spring</option>
+              <option>2025-2026 Autumn</option>
+              <option>2024-2025 Spring</option>
+            </select>
+          </div>
+          <div class="flex flex-col">
+            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Faculty</label>
+            <select class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer">
+              <option>All Faculties</option>
+              <option>School of Engineering</option>
+              <option>School of Science</option>
+              <option>School of Business</option>
+              <option>Humanities & Social Science</option>
+            </select>
+          </div>
+          <div class="flex flex-col">
+            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Time Range</label>
+            <div class="flex items-center bg-white border border-slate-200 rounded-lg px-3 py-2 gap-2 text-sm">
+              <span class="iconify w-4 h-4 text-slate-400" data-icon="heroicons:calendar-days"></span>
+              <span class="font-medium">Last 30 Days</span>
+            </div>
+          </div>
+          <button class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md mt-auto">
+            <span class="iconify w-4 h-4" data-icon="heroicons:arrow-path"></span>
+            Refresh Data
+          </button>
+        </div>
+      </div>
+      <!-- Overview Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <a class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-blue-500 hover:shadow-lg transition-all group" href="job-supervision.html">
+          <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+            <span class="iconify w-6 h-6" data-icon="heroicons:briefcase"></span>
+          </div>
+          <h3 class="font-bold text-slate-800">Job Post Review</h3>
+          <p class="text-xs text-slate-500 mt-1">Pending: 12 positions</p>
+        </a>
+        <a class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition-all group" href="workload-overview.html">
+          <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+            <span class="iconify w-6 h-6" data-icon="heroicons:chart-bar"></span>
+          </div>
+          <h3 class="font-bold text-slate-800">Workload Verification</h3>
+          <p class="text-xs text-slate-500 mt-1">3 departments pending</p>
+        </a>
+        <a class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition-all group" href="basic-statistics.html">
+          <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 mb-4 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+            <span class="iconify w-6 h-6" data-icon="heroicons:presentation-chart-line"></span>
+          </div>
+          <h3 class="font-bold text-slate-800">Monthly Data Export</h3>
+          <p class="text-xs text-slate-500 mt-1">Auto-generated</p>
+        </a>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-lg transition-all group cursor-pointer">
+          <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+            <span class="iconify w-6 h-6" data-icon="heroicons:user-group"></span>
+          </div>
+          <h3 class="font-bold text-slate-800">TA Directory</h3>
+          <p class="text-xs text-slate-500 mt-1">Total: 1,280+ TAs</p>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        <!-- Card 1 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span class="iconify w-6 h-6" data-icon="heroicons:user-group"></span>
+            </div>
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-emerald-50 text-emerald-600 flex items-center gap-1">
+              <span class="iconify w-3 h-3" data-icon="heroicons:arrow-trending-up"></span> +8.2%
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-sm font-medium text-slate-500">Total Users</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1">12,842</h3>
+            <p class="text-xs text-slate-400 mt-2">Active: 4,291 this week</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span class="iconify w-6 h-6" data-icon="heroicons:briefcase"></span>
+            </div>
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-blue-50 text-blue-600 flex items-center gap-1">
+              <span class="iconify w-3 h-3" data-icon="heroicons:minus"></span> 0.0%
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-sm font-medium text-slate-500">Ongoing Positions</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1">458</h3>
+            <p class="text-xs text-slate-400 mt-2">12 positions closing today</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span class="iconify w-6 h-6" data-icon="heroicons:document-text"></span>
+            </div>
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-green-50 text-green-600 flex items-center gap-1">
+              <span class="iconify w-3 h-3" data-icon="heroicons:arrow-trending-up"></span> +12.5%
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-sm font-medium text-slate-500">Total Applications</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1">2,410</h3>
+            <p class="text-xs text-slate-400 mt-2">Avg. 5.26 per position</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
+          <div class="flex items-start justify-between">
+            <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <span class="iconify w-6 h-6" data-icon="heroicons:exclamation-triangle"></span>
+            </div>
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-red-50 text-red-600 flex items-center gap-1">
+              <span class="iconify w-3 h-3" data-icon="heroicons:arrow-trending-up"></span> +8
+            </span>
+          </div>
+          <div class="mt-4">
+            <p class="text-sm font-medium text-slate-500">Overloaded TAs</p>
+            <h3 class="text-2xl font-bold text-slate-900 mt-1">34</h3>
+            <p class="text-xs text-slate-400 mt-2">Contract hours limit exceeded</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Section: Chart and Quick Access -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Trend Chart -->
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col">
+          <div class="flex items-center justify-between mb-6">
+            <h4 class="font-bold text-slate-800">Application Trends</h4>
+            <div class="flex items-center gap-2">
+              <span class="flex items-center gap-1 text-xs text-slate-500"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Current</span>
+              <span class="flex items-center gap-1 text-xs text-slate-500 ml-4"><span class="w-3 h-3 rounded-full bg-slate-200"></span> Previous Month</span>
+            </div>
+          </div>
+          <div class="w-full h-[300px]" id="trendChart"></div>
+        </div>
+        <!-- Quick Access Buttons -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col">
+          <h4 class="font-bold text-slate-800 mb-4">Quick Entry</h4>
+          <div class="grid grid-cols-2 gap-4 flex-1">
+            <a class="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 transition-all group text-center" href="#">
+              <div class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <span class="iconify w-5 h-5" data-icon="heroicons:users"></span>
+              </div>
+              <span class="text-xs font-bold text-slate-700">Teacher Management</span>
+            </a>
+            <a class="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 transition-all group text-center" href="#">
+              <div class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <span class="iconify w-5 h-5" data-icon="heroicons:user-group"></span>
+              </div>
+              <span class="text-xs font-bold text-slate-700">TA Management</span>
+            </a>
+            <a class="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-all group text-center" href="job-supervision.html">
+              <div class="w-10 h-10 bg-white shadow-sm rounded-lg flex items-center justify-center text-indigo-600 group-hover:text-indigo-700">
+                <span class="iconify w-6 h-6" data-icon="heroicons:eye"></span>
+              </div>
+              <span class="text-xs font-bold text-slate-600">Pos. Monitor</span>
+            </a>
+            <a class="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-purple-50 hover:border-purple-200 transition-all group text-center" href="workload-overview.html">
+              <div class="w-10 h-10 bg-white shadow-sm rounded-lg flex items-center justify-center text-purple-600 group-hover:text-purple-700">
+                <span class="iconify w-6 h-6" data-icon="heroicons:clock"></span>
+              </div>
+              <span class="text-xs font-bold text-slate-600">Workload</span>
+            </a>
+            <a class="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 transition-all group text-center" href="basic-statistics.html">
+              <div class="w-10 h-10 bg-white shadow-sm rounded-lg flex items-center justify-center text-emerald-600 group-hover:text-emerald-700">
+                <span class="iconify w-6 h-6" data-icon="heroicons:presentation-chart-line"></span>
+              </div>
+              <span class="text-xs font-bold text-slate-600">Statistics</span>
+            </a>
+          </div>
+          <div class="mt-6 p-4 rounded-xl bg-blue-900 text-white">
+            <p class="text-[10px] font-bold uppercase text-blue-300 tracking-widest mb-1">System Status</p>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+              <span class="text-sm font-medium">All Services Normal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section: Alert & Exception Handling -->
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <!-- Alerts Container -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <h4 class="font-bold text-slate-800">System Reminders</h4>
+              <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-bold">12 Action Required</span>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-lg">
+              <button class="px-3 py-1 text-xs font-bold bg-white shadow-sm rounded-md text-slate-900">Critical</button>
+              <button class="px-3 py-1 text-xs font-bold text-slate-500 hover:text-slate-700">All</button>
+            </div>
+          </div>
+          <div class="divide-y divide-slate-50 max-h-[360px] overflow-y-auto custom-scrollbar">
+            <!-- Alert Item -->
+            <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer">
+              <div class="p-2 rounded-full bg-orange-100 text-orange-600 mt-1">
+                <span class="iconify w-5 h-5" data-icon="heroicons:clock"></span>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Upcoming Deadline</h5>
+                  <span class="text-[10px] text-slate-400 font-medium">Closing in 12h</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1 uppercase">Position: [COMP2011] Introduction to Computing Lab TA</p>
+                <div class="mt-3 flex gap-2">
+                  <button class="text-[10px] font-bold text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white">Notify Prof.</button>
+                  <button class="text-[10px] font-bold text-slate-400 hover:text-slate-600 px-3 py-1 rounded border border-slate-200">Extend</button>
+                </div>
+              </div>
+            </div>
+            <!-- Alert Item -->
+            <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer">
+              <div class="p-2 rounded-full bg-red-100 text-red-600 mt-1">
+                <span class="iconify w-5 h-5" data-icon="heroicons:user-minus"></span>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Overloaded TA (20+ Hours)</h5>
+                  <span class="text-[10px] text-red-500 font-bold uppercase">Severe</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1 uppercase">User: WANG Zeyu (Student ID: 29331043) - Current: 24.5 hrs/week</p>
+                <div class="mt-3 flex gap-2">
+                  <button class="text-[10px] font-bold text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-600 hover:text-white">Review Contract</button>
+                </div>
+              </div>
+            </div>
+            <!-- Alert Item -->
+            <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer">
+              <div class="p-2 rounded-full bg-blue-100 text-blue-600 mt-1">
+                <span class="iconify w-5 h-5" data-icon="heroicons:envelope"></span>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Long Pending Application</h5>
+                  <span class="text-[10px] text-slate-400 font-medium">Pending 7 days</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1 lowercase">Physics Dept. Position #7712 (Adv. Mechanics) waiting for selection.</p>
+                <div class="mt-3 flex gap-2">
+                  <button class="text-[10px] font-bold text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white">Send Reminder</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Table List -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <h4 class="font-bold text-slate-800">Pending Requests</h4>
+            <a class="text-xs font-bold text-blue-600 hover:underline" href="#">View All</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
+                  <th class="px-6 py-4">Request Type</th>
+                  <th class="px-6 py-4">Status</th>
+                  <th class="px-6 py-4">Requester</th>
+                  <th class="px-6 py-4">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="px-6 py-4">
+                    <p class="text-xs font-bold">New Teacher Account</p>
+                    <p class="text-[10px] text-slate-400">Dr. Sarah Miller (Business)</p>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-[10px] font-bold">Verifying</span>
+                  </td>
+                  <td class="px-6 py-4 text-xs">2026/03/20</td>
+                  <td class="px-6 py-4">
+                    <a class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors" href="job-supervision.html">
+                      <span class="iconify w-4 h-4" data-icon="heroicons:arrow-right"></span>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4">
+                    <p class="text-xs font-bold">New Position Batch</p>
+                    <p class="text-[10px] text-slate-400">School of Engineering (12 posts)</p>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded bg-slate-100 text-slate-500 text-[10px] font-bold">Draft</span>
+                  </td>
+                  <td class="px-6 py-4 text-xs">2026/03/21</td>
+                  <td class="px-6 py-4">
+                    <button class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
+                      <span class="iconify w-4 h-4" data-icon="heroicons:arrow-right"></span>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4">
+                    <p class="text-xs font-bold">Override Qualification</p>
+                    <p class="text-[10px] text-slate-400">Student ID: 20120... (UG Year 1)</p>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded bg-red-100 text-red-700 text-[10px] font-bold">Urgent</span>
+                  </td>
+                  <td class="px-6 py-4 text-xs">2026/03/21</td>
+                  <td class="px-6 py-4">
+                    <button class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
+                      <span class="iconify w-4 h-4" data-icon="heroicons:arrow-right"></span>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4">
+                    <p class="text-xs font-bold">Contract Update</p>
+                    <p class="text-[10px] text-slate-400">Payroll Dept Revision</p>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-[10px] font-bold">Verifying</span>
+                  </td>
+                  <td class="px-6 py-4 text-xs">2026/03/19</td>
+                  <td class="px-6 py-4">
+                    <button class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
+                      <span class="iconify w-4 h-4" data-icon="heroicons:arrow-right"></span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Meta -->
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-slate-200">
+        <p>© 2026 MO Recruitment Management System - Admin Side Portal</p>
+        <div class="flex items-center gap-4">
+          <span class="flex items-center gap-1"><span class="iconify" data-icon="heroicons:map-pin"></span> Main Campus Node #14</span>
+          <span class="flex items-center gap-1 font-medium text-slate-500">
+            <span class="iconify" data-icon="heroicons:arrow-path" id="syncIcon"></span>
+            Last updated: 2026-03-21 09:30:11
+          </span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Init Charts
+    const trendChart = echarts.init(document.getElementById('trendChart'));
+
+    const option = {
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#ffffff',
+        borderWidth: 0,
+        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        textStyle: {
+          color: '#000'
+        }
+      },
+      grid: {
+        left: '2%',
+        right: '2%',
+        bottom: '2%',
+        top: '10%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        axisLine: {
+          lineStyle: {
+            color: '#e2e8f0'
+          }
+        },
+        axisLabel: {
+          color: '#94a3b8',
+          fontSize: 10
+        }
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: {
+          lineStyle: {
+            color: '#f1f5f9',
+            type: 'dashed'
+          }
+        },
+        axisLabel: {
+          color: '#94a3b8',
+          fontSize: 10
+        }
+      },
+      series: [{
+          name: 'Current Applications',
+          type: 'line',
+          smooth: true,
+          data: [120, 182, 191, 234, 290, 330, 310],
+          itemStyle: {
+            color: '#3B82F6'
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                offset: 0,
+                color: 'rgba(59, 130, 246, 0.2)'
+              },
+              {
+                offset: 1,
+                color: 'rgba(59, 130, 246, 0)'
+              }
+            ])
+          },
+          lineStyle: {
+            width: 3
+          }
+        },
+        {
+          name: 'Previous Period',
+          type: 'line',
+          smooth: true,
+          data: [100, 140, 130, 180, 250, 220, 260],
+          itemStyle: {
+            color: '#e2e8f0'
+          },
+          lineStyle: {
+            width: 2,
+            type: 'dashed'
+          }
+        }
+      ]
+    };
+
+    trendChart.setOption(option);
+
+    // Window resize handle
+    window.addEventListener('resize', () => {
+      trendChart.resize();
+    });
+
+    // Simulating data refresh
+    document.querySelector('button.bg-blue-600').addEventListener('click', function() {
+      this.classList.add('opacity-75');
+      const icon = this.querySelector('.iconify');
+      icon.classList.add('animate-spin');
+
+      setTimeout(() => {
+        this.classList.remove('opacity-75');
+        icon.classList.remove('animate-spin');
+        alert('Management dashboard data updated successfully.');
+      }, 800);
+    });
+  </script>
+
+</body>
+
+</html>

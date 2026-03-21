@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TA Workload Overview | AD Administration System 2026</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .sidebar-item-active { background-color: #EFF6FF; border-right: 4px solid #3B82F6; color: #1D4ED8; }
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
+        .glass-header { backdrop-filter: blur(8px); background: rgba(255, 255, 255, 0.8); }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex min-h-screen text-slate-700">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+<span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
+</div>
+<span class="text-xl font-bold tracking-tight text-blue-900">MO Admin</span>
+</div>
+<nav class="mt-4 flex-1">
+<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="admin-dashboard.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:squares-2x2-20-solid"></span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="job-supervision.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:briefcase"></span>
+<span>Job Supervision</span>
+</a>
+<a class="sidebar-item-active flex items-center px-6 py-3 gap-3 transition-all font-medium" href="workload-overview.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:chart-bar"></span>
+<span class="font-medium">Workload Stats</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="user-management.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:users"></span>
+<span>User Management</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="basic-statistics.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:presentation-chart-line"></span>
+<span>Basic Statistics</span>
+</a>
+<div class="px-4 py-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">System Config</div>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="system-settings.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:cog-6-tooth"></span>
+<span>Settings</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="audit-logs.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:shield-check"></span>
+<span>Audit Logs</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<div class="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold truncate">Admin Mr. Chen</p>
+<p class="text-[10px] text-slate-500 uppercase">Super Administrator</p>
+</div>
+<button class="text-slate-400 hover:text-red-500">
+<span class="iconify w-4 h-4" data-icon="heroicons:arrow-right-start-on-rectangle"></span>
+</button>
+</div>
+</div>
+</aside>te-100"&gt;
+            <div class="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold truncate">管理员 陈老师</p>
+<p class="text-[10px] text-slate-500 uppercase">超级管理员</p>
+</div>
+<button class="text-slate-400 hover:text-red-500">
+<span class="iconify w-4 h-4" data-icon="heroicons:arrow-right-start-on-rectangle"></span>
+</button>
+</div>
+
+
+<!-- Main Content -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen overflow-hidden relative">
+<!-- Top Header -->
+<header class="h-16 px-6 glass-header border-b border-gray-200 flex items-center justify-between z-10">
+<div class="flex items-center space-x-4">
+<nav aria-label="Breadcrumb" class="flex text-xs text-gray-500 space-x-2">
+<span>Admin</span>
+<span>/</span>
+<span class="text-gray-900 font-medium font-bold">工作量统计</span>
+</nav>
+</div>
+<div class="flex items-center space-x-6">
+<div class="relative group">
+<span class="iconify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" data-icon="solar:magnifer-linear"></span>
+<input class="pl-10 pr-4 py-1.5 bg-gray-100 border-transparent rounded-full text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all w-64" placeholder="Search TA Name or ID..." type="text"/>
+</div>
+<div class="flex items-center space-x-3">
+<button class="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+<span class="iconify text-xl" data-icon="solar:bell-linear"></span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<div class="h-6 w-px bg-gray-200"></div>
+<div class="text-right hidden sm:block">
+<p class="text-[10px] text-gray-400 uppercase leading-none mb-1">System Status</p>
+<div class="flex items-center text-[10px] font-bold text-green-500 space-x-1">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+<span>CONNECTED · 2026-03-21</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Scrollable Body -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<!-- Page Title & Filter Bar -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-2xl font-bold text-gray-900">TA Workload Monitoring</h1>
+<p class="text-sm text-gray-500 mt-1">Real-time supervision of Teaching Assistant hours and allocation status across all departments.</p>
+</div>
+<div class="flex items-center space-x-3 bg-white p-1 rounded-xl card-shadow border border-gray-100">
+<select class="bg-transparent text-sm font-medium px-4 py-2 border-none focus:ring-0 cursor-pointer text-gray-600 hover:text-blue-600 transition-colors">
+<option>All Faculties</option>
+<option>Engineering</option>
+<option>Science</option>
+<option>Business</option>
+<option>Art &amp; Design</option>
+</select>
+<div class="w-px h-6 bg-gray-100"></div>
+<select class="bg-transparent text-sm font-medium px-4 py-2 border-none focus:ring-0 cursor-pointer text-gray-600 hover:text-blue-600 transition-colors">
+<option>All Status</option>
+<option>Normal</option>
+<option>Warning</option>
+<option>Overload</option>
+</select>
+<button class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all flex items-center">
+<span class="iconify mr-2" data-icon="solar:filter-linear"></span>
+                        Apply Filters
+                    </button>
+</div>
+</div>
+<!-- Dashboard Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Stat 1 -->
+<div class="bg-white p-5 rounded-2xl card-shadow border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+<div>
+<p class="text-xs font-bold text-gray-400 uppercase mb-1">Total TA Count</p>
+<h3 class="text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">248</h3>
+<p class="text-[10px] text-green-500 font-bold mt-2 flex items-center">
+<span class="iconify mr-1" data-icon="solar:arrow-right-up-linear"></span>
+                            +12 from last semester
+                        </p>
+</div>
+<div class="w-12 h-12 bg-blue-50 flex items-center justify-center rounded-xl text-blue-600">
+<span class="iconify text-2xl" data-icon="solar:users-group-two-rounded-bold"></span>
+</div>
+</div>
+<!-- Stat 2 -->
+<div class="bg-white p-5 rounded-2xl card-shadow border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+<div>
+<p class="text-xs font-bold text-gray-400 uppercase mb-1">Avg. Hours/Week</p>
+<h3 class="text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">14.2h</h3>
+<p class="text-[10px] text-gray-400 font-medium mt-2">Target range: 10h-18h</p>
+</div>
+<div class="w-12 h-12 bg-indigo-50 flex items-center justify-center rounded-xl text-indigo-600">
+<span class="iconify text-2xl" data-icon="solar:clock-circle-bold"></span>
+</div>
+</div>
+<!-- Stat 3 -->
+<div class="bg-white p-5 rounded-2xl border-2 border-red-50 bg-red-50/20 flex items-center justify-between group">
+<div>
+<p class="text-xs font-bold text-red-400 uppercase mb-1">Overload Warning</p>
+<h3 class="text-2xl font-bold text-red-600">18</h3>
+<p class="text-[10px] text-red-500 font-bold mt-2 animate-pulse">Needs immediate review</p>
+</div>
+<div class="w-12 h-12 bg-red-100 flex items-center justify-center rounded-xl text-red-600">
+<span class="iconify text-2xl" data-icon="solar:danger-bold"></span>
+</div>
+</div>
+<!-- Stat 4 -->
+<div class="bg-white p-5 rounded-2xl card-shadow border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
+<div>
+<p class="text-xs font-bold text-gray-400 uppercase mb-1">Max Workload</p>
+<h3 class="text-2xl font-bold text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">26.5h</h3>
+<p class="text-[10px] text-gray-400 font-medium mt-2">ID: #20268809 (David L.)</p>
+</div>
+<div class="w-12 h-12 bg-amber-50 flex items-center justify-center rounded-xl text-amber-600">
+<span class="iconify text-2xl" data-icon="solar:chart-line-up-bold"></span>
+</div>
+</div>
+</div>
+<!-- Table Section -->
+<div class="bg-white rounded-2xl card-shadow overflow-hidden border border-gray-100">
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+<div class="flex items-center space-x-2">
+<span class="iconify text-blue-500 text-lg" data-icon="solar:list-bold"></span>
+<h3 class="font-bold text-gray-800 text-base">TA Workload Detailed List</h3>
+</div>
+<div class="flex items-center space-x-2">
+<button class="text-xs font-bold text-gray-500 px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors border border-gray-100">Sort By: Hours Asc</button>
+<button class="bg-indigo-50 text-indigo-600 text-xs font-bold px-4 py-2 rounded-lg hover:bg-indigo-100 transition-all flex items-center">
+<span class="iconify mr-1.5" data-icon="solar:cloud-download-linear"></span>
+                            Export Report
+                        </button>
+</div>
+</div>
+<div class="overflow-x-auto overflow-y-visible">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-gray-50/50 text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+<th class="px-6 py-4 font-bold border-b border-gray-100">TA Name &amp; Student ID</th>
+<th class="px-6 py-4 font-bold border-b border-gray-100">Faculty</th>
+<th class="px-6 py-4 font-bold border-b border-gray-100">Assigned Positions</th>
+<th class="px-6 py-4 font-bold border-b border-gray-100 text-center">Total Weekly Hours</th>
+<th class="px-6 py-4 font-bold border-b border-gray-100">Workload Status</th>
+<th class="px-6 py-4 font-bold border-b border-gray-100 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50">
+<!-- TA 1: Overload Case -->
+<tr class="hover:bg-blue-50/30 transition-colors animate-fade-in">
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 text-xs font-bold mr-3 italic">JD</div>
+<div>
+<div class="text-sm font-bold text-gray-900">James D. Watson</div>
+<div class="text-[10px] text-gray-500 uppercase">ID: 202611092</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">Engineering (CS)</span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="w-32">
+<div class="flex justify-between text-[10px] mb-1">
+<span class="font-bold text-gray-700">3 Positions</span>
+<span class="text-blue-600">100% Load</span>
+</div>
+<div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-blue-600 rounded-full w-full"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-center">
+<span class="font-bold text-lg text-red-600">26.5 <small class="text-xs font-normal text-gray-400">h</small></span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="flex items-center text-[10px] font-bold px-2 py-1 rounded bg-red-100 text-red-600 uppercase w-fit">
+<span class="w-1 h-1 bg-red-600 rounded-full mr-2"></span> Overload
+                                    </span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-right">
+<div class="flex justify-end space-x-1">
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="View Detail">
+<span class="iconify" data-icon="solar:eye-linear"></span>
+</button>
+<button class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Adjust Manually">
+<span class="iconify" data-icon="solar:tuning-square-2-linear"></span>
+</button>
+</div>
+</td>
+</tr>
+<!-- TA 2: Normal Case -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-700 text-xs font-bold mr-3 italic">ML</div>
+<div>
+<div class="text-sm font-bold text-gray-900">Maya Lopez</div>
+<div class="text-[10px] text-gray-500 uppercase">ID: 202611583</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">Science (Bio)</span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="w-32">
+<div class="flex justify-between text-[10px] mb-1">
+<span class="font-bold text-gray-700">2 Positions</span>
+<span class="text-green-600">60% Load</span>
+</div>
+<div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-green-500 rounded-full w-[60%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-center">
+<span class="font-bold text-lg text-gray-900">12.0 <small class="text-xs font-normal text-gray-400">h</small></span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="flex items-center text-[10px] font-bold px-2 py-1 rounded bg-green-100 text-green-600 uppercase w-fit">
+<span class="w-1 h-1 bg-green-600 rounded-full mr-2"></span> Balanced
+                                    </span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-right">
+<div class="flex justify-end space-x-1">
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" onclick="viewDetail('202612301')" title="查看详细工作量">
+<span class="iconify" data-icon="solar:eye-linear"></span>
+</button>
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+<span class="iconify" data-icon="solar:tuning-square-2-linear"></span>
+</button>
+</div>
+</td>
+</tr>
+<!-- TA 3: Warning Case -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-amber-700 text-xs font-bold mr-3 italic">WC</div>
+<div>
+<div class="text-sm font-bold text-gray-900">Wilson Chen</div>
+<div class="text-[10px] text-gray-500 uppercase">ID: 202611004</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">Business School</span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="w-32">
+<div class="flex justify-between text-[10px] mb-1">
+<span class="font-bold text-gray-700">2 Positions</span>
+<span class="text-amber-600">85% Load</span>
+</div>
+<div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 rounded-full w-[85%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-center">
+<span class="font-bold text-lg text-amber-600">19.5 <small class="text-xs font-normal text-gray-400">h</small></span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="flex items-center text-[10px] font-bold px-2 py-1 rounded bg-amber-100 text-amber-600 uppercase w-fit">
+<span class="w-1 h-1 bg-amber-600 rounded-full mr-2"></span> Warning
+                                    </span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-right">
+<div class="flex justify-end space-x-1">
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+<span class="iconify" data-icon="solar:eye-linear"></span>
+</button>
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+<span class="iconify" data-icon="solar:tuning-square-2-linear"></span>
+</button>
+</div>
+</td>
+</tr>
+<!-- TA 4: Normal Case -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 text-xs font-bold mr-3 italic">SK</div>
+<div>
+<div class="text-sm font-bold text-gray-900">Sarah Kim</div>
+<div class="text-[10px] text-gray-500 uppercase">ID: 202611721</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">Art &amp; Design</span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="w-32">
+<div class="flex justify-between text-[10px] mb-1">
+<span class="font-bold text-gray-700">1 Position</span>
+<span class="text-green-600">40% Load</span>
+</div>
+<div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-green-500 rounded-full w-[40%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-center">
+<span class="font-bold text-lg text-gray-900">8.0 <small class="text-xs font-normal text-gray-400">h</small></span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="flex items-center text-[10px] font-bold px-2 py-1 rounded bg-green-100 text-green-600 uppercase w-fit">
+<span class="w-1 h-1 bg-green-600 rounded-full mr-2"></span> Balanced
+                                    </span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-right">
+<div class="flex justify-end space-x-1">
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+<span class="iconify" data-icon="solar:eye-linear"></span>
+</button>
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+<span class="iconify" data-icon="solar:tuning-square-2-linear"></span>
+</button>
+</div>
+</td>
+</tr>
+<!-- TA 5: Normal Case -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center text-pink-700 text-xs font-bold mr-3 italic">RB</div>
+<div>
+<div class="text-sm font-bold text-gray-900">Robert Brown</div>
+<div class="text-[10px] text-gray-500 uppercase">ID: 202612301</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">Social Science</span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<div class="w-32">
+<div class="flex justify-between text-[10px] mb-1">
+<span class="font-bold text-gray-700">2 Positions</span>
+<span class="text-green-600">55% Load</span>
+</div>
+<div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-green-500 rounded-full w-[55%]"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-center">
+<span class="font-bold text-lg text-gray-900">11.0 <small class="text-xs font-normal text-gray-400">h</small></span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50">
+<span class="flex items-center text-[10px] font-bold px-2 py-1 rounded bg-green-100 text-green-600 uppercase w-fit">
+<span class="w-1 h-1 bg-green-600 rounded-full mr-2"></span> Balanced
+                                    </span>
+</td>
+<td class="px-6 py-4 border-b border-gray-50 text-right">
+<div class="flex justify-end space-x-1">
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+<span class="iconify" data-icon="solar:eye-linear"></span>
+</button>
+<button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+<span class="iconify" data-icon="solar:tuning-square-2-linear"></span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Footer Pagination -->
+<div class="px-6 py-4 flex items-center justify-between bg-gray-50/50">
+<p class="text-xs text-gray-500">Showing <span class="font-bold text-gray-900">1 to 5</span> of 248 assistants</p>
+<div class="flex items-center space-x-1">
+<button class="p-1 px-2.5 bg-white border border-gray-200 text-gray-400 rounded-lg hover:bg-gray-100 transition-colors">
+<span class="iconify" data-icon="solar:alt-arrow-left-linear"></span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-blue-600 text-white text-xs font-bold">1</button>
+<button class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">2</button>
+<button class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">3</button>
+<span class="px-1 text-gray-400 uppercase text-[10px] font-bold">...</span>
+<button class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">49</button>
+<button class="p-1 px-2.5 bg-white border border-gray-200 text-gray-400 rounded-lg hover:bg-gray-100 transition-colors">
+<span class="iconify" data-icon="solar:alt-arrow-right-linear"></span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty State Concept (Hidden by default) -->
+<div class="hidden flex flex-col items-center justify-center py-20 bg-white rounded-2xl card-shadow border border-gray-100 text-center" id="no-data">
+<div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+<span class="iconify text-4xl text-gray-300" data-icon="solar:gallery-wide-linear"></span>
+</div>
+<h4 class="text-lg font-bold text-gray-900">No matching TAs found</h4>
+<p class="text-sm text-gray-500 max-w-xs mx-auto mt-2">We couldn't find any results matching your filter criteria. Try adjusting your filters or search keywords.</p>
+<button class="mt-6 text-blue-600 font-bold text-sm hover:underline">Clear all filters</button>
+</div>
+<!-- Analytics Integration Preview -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-gray-800 flex items-center">
+<span class="iconify mr-2 text-blue-500" data-icon="solar:pen-new-square-linear"></span>
+                            Workload Distribution by Faculty
+                        </h3>
+</div>
+<div id="distribution-chart" style="height: 300px;"></div>
+</div>
+<div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-gray-800 flex items-center">
+<span class="iconify mr-2 text-blue-500" data-icon="solar:calendar-minimalistic-linear"></span>
+                            Recent Load Trends (Last 8 Weeks)
+                        </h3>
+</div>
+<div id="trend-chart" style="height: 300px;"></div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Init Distribution Chart
+        const distChart = echarts.init(document.getElementById('distribution-chart'));
+        distChart.setOption({
+            tooltip: { trigger: 'item' },
+            legend: { bottom: '0', left: 'center', itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 10 } },
+            series: [{
+                name: 'TAs Count',
+                type: 'pie',
+                radius: ['45%', '70%'],
+                avoidLabelOverlap: false,
+                itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+                label: { show: false },
+                emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
+                data: [
+                    { value: 104, name: 'Engineering', itemStyle: { color: '#3B82F6' } },
+                    { value: 68, name: 'Science', itemStyle: { color: '#6366F1' } },
+                    { value: 46, name: 'Business', itemStyle: { color: '#F59E0B' } },
+                    { value: 30, name: 'Others', itemStyle: { color: '#94A3B8' } }
+                ]
+            }]
+        });
+
+        // Init Trend Chart
+        const trendChart = echarts.init(document.getElementById('trend-chart'));
+        trendChart.setOption({
+            grid: { top: 20, left: 30, right: 30, bottom: 30, containLabel: true },
+            xAxis: { 
+                type: 'category', 
+                data: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
+                axisLine: { lineStyle: { color: '#E2E8F0' } },
+                axisLabel: { color: '#94A3B8', fontSize: 10 }
+            },
+            yAxis: { 
+                type: 'value', 
+                axisLine: { show: false },
+                splitLine: { lineStyle: { type: 'dashed', color: '#F1F5F9' } },
+                axisLabel: { color: '#94A3B8', fontSize: 10 }
+            },
+            series: [{
+                data: [12.5, 13.8, 14.2, 14.8, 16.2, 15.5, 14.9, 14.2],
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 6,
+                itemStyle: { color: '#3B82F6' },
+                lineStyle: { width: 3 },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(59, 130, 246, 0.2)' },
+                        { offset: 1, color: 'rgba(59, 130, 246, 0)' }
+                    ])
+                }
+            }]
+        });
+
+        window.addEventListener('resize', () => {
+            distChart.resize();
+            trendChart.resize();
+        });
+
+        function viewDetail(id) {
+            alert('正在跳转到工作量明细页 (ID: ' + id + ')\n\n链接占位: workload-detail.html?id=' + id);
+            // window.location.href = 'workload-detail.html?id=' + id;
+        }
+
+        // Filter search interaction
+        document.querySelector('input[type="text"]').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                alert('正在筛选助管人员: ' + this.value);
+            }
+        });
+    </script>
+</body>
+</html>
