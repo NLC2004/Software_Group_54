@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Applications - 2026-03-21</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .tab-active { color: #2563EB; border-bottom: 2px solid #2563EB; font-weight: 600; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] text-gray-800">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full shadow-sm">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-100">
+<span class="iconify text-white text-xl" data-icon="mdi:school"></span>
+</div>
+<span class="font-bold text-lg text-gray-800 tracking-tight">BUPT TA System</span>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="dashboard.html">
+<span class="iconify text-xl" data-icon="mdi:view-dashboard"></span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="ta-recruitment-list.html">
+<span class="iconify text-xl" data-icon="mdi:account-group"></span>
+                TA Recruitment
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-blue-50 rounded-xl font-medium transition-all" href="my-ta-applications.html">
+<span class="iconify text-xl" data-icon="mdi:clipboard-text-clock-outline"></span>
+                My Applications
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="personal-information.html">
+<span class="iconify text-xl" data-icon="mdi:account-circle-outline"></span>
+                Profile
+            </a>
+<div class="pt-4 border-t border-gray-100 mt-4">
+<p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Management</p>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-xl transition-all" type="button" onclick="alert('In development')">
+<span class="iconify text-xl" data-icon="mdi:bell-outline"></span>
+                    Notifications
+                    <span class="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+</button>
+</div>
+</nav>
+<div class="p-4 border-t border-gray-100">
+<div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+<img alt="Avatar" class="w-10 h-10 rounded-full border border-gray-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold truncate">Zhang San</p>
+<p class="text-[10px] text-gray-400 truncate">School of Computer Science · Year 1</p>
+</div>
+<a class="text-gray-400 hover:text-red-500" href="index.html" title="Logout">
+<span class="iconify text-lg" data-icon="mdi:logout"></span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 ml-64 p-8">
+<!-- Breadcrumb -->
+<nav class="flex items-center text-sm text-gray-500 mb-6">
+<a class="hover:text-blue-600" href="dashboard.html">Home</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900 font-medium">My applications</span>
+</nav>
+<header class="flex justify-between items-center mb-8">
+<div>
+<h1 class="text-2xl font-bold">My Applications</h1>
+<p class="text-gray-400 text-sm mt-1">You have submitted 3 TA applications. Please track the review status.</p>
+</div>
+</header>
+<!-- Filter Tabs -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+<div class="flex border-b border-gray-100">
+<button class="px-8 py-4 text-sm font-medium tab-active transition-all" id="tab-all" onclick="filterRecords('all')">All</button>
+<button class="px-8 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition-all" id="tab-pending" onclick="filterRecords('pending')">Pending</button>
+<button class="px-8 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition-all" id="tab-approved" onclick="filterRecords('approved')">Approved</button>
+<button class="px-8 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 transition-all" id="tab-rejected" onclick="filterRecords('rejected')">Rejected</button>
+</div>
+<!-- Content -->
+<div class="p-6">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-gray-400 text-xs font-bold uppercase tracking-wider border-b border-gray-50">
+<th class="pb-4 pl-2">Course</th>
+<th class="pb-4">Instructor</th>
+<th class="pb-4">Submitted</th>
+<th class="pb-4">Status</th>
+<th class="pb-4 text-right pr-2">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50" id="records-container">
+<!-- Records will be injected here -->
+</tbody>
+</table>
+</div>
+<!-- Empty State -->
+<div class="hidden py-16 text-center" id="empty-state">
+<span class="iconify text-6xl text-gray-200 mx-auto mb-4" data-icon="material-symbols:assignment-late-outline-rounded"></span>
+<p class="text-gray-500">No records found</p>
+<a class="mt-4 inline-block text-blue-600 font-semibold hover:underline" href="ta-recruitment-list.html">Go to recruitment</a>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Rejection Modal -->
+<div class="modal" id="rejection-modal">
+<div class="bg-white rounded-2xl p-8 w-[400px] shadow-2xl">
+<div class="flex items-center gap-3 mb-4 text-red-600">
+<span class="iconify text-2xl" data-icon="mdi:alert-circle-outline"></span>
+<h3 class="text-lg font-bold">Review comment</h3>
+</div>
+<p class="text-gray-600 mb-8 bg-red-50 p-4 rounded-xl border border-red-100 leading-relaxed italic" id="rejection-text">
+            "We were looking for candidates with prior lab experience. Please feel free to apply again next semester."
+        </p>
+<button class="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors" onclick="closeModal()">Close</button>
+</div>
+</div>
+<script>
+    const records = [
+        { id: 1, course: "Data Communications", courseCode: "CS302", teacher: "Prof. Zhang", time: "2026-03-21 10:30", status: "pending", statusName: "Pending" },
+        { id: 2, course: "Digital Signal Processing", courseCode: "EE401", teacher: "Dr. Li", time: "2026-03-20 14:15", status: "rejected", statusName: "Rejected", comment: "The applicant's grade does not meet the minimum requirement (A-)." },
+        { id: 3, course: "Object Oriented Programming", courseCode: "CS201", teacher: "Mr. Wang", time: "2026-03-18 09:00", status: "approved", statusName: "Approved" }
+    ];
+
+    function renderRecords(filter = 'all') {
+        const container = document.getElementById('records-container');
+        const empty = document.getElementById('empty-state');
+        const filtered = filter === 'all' ? records : records.filter(r => r.status === filter);
+
+        container.innerHTML = '';
+        if (filtered.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
+
+        filtered.forEach(rec => {
+            const statusStyles = {
+                pending: 'bg-blue-50 text-blue-600',
+                approved: 'bg-green-50 text-green-600',
+                rejected: 'bg-red-50 text-red-600'
+            };
+            
+            const tr = document.createElement('tr');
+            tr.className = "group hover:bg-gray-50 transition-colors";
+            tr.innerHTML = `
+                <td class="py-4 pl-2">
+                    <div class="font-bold text-gray-900">${rec.course}</div>
+                    <div class="text-xs text-gray-400">${rec.courseCode}</div>
+                </td>
+                <td class="py-4 text-sm text-gray-600">${rec.teacher}</td>
+                <td class="py-4 text-sm text-gray-600">${rec.time}</td>
+                <td class="py-4">
+                    <span class="text-xs font-bold px-3 py-1 rounded-full ${statusStyles[rec.status]}">
+                        ${rec.statusName}
+                    </span>
+                </td>
+                <td class="py-4 text-right pr-2">
+                    <div class="flex justify-end gap-3">
+                        <a href="application-review-detail.html?id=${rec.id}" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">
+                            View details
+                        </a>
+                        ${rec.status === 'rejected' ? `<button onclick="showRejection('${rec.comment}')" class="text-red-600 hover:text-red-800 text-sm font-medium">Feedback</button>` : ''}
+                    </div>
+                </td>
+            `;
+            container.appendChild(tr);
+        });
+    }
+
+    function filterRecords(type) {
+        document.querySelectorAll('[id^="tab-"]').forEach(btn => {
+            btn.classList.remove('tab-active');
+            btn.classList.add('text-gray-500');
+        });
+        const activeBtn = document.getElementById('tab-' + type);
+        activeBtn.classList.add('tab-active');
+        activeBtn.classList.remove('text-gray-500');
+        renderRecords(type);
+    }
+
+    function showRejection(msg) {
+        document.getElementById('rejection-text').innerText = '“' + msg + '”';
+        document.getElementById('rejection-modal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('rejection-modal').classList.remove('active');
+    }
+
+    window.onload = () => renderRecords('all');
+</script>
+</body>
+</html>
