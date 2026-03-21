@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - MO Recruitment System (MO)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        body {
+            background: linear-gradient(135deg, #EBF4FF 0%, #F5F7FA 100%);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .login-card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center py-12 px-4">
+<div class="w-full max-w-md">
+<div class="text-center mb-10">
+<div class="inline-flex items-center justify-center p-3 bg-blue-600 rounded-2xl shadow-lg mb-6">
+<span class="iconify text-white text-4xl" data-icon="mdi:school"></span>
+</div>
+<h1 class="text-2xl font-bold text-gray-800 tracking-tight">
+                MO Recruitment System<br/>
+<span class="text-blue-600">MO Portal</span>
+</h1>
+<p class="text-gray-500 mt-2 text-sm uppercase tracking-widest">Management Office</p>
+</div>
+<div class="bg-white p-8 rounded-2xl login-card border border-blue-50">
+<div class="hidden mb-4 p-3 rounded-lg text-sm flex items-center gap-2" id="alertBox">
+<span class="iconify" data-icon="" id="alertIcon"></span>
+<span id="alertMsg"></span>
+</div>
+<form class="space-y-6" id="loginForm">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">MO Account / Email</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:account-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="username" placeholder="Enter MO account" type="text"/>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="block text-sm font-semibold text-gray-700">Password</label>
+<a class="text-xs text-gray-400 hover:text-blue-600 transition-colors" href="../TA/forgot-password.html">Forgot password?</a>
+</div>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="password" placeholder="Enter your password" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500" onclick="togglePassword()" type="button">
+<span class="iconify" data-icon="mdi:eye-off-outline" id="passIcon"></span>
+</button>
+</div>
+</div>
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-blue-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
+<span id="btnText">Login</span>
+<span class="hidden animate-spin iconify" data-icon="mdi:loading" id="loadingIcon"></span>
+</button>
+</form>
+<div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-4">
+<span class="text-xs text-gray-400">Other methods:</span>
+<button class="text-gray-400 hover:text-green-500 transition-colors" type="button">
+<span class="iconify text-xl" data-icon="mdi:wechat"></span>
+</button>
+<button class="text-gray-400 hover:text-blue-400 transition-colors" type="button">
+<span class="iconify text-xl" data-icon="mdi:qqchat"></span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-8 text-center">
+<p class="text-gray-400 text-xs">© 2026 MO Recruitment System</p>
+<p class="text-gray-300 text-[10px] mt-1 italic font-light">System date: 2026-03-21</p>
+</div>
+<script>
+        const loginForm = document.getElementById('loginForm');
+        const alertBox = document.getElementById('alertBox');
+        const alertMsg = document.getElementById('alertMsg');
+        const alertIcon = document.getElementById('alertIcon');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const btnText = document.getElementById('btnText');
+        const loadingIcon = document.getElementById('loadingIcon');
+
+        function showAlert(type, message) {
+            alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
+            if(type === 'error') {
+                alertBox.classList.add('bg-red-50', 'text-red-700');
+                alertIcon.setAttribute('data-icon', 'mdi:alert-circle-outline');
+            } else {
+                alertBox.classList.add('bg-green-50', 'text-green-700');
+                alertIcon.setAttribute('data-icon', 'mdi:check-circle-outline');
+            }
+            alertMsg.innerText = message;
+        }
+
+        function togglePassword() {
+            const passIcon = document.getElementById('passIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passIcon.setAttribute('data-icon', 'mdi:eye-outline');
+            } else {
+                passwordInput.type = 'password';
+                passIcon.setAttribute('data-icon', 'mdi:eye-off-outline');
+            }
+        }
+
+        loginForm.onsubmit = (e) => {
+            e.preventDefault();
+            const user = usernameInput.value.trim();
+            const pass = passwordInput.value.trim();
+
+            if (!user || !pass) {
+                showAlert('error', 'Please enter your account and password');
+                return;
+            }
+
+            btnText.innerText = 'Verifying...';
+            loadingIcon.classList.remove('hidden');
+
+            setTimeout(() => {
+                if (user === 'mo' && pass === 'mo123') {
+                    showAlert('success', 'Login successful. Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = 'my-job-list.html';
+                    }, 800);
+                } else {
+                    showAlert('error', 'Invalid account or password');
+                    btnText.innerText = 'Login';
+                    loadingIcon.classList.add('hidden');
+                }
+            }, 800);
+        };
+    </script>
+</body>
+</html>
