@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TA Recruitment - TA Portal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background-color: #F8FAFC; }
+        .custom-shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+        .card-hover:hover { transform: translateY(-4px); transition: all 0.3s ease; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] text-gray-800">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full shadow-sm z-10">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-100">
+<span class="iconify text-white text-xl" data-icon="mdi:school"></span>
+</div>
+<span class="font-bold text-lg text-gray-800 tracking-tight">BUPT TA System</span>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="dashboard.html">
+<span class="iconify text-xl" data-icon="mdi:view-dashboard"></span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-blue-50 rounded-xl font-medium transition-all" href="ta-recruitment-list.html">
+<span class="iconify text-xl" data-icon="mdi:account-group"></span>
+                TA Recruitment
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="my-ta-applications.html">
+<span class="iconify text-xl" data-icon="mdi:clipboard-text-clock-outline"></span>
+                My Applications
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="personal-information.html">
+<span class="iconify text-xl" data-icon="mdi:account-circle-outline"></span>
+                Profile
+            </a>
+</nav>
+<div class="p-4 border-t border-gray-100">
+<div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+<img alt="Avatar" class="w-10 h-10 rounded-full border border-gray-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold truncate">Zhang San</p>
+<p class="text-[10px] text-gray-500 truncate">2022211101</p>
+</div>
+<a class="text-gray-400 hover:text-red-500 transition-colors" href="index.html" title="Logout">
+<span class="iconify" data-icon="mdi:logout"></span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 ml-64 p-8">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<h1 class="text-2xl font-bold text-gray-900">TA Recruitment</h1>
+<p class="text-gray-500 mt-1">Find TA opportunities that fit you | Date: 2026-03-21</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<input class="w-64 pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Search course / instructor..." type="text"/>
+<span class="iconify absolute left-3 top-2.5 text-gray-400" data-icon="material-symbols:search"></span>
+</div>
+<button class="bg-white p-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all">
+<span class="iconify text-xl text-gray-600" data-icon="material-symbols:filter-list"></span>
+</button>
+</div>
+</div>
+<!-- Filter Tabs -->
+<div class="flex items-center gap-8 mb-8 border-b border-gray-200 overflow-x-auto">
+<button class="pb-4 text-blue-600 border-b-2 border-blue-600 font-medium whitespace-nowrap" type="button">All</button>
+<button class="pb-4 text-gray-500 hover:text-gray-700 whitespace-nowrap" type="button">School of Information and Communication Engineering</button>
+<button class="pb-4 text-gray-500 hover:text-gray-700 whitespace-nowrap" type="button">School of Computer Science</button>
+<button class="pb-4 text-gray-500 hover:text-gray-700 whitespace-nowrap" type="button">School of AI</button>
+<button class="pb-4 text-gray-500 hover:text-gray-700 whitespace-nowrap" type="button">School of Economics and Management</button>
+</div>
+<!-- Grid Container -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="list-container">
+<!-- Card 1 -->
+<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-green-100 text-green-600 text-xs px-2.5 py-1 rounded-full font-medium">Open</span>
+</div>
+<h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">Advanced Mathematics A (I)</h3>
+<div class="space-y-2 text-sm text-gray-500 mb-6">
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:person-outline"></span>
+<span>Instructor: Prof. Li Weidong</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:location-on-outline"></span>
+<span>School: School of Science</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:calendar-month-outline"></span>
+<span>Deadline: 2026-03-30</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+<button class="text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors">
+<span class="iconify" data-icon="material-symbols:favorite-outline"></span>
+<span class="text-xs">Save</span>
+</button>
+<a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html">View details</a>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-orange-100 text-orange-600 text-xs px-2.5 py-1 rounded-full font-medium">Closing soon</span>
+</div>
+<h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">Programming Fundamentals (Python)</h3>
+<div class="space-y-2 text-sm text-gray-500 mb-6">
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:person-outline"></span>
+<span>Instructor: Dr. Zhang Ming</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:location-on-outline"></span>
+<span>School: School of Computer Science</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:calendar-month-outline"></span>
+<span>Deadline: 2026-03-25</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+<button class="text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors">
+<span class="iconify" data-icon="material-symbols:favorite-outline"></span>
+<span class="text-xs">Save</span>
+</button>
+<a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html">View details</a>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-green-100 text-green-600 text-xs px-2.5 py-1 rounded-full font-medium">Open</span>
+</div>
+<h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">Digital Signal Processing</h3>
+<div class="space-y-2 text-sm text-gray-500 mb-6">
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:person-outline"></span>
+<span>Instructor: Prof. Wang Fang</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:location-on-outline"></span>
+<span>School: School of Information and Communication Engineering</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:calendar-month-outline"></span>
+<span>Deadline: 2026-04-02</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+<button class="text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors">
+<span class="iconify" data-icon="material-symbols:favorite-outline"></span>
+<span class="text-xs">Save</span>
+</button>
+<a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html">View details</a>
+</div>
+</div>
+<!-- Card 4 (Was Advanced Business English Oral) -->
+<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-green-100 text-green-600 text-xs px-2.5 py-1 rounded-full font-medium">Open</span>
+</div>
+<h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">Advanced Business English Speaking</h3>
+<div class="space-y-2 text-sm text-gray-500 mb-6">
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:person-outline"></span>
+<span>Instructor: Sarah Johnson</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:location-on-outline"></span>
+<span>School: School of Humanities</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:calendar-month-outline"></span>
+<span>Deadline: 2026-03-28</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+<button class="text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors">
+<span class="iconify" data-icon="material-symbols:favorite-outline"></span>
+<span class="text-xs">Save</span>
+</button>
+<a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html">View details</a>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-green-100 text-green-600 text-xs px-2.5 py-1 rounded-full font-medium">Open</span>
+</div>
+<h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">Introduction to FinTech</h3>
+<div class="space-y-2 text-sm text-gray-500 mb-6">
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:person-outline"></span>
+<span>Instructor: Prof. Chen Yongsheng</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:location-on-outline"></span>
+<span>School: School of Economics and Management</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:calendar-month-outline"></span>
+<span>Deadline: 2026-04-05</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+<button class="text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors">
+<span class="iconify" data-icon="material-symbols:favorite-outline"></span>
+<span class="text-xs">Save</span>
+</button>
+<a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html">View details</a>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
+<div class="p-6 flex-1">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-green-100 text-green-600 text-xs px-2.5 py-1 rounded-full font-medium">Open</span>
+</div>
+<h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">History of Modern Design</h3>
+<div class="space-y-2 text-sm text-gray-500 mb-6">
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:person-outline"></span>
+<span>Instructor: Prof. Zhou Meimei</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:location-on-outline"></span>
+<span>School: School of Art and Design</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="iconify text-gray-400" data-icon="material-symbols:calendar-month-outline"></span>
+<span>Deadline: 2026-03-30</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+<button class="text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors">
+<span class="iconify" data-icon="material-symbols:favorite-outline"></span>
+<span class="text-xs">Save</span>
+</button>
+<a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html">View details</a>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-12 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-gray-200 pt-8">
+<div class="text-sm text-gray-500">
+                Showing 1 to 6 of 84 positions
+            </div>
+<div class="flex items-center gap-2">
+<button class="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-colors">
+<span class="iconify" data-icon="material-symbols:keyboard-arrow-left"></span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-blue-600 text-white text-sm font-medium shadow-sm">1</button>
+<button class="w-10 h-10 rounded-lg hover:bg-white border border-transparent hover:border-gray-200 text-gray-600 text-sm font-medium transition-all">2</button>
+<button class="w-10 h-10 rounded-lg hover:bg-white border border-transparent hover:border-gray-200 text-gray-600 text-sm font-medium transition-all">3</button>
+<span class="mx-2 text-gray-400">...</span>
+<button class="w-10 h-10 rounded-lg hover:bg-white border border-transparent hover:border-gray-200 text-gray-600 text-sm font-medium transition-all">14</button>
+<button class="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+<span class="iconify" data-icon="material-symbols:keyboard-arrow-right"></span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</body>
+</html>

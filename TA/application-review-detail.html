@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Review Result Detail - TA MS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] text-gray-800">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full shadow-sm">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-100">
+<span class="iconify text-white text-xl" data-icon="mdi:school"></span>
+</div>
+<span class="font-bold text-lg text-gray-800 tracking-tight">BUPT TA System</span>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="dashboard.html">
+<span class="iconify text-xl" data-icon="mdi:view-dashboard"></span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="ta-recruitment-list.html">
+<span class="iconify text-xl" data-icon="mdi:account-group"></span>
+                TA Recruitment
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-blue-50 rounded-xl font-medium transition-all" href="my-ta-applications.html">
+<span class="iconify text-xl" data-icon="mdi:clipboard-text-clock-outline"></span>
+                My Applications
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="personal-information.html">
+<span class="iconify text-xl" data-icon="mdi:account-circle-outline"></span>
+                Profile
+            </a>
+<div class="pt-4 border-t border-gray-100 mt-4">
+<p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Management</p>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-xl transition-all" type="button" onclick="alert('In development')">
+<span class="iconify text-xl" data-icon="mdi:bell-outline"></span>
+                    Notifications
+                    <span class="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+</button>
+</div>
+</nav>
+<div class="p-4 border-t border-gray-100">
+<div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+<img alt="Avatar" class="w-10 h-10 rounded-full border border-gray-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold truncate">Zhang San</p>
+<p class="text-[10px] text-gray-400 truncate">School of Computer Science · Year 1</p>
+</div>
+<a class="text-gray-400 hover:text-red-500" href="index.html" title="Logout">
+<span class="iconify text-lg" data-icon="mdi:logout"></span>
+</a>
+</div>
+</div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 ml-64 p-8">
+<nav class="flex items-center text-sm text-gray-500 mb-6">
+<a class="hover:text-blue-600" href="dashboard.html">Home</a>
+<span class="mx-2">/</span>
+<a class="hover:text-blue-600" href="my-ta-applications.html">My Applications</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900 font-medium">Review detail</span>
+</nav>
+
+<div class="max-w-4xl">
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-gray-100 flex items-center gap-3">
+<a class="p-2 hover:bg-gray-50 rounded-xl transition-colors text-gray-500 border border-gray-100" href="my-ta-applications.html" title="Back">
+<span class="iconify text-xl" data-icon="mdi:arrow-left"></span>
+</a>
+<div>
+<h2 class="text-xl font-bold text-gray-900 leading-tight">Review result - <span id="course-name">Object Oriented Programming</span></h2>
+<p class="text-xs text-gray-400 mt-1">Application ID: <span id="app-id">-</span></p>
+</div>
+</div>
+
+<div class="p-6 space-y-6">
+<!-- Base Info Container -->
+<div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-xs text-gray-500 uppercase font-bold tracking-wider">Status</span>
+<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full" id="status-tag">Approved</span>
+</div>
+<div class="grid grid-cols-2 gap-y-4 pt-4 border-t border-gray-50">
+<div>
+<p class="text-[10px] text-gray-400 uppercase font-bold">Course Title</p>
+<p class="text-sm font-medium text-gray-800" id="detail-course">OO Programming</p>
+</div>
+<div>
+<p class="text-[10px] text-gray-400 uppercase font-bold">Submission Time</p>
+<p class="text-sm font-medium text-gray-800" id="detail-time">2026-03-21 14:35</p>
+</div>
+</div>
+</div>
+<!-- Review Comments Section -->
+<div class="space-y-3" id="comments-section">
+<h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+<span class="iconify text-blue-500" data-icon="material-symbols:comment-outline"></span>
+                    Course Instructor Review Comments
+                </h3>
+<div class="bg-gray-50 border border-gray-100 rounded-xl p-4">
+<p class="text-sm text-gray-600 leading-relaxed italic" id="comments-text">
+                        "Your coding skills demonstrated in the interview are impressive. Welcome to the teaching team!"
+                    </p>
+</div>
+</div>
+<!-- Action Buttons for Pending -->
+<div class="hidden pt-2" id="pending-actions">
+<button class="w-full py-4 bg-red-50 text-red-600 border border-red-100 rounded-xl font-bold flex items-center justify-center gap-2" onclick="openWithdrawModal()">
+<span class="iconify" data-icon="material-symbols:cancel-presentation-outline-rounded"></span>
+                    Withdraw Application
+                </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Withdraw Confirmation Modal -->
+<div class="modal" id="withdraw-modal">
+<div class="bg-white rounded-2xl p-6 w-[320px] shadow-2xl">
+<div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4">
+<span class="iconify text-2xl text-red-600" data-icon="material-symbols:warning-outline"></span>
+</div>
+<h3 class="text-lg font-bold text-gray-900 mb-2">Withdraw?</h3>
+<p class="text-sm text-gray-500 mb-6">Are you sure you want to withdraw your application? This action cannot be undone.</p>
+<div class="flex gap-3">
+<button class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold" onclick="closeModal()">Cancel</button>
+<button class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold" onclick="confirmWithdraw()">Confirm</button>
+</div>
+</div>
+</div>
+<script>
+        // Mock data initialization based on "ID" or similar
+        // For demo, we switch views manually
+        function initPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            document.getElementById('app-id').innerText = id || '-';
+            
+            // Simulating different states based on ID
+            if(id === '1') { // Pending
+                document.getElementById('course-name').innerText = 'Data Communications';
+                document.getElementById('detail-course').innerText = 'Data Communications';
+                document.getElementById('status-tag').innerText = 'Pending';
+                document.getElementById('status-tag').className = 'px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full';
+                document.getElementById('comments-section').classList.add('hidden');
+                document.getElementById('pending-actions').classList.remove('hidden');
+            } else if (id === '2') { // Rejected
+                document.getElementById('course-name').innerText = 'Digital Signal Processing';
+                document.getElementById('detail-course').innerText = 'Digital Signal Processing';
+                document.getElementById('status-tag').innerText = 'Rejected';
+                document.getElementById('status-tag').className = 'px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full';
+                document.getElementById('comments-text').innerText = '"The applicant\'s grades in this course do not meet the minimum requirement (A-)."';
+            }
+            // Default 3 is Approved
+        }
+
+        function openWithdrawModal() {
+            document.getElementById('withdraw-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('withdraw-modal').classList.remove('active');
+        }
+
+        function confirmWithdraw() {
+            alert('Application withdrawn successfully.');
+            window.location.href = 'my-ta-applications.html';
+        }
+
+        window.onload = initPage;
+    </script>
+</body>
+</html>
