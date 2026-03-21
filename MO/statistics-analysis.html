@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Recruitment Statistics - EduMO System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FC; color: #1E293B; }
+        .nav-link { display: flex; align-items: center; padding: 0.75rem; border-radius: 0.75rem; transition: all 0.3s ease; }
+        .nav-link.active { background-color: rgb(239 246 255); color: rgb(37 99 235); font-weight: 600; }
+        .nav-link.inactive { color: rgb(100 116 139); }
+        .nav-link.inactive:hover { background-color: rgb(248 250 252); color: rgb(37 99 235); }
+        .stat-card { background-color: white; padding: 1.5rem; border-radius: 2rem; border: 1px solid rgb(241 245 249); box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+        .stat-card:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: translateY(-2px); }
+        .chart-container { width: 100%; height: 320px; }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-100 flex flex-col fixed h-full z-50">
+<div class="p-6 flex items-center space-x-3">
+<div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+<span class="iconify text-2xl" data-icon="solar:library-bold"></span>
+</div>
+<span class="text-xl font-black text-slate-800 tracking-tight">EduMO</span>
+</div>
+<nav class="flex-1 mt-4 px-4 space-y-2">
+<a class="nav-link inactive" href="my-job-list.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:widget-4-bold"></span>
+<span>Dashboard</span>
+</a>
+<a class="nav-link active" href="statistics-analysis.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
+<span>Statistics</span>
+</a>
+<a class="nav-link inactive" href="notifications-messages.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
+<span>Notifications</span>
+</a>
+<a class="nav-link inactive" href="personal-center.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
+<span>Profile Settings</span>
+</a>
+</nav>
+<div class="p-6 border-t border-slate-50">
+<div class="bg-blue-50 p-4 rounded-2xl">
+<p class="text-[10px] font-black uppercase text-blue-600 tracking-widest mb-1">System Load</p>
+<div class="w-full bg-blue-100 h-1 rounded-full mb-2">
+<div class="bg-blue-600 h-full w-[65%] rounded-full"></div>
+</div>
+<p class="text-[11px] text-blue-400">Normal Performance</p>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 flex-1">
+<header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center space-x-2 text-sm text-slate-400">
+<span>Management</span>
+<span class="iconify" data-icon="solar:alt-arrow-right-linear"></span>
+<span class="text-slate-900 font-medium italic underline">Analytics Dashboard</span>
+</div>
+<div class="flex items-center space-x-4">
+<div class="flex items-center bg-slate-100 px-3 py-1.5 rounded-full text-xs font-bold text-slate-500">
+<span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                    LIVE DATA
+                </div>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto space-y-8">
+<!-- Filter & Title -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="text-3xl font-black text-slate-800 mb-2">Recruitment Insights</h1>
+<p class="text-slate-400 font-medium">Monitoring hiring efficiency and departmental distribution for 2026.</p>
+</div>
+<div class="flex items-center space-x-3">
+<select class="bg-white border border-slate-200 text-sm font-bold text-slate-600 px-4 py-3 rounded-2xl outline-none focus:border-blue-500">
+<option>Fall Semester 2026</option>
+<option>Spring Semester 2026</option>
+</select>
+<button class="bg-white border border-slate-200 p-3 rounded-2xl text-slate-600 hover:bg-slate-50">
+<span class="iconify text-xl" data-icon="solar:filter-bold"></span>
+</button>
+<button class="bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold flex items-center text-sm">
+<span class="iconify mr-2" data-icon="solar:file-download-bold"></span>
+                        Export Report
+                    </button>
+</div>
+</div>
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="stat-card">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-blue-50 text-blue-600 rounded-2xl"><span class="iconify text-2xl" data-icon="solar:case-round-bold"></span></div>
+<span class="text-green-500 text-xs font-black flex items-center">+12.5% <span class="iconify ml-1" data-icon="solar:graph-up-bold"></span></span>
+</div>
+<p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Active Jobs</p>
+<h2 class="text-3xl font-black text-slate-800 mt-1">42</h2>
+</div>
+<div class="stat-card">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-purple-50 text-purple-600 rounded-2xl"><span class="iconify text-2xl" data-icon="solar:users-group-two-rounded-bold"></span></div>
+<span class="text-green-500 text-xs font-black flex items-center">+8.2% <span class="iconify ml-1" data-icon="solar:graph-up-bold"></span></span>
+</div>
+<p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Total Applicants</p>
+<h2 class="text-3xl font-black text-slate-800 mt-1">1,284</h2>
+</div>
+<div class="stat-card">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-orange-50 text-orange-600 rounded-2xl"><span class="iconify text-2xl" data-icon="solar:verified-check-bold"></span></div>
+<span class="text-red-500 text-xs font-black flex items-center">-2.1% <span class="iconify ml-1" data-icon="solar:graph-down-bold"></span></span>
+</div>
+<p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Acceptance Rate</p>
+<h2 class="text-3xl font-black text-slate-800 mt-1">18.5%</h2>
+</div>
+<div class="stat-card">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-green-50 text-green-600 rounded-2xl"><span class="iconify text-2xl" data-icon="solar:clock-circle-bold"></span></div>
+<span class="text-slate-400 text-xs font-black italic">Avg. Scale</span>
+</div>
+<p class="text-slate-400 text-sm font-bold uppercase tracking-wider">Mean Time to Hire</p>
+<h2 class="text-3xl font-black text-slate-800 mt-1">14.2d</h2>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-lg font-bold text-slate-800">Recruitment Trend</h3>
+<p class="text-xs text-slate-400">Monthly applicant volume for 2026</p>
+</div>
+<span class="iconify text-slate-300 text-2xl" data-icon="solar:graph-line-bold"></span>
+</div>
+<div class="chart-container" id="trendChart"></div>
+</div>
+<div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-lg font-bold text-slate-800">Department Distribution</h3>
+<p class="text-xs text-slate-400">Hiring share by focus area</p>
+</div>
+<span class="iconify text-slate-300 text-2xl" data-icon="solar:chart-square-bold"></span>
+</div>
+<div class="chart-container" id="pieChart"></div>
+</div>
+</div>
+<div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-lg font-bold text-slate-800">Hiring Funnel Analysis</h3>
+<p class="text-xs text-slate-400">Conversion from application to onboarding</p>
+</div>
+<div class="flex space-x-2">
+<span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-lg uppercase">Benchmark: High</span>
+</div>
+</div>
+<div class="chart-container h-[400px]" id="funnelChart"></div>
+</div>
+</div>
+</main>
+<script>
+        // Trend Chart
+        const trendDom = document.getElementById('trendChart');
+        const trendChart = echarts.init(trendDom);
+        trendChart.setOption({
+            grid: { top: 20, right: 20, bottom: 40, left: 40 },
+            xAxis: { 
+                type: 'category', 
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                axisLine: { lineStyle: { color: '#E2E8F0' } },
+                axisLabel: { color: '#94A3B8', fontWeight: 600 }
+            },
+            yAxis: { 
+                type: 'value',
+                splitLine: { lineStyle: { type: 'dashed', color: '#F1F5F9' } },
+                axisLabel: { color: '#94A3B8' }
+            },
+            series: [{
+                data: [150, 230, 424, 318, 550, 480],
+                type: 'line',
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 8,
+                itemStyle: { color: '#2563EB' },
+                lineStyle: { width: 4 },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(37, 99, 235, 0.2)' },
+                        { offset: 1, color: 'rgba(37, 99, 235, 0)' }
+                    ])
+                }
+            }]
+        });
+
+        // Department Pie Chart
+        const pieDom = document.getElementById('pieChart');
+        const pieChart = echarts.init(pieDom);
+        pieChart.setOption({
+            tooltip: { trigger: 'item' },
+            legend: { bottom: '0', left: 'center', itemStyle: { borderRadius: 4 } },
+            series: [{
+                name: 'Departments',
+                type: 'pie',
+                radius: ['50%', '80%'],
+                avoidLabelOverlap: false,
+                itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+                label: { show: false },
+                data: [
+                    { value: 40, name: 'Computing', itemStyle: { color: '#2563EB' } },
+                    { value: 25, name: 'Business', itemStyle: { color: '#8B5CF6' } },
+                    { value: 20, name: 'Science', itemStyle: { color: '#10B981' } },
+                    { value: 15, name: 'Arts', itemStyle: { color: '#F59E0B' } }
+                ]
+            }]
+        });
+
+        // Funnel Funnel Chart
+        const barDom = document.getElementById('funnelChart');
+        const barChart = echarts.init(barDom);
+        barChart.setOption({
+            grid: { top: 20, right: 20, bottom: 40, left: 60 },
+            xAxis: { 
+                type: 'value',
+                splitLine: { show: false }
+            },
+            yAxis: { 
+                type: 'category', 
+                data: ['Onboarded', 'Selected', 'Interviewed', 'Applied'],
+                axisLine: { show: false },
+                axisTick: { show: false },
+                axisLabel: { color: '#475569', fontWeight: 600 }
+            },
+            series: [{
+                data: [237, 482, 890, 1284],
+                type: 'bar',
+                barWidth: '40%',
+                itemStyle: {
+                    borderRadius: [0, 15, 15, 0],
+                    color: function(params) {
+                        const colorList = ['#10B981', '#2563EB', '#8B5CF6', '#F1F5F9'];
+                        return colorList[params.dataIndex];
+                    }
+                },
+                label: { 
+                    show: true, 
+                    position: 'right',
+                    formatter: '{c} Cand.',
+                    color: '#64748B',
+                    fontWeight: 700
+                }
+            }]
+        });
+
+        window.addEventListener('resize', () => {
+            trendChart.resize();
+            pieChart.resize();
+            barChart.resize();
+        });
+    </script>
+</body>
+</html>
