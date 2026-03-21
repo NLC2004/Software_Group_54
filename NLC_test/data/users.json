@@ -1,0 +1,33 @@
+[
+  {
+    "id": "admin001",
+    "username": "admin",
+    "password": "admin123",
+    "role": "ADMIN",
+    "fullName": "System Administrator",
+    "active": true,
+    "createdAt": 1774074781066
+  },
+  {
+    "id": "f22fb459",
+    "username": "NLC_MO",
+    "password": "Nlc141203!",
+    "role": "MO",
+    "fullName": "ninglechen",
+    "email": "ninglechen666@bupt.edu.cn",
+    "active": true,
+    "createdAt": 1774075610820
+  },
+  {
+    "id": "f6c5b117",
+    "username": "NLC",
+    "password": "Nlc141203",
+    "role": "TA",
+    "fullName": "ninglechen",
+    "email": "ninglechen666@bupt.edu.cn",
+    "phone": "",
+    "gender": "Male",
+    "active": true,
+    "createdAt": 1774074814330
+  }
+]
