@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TA Dashboard - 2026-03-21</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+</head>
+<body class="bg-[#F5F7FA] font-sans text-gray-800">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full shadow-sm">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-100">
+<span class="iconify text-white text-xl" data-icon="mdi:school"></span>
+</div>
+<span class="font-bold text-lg text-gray-800 tracking-tight">BUPT TA System</span>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-blue-50 rounded-xl font-medium transition-all" href="dashboard.html">
+<span class="iconify text-xl" data-icon="mdi:view-dashboard"></span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="ta-recruitment-list.html">
+<span class="iconify text-xl" data-icon="mdi:account-group"></span>
+                    TA Recruitment
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="my-ta-applications.html">
+<span class="iconify text-xl" data-icon="mdi:clipboard-text-clock-outline"></span>
+                    My Applications
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="personal-information.html">
+<span class="iconify text-xl" data-icon="mdi:account-circle-outline"></span>
+                    Profile
+                </a>
+<div class="pt-4 border-t border-gray-100 mt-4">
+<p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Management</p>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-xl transition-all" type="button" onclick="alert('In development')">
+<span class="iconify text-xl" data-icon="mdi:bell-outline"></span>
+                        Notifications
+                        <span class="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
+</button>
+</div>
+</nav>
+<div class="p-4 border-t border-gray-100">
+<div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+<img alt="Avatar" class="w-10 h-10 rounded-full border border-gray-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold truncate">Zhang San</p>
+<p class="text-[10px] text-gray-400 truncate">School of Computer Science · Year 1</p>
+</div>
+<a class="text-gray-400 hover:text-red-500" href="index.html" title="Logout">
+<span class="iconify text-lg" data-icon="mdi:logout"></span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 ml-64 p-8">
+<!-- Top Bar -->
+<header class="flex justify-between items-center mb-8">
+<div>
+<h1 class="text-2xl font-bold">Welcome back, Zhang San</h1>
+<p class="text-gray-400 text-sm mt-1">Today is Mar 21, 2026. You have 4 pending tasks.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<input class="bg-white border text-sm border-gray-200 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none w-64 transition-all" placeholder="Search tasks or courses..." type="text"/>
+<span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:magnify"></span>
+</span>
+</div>
+<button class="bg-white p-2 rounded-lg border border-gray-200 text-gray-500 relative hover:bg-gray-50 transition-colors">
+<span class="iconify text-xl" data-icon="mdi:chat-processing-outline"></span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Data Overview -->
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-blue-50 p-2 rounded-lg text-blue-500">
+<span class="iconify text-2xl" data-icon="mdi:file-document-edit-outline"></span>
+</div>
+<span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded">+12%</span>
+</div>
+<p class="text-gray-400 text-sm">Pending Reviews</p>
+<h3 class="text-2xl font-bold mt-1">24</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-purple-50 p-2 rounded-lg text-purple-500">
+<span class="iconify text-2xl" data-icon="mdi:clock-check-outline"></span>
+</div>
+<span class="text-gray-400 text-xs font-medium">This week</span>
+</div>
+<p class="text-gray-400 text-sm">Work Hours (h)</p>
+<h3 class="text-2xl font-bold mt-1">16.5</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-orange-50 p-2 rounded-lg text-orange-500">
+<span class="iconify text-2xl" data-icon="mdi:human-greeting-variant"></span>
+</div>
+<span class="text-orange-500 text-xs font-bold bg-orange-50 px-2 py-1 rounded">Urgent</span>
+</div>
+<p class="text-gray-400 text-sm">Student Feedback</p>
+<h3 class="text-2xl font-bold mt-1">08</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-green-50 p-2 rounded-lg text-green-500">
+<span class="iconify text-2xl" data-icon="mdi:chart-bar"></span>
+</div>
+<span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded">Good</span>
+</div>
+<p class="text-gray-400 text-sm">Class Satisfaction</p>
+<h3 class="text-2xl font-bold mt-1">4.9</h3>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-8">
+<!-- Left: Charts -->
+<div class="col-span-2 space-y-8">
+<!-- Task List -->
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm">
+<div class="p-6 border-b border-gray-100 flex justify-between items-center">
+<h4 class="font-bold">Recent Activity</h4>
+<button class="text-blue-500 text-xs hover:underline" type="button" onclick="alert('In development')">View all</button>
+</div>
+<div class="divide-y divide-gray-50">
+<!-- Row -->
+<div class="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='application-review-detail.html?id=1'">
+<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+<span class="iconify text-2xl" data-icon="mdi:book-open-page-variant"></span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-gray-800">Database Systems - Assignment Review</p>
+<p class="text-xs text-gray-400 mt-1">Due: 2026-03-23 23:59</p>
+</div>
+<span class="px-3 py-1 bg-yellow-50 text-yellow-600 text-xs font-medium rounded-full">In Progress</span>
+</div>
+<!-- Row -->
+<div class="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors">
+<div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+<span class="iconify text-2xl" data-icon="mdi:account-badge-outline"></span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-gray-800">Week 4 Lab Attendance Summary</p>
+<p class="text-xs text-gray-400 mt-1">Updated: 2 hours ago</p>
+</div>
+<span class="px-3 py-1 bg-green-50 text-green-600 text-xs font-medium rounded-full">Completed</span>
+</div>
+<!-- Row -->
+<div class="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 shrink-0">
+<span class="iconify text-2xl" data-icon="mdi:alert-decagram-outline"></span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-gray-800">Urgent: Schedule Change Request</p>
+<p class="text-xs text-gray-400 mt-1">Requested by: Prof. Li</p>
+</div>
+<span class="px-3 py-1 bg-red-50 text-red-600 text-xs font-medium rounded-full">Pending</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Schedule & News -->
+<div class="space-y-8">
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<h4 class="font-bold mb-6">Today</h4>
+<div class="space-y-6">
+<div class="flex gap-4 border-l-4 border-blue-500 pl-4 py-1">
+<div>
+<p class="text-xs text-gray-400">08:00 - 10:00</p>
+<p class="text-sm font-bold mt-0.5">Discrete Mathematics Office Hour</p>
+<p class="text-xs text-gray-500">Teaching Building 1, Room 402</p>
+</div>
+</div>
+<div class="flex gap-4 border-l-4 border-gray-200 pl-4 py-1">
+<div>
+<p class="text-xs text-gray-400">14:30 - 16:00</p>
+<p class="text-sm font-bold mt-0.5">TA Weekly Meeting</p>
+<p class="text-xs text-gray-500">Online Meeting (ID: 324-...)</p>
+</div>
+</div>
+<div class="flex gap-4 border-l-4 border-gray-200 pl-4 py-1">
+<div>
+<p class="text-xs text-gray-400">19:00 - 21:00</p>
+<p class="text-sm font-bold mt-0.5">Python Programming Office Hour</p>
+<p class="text-xs text-gray-500">Xitucheng Campus · Student Center</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border-2 border-dashed border-gray-100 text-gray-400 rounded-xl text-sm hover:bg-gray-50 transition-all transition-colors" type="button" onclick="alert('In development')">+ Add new event</button>
+</div>
+<div class="bg-blue-600 p-6 rounded-2xl shadow-lg shadow-blue-200 text-white relative overflow-hidden cursor-pointer hover:bg-blue-700 transition-colors" onclick="window.location.href='ta-recruitment-list.html'">
+<span class="iconify absolute -right-6 -bottom-6 text-9xl opacity-10" data-icon="mdi:rocket-launch-outline"></span>
+<h4 class="font-bold relative z-10">Spring 2026 Outstanding TA Award</h4>
+<p class="text-xs opacity-80 mt-2 relative z-10">Show your impact and earn recognition.</p>
+<button class="mt-4 bg-white text-blue-600 px-4 py-2 rounded-lg text-xs font-bold relative z-10" type="button" onclick="alert('In development')">Complete your profile</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+</script>
+</body>
+</html>
