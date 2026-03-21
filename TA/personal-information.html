@@ -46,11 +46,11 @@
             </a>
 <div class="pt-4 border-t border-gray-100 mt-4">
 <p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Management</p>
-<button class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-xl transition-all" type="button" onclick="alert('In development')">
+<a class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="notifications.html">
 <span class="iconify text-xl" data-icon="mdi:bell-outline"></span>
                     Notifications
                     <span class="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">3</span>
-</button>
+</a>
 </div>
 </nav>
 <div class="p-4 border-t border-gray-100">
@@ -152,10 +152,74 @@
 </div>
 </form>
 <div class="mt-4">
-<a class="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-600 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" href="forgot-password.html">
+<button class="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-600 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" id="openPasswordModal" type="button">
 <span class="iconify text-xl" data-icon="mdi:lock-reset"></span>
-                            Reset password
-                        </a>
+                            Change password
+                        </button>
+</div>
+<div class="hidden fixed inset-0 z-50" id="passwordModal">
+<div class="absolute inset-0 bg-black/30" id="passwordModalOverlay"></div>
+<div class="relative min-h-full flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+<div class="h-2 bg-blue-600 w-full"></div>
+<div class="p-8">
+<div class="flex items-center justify-between gap-4 mb-6">
+<div>
+<h3 class="text-xl font-bold text-gray-800">Change password</h3>
+<p class="text-xs text-gray-400 mt-1">Verify your current password and set a new one.</p>
+</div>
+<button class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500" id="closePasswordModal" type="button">
+<span class="iconify text-xl" data-icon="mdi:close"></span>
+</button>
+</div>
+<div class="hidden mb-4 p-3 rounded-lg text-sm flex items-center gap-2" id="pwdAlertBox">
+<span class="iconify" data-icon="" id="pwdAlertIcon"></span>
+<span id="pwdAlertMsg"></span>
+</div>
+<form class="space-y-5" id="passwordForm">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Current password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="currentPassword" placeholder="Enter current password" type="password"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">New password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-reset"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="newPassword" placeholder="Enter new password" type="password"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Confirm new password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-check-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="confirmPassword" placeholder="Re-enter new password" type="password"/>
+</div>
+</div>
+<div class="pt-2 flex items-center gap-3">
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-blue-200 transition-all transform active:scale-[0.98]" type="submit">
+Update password
+</button>
+<button class="px-5 py-3.5 bg-white text-gray-500 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" id="cancelPasswordModal" type="button">
+Cancel
+</button>
+</div>
+<div class="mt-2 text-center">
+<a class="text-xs text-gray-400 hover:text-blue-600 transition-colors" href="forgot-password.html">Forgot password? Submit a reset request</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="mt-8 flex items-start gap-3 bg-blue-50 p-4 rounded-xl border border-blue-100">
 <span class="iconify text-blue-500 text-xl mt-0.5" data-icon="mdi:information-outline"></span>
@@ -168,7 +232,7 @@
 </div>
 </main>
 </div>
-<script>
+ <script>
     document.getElementById('infoForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -191,6 +255,77 @@
             document.getElementById('infoForm').reset();
         }
     }
+
+    const passwordModal = document.getElementById('passwordModal');
+    const openPasswordModal = document.getElementById('openPasswordModal');
+    const closePasswordModal = document.getElementById('closePasswordModal');
+    const cancelPasswordModal = document.getElementById('cancelPasswordModal');
+    const passwordModalOverlay = document.getElementById('passwordModalOverlay');
+    const passwordForm = document.getElementById('passwordForm');
+
+    const pwdAlertBox = document.getElementById('pwdAlertBox');
+    const pwdAlertMsg = document.getElementById('pwdAlertMsg');
+    const pwdAlertIcon = document.getElementById('pwdAlertIcon');
+
+    const currentPassword = document.getElementById('currentPassword');
+    const newPassword = document.getElementById('newPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+
+    function showPwdAlert(type, message) {
+        pwdAlertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
+        if (type === 'error') {
+            pwdAlertBox.classList.add('bg-red-50', 'text-red-700');
+            pwdAlertIcon.setAttribute('data-icon', 'mdi:alert-circle-outline');
+        } else {
+            pwdAlertBox.classList.add('bg-green-50', 'text-green-700');
+            pwdAlertIcon.setAttribute('data-icon', 'mdi:check-circle-outline');
+        }
+        pwdAlertMsg.innerText = message;
+    }
+
+    function openPwdModal() {
+        passwordModal.classList.remove('hidden');
+        pwdAlertBox.classList.add('hidden');
+        passwordForm.reset();
+        currentPassword.focus();
+    }
+
+    function closePwdModal() {
+        passwordModal.classList.add('hidden');
+    }
+
+    openPasswordModal.addEventListener('click', openPwdModal);
+    closePasswordModal.addEventListener('click', closePwdModal);
+    cancelPasswordModal.addEventListener('click', closePwdModal);
+    passwordModalOverlay.addEventListener('click', closePwdModal);
+
+    passwordForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const cur = currentPassword.value.trim();
+        const next = newPassword.value.trim();
+        const confirmNext = confirmPassword.value.trim();
+
+        if (!cur || !next || !confirmNext) {
+            showPwdAlert('error', 'Please fill in all password fields.');
+            return;
+        }
+
+        if (next.length < 6) {
+            showPwdAlert('error', 'New password must be at least 6 characters.');
+            return;
+        }
+
+        if (next !== confirmNext) {
+            showPwdAlert('error', 'The new passwords do not match.');
+            return;
+        }
+
+        showPwdAlert('success', 'Password updated successfully (mock).');
+        setTimeout(() => {
+            closePwdModal();
+        }, 800);
+    });
 </script>
 </body>
 </html>
