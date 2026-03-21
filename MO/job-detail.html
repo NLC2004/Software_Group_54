@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Job Details - TA Recruitment MO System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FC; }
+        .nav-link { display: flex; align-items: center; padding: 0.75rem; border-radius: 0.75rem; transition: all 0.3s ease; }
+        .nav-link.active { background-color: rgb(239 246 255); color: rgb(37 99 235); font-weight: 600; }
+        .nav-link.inactive { color: rgb(100 116 139); }
+        .nav-link.inactive:hover { background-color: rgb(248 250 252); color: rgb(37 99 235); }
+        .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- Sidebar (Same as List Page) -->
+<aside class="w-64 bg-white border-r border-gray-100 flex flex-col fixed h-full z-50">
+<div class="p-6 flex items-center space-x-3">
+<div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+<span class="iconify text-2xl" data-icon="solar:library-bold"></span>
+</div>
+<span class="text-xl font-bold text-gray-800 tracking-tight">EduMO</span>
+</div>
+<nav class="flex-1 mt-4 px-4 space-y-2">
+<a class="nav-link inactive" href="my-job-list.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:widget-4-bold"></span>
+<span>Dashboard</span>
+</a>
+<a class="nav-link inactive" href="statistics-analysis.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
+<span>Statistics</span>
+</a>
+<a class="nav-link inactive" href="notifications-messages.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
+<span>Notifications</span>
+</a>
+<a class="nav-link inactive" href="personal-center.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
+<span>Profile Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 flex-1 flex flex-col min-w-0">
+<header class="h-16 bg-white/80 glass-effect border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center space-x-2 text-sm text-gray-500">
+<a class="hover:text-blue-600" href="my-job-list.html">Jobs</a>
+<span class="iconify" data-icon="solar:alt-arrow-right-linear"></span>
+<span class="text-gray-900 font-medium tracking-tight">CS101 Intro to Python</span>
+</div>
+<div class="flex space-x-3">
+<a class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all" href="job-edit.html">Edit Job</a>
+<button class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-100 transition-all">Close Recruitment</button>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left: Job Info -->
+<div class="lg:col-span-1 space-y-6">
+<div class="bg-white p-8 rounded-[2rem] card-shadow border border-gray-50">
+<div class="flex items-center space-x-4 mb-6">
+<div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+<span class="iconify text-3xl" data-icon="solar:code-bold"></span>
+</div>
+<div>
+<h2 class="text-2xl font-bold text-gray-800">CS101</h2>
+<p class="text-sm text-gray-400 font-medium">Undergraduate / Fall 2026</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-gray-50 rounded-2xl">
+<p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Position Title</p>
+<p class="text-gray-800 font-semibold">Intro to Python Teaching Assistant</p>
+</div>
+<div class="p-4 bg-gray-50 rounded-2xl">
+<p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Time &amp; Venue</p>
+<p class="text-gray-800 font-semibold italic">Tue/Thu 14:00 - 16:00, Science Lab 4</p>
+</div>
+</div>
+<div class="mt-8 border-t border-gray-100 pt-6">
+<h4 class="font-bold text-gray-800 mb-3">Key Responsibilities</h4>
+<ul class="text-sm text-gray-500 space-y-2">
+<li class="flex items-start"><span class="iconify mt-1 mr-2 text-green-500" data-icon="solar:check-circle-bold"></span> Lead 2 lab sessions per week.</li>
+<li class="flex items-start"><span class="iconify mt-1 mr-2 text-green-500" data-icon="solar:check-circle-bold"></span> Grade weekly assignments (Python).</li>
+<li class="flex items-start"><span class="iconify mt-1 mr-2 text-green-500" data-icon="solar:check-circle-bold"></span> Hold 2 hours of office hours.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Right: Applicants List -->
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold text-gray-800 flex items-center">
+                        Applicants 
+                        <span class="ml-3 px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">12 New</span>
+</h3>
+<div class="flex space-x-2">
+<button class="text-sm text-gray-500 font-medium hover:text-blue-600">Sort by Status</button>
+</div>
+</div>
+<!-- Candidate List -->
+<div class="space-y-4">
+<!-- Candidate 1 -->
+<div class="bg-white p-6 rounded-3xl border border-gray-50 card-shadow hover:border-blue-200 transition-all flex items-center justify-between group">
+<div class="flex items-center space-x-4">
+<img alt="Avatar" class="w-14 h-14 rounded-2xl border-2 border-blue-50" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/2ec5a81d62774f77ba7944fe28c9c81a.jpg"/>
+<div>
+<h4 class="font-bold text-gray-800">Ethan Zhang</h4>
+<p class="text-xs text-gray-400">Computer Science, Senior · GPA 3.9/4.0</p>
+<div class="flex mt-1 space-x-2 font-medium">
+<span class="px-2 py-0.5 bg-blue-50 text-blue-500 text-[10px] rounded italic">Python Expert</span>
+<span class="px-2 py-0.5 bg-purple-50 text-purple-500 text-[10px] rounded italic">Prev. TA (CS100)</span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="text-right">
+<div class="text-xs text-gray-400 font-bold uppercase mb-1">Status</div>
+<div class="text-xl font-black text-green-500">New</div>
+</div>
+<div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100"><span class="iconify text-xl" data-icon="solar:check-read-bold"></span></button>
+<button class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100"><span class="iconify text-xl" data-icon="solar:close-circle-bold"></span></button>
+<button class="p-2 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200"><span class="iconify text-xl" data-icon="solar:eye-bold"></span></button>
+</div>
+</div>
+</div>
+<!-- Candidate 2 -->
+<div class="bg-white p-6 rounded-3xl border border-gray-50 card-shadow hover:border-blue-200 transition-all flex items-center justify-between group">
+<div class="flex items-center space-x-4">
+<img alt="Avatar" class="w-14 h-14 rounded-2xl border-2 border-blue-50" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/2ec5a81d62774f77ba7944fe28c9c81a.jpg"/>
+<div>
+<h4 class="font-bold text-gray-800">Sarah Jenkins</h4>
+<p class="text-xs text-gray-400">Data Science, Junior · GPA 3.7/4.0</p>
+<div class="flex mt-1 space-x-2 font-medium">
+<span class="px-2 py-0.5 bg-blue-50 text-blue-500 text-[10px] rounded italic">Pandas/NumPy</span>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="text-right">
+<div class="text-xs text-gray-400 font-bold uppercase mb-1">Status</div>
+<div class="text-xl font-black text-blue-400">Pending</div>
+</div>
+<div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100"><span class="iconify text-xl" data-icon="solar:check-read-bold"></span></button>
+<button class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100"><span class="iconify text-xl" data-icon="solar:close-circle-bold"></span></button>
+<button class="p-2 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200"><span class="iconify text-xl" data-icon="solar:eye-bold"></span></button>
+</div>
+</div>
+</div>
+<!-- More candidates placeholders (6+) -->
+<div class="bg-white p-6 rounded-3xl border border-gray-50 card-shadow hover:border-blue-200 transition-all flex items-center justify-between group">
+<div class="flex items-center space-x-4">
+<img alt="Avatar" class="w-14 h-14 rounded-2xl border-2 border-blue-50" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/2ec5a81d62774f77ba7944fe28c9c81a.jpg"/>
+<div>
+<h4 class="font-bold text-gray-800">Marcus Low</h4>
+<p class="text-xs text-gray-400">Mathematics, Ph.D. Candidate</p>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="text-right">
+<div class="text-xs text-gray-400 font-bold uppercase mb-1">Status</div>
+<div class="text-xl font-black text-gray-400">Review</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body>
+</html>

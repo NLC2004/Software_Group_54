@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personal Center - EduMO System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FC; color: #1E293B; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(241, 245, 249, 1); }
+        .form-input { display: block; width: 100%; background-color: rgb(248 250 252); border: 1px solid rgb(226 232 240); border-radius: 1rem; padding: 0.75rem 1rem; transition: all 0.3s ease; outline: none; }
+        .form-input:focus { border-color: rgb(59 130 246); box-shadow: 0 0 0 3px rgba(59 130 246, 0.1); }
+        .nav-link { display: flex; align-items: center; padding: 0.75rem; border-radius: 0.75rem; transition: all 0.3s ease; }
+        .nav-link.active { background-color: rgb(239 246 255); color: rgb(37 99 235); font-weight: 600; }
+        .nav-link.inactive { color: rgb(100 116 139); }
+        .nav-link.inactive:hover { background-color: rgb(248 250 252); color: rgb(37 99 235); }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-100 flex flex-col fixed h-full z-50">
+<div class="p-6 flex items-center space-x-3">
+<div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+<span class="iconify text-2xl" data-icon="solar:library-bold"></span>
+</div>
+<span class="text-xl font-black text-slate-800 tracking-tight">EduMO</span>
+</div>
+<nav class="flex-1 mt-4 px-4 space-y-2">
+<a class="nav-link inactive" href="my-job-list.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:widget-4-bold"></span>
+<span>Dashboard</span>
+</a>
+<a class="nav-link inactive" href="statistics-analysis.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
+<span>Statistics</span>
+</a>
+<a class="nav-link inactive" href="notifications-messages.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
+<span>Notifications</span>
+</a>
+<a class="nav-link active" href="personal-center.html">
+<span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
+<span>Profile Settings</span>
+</a>
+</nav>
+<div class="p-6 border-t border-slate-50">
+<button class="flex items-center text-slate-400 hover:text-red-500 transition-colors">
+<span class="iconify mr-2" data-icon="solar:logout-3-bold"></span>
+<span class="text-sm font-medium">Log Out</span>
+</button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 flex-1">
+<header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-40">
+<div class="flex items-center space-x-2 text-sm text-slate-400">
+<span>Account</span>
+<span class="iconify" data-icon="solar:alt-arrow-right-linear"></span>
+<span class="text-slate-900 font-medium">Personal Center</span>
+</div>
+<div class="text-sm text-slate-400 font-medium">March 21, 2026</div>
+</header>
+<div class="p-8 max-w-5xl mx-auto h-full">
+<!-- Profile Header -->
+<div class="bg-white rounded-[2.5rem] p-8 mb-8 border border-slate-100 shadow-sm flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+<div class="relative group">
+<img alt="User Avatar" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/d881d07e05854516ac76ed0fab03b49c.jpg"/>
+<button class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform">
+<span class="iconify" data-icon="solar:camera-add-bold"></span>
+</button>
+</div>
+<div class="text-center md:text-left flex-1">
+<h1 class="text-3xl font-black text-slate-800 mb-1">Dr. Alexander Pierce</h1>
+<p class="text-slate-500 font-medium mb-4">Senior MO Coordinator • Computer Science Department</p>
+<div class="flex flex-wrap gap-2 justify-center md:justify-start">
+<span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-100">STAFF ID: 20260321</span>
+<span class="px-3 py-1 bg-slate-50 text-slate-600 text-xs font-bold rounded-full border border-slate-200 italic">Joined since Sep 2023</span>
+</div>
+</div>
+<div class="flex space-x-3">
+<button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-blue-200">Save Changes</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Basic Info -->
+<div class="lg:col-span-2 space-y-8">
+<section class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+<div class="flex items-center mb-8 space-x-3">
+<div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl"><span class="iconify text-xl" data-icon="solar:user-id-bold"></span></div>
+<h3 class="text-lg font-bold text-slate-800">Basic Information</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Full Name</label>
+<input class="form-input" type="text" value="Alexander Pierce"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Email Address</label>
+<input class="form-input" type="email" value="a.pierce@university.edu"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Phone Number</label>
+<input class="form-input" type="text" value="+1 (555) 012-3456"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Office Location</label>
+<input class="form-input" type="text" value="Tech Hub, Room 402"/>
+</div>
+<div class="md:col-span-2 space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Brief Bio</label>
+<textarea class="form-input resize-none" rows="3">Coordinating student assignments and recruitment for the School of Computing since 2023.</textarea>
+</div>
+</div>
+</section>
+<section class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+<div class="flex items-center mb-8 space-x-3">
+<div class="p-2.5 bg-orange-50 text-orange-600 rounded-xl"><span class="iconify text-xl" data-icon="solar:shield-keyhole-bold"></span></div>
+<h3 class="text-lg font-bold text-slate-800">Security &amp; Password</h3>
+</div>
+<div class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Current Password</label>
+<input class="form-input" placeholder="••••••••" type="password"/>
+</div>
+<div></div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">New Password</label>
+<input class="form-input" placeholder="Min 8 characters" type="password"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Confirm New Password</label>
+<input class="form-input" placeholder="Re-enter password" type="password"/>
+</div>
+</div>
+<div class="bg-slate-50 p-4 rounded-xl flex items-start space-x-3 border border-slate-100">
+<span class="iconify text-slate-400 mt-0.5" data-icon="solar:info-circle-bold"></span>
+<p class="text-[13px] text-slate-500 leading-relaxed">Password must be at least 8 characters long and include a mix of uppercase letters, numbers, and special symbols.</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Sidebar Config -->
+<div class="space-y-8">
+<section class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+<div class="flex items-center mb-8 space-x-3">
+<div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl"><span class="iconify text-xl" data-icon="solar:settings-bold"></span></div>
+<h3 class="text-lg font-bold text-slate-800">Preferences</h3>
+</div>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-slate-700">Email Notifications</p>
+<p class="text-xs text-slate-400">Receive summaries daily</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-slate-700">Desktop Alerts</p>
+<p class="text-xs text-slate-400">Browser push notifications</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+</label>
+</div>
+<hr class="border-slate-50"/>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-bold text-slate-700">Two-Factor Auth</p>
+<p class="text-xs text-slate-400 italic text-blue-500">Recommended</p>
+</div>
+<button class="text-xs font-black text-blue-600 uppercase underline underline-offset-4 tracking-tight">Enable</button>
+</div>
+</div>
+</section>
+<section class="bg-gradient-to-br from-blue-600 to-blue-700 p-8 rounded-[2rem] text-white shadow-xl shadow-blue-200">
+<div class="flex items-center space-x-3 mb-4">
+<span class="iconify text-2xl" data-icon="solar:verified-check-bold"></span>
+<h4 class="font-bold">Account Verification</h4>
+</div>
+<p class="text-sm text-blue-100 opacity-80 leading-relaxed mb-6">Your university employee status is verified for the academic year 2025-2026. This allows you to manage recruitment and funding.</p>
+<button class="w-full py-3 bg-white/10 border border-white/20 rounded-xl text-sm font-bold backdrop-blur-sm hover:bg-white/20 transition-all">Download Certification</button>
+</section>
+</div>
+</div>
+</div>
+</main>
+</body>
+</html>
