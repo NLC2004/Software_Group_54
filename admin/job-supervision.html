@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AD Job Supervision - Assistant Management System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .sidebar-item-active { background-color: #EFF6FF; border-right: 4px solid #3B82F6; color: #1D4ED8; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(232, 232, 238, 1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex min-h-screen text-slate-700">
+<!-- 1. LEFT SIDEBAR -->
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+<span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
+</div>
+<span class="text-xl font-bold tracking-tight text-blue-900">MO Admin</span>
+</div>
+<nav class="mt-4 flex-1">
+<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="admin-dashboard.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:squares-2x2-20-solid"></span>
+<span>Dashboard</span>
+</a>
+<a class="sidebar-item-active flex items-center px-6 py-3 gap-3 transition-all font-medium" href="job-supervision.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:briefcase"></span>
+<span class="font-medium">Job Supervision</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="workload-overview.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:chart-bar"></span>
+<span>Workload Stats</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="user-management.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:users"></span>
+<span>User Management</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="basic-statistics.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:presentation-chart-line"></span>
+<span>Basic Statistics</span>
+</a>
+<div class="px-4 py-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">System Config</div>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="system-settings.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:cog-6-tooth"></span>
+<span>Settings</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="audit-logs.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:shield-check"></span>
+<span>Audit Logs</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<div class="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold truncate">Admin Mr. Chen</p>
+<p class="text-[10px] text-slate-500 uppercase">Super Administrator</p>
+</div>
+<button class="text-slate-400 hover:text-red-500">
+<span class="iconify w-4 h-4" data-icon="heroicons:arrow-right-start-on-rectangle"></span>
+</button>
+</div>
+</div>
+</aside>
+<!-- 2. MAIN CONTENT AREA -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen">
+<!-- TOP HEADER -->
+<header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0 z-10">
+<div class="flex items-center gap-4">
+<nav class="flex text-xs text-gray-400 gap-2 items-center uppercase tracking-wider font-medium">
+<a class="hover:text-blue-600" href="#">Home</a>
+<span class="iconify" data-icon="lucide:chevron-right"></span>
+<span class="text-gray-800">Job Supervision</span>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center text-gray-400 group-focus-within:text-blue-500 transition-colors">
+<span class="iconify" data-icon="lucide:search"></span>
+</span>
+<input class="pl-10 pr-4 py-2 bg-gray-100 border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all outline-none" placeholder="Search job ID, course or teacher..." type="text"/>
+</div>
+<div class="flex items-center gap-3 border-l pl-6 border-gray-200">
+<button class="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+<span class="iconify text-xl" data-icon="lucide:bell"></span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<div class="flex flex-col items-end">
+<span class="text-[10px] text-green-500 font-bold uppercase tracking-tighter flex items-center gap-1">
+                            ● System Online
+                        </span>
+<span class="text-[10px] text-gray-400">Sync: 2026-03-21 14:30</span>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTENT SCROLL AREA -->
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+<!-- PAGE TITLE & KPI SUMMARY -->
+<div class="mb-8 flex flex-col gap-6">
+<div>
+<h2 class="text-2xl font-bold text-gray-800">Job Supervision</h2>
+<p class="text-gray-500 text-sm mt-1">Oversee all TA recruitment posts across universities and departments.</p>
+</div>
+<div class="grid grid-cols-4 gap-6">
+<div class="glass-card p-6 rounded-2xl shadow-sm relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-sm font-medium text-gray-500">Total Active Jobs</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-2">1,284</h3>
+<p class="text-xs text-green-500 mt-2 flex items-center gap-1 font-semibold">
+<span class="iconify font-bold" data-icon="lucide:trending-up"></span>
+                                +12.5% from last month
+                            </p>
+</div>
+<span class="iconify text-7xl absolute -right-4 -bottom-4 text-blue-50/50 group-hover:scale-110 transition-transform" data-icon="lucide:briefcase"></span>
+</div>
+<div class="glass-card p-6 rounded-2xl shadow-sm relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-sm font-medium text-gray-500">Pending Review</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-2 leading-tight">42</h3>
+<p class="text-xs text-orange-500 mt-2 font-semibold">Need urgent attention</p>
+</div>
+<span class="iconify text-7xl absolute -right-4 -bottom-4 text-orange-50/50 group-hover:scale-110 transition-transform" data-icon="lucide:clock"></span>
+</div>
+<div class="glass-card p-6 rounded-2xl shadow-sm relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-sm font-medium text-gray-500">Total Applications</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-2 leading-tight">8,642</h3>
+<p class="text-xs text-blue-500 mt-2 font-semibold">Average 6.7 per job</p>
+</div>
+<span class="iconify text-7xl absolute -right-4 -bottom-4 text-blue-50/50 group-hover:scale-110 transition-transform" data-icon="lucide:users"></span>
+</div>
+<div class="glass-card p-6 rounded-2xl shadow-sm relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-sm font-medium text-gray-500">Fill rate</p>
+<h3 class="text-3xl font-bold text-gray-800 mt-2 leading-tight">92.4%</h3>
+<div class="w-full bg-gray-100 h-1.5 rounded-full mt-3">
+<div class="bg-blue-600 h-full rounded-full w-[92%]"></div>
+</div>
+</div>
+<span class="iconify text-7xl absolute -right-4 -bottom-4 text-green-50/50 group-hover:scale-110 transition-transform" data-icon="lucide:check-circle"></span>
+</div>
+</div>
+</div>
+<!-- FILTER SECTION -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 mb-6 transition-all overflow-hidden">
+<div class="px-6 py-4 flex items-center justify-between border-b border-gray-100 bg-gray-50/50">
+<div class="flex items-center gap-2 font-semibold text-gray-700">
+<span class="iconify text-blue-600" data-icon="lucide:filter"></span>
+                        Advanced Filters
+                    </div>
+<button class="text-blue-600 text-sm font-medium flex items-center gap-1 hover:underline">
+                        Reset All
+                    </button>
+</div>
+<div class="p-6 grid grid-cols-4 gap-6">
+<div>
+<label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">School / Department</label>
+<select class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all">
+<option>All Departments</option>
+<option>School of Computer Science</option>
+<option>Department of Mathematics</option>
+<option>School of Physics</option>
+<option>Economic &amp; Management</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Job Status</label>
+<select class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all">
+<option>All Status</option>
+<option>Hiring</option>
+<option>Pending Review</option>
+<option>Closed</option>
+<option>Draft</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Publish Time</label>
+<input class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all text-gray-600" type="date"/>
+</div>
+<div class="flex items-end">
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center justify-center gap-2">
+<span class="iconify text-lg" data-icon="lucide:search"></span>
+                            Apply Filters
+                        </button>
+</div>
+</div>
+</div>
+<!-- DATA TABLE -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-gray-50 border-b border-gray-100">
+<th class="py-4 px-6">
+<input class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" type="checkbox"/>
+</th>
+<th class="py-4 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">ID &amp; Course Name</th>
+<th class="py-4 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Publisher</th>
+<th class="py-4 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap text-center">Recruitment</th>
+<th class="py-4 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Applicants</th>
+<th class="py-4 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Deadline</th>
+<th class="py-4 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Status</th>
+<th class="py-4 px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Operation</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100">
+<!-- Row 1 -->
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="py-4 px-6 text-center">
+<input class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" type="checkbox"/>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="text-[10px] text-gray-400 font-mono">#JOB-2026-001</span>
+<span class="text-sm font-bold text-gray-800 group-hover:text-blue-600 transition-colors">Advanced Algorithm Analysis</span>
+<span class="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md self-start mt-1">CS School</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<img alt="U" class="w-6 h-6 rounded-full" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/be9bbca2ae1b45a4891e26b0c701dcb6.jpg"/>
+<span class="text-sm text-gray-700">Dr. Emily Smith</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1 items-center">
+<span class="text-xs font-bold text-gray-700">8 / 10</span>
+<div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-blue-500 h-full rounded-full" style="width: 80%"></div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex -space-x-2">
+<img alt="A1" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-gray-100" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/361da9ce8e464cd9957fe4a66c1a7830.jpg"/>
+<img alt="A2" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-gray-100" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/47658a6ca99741008e6b5564d5fd2022.jpg"/>
+<img alt="A3" class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-gray-100" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/9d5f41f3ff2b45b2a188b5036b1ae274.jpg"/>
+<div class="w-7 h-7 rounded-full border-2 border-white ring-1 ring-gray-100 bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500">+22</div>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-gray-600">2026-04-15</td>
+<td class="py-4 px-6">
+<span class="px-3 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 border border-green-200 uppercase tracking-tighter">Hiring</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<button class="text-blue-600 hover:text-blue-800 text-sm font-semibold">Audit</button>
+<button class="text-gray-400 hover:text-red-600 transition-colors">
+<span class="iconify text-lg" data-icon="lucide:more-horizontal"></span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="py-4 px-6 text-center">
+<input class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" type="checkbox"/>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="text-[10px] text-gray-400 font-mono">#JOB-2026-002</span>
+<span class="text-sm font-bold text-gray-800 group-hover:text-blue-600">Introduction to AI</span>
+<span class="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md self-start mt-1">CS School</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<img alt="U" class="w-6 h-6 rounded-full" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/be9bbca2ae1b45a4891e26b0c701dcb6.jpg"/>
+<span class="text-sm text-gray-700">Prof. Li Wei</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1 items-center">
+<span class="text-xs font-bold text-gray-700">0 / 5</span>
+<div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-gray-300 h-full rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-gray-400">No applicants</td>
+<td class="py-4 px-6 text-sm text-gray-600">2026-03-25</td>
+<td class="py-4 px-6">
+<span class="px-3 py-1 text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 border border-orange-200 uppercase tracking-tighter">Pending Review</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<button class="text-blue-600 hover:text-blue-800 text-sm font-semibold">Audit</button>
+<button class="text-gray-400 hover:text-red-600">
+<span class="iconify text-lg" data-icon="lucide:more-horizontal"></span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-blue-50/30 transition-colors group">
+<td class="py-4 px-6 text-center">
+<input class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" type="checkbox"/>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col">
+<span class="text-[10px] text-gray-400 font-mono">#JOB-2026-005</span>
+<span class="text-sm font-bold text-gray-800 group-hover:text-blue-600">Modern Economic Theory</span>
+<span class="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md self-start mt-1">Economics</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-2">
+<img alt="U" class="w-6 h-6 rounded-full" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/be9bbca2ae1b45a4891e26b0c701dcb6.jpg"/>
+<span class="text-sm text-gray-700">Dr. Sarah Johnson</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<div class="flex flex-col gap-1 items-center">
+<span class="text-xs font-bold text-gray-700">2 / 2</span>
+<div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-gray-400 h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 text-sm text-gray-600">
+<span class="text-gray-400">8 total</span>
+</td>
+<td class="py-4 px-6 text-sm text-red-400 font-medium">Closed</td>
+<td class="py-4 px-6">
+<span class="px-3 py-1 text-[10px] font-bold rounded-full bg-gray-100 text-gray-600 border border-gray-200 uppercase tracking-tighter">Closed</span>
+</td>
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<button class="text-gray-400 text-sm font-semibold bg-gray-50 px-3 py-1 rounded border border-gray-100">Review</button>
+<button class="text-gray-400 hover:text-red-600">
+<span class="iconify text-lg" data-icon="lucide:more-horizontal"></span>
+</button>
+</div>
+</td>
+</tr>
+<!-- More 5 placeholders for density -->
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="py-4 px-6 text-center"><input class="rounded border-gray-300" type="checkbox"/></td>
+<td class="py-4 px-6"><div class="flex flex-col"><span class="text-[10px] text-gray-400 font-mono">#JOB-2026-008</span><span class="text-sm font-bold text-gray-800 underline decoration-dotted decoration-gray-300 underline-offset-4 cursor-help">Digital Signal Processing</span><span class="text-[11px] text-gray-500 mt-1">Electronic Eng.</span></div></td>
+<td class="py-4 px-6 text-sm text-gray-700">Prof. Hans Miller</td>
+<td class="py-4 px-6"><div class="flex flex-col gap-1 items-center"><span class="text-xs font-bold text-gray-700">1 / 4</span><div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full rounded-full w-[25%]"></div></div></div></td>
+<td class="py-4 px-6 text-sm text-gray-500">6 apps</td>
+<td class="py-4 px-6 text-sm text-gray-600">2026-05-02</td>
+<td class="py-4 px-6"><span class="px-3 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 border border-green-200 uppercase tracking-tighter">Hiring</span></td>
+<td class="py-4 px-6 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors border border-transparent hover:border-blue-100" onclick="showJobDetail('JOB-2026-008')" title="查看详情">
+<span class="iconify" data-icon="lucide:eye"></span>
+</button>
+<button class="p-2 hover:bg-amber-50 text-amber-600 rounded-lg transition-colors border border-transparent hover:border-amber-100" onclick="editJob('JOB-2026-008')" title="编辑岗位">
+<span class="iconify" data-icon="lucide:edit-3"></span>
+</button>
+<button class="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors border border-transparent hover:border-red-100" onclick="deleteJob('JOB-2026-008')" title="下架/删除">
+<span class="iconify" data-icon="lucide:trash-2"></span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="py-4 px-6 text-center"><input class="rounded border-gray-300" type="checkbox"/></td>
+<td class="py-4 px-6"><div class="flex flex-col"><span class="text-[10px] text-gray-400 font-mono">#JOB-2026-012</span><span class="text-sm font-bold text-gray-800">Advanced Calculus II</span><span class="text-[11px] text-gray-500 mt-1">Mathematics</span></div></td>
+<td class="py-4 px-6 text-sm text-gray-700">Dr. Susan Ray</td>
+<td class="py-4 px-6"><div class="flex flex-col gap-1 items-center"><span class="text-xs font-bold text-gray-700">12 / 15</span><div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full rounded-full w-[80%]"></div></div></div></td>
+<td class="py-4 px-6 text-sm text-gray-500">45 apps</td>
+<td class="py-4 px-6 text-sm text-gray-600">2026-04-30</td>
+<td class="py-4 px-6"><span class="px-3 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 border border-green-200 uppercase tracking-tighter">Hiring</span></td>
+<td class="py-4 px-6"><button class="text-blue-600 font-semibold text-sm">Audit</button></td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="py-4 px-6 text-center"><input class="rounded border-gray-300" type="checkbox"/></td>
+<td class="py-4 px-6"><div class="flex flex-col"><span class="text-[10px] text-gray-400 font-mono">#JOB-2026-015</span><span class="text-sm font-bold text-gray-800">Quantum Mechanics</span><span class="text-[11px] text-gray-500 mt-1">Physics School</span></div></td>
+<td class="py-4 px-6 text-sm text-gray-700">Prof. Albert New</td>
+<td class="py-4 px-6"><div class="flex flex-col gap-1 items-center"><span class="text-xs font-bold text-gray-700">3 / 3</span><div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="bg-gray-400 h-full rounded-full w-[100%]"></div></div></div></td>
+<td class="py-4 px-6 text-sm text-gray-500">12 apps</td>
+<td class="py-4 px-6 text-sm text-gray-600">2026-03-10</td>
+<td class="py-4 px-6"><span class="px-3 py-1 text-[10px] font-bold rounded-full bg-gray-100 text-gray-600 border border-gray-200 uppercase tracking-tighter">Closed</span></td>
+<td class="py-4 px-6"><button class="text-gray-400 font-semibold text-sm">Review</button></td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="py-4 px-6 text-center"><input class="rounded border-gray-300" type="checkbox"/></td>
+<td class="py-4 px-6"><div class="flex flex-col"><span class="text-[10px] text-gray-400 font-mono">#JOB-2026-019</span><span class="text-sm font-bold text-gray-800">Organic Chemistry Lab</span><span class="text-[11px] text-gray-500 mt-1">Chemistry</span></div></td>
+<td class="py-4 px-6 text-sm text-gray-700">Dr. Helen Page</td>
+<td class="py-4 px-6"><div class="flex flex-col gap-1 items-center"><span class="text-xs font-bold text-gray-700">0 / 6</span><div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="bg-gray-300 h-full rounded-full w-[0%]"></div></div></div></td>
+<td class="py-4 px-6 text-sm text-gray-500">5 apps</td>
+<td class="py-4 px-6 text-sm text-gray-600">2026-03-24</td>
+<td class="py-4 px-6"><span class="px-3 py-1 text-[10px] font-bold rounded-full bg-orange-100 text-orange-700 border border-orange-200 uppercase tracking-tighter">Pending</span></td>
+<td class="py-4 px-6"><button class="text-blue-600 font-semibold text-sm">Audit</button></td>
+</tr>
+<tr class="hover:bg-blue-50/30 transition-colors">
+<td class="py-4 px-6 text-center"><input class="rounded border-gray-300" type="checkbox"/></td>
+<td class="py-4 px-6"><div class="flex flex-col"><span class="text-[10px] text-gray-400 font-mono">#JOB-2026-022</span><span class="text-sm font-bold text-gray-800">Database System</span><span class="text-[11px] text-gray-500 mt-1">CS School</span></div></td>
+<td class="py-4 px-6 text-sm text-gray-700">Prof. Wu Jing</td>
+<td class="py-4 px-6"><div class="flex flex-col gap-1 items-center"><span class="text-xs font-bold text-gray-700">10 / 10</span><div class="w-24 bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="bg-blue-500 h-full rounded-full w-[100%]"></div></div></div></td>
+<td class="py-4 px-6 text-sm text-gray-500">82 apps</td>
+<td class="py-4 px-6 text-sm text-gray-600">2026-04-10</td>
+<td class="py-4 px-6"><span class="px-3 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-700 border border-green-200 uppercase tracking-tighter">Hiring</span></td>
+<td class="py-4 px-6"><button class="text-blue-600 font-semibold text-sm">Audit</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- TABLE FOOTER / PAGINATION -->
+<div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="text-xs text-gray-500 font-medium whitespace-nowrap">Show</span>
+<select class="bg-white border border-gray-200 px-2 py-1 rounded text-xs outline-none">
+<option>10</option>
+<option>20</option>
+<option>50</option>
+</select>
+<span class="text-xs text-gray-500 font-medium">items per page</span>
+</div>
+<div class="flex items-center gap-2">
+<p class="text-xs text-gray-500 mr-4">Showing 1 to 8 of 1,284 results</p>
+<nav class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 text-gray-400 hover:bg-white transition-colors">
+<span class="iconify" data-icon="lucide:chevron-left"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-600 text-white font-bold text-xs">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 text-gray-600 hover:bg-white text-xs font-medium">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 text-gray-600 hover:bg-white text-xs font-medium">3</button>
+<span class="text-gray-400 px-1">...</span>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 text-gray-600 hover:bg-white text-xs font-medium">128</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 text-gray-400 hover:bg-white transition-colors">
+<span class="iconify" data-icon="lucide:chevron-right"></span>
+</button>
+</nav>
+</div>
+</div>
+</div>
+<!-- BULK ACTION BAR (HIDDEN BY DEFAULT, SHOWN ON CHECK) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900/90 backdrop-blur-md text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-8 border border-gray-700 hidden z-50" id="action-bar">
+<div class="flex items-center gap-3">
+<span class="bg-blue-500 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
+<span class="text-sm font-medium">Selected jobs for bulk processing</span>
+</div>
+<div class="h-6 w-px bg-gray-700"></div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 text-sm font-semibold text-green-400 hover:text-green-300">
+<span class="iconify" data-icon="lucide:check-circle"></span> Approve All
+                    </button>
+<button class="flex items-center gap-2 text-sm font-semibold text-orange-400 hover:text-orange-300">
+<span class="iconify" data-icon="lucide:minus-circle"></span> Suspend
+                    </button>
+<button class="flex items-center gap-2 text-sm font-semibold text-red-400 hover:text-red-300" onclick="confirmDelete()">
+<span class="iconify" data-icon="lucide:trash-2"></span> Delete
+                    </button>
+</div>
+<button class="text-gray-400 hover:text-white" onclick="toggleActionBar(false)">
+<span class="iconify text-xl" data-icon="lucide:x"></span>
+</button>
+</div>
+</div>
+</main>
+<!-- JS MOCK ACTIONS -->
+<script>
+        // Simple Interaction to show bulk action bar
+        const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+        const actionBar = document.getElementById('action-bar');
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checkedCount = document.querySelectorAll('tbody input[type="checkbox"]:checked').length;
+                if (checkedCount > 0) {
+                    actionBar.classList.remove('hidden');
+                    actionBar.querySelector('.bg-blue-500').innerText = checkedCount;
+                } else {
+                    actionBar.classList.add('hidden');
+                }
+            });
+        });
+
+        function toggleActionBar(show) {
+            if(!show) {
+                checkboxes.forEach(c => c.checked = false);
+                actionBar.classList.add('hidden');
+            }
+        }
+
+        function confirmDelete() {
+            if(confirm('您确定要删除所选岗位吗？此操作无法撤销。')) {
+                alert('成功：已移除所选岗位。');
+                toggleActionBar(false);
+            }
+        }
+
+        // Job Operations
+        function showJobDetail(id) {
+            alert('查看岗位详情: ' + id + '\n\n展示职位的详细描述、申请要求和当前申请人列表。');
+        }
+
+        function editJob(id) {
+            alert('编辑岗位: ' + id + '\n\n弹出表单以修改岗位信息。');
+        }
+
+        function deleteJob(id) {
+            if(confirm('确定要下架或删除岗位 ' + id + ' 吗？')) {
+                alert('岗位 ' + id + ' 已成功操作。');
+            }
+        }
+
+        // Search & Filter
+        document.querySelector('input[placeholder*="Search"]').addEventListener('input', function(e) {
+            console.log('正在搜索: ' + e.target.value);
+        });
+    </script>
+</body>
+</html>
