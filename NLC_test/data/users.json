@@ -29,5 +29,15 @@
     "gender": "Male",
     "active": true,
     "createdAt": 1774074814330
+  },
+  {
+    "id": "8737e7ea",
+    "username": "NLC123",
+    "password": "Nlc141203",
+    "role": "TA",
+    "fullName": "ninglechen123",
+    "email": "ninglechen666@163.com",
+    "active": true,
+    "createdAt": 1774118641128
   }
 ]
