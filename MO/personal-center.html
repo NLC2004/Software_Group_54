@@ -116,31 +116,15 @@
 </div>
 </section>
 <section class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
-<div class="flex items-center mb-8 space-x-3">
+<div class="flex items-center mb-6 space-x-3">
 <div class="p-2.5 bg-orange-50 text-orange-600 rounded-xl"><span class="iconify text-xl" data-icon="solar:shield-keyhole-bold"></span></div>
 <h3 class="text-lg font-bold text-slate-800">Security &amp; Password</h3>
 </div>
-<div class="space-y-6">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Current Password</label>
-<input class="form-input" placeholder="••••••••" type="password"/>
-</div>
-<div></div>
-<div class="space-y-2">
-<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">New Password</label>
-<input class="form-input" placeholder="Min 8 characters" type="password"/>
-</div>
-<div class="space-y-2">
-<label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Confirm New Password</label>
-<input class="form-input" placeholder="Re-enter password" type="password"/>
-</div>
-</div>
-<div class="bg-slate-50 p-4 rounded-xl flex items-start space-x-3 border border-slate-100">
-<span class="iconify text-slate-400 mt-0.5" data-icon="solar:info-circle-bold"></span>
-<p class="text-[13px] text-slate-500 leading-relaxed">Password must be at least 8 characters long and include a mix of uppercase letters, numbers, and special symbols.</p>
-</div>
-</div>
+<p class="text-sm text-slate-500 mb-6">Verify your current password to change it. If you forgot your password, submit a reset request for admin review.</p>
+<button class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-slate-700 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all" id="openPasswordModal" type="button">
+<span class="iconify text-xl" data-icon="mdi:lock-reset"></span>
+Change password
+</button>
 </section>
 </div>
 <!-- Sidebar Config -->
@@ -193,5 +177,140 @@
 </div>
 </div>
 </main>
+<div class="hidden fixed inset-0 z-[100]" id="passwordModal">
+<div class="absolute inset-0 bg-black/30" id="passwordModalOverlay"></div>
+<div class="relative min-h-full flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+<div class="h-2 bg-blue-600 w-full"></div>
+<div class="p-8">
+<div class="flex items-center justify-between gap-4 mb-6">
+<div>
+<h3 class="text-xl font-bold text-gray-800">Change password</h3>
+<p class="text-xs text-gray-400 mt-1">Verify your current password and set a new one.</p>
+</div>
+<button class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500" id="closePasswordModal" type="button">
+<span class="iconify text-xl" data-icon="mdi:close"></span>
+</button>
+</div>
+<div class="hidden mb-4 p-3 rounded-lg text-sm flex items-center gap-2" id="pwdAlertBox">
+<span class="iconify" data-icon="" id="pwdAlertIcon"></span>
+<span id="pwdAlertMsg"></span>
+</div>
+<form class="space-y-5" id="passwordForm">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Current password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="currentPassword" placeholder="Enter current password" type="password"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">New password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-reset"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="newPassword" placeholder="Enter new password" type="password"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Confirm new password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-check-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="confirmPassword" placeholder="Re-enter new password" type="password"/>
+</div>
+</div>
+<div class="pt-2 flex items-center gap-3">
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-blue-200 transition-all transform active:scale-[0.98]" type="submit">
+Update password
+</button>
+<button class="px-5 py-3.5 bg-white text-gray-500 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" id="cancelPasswordModal" type="button">
+Cancel
+</button>
+</div>
+<div class="mt-2 text-center">
+<a class="text-xs text-gray-400 hover:text-blue-600 transition-colors" href="forgot-password.html">Forgot password? Submit a reset request</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+<script>
+    const passwordModal = document.getElementById('passwordModal');
+    const openPasswordModal = document.getElementById('openPasswordModal');
+    const closePasswordModal = document.getElementById('closePasswordModal');
+    const cancelPasswordModal = document.getElementById('cancelPasswordModal');
+    const passwordModalOverlay = document.getElementById('passwordModalOverlay');
+    const passwordForm = document.getElementById('passwordForm');
+
+    const pwdAlertBox = document.getElementById('pwdAlertBox');
+    const pwdAlertMsg = document.getElementById('pwdAlertMsg');
+    const pwdAlertIcon = document.getElementById('pwdAlertIcon');
+
+    const currentPassword = document.getElementById('currentPassword');
+    const newPassword = document.getElementById('newPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+
+    function showPwdAlert(type, message) {
+        pwdAlertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
+        if (type === 'error') {
+            pwdAlertBox.classList.add('bg-red-50', 'text-red-700');
+            pwdAlertIcon.setAttribute('data-icon', 'mdi:alert-circle-outline');
+        } else {
+            pwdAlertBox.classList.add('bg-green-50', 'text-green-700');
+            pwdAlertIcon.setAttribute('data-icon', 'mdi:check-circle-outline');
+        }
+        pwdAlertMsg.innerText = message;
+    }
+
+    function openPwdModal() {
+        passwordModal.classList.remove('hidden');
+        pwdAlertBox.classList.add('hidden');
+        passwordForm.reset();
+        currentPassword.focus();
+    }
+
+    function closePwdModal() {
+        passwordModal.classList.add('hidden');
+    }
+
+    openPasswordModal.addEventListener('click', openPwdModal);
+    closePasswordModal.addEventListener('click', closePwdModal);
+    cancelPasswordModal.addEventListener('click', closePwdModal);
+    passwordModalOverlay.addEventListener('click', closePwdModal);
+
+    passwordForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const cur = currentPassword.value.trim();
+        const next = newPassword.value.trim();
+        const confirmNext = confirmPassword.value.trim();
+
+        if (!cur || !next || !confirmNext) {
+            showPwdAlert('error', 'Please fill in all password fields.');
+            return;
+        }
+
+        if (next.length < 6) {
+            showPwdAlert('error', 'New password must be at least 6 characters.');
+            return;
+        }
+
+        if (next !== confirmNext) {
+            showPwdAlert('error', 'The new passwords do not match.');
+            return;
+        }
+
+        showPwdAlert('success', 'Password updated successfully (mock).');
+        setTimeout(() => {
+            closePwdModal();
+        }, 800);
+    });
+</script>
 </body>
 </html>
