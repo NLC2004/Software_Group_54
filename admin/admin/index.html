@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Portal — Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center bg-slate-900 px-4">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+    <div class="text-center mb-8">
+      <h1 class="text-xl font-bold text-slate-800">Administrator</h1>
+      <p class="text-sm text-slate-500 mt-1">Default: admin / admin123</p>
+    </div>
+    <div class="hidden mb-4 p-3 rounded-lg text-sm" id="alertBox"></div>
+    <form id="loginForm" class="space-y-4">
+      <input id="username" type="text" class="w-full border rounded-xl px-3 py-2.5" placeholder="Username" value="admin"/>
+      <input id="password" type="password" class="w-full border rounded-xl px-3 py-2.5" placeholder="Password"/>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl">Login</button>
+    </form>
+    <p class="text-center mt-6"><a href="/login.html" class="text-sm text-blue-600">Main site</a></p>
+  </div>
+  <script src="/js/tarecruit-api.js"></script>
+  <script>
+    if (TR.getToken() && TR.getUser() && TR.getUser().role === 'ADMIN') location.href = 'admin-dashboard.html';
+    const box = document.getElementById('alertBox');
+    document.getElementById('loginForm').onsubmit = async function (e) {
+      e.preventDefault();
+      box.classList.add('hidden');
+      try {
+        const data = await TR.login(document.getElementById('username').value.trim(), document.getElementById('password').value);
+        if (data.user.role !== 'ADMIN') {
+          TR.logout();
+          box.className = 'mb-4 p-3 rounded-lg text-sm bg-red-50 text-red-700';
+          box.textContent = 'Administrator only. Your role: ' + data.user.role;
+          box.classList.remove('hidden');
+          return;
+        }
+        location.href = 'admin-dashboard.html';
+      } catch (err) {
+        box.className = 'mb-4 p-3 rounded-lg text-sm bg-red-50 text-red-700';
+        box.textContent = err.message || 'Login failed';
+        box.classList.remove('hidden');
+      }
+    };
+  </script>
+</body>
+</html>
