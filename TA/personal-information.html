@@ -93,11 +93,17 @@
 <div class="bg-gray-50 rounded-xl p-4 text-left space-y-3">
 <div class="flex justify-between items-center text-sm">
 <span class="text-gray-400 font-medium">Student ID</span>
-<span class="text-gray-700 font-mono font-bold">2022212345</span>
+<span class="text-gray-700 font-mono font-bold" id="fixedStudentId">2022212345</span>
 </div>
 <div class="flex justify-between items-center text-sm border-t border-gray-100 pt-3">
 <span class="text-gray-400 font-medium">Email</span>
 <span class="text-gray-700 truncate ml-4">student@bupt.edu.cn</span>
+</div>
+<div class="pt-3 border-t border-gray-100">
+<button class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-600 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" id="openPasswordModal" type="button">
+<span class="iconify text-xl" data-icon="mdi:lock-reset"></span>
+                         Change password
+                     </button>
 </div>
 </div>
 </div>
@@ -106,40 +112,57 @@
 <div class="col-span-2">
 <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
 <form id="infoForm">
+<div class="mb-6 rounded-xl border border-gray-100 bg-gray-50 p-4">
+<p class="text-sm font-bold text-gray-800">TA application profile</p>
+<p class="text-xs text-gray-500 mt-1">These fields can be used to auto-fill future TA application forms.</p>
+</div>
 <div class="grid grid-cols-2 gap-6">
 <div class="input-group">
-<label class="label-text">Full name <span class="text-red-500">*</span></label>
-<input class="input-box" id="fullName" placeholder="Enter your legal name" required="" type="text" value="Zhang San"/>
+<label class="label-text">QMplus account</label>
+<input class="input-box" id="qmplusAccount" placeholder="e.g. qmplus_2026110123" type="text"/>
 </div>
 <div class="input-group">
-<label class="label-text">Mobile <span class="text-red-500">*</span></label>
-<input class="input-box" id="mobile" placeholder="138xxxx8888" required="" type="tel" value="13900008888"/>
+<label class="label-text">Your surname (family name)</label>
+<input class="input-box" id="surname" placeholder="e.g. Zhang" type="text"/>
 </div>
 <div class="input-group">
-<label class="label-text">School/Department <span class="text-red-500">*</span></label>
-<select class="input-box bg-white appearance-none" id="school" required="">
+<label class="label-text">Your forename (given name)</label>
+<input class="input-box" id="forename" placeholder="e.g. San" type="text"/>
+</div>
+<div class="input-group">
+<label class="label-text">Your Chinese name</label>
+<input class="input-box" id="chineseName" placeholder="e.g. 张三" type="text"/>
+</div>
+<div class="input-group">
+<label class="label-text">Your mobile/cell phone number</label>
+<input class="input-box" id="mobileNumber" placeholder="e.g. 13800138000" type="tel"/>
+</div>
+<div class="input-group">
+<label class="label-text">Gender</label>
+<div class="flex items-center gap-6 pt-2" id="genderGroup">
+<label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+<input name="gender" type="radio" value="Female"/>
+<span>Female</span>
+</label>
+<label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+<input name="gender" type="radio" value="Male"/>
+<span>Male</span>
+</label>
+</div>
+</div>
+<div class="input-group">
+<label class="label-text">Which School are you from at BUPT?</label>
+<select class="input-box bg-white appearance-none" id="buptSchool">
 <option value="">Select a school</option>
-<option selected="" value="SICE">School of Computer Science</option>
-<option value="SSE">School of Software</option>
-<option value="SCS">School of Automation</option>
-<option value="SEM">School of Economics and Management</option>
+<option value="International School">International School</option>
+<option value="School of Computer Science">School of Computer Science</option>
+<option value="School of Information and Communication Engineering">School of Information and Communication Engineering</option>
+<option value="School of Software">School of Software</option>
+<option value="School of Artificial Intelligence">School of Artificial Intelligence</option>
+<option value="School of Automation">School of Automation</option>
+<option value="School of Economics and Management">School of Economics and Management</option>
 </select>
 </div>
-<div class="input-group">
-<label class="label-text">Campus <span class="text-red-500">*</span></label>
-<select class="input-box bg-white appearance-none" id="campus" required="">
-<option selected="" value="Xitucheng">Xitucheng Campus</option>
-<option value="Shahe">Shahe Campus</option>
-</select>
-</div>
-</div>
-<div class="input-group">
-<label class="label-text">Supervisor (optional)</label>
-<input class="input-box" id="supervisor" placeholder="e.g. Prof. Li" type="text" value="Prof. Wang"/>
-</div>
-<div class="input-group">
-<label class="label-text">Relevant experience</label>
-<textarea class="input-box h-32 resize-none" id="experience" placeholder="Describe your relevant experience..."></textarea>
 </div>
 <!-- Actions -->
 <div class="flex items-center gap-4 pt-4">
@@ -151,12 +174,6 @@
                             </button>
 </div>
 </form>
-<div class="mt-4">
-<button class="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-600 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" id="openPasswordModal" type="button">
-<span class="iconify text-xl" data-icon="mdi:lock-reset"></span>
-                            Change password
-                        </button>
-</div>
 <div class="hidden fixed inset-0 z-50" id="passwordModal">
 <div class="absolute inset-0 bg-black/30" id="passwordModalOverlay"></div>
 <div class="relative min-h-full flex items-center justify-center p-4">
@@ -233,18 +250,61 @@ Cancel
 </main>
 </div>
  <script>
+    const PROFILE_KEY = 'ta_profile_v1';
+
+    function getRadioValue(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : '';
+    }
+
+    function setRadioValue(name, value) {
+        const els = document.querySelectorAll(`input[name="${name}"]`);
+        els.forEach((el) => {
+            el.checked = el.value === value;
+        });
+    }
+
+    function getProfileData() {
+        return {
+            qmplusAccount: document.getElementById('qmplusAccount').value,
+            buptStudentId: (document.getElementById('fixedStudentId') && document.getElementById('fixedStudentId').innerText) ? document.getElementById('fixedStudentId').innerText.trim() : '',
+            surname: document.getElementById('surname').value,
+            forename: document.getElementById('forename').value,
+            chineseName: document.getElementById('chineseName').value,
+            mobileNumber: document.getElementById('mobileNumber').value,
+            gender: getRadioValue('gender'),
+            buptSchool: document.getElementById('buptSchool').value,
+            updatedAt: Date.now()
+        };
+    }
+
+    function restoreProfileData(profile) {
+        if (!profile) return;
+        if (typeof profile.qmplusAccount === 'string') document.getElementById('qmplusAccount').value = profile.qmplusAccount;
+        if (typeof profile.surname === 'string') document.getElementById('surname').value = profile.surname;
+        if (typeof profile.forename === 'string') document.getElementById('forename').value = profile.forename;
+        if (typeof profile.chineseName === 'string') document.getElementById('chineseName').value = profile.chineseName;
+        if (typeof profile.mobileNumber === 'string') document.getElementById('mobileNumber').value = profile.mobileNumber;
+        if (typeof profile.gender === 'string') setRadioValue('gender', profile.gender);
+        if (typeof profile.buptSchool === 'string') document.getElementById('buptSchool').value = profile.buptSchool;
+    }
+
+    (function restoreProfileOnLoad() {
+        try {
+            const raw = localStorage.getItem(PROFILE_KEY);
+            if (raw) {
+                const profile = JSON.parse(raw);
+                restoreProfileData(profile);
+            }
+        } catch (e) {}
+    })();
+
     document.getElementById('infoForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Basic Validation
-        const name = document.getElementById('fullName').value.trim();
-        const mobile = document.getElementById('mobile').value.trim();
-        const school = document.getElementById('school').value;
 
-        if (!name || !mobile || !school) {
-            alert('Please fill in all required fields.');
-            return;
-        }
+        try {
+            localStorage.setItem(PROFILE_KEY, JSON.stringify(getProfileData()));
+        } catch (e) {}
 
         // Mock Success
         alert('Profile updated successfully.');
