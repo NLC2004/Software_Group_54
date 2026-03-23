@@ -58,7 +58,7 @@
 <span class="iconify" data-icon="mdi:lock-outline"></span>
 </span>
 <input class="block w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="password" placeholder="Enter your password" type="password"/>
-<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500" onclick="togglePassword()" type="button">
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500" onclick="togglePassword('password','passIcon')" type="button">
 <span class="iconify" data-icon="mdi:eye-off-outline" id="passIcon"></span>
 </button>
 </div>
@@ -69,15 +69,70 @@
 <span class="hidden animate-spin iconify" data-icon="mdi:loading" id="loadingIcon"></span>
 </button>
 </form>
+
+<form class="space-y-6 hidden" id="registerForm">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Student ID / Email</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:account-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regUsername" placeholder="Enter your student ID or email" type="text"/>
+</div>
+</div>
+
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regPassword" placeholder="Create a password" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500" onclick="togglePassword('regPassword','regPassIcon')" type="button">
+<span class="iconify" data-icon="mdi:eye-off-outline" id="regPassIcon"></span>
+</button>
+</div>
+</div>
+
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Confirm password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-check-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regConfirmPassword" placeholder="Re-enter your password" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500" onclick="togglePassword('regConfirmPassword','regConfirmPassIcon')" type="button">
+<span class="iconify" data-icon="mdi:eye-off-outline" id="regConfirmPassIcon"></span>
+</button>
+</div>
+</div>
+
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-blue-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
+<span id="regBtnText">Create account</span>
+<span class="hidden animate-spin iconify" data-icon="mdi:loading" id="regLoadingIcon"></span>
+</button>
+</form>
+
+<div class="mt-6 text-center">
+<p class="text-sm text-gray-500" id="toggleHint">
+Don’t have an account?
+<button class="font-bold text-blue-600 hover:text-blue-700" id="showRegisterBtn" type="button">Register</button>
+</p>
+<p class="text-sm text-gray-500 hidden" id="toggleHintBack">
+Already have an account?
+<button class="font-bold text-blue-600 hover:text-blue-700" id="showLoginBtn" type="button">Back to login</button>
+</p>
+</div>
 </div>
 </div>
 <!-- Copyright -->
 <div class="mt-8 text-center">
 <p class="text-gray-400 text-xs">© 2026 BUPT International School</p>
-<p class="text-gray-300 text-[10px] mt-1 italic font-light">System date: 2026-03-22</p>
+<p class="text-gray-300 text-[10px] mt-1 italic font-light">System date: 2026-03-21</p>
 </div>
 <script>
         const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
         const alertBox = document.getElementById('alertBox');
         const alertMsg = document.getElementById('alertMsg');
         const alertIcon = document.getElementById('alertIcon');
@@ -85,6 +140,17 @@
         const passwordInput = document.getElementById('password');
         const btnText = document.getElementById('btnText');
         const loadingIcon = document.getElementById('loadingIcon');
+
+        const showRegisterBtn = document.getElementById('showRegisterBtn');
+        const showLoginBtn = document.getElementById('showLoginBtn');
+        const toggleHint = document.getElementById('toggleHint');
+        const toggleHintBack = document.getElementById('toggleHintBack');
+
+        const regUsernameInput = document.getElementById('regUsername');
+        const regPasswordInput = document.getElementById('regPassword');
+        const regConfirmPasswordInput = document.getElementById('regConfirmPassword');
+        const regBtnText = document.getElementById('regBtnText');
+        const regLoadingIcon = document.getElementById('regLoadingIcon');
 
         function showAlert(type, message) {
             alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
@@ -98,16 +164,37 @@
             alertMsg.innerText = message;
         }
 
-        function togglePassword() {
-            const passIcon = document.getElementById('passIcon');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const passIcon = document.getElementById(iconId);
+            if (!input || !passIcon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
                 passIcon.setAttribute('data-icon', 'mdi:eye-outline');
             } else {
-                passwordInput.type = 'password';
+                input.type = 'password';
                 passIcon.setAttribute('data-icon', 'mdi:eye-off-outline');
             }
         }
+
+        function showLogin() {
+            alertBox.classList.add('hidden');
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            toggleHint.classList.remove('hidden');
+            toggleHintBack.classList.add('hidden');
+        }
+
+        function showRegister() {
+            alertBox.classList.add('hidden');
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            toggleHint.classList.add('hidden');
+            toggleHintBack.classList.remove('hidden');
+        }
+
+        showRegisterBtn.addEventListener('click', showRegister);
+        showLoginBtn.addEventListener('click', showLogin);
 
         loginForm.onsubmit = (e) => {
             e.preventDefault();
@@ -134,6 +221,42 @@
                     btnText.innerText = 'Login';
                     loadingIcon.classList.add('hidden');
                 }
+            }, 800);
+        };
+
+        registerForm.onsubmit = (e) => {
+            e.preventDefault();
+            const user = regUsernameInput.value.trim();
+            const pass = regPasswordInput.value.trim();
+            const confirmPass = regConfirmPasswordInput.value.trim();
+
+            if (!user || !pass || !confirmPass) {
+                showAlert('error', 'Please complete all registration fields');
+                return;
+            }
+
+            if (pass.length < 6) {
+                showAlert('error', 'Password must be at least 6 characters');
+                return;
+            }
+
+            if (pass !== confirmPass) {
+                showAlert('error', 'Passwords do not match');
+                return;
+            }
+
+            regBtnText.innerText = 'Creating...';
+            regLoadingIcon.classList.remove('hidden');
+
+            setTimeout(() => {
+                showAlert('success', 'Registration successful. Please login.');
+                regBtnText.innerText = 'Create account';
+                regLoadingIcon.classList.add('hidden');
+                usernameInput.value = user;
+                passwordInput.value = '';
+                regPasswordInput.value = '';
+                regConfirmPasswordInput.value = '';
+                showLogin();
             }, 800);
         };
     </script>
