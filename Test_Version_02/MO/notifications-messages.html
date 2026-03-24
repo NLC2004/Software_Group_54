@@ -143,7 +143,7 @@
                 const time = n.createdAt ? timeAgo(n.createdAt) : '';
 
                 return `
-                <div class="msg-item ${isUnread ? 'msg-unread' : ''}" onclick="selectNotification(${n.id})">
+                <div class="msg-item ${isUnread ? 'msg-unread' : ''}" onclick="selectNotification('${safeJsStr(n.id)}')">
                     <div class="w-12 h-12 ${color} rounded-2xl flex-shrink-0 flex items-center justify-center">
                         <span class="iconify text-2xl" data-icon="${icon}"></span>
                     </div>

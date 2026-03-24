@@ -150,7 +150,7 @@
                         <a href="application-review-detail.html?id=${rec.id}" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">
                             View details
                         </a>
-                        ${rec.status === 'PENDING' ? `<button class="text-red-500 hover:text-red-700 text-sm font-medium" onclick="withdrawApp(${rec.id}, event)">Withdraw</button>` : ''}
+                        ${rec.status === 'PENDING' ? `<button class="text-red-500 hover:text-red-700 text-sm font-medium" onclick="withdrawApp('${safeJsStr(rec.id)}', event)">Withdraw</button>` : ''}
                     </div>
                 </td>
             `;

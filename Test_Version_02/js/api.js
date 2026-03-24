@@ -97,6 +97,11 @@ function esc(str) {
     return div.innerHTML;
 }
 
+/** For onclick="fn('...')" — escape backslashes and single quotes in IDs / filenames */
+function safeJsStr(s) {
+    return String(s ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
 function formatDate(ts) {
     if (!ts) return '-';
     const d = new Date(ts);

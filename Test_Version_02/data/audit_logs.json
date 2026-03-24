@@ -150,5 +150,69 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1774369186832
+  },
+  {
+    "id": "d1202a34",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774369929782
+  },
+  {
+    "id": "17d70884",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774370043857
+  },
+  {
+    "id": "0ad687c6",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774370050121
+  },
+  {
+    "id": "a6bdc370",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "APPLICATION_WITHDRAWN",
+    "detail": "Application 260de52d for Python Lab Teaching Assistant",
+    "createdAt": 1774370066424
+  },
+  {
+    "id": "7f274a4b",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "APPLY",
+    "detail": "Applied for job: Python Lab Teaching Assistant",
+    "createdAt": 1774370216202
+  },
+  {
+    "id": "437ba80a",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774370221761
+  },
+  {
+    "id": "4b4efcf9",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774370240385
+  },
+  {
+    "id": "dcf55ce8",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application 61e239f2 for Python Lab Teaching Assistant",
+    "createdAt": 1774370250559
   }
 ]

@@ -163,7 +163,7 @@
                         </div>
                         <p class="text-sm text-gray-500 mt-2 leading-relaxed">${esc(n.content || '')}</p>
                         ${!n.read ? `<div class="mt-3">
-                            <button class="px-4 py-2 bg-white text-gray-600 rounded-xl text-xs font-bold border border-gray-200 hover:bg-gray-50 transition-all" onclick="markAsRead(${n.id})">Mark as read</button>
+                            <button class="px-4 py-2 bg-white text-gray-600 rounded-xl text-xs font-bold border border-gray-200 hover:bg-gray-50 transition-all" onclick="markAsRead('${safeJsStr(n.id)}')">Mark as read</button>
                         </div>` : ''}
                     </div>
                 </div>

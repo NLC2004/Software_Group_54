@@ -508,6 +508,8 @@ function renderUsers(users) {
         return;
     }
     tbody.innerHTML = users.map(u => {
+        const uid = safeJsStr(u.id);
+        const uname = safeJsStr(u.fullName || u.username);
         const initials = (u.fullName || u.username || '??').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
         const statusClass = u.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
         const statusText = u.active ? 'ACTIVE' : 'DISABLED';
@@ -532,13 +534,13 @@ function renderUsers(users) {
             <td class="px-6 py-4 text-xs text-gray-400 font-mono">${u.createdAt ? formatDateTime(u.createdAt) : '-'}</td>
             <td class="px-6 py-4 text-right">
                 <div class="flex justify-end gap-1">
-                    <button class="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Reset Password" onclick="resetPassword(${u.id}, '${esc(u.fullName || u.username)}')">
+                    <button class="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Reset Password" onclick="resetPassword('${uid}', '${uname}')">
                         <span class="iconify w-4 h-4" data-icon="material-symbols:lock-reset"></span>
                     </button>
-                    <button class="p-2 text-gray-400 hover:text-${u.active ? 'red' : 'green'}-600 hover:bg-${u.active ? 'red' : 'green'}-50 rounded-lg transition-all" title="${u.active ? 'Disable' : 'Enable'}" onclick="toggleActive(${u.id}, ${u.active})">
+                    <button class="p-2 text-gray-400 hover:text-${u.active ? 'red' : 'green'}-600 hover:bg-${u.active ? 'red' : 'green'}-50 rounded-lg transition-all" title="${u.active ? 'Disable' : 'Enable'}" onclick="toggleActive('${uid}', ${u.active})">
                         <span class="iconify w-4 h-4" data-icon="material-symbols:${u.active ? 'person-off' : 'person'}"></span>
                     </button>
-                    <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete" onclick="deleteUser(${u.id}, '${esc(u.fullName || u.username)}')">
+                    <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete" onclick="deleteUser('${uid}', '${uname}')">
                         <span class="iconify w-4 h-4" data-icon="material-symbols:delete-outline"></span>
                     </button>
                 </div>
@@ -626,8 +628,8 @@ async function loadPasswordResets() {
                     <p class="text-[10px] text-gray-400">${timeAgo(r.createdAt)}</p>
                 </div>
                 <div class="flex gap-1">
-                    <button onclick="approveReset(${r.id})" class="px-3 py-1 text-xs font-bold text-green-600 bg-green-50 rounded hover:bg-green-100">Approve</button>
-                    <button onclick="rejectReset(${r.id})" class="px-3 py-1 text-xs font-bold text-red-600 bg-red-50 rounded hover:bg-red-100">Reject</button>
+                    <button onclick="approveReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold text-green-600 bg-green-50 rounded hover:bg-green-100">Approve</button>
+                    <button onclick="rejectReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold text-red-600 bg-red-50 rounded hover:bg-red-100">Reject</button>
                 </div>
             </div>
         `).join('');
