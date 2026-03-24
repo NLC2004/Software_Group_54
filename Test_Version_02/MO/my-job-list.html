@@ -213,6 +213,7 @@
 
             let html = '';
             filtered.forEach(job => {
+                const jid = safeJsStr(job.id);
                 const isOpen = job.status === 'OPEN';
                 const statusClass = isOpen
                     ? 'bg-green-50 text-green-600'
@@ -229,9 +230,9 @@
                                 <span class="iconify text-xl" data-icon="solar:menu-dots-bold"></span>
                             </button>
                             <div class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-gray-100 z-50 py-1">
-                                <a href="job-edit.html?id=${job.id}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Edit</a>
-                                <button onclick="toggleJobStatus(${job.id}, '${isOpen ? 'CLOSED' : 'OPEN'}')" class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">${isOpen ? 'Close Job' : 'Reopen Job'}</button>
-                                <button onclick="deleteJob(${job.id})" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">Delete</button>
+                                <a href="job-edit.html?id=${esc(job.id)}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Edit</a>
+                                <button onclick="toggleJobStatus('${jid}', '${isOpen ? 'CLOSED' : 'OPEN'}')" class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">${isOpen ? 'Close Job' : 'Reopen Job'}</button>
+                                <button onclick="deleteJob('${jid}')" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">Delete</button>
                             </div>
                         </div>
                     </div>

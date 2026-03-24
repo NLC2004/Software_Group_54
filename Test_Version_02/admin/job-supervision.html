@@ -515,6 +515,7 @@ function renderJobs(jobs) {
     return;
   }
   tbody.innerHTML = jobs.map(job => {
+    const jid = safeJsStr(job.id);
     const statusColors = { OPEN: 'bg-green-100 text-green-700 border-green-200', CLOSED: 'bg-gray-100 text-gray-600 border-gray-200' };
     const sc = statusColors[job.status] || 'bg-orange-100 text-orange-700 border-orange-200';
     return `<tr class="hover:bg-blue-50/30 transition-colors group">
@@ -530,9 +531,9 @@ function renderJobs(jobs) {
       <td class="py-4 px-6 text-sm text-gray-600">${job.createdAt ? formatDate(job.createdAt) : 'N/A'}</td>
       <td class="py-4 px-6"><span class="px-3 py-1 text-[10px] font-bold rounded-full ${sc} border uppercase tracking-tighter">${esc(job.status || '')}</span></td>
       <td class="py-4 px-6"><div class="flex items-center gap-2">
-        <button onclick="toggleJobStatus(${job.id}, '${job.status === 'OPEN' ? 'CLOSED' : 'OPEN'}')" class="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors border border-transparent hover:border-blue-100" title="${job.status === 'OPEN' ? 'Close' : 'Reopen'}">
+        <button onclick="toggleJobStatus('${jid}', '${job.status === 'OPEN' ? 'CLOSED' : 'OPEN'}')" class="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors border border-transparent hover:border-blue-100" title="${job.status === 'OPEN' ? 'Close' : 'Reopen'}">
           <span class="iconify" data-icon="${job.status === 'OPEN' ? 'lucide:lock' : 'lucide:unlock'}"></span></button>
-        <button onclick="deleteJobById(${job.id})" class="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors border border-transparent hover:border-red-100" title="Delete">
+        <button onclick="deleteJobById('${jid}')" class="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors border border-transparent hover:border-red-100" title="Delete">
           <span class="iconify" data-icon="lucide:trash-2"></span></button>
       </div></td>
     </tr>`;

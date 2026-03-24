@@ -177,12 +177,12 @@
                     : 'text-blue-400';
 
                 const cvButton = app.cvFileName
-                    ? `<button onclick="viewCV('${esc(app.cvFileName)}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100" title="View CV"><span class="iconify text-xl" data-icon="solar:document-bold"></span></button>`
+                    ? `<button onclick="viewCV('${safeJsStr(app.cvFileName)}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100" title="View CV"><span class="iconify text-xl" data-icon="solar:document-bold"></span></button>`
                     : '';
 
                 const actionButtons = app.status === 'PENDING' ? `
-                    <button onclick="updateAppStatus(${app.id}, 'APPROVED')" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100" title="Approve"><span class="iconify text-xl" data-icon="solar:check-read-bold"></span></button>
-                    <button onclick="updateAppStatus(${app.id}, 'REJECTED')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100" title="Reject"><span class="iconify text-xl" data-icon="solar:close-circle-bold"></span></button>`
+                    <button onclick="updateAppStatus('${safeJsStr(app.id)}', 'APPROVED')" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100" title="Approve"><span class="iconify text-xl" data-icon="solar:check-read-bold"></span></button>
+                    <button onclick="updateAppStatus('${safeJsStr(app.id)}', 'REJECTED')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100" title="Reject"><span class="iconify text-xl" data-icon="solar:close-circle-bold"></span></button>`
                     : `<span class="px-3 py-1 text-xs font-bold rounded-full ${app.status === 'APPROVED' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}">${esc(app.status)}</span>`;
 
                 return `
