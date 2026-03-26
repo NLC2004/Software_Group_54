@@ -1,23 +1,5 @@
 [
   {
-    "id": "9d69ac25",
-    "userId": "91671c06",
-    "title": "Application Withdrawn",
-    "content": "You withdrew your application for Python Lab Teaching Assistant.",
-    "type": "APPLICATION",
-    "read": false,
-    "createdAt": 1774370066426
-  },
-  {
-    "id": "2905dc86",
-    "userId": "91671c06",
-    "title": "Application Approved",
-    "content": "Your application for Python Lab Teaching Assistant has been approved!",
-    "type": "APPLICATION",
-    "read": false,
-    "createdAt": 1774370250568
-  },
-  {
     "id": "f1bfa676",
     "userId": "b398e651",
     "title": "New Application",
@@ -34,5 +16,23 @@
     "type": "APPLICATION",
     "read": true,
     "createdAt": 1774370216203
+  },
+  {
+    "id": "9d69ac25",
+    "userId": "91671c06",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Python Lab Teaching Assistant.",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1774370066426
+  },
+  {
+    "id": "2905dc86",
+    "userId": "91671c06",
+    "title": "Application Approved",
+    "content": "Your application for Python Lab Teaching Assistant has been approved!",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1774370250568
   }
 ]
