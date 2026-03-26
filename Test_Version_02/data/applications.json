@@ -1,0 +1,24 @@
+[
+  {
+    "id": "260de52d",
+    "jobId": "3e8fd336",
+    "applicantId": "91671c06",
+    "cvFileName": "1774368811339____-____.pdf",
+    "coverLetter": "good at all",
+    "status": "WITHDRAWN",
+    "priority": 1,
+    "createdAt": 1774368811351,
+    "updatedAt": 1774370066422
+  },
+  {
+    "id": "61e239f2",
+    "jobId": "3e8fd336",
+    "applicantId": "91671c06",
+    "cvFileName": "1774370216192_______1.pdf",
+    "coverLetter": "aaaa",
+    "status": "APPROVED",
+    "priority": 1,
+    "createdAt": 1774370216201,
+    "updatedAt": 1774370250549
+  }
+]
