@@ -214,5 +214,93 @@
     "action": "APPLICATION_APPROVED",
     "detail": "Application 61e239f2 for Python Lab Teaching Assistant",
     "createdAt": 1774370250559
+  },
+  {
+    "id": "b5c2bd49",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774371208760
+  },
+  {
+    "id": "660ec7b7",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371218247
+  },
+  {
+    "id": "a5fd9ce3",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371238200
+  },
+  {
+    "id": "346c9dd3",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774371263062
+  },
+  {
+    "id": "a8c45b3d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371271985
+  },
+  {
+    "id": "dcc34083",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371407803
+  },
+  {
+    "id": "45971db9",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371463955
+  },
+  {
+    "id": "38deb0c2",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774371488795
+  },
+  {
+    "id": "49ee5498",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371528927
+  },
+  {
+    "id": "8d2c04ff",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1774371564332
+  },
+  {
+    "id": "3a77a416",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1774371580266
   }
 ]
