@@ -302,5 +302,77 @@
     "action": "PASSWORD_CHANGE",
     "detail": "User changed password",
     "createdAt": 1774371580266
+  },
+  {
+    "id": "21a71380",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774632116471
+  },
+  {
+    "id": "dfaf8be0",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774632186302
+  },
+  {
+    "id": "038f5579",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "CREATE_JOB",
+    "detail": "Created job: Lab Teaching Assistant222",
+    "createdAt": 1774633110537
+  },
+  {
+    "id": "ada27e6b",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774633151992
+  },
+  {
+    "id": "e22c7ac1",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774633161371
+  },
+  {
+    "id": "49f0ee85",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774633332029
+  },
+  {
+    "id": "e3b6f054",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774633342257
+  },
+  {
+    "id": "afe77cab",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774633363322
+  },
+  {
+    "id": "ab9a72c7",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774633381455
   }
 ]
