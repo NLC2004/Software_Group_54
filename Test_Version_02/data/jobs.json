@@ -33,5 +33,20 @@
     "deadline": "2026-02-13",
     "status": "OPEN",
     "createdAt": 1774368561992
+  },
+  {
+    "id": "27dac4a9",
+    "postedBy": "b398e651",
+    "title": "Lab Teaching Assistant222",
+    "type": "COURSE",
+    "courseName": "Physical Lab",
+    "description": "",
+    "requirements": [],
+    "quota": 3,
+    "schedule": "Tue/ Thu 14:00-16:00",
+    "weeklyHours": 10.0,
+    "deadline": "2026-02-13",
+    "status": "OPEN",
+    "createdAt": 1774633110533
   }
 ]
