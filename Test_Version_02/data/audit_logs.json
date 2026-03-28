@@ -374,5 +374,61 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1774633381455
+  },
+  {
+    "id": "a352a133",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774672522699
+  },
+  {
+    "id": "b60a772c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774672676645
+  },
+  {
+    "id": "0293d161",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774672682400
+  },
+  {
+    "id": "17a60ac8",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774672832170
+  },
+  {
+    "id": "5153fc2f",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774672855866
+  },
+  {
+    "id": "c4f4e78a",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774672913532
+  },
+  {
+    "id": "7011c66c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774673949799
   }
 ]
