@@ -1,0 +1,52 @@
+[
+  {
+    "id": "3e8fd336",
+    "postedBy": "b398e651",
+    "title": "Python Lab Teaching Assistant",
+    "type": "COURSE",
+    "courseName": "Advanced Machine Learning",
+    "description": "C++,java,python",
+    "requirements": [
+      "GPA \u003e\u003d 3.5",
+      "GRE\u003e\u003d100"
+    ],
+    "quota": 3,
+    "schedule": "Tue/ Thu 14:00-16:00",
+    "weeklyHours": 10.0,
+    "deadline": "2026-10-25",
+    "status": "OPEN",
+    "createdAt": 1774368446716
+  },
+  {
+    "id": "0873046a",
+    "postedBy": "b398e651",
+    "title": "Lab Teaching Assistant",
+    "type": "ACTIVITY",
+    "courseName": "Physical Lab",
+    "description": "熟练使用物理实验器材",
+    "requirements": [
+      "physical score \u003e\u003d95"
+    ],
+    "quota": 3,
+    "schedule": "Tue/ Thu 14:00-16:00",
+    "weeklyHours": 10.0,
+    "deadline": "2026-02-13",
+    "status": "OPEN",
+    "createdAt": 1774368561992
+  },
+  {
+    "id": "27dac4a9",
+    "postedBy": "b398e651",
+    "title": "Lab Teaching Assistant222",
+    "type": "COURSE",
+    "courseName": "Physical Lab",
+    "description": "",
+    "requirements": [],
+    "quota": 3,
+    "schedule": "Tue/ Thu 14:00-16:00",
+    "weeklyHours": 10.0,
+    "deadline": "2026-02-13",
+    "status": "OPEN",
+    "createdAt": 1774633110533
+  }
+]
