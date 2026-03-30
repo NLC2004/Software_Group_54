@@ -1,0 +1,57 @@
+[
+  {
+    "id": "91671c06",
+    "username": "NLC",
+    "password": "Nlc141203",
+    "role": "TA",
+    "fullName": "ninglechen",
+    "email": "ninglechen666@bupt.edu.cn",
+    "phone": "19991219967",
+    "gender": "Male",
+    "studentId": "2023213346",
+    "school": "",
+    "supervisor": "Ni cai",
+    "degree": "Masters (MSc)",
+    "yearOfStudy": "Year 3",
+    "active": true,
+    "adminRoleTemplateId": "",
+    "createdAt": 1774368133519
+  },
+  {
+    "id": "b398e651",
+    "username": "NLC_lecturer",
+    "password": "Nlc141203",
+    "role": "MO",
+    "fullName": "ninglechen",
+    "email": "ninglechen666@163.com",
+    "phone": "19991219967",
+    "gender": "",
+    "studentId": "",
+    "active": true,
+    "adminRoleTemplateId": "",
+    "createdAt": 1774368323989
+  },
+  {
+    "id": "cf8587f1",
+    "username": "SZJ",
+    "password": "123456",
+    "role": "TA",
+    "fullName": "Songzijun",
+    "email": "",
+    "studentId": "2023213340",
+    "active": true,
+    "adminRoleTemplateId": "",
+    "createdAt": 1774708676746
+  },
+  {
+    "id": "admin001",
+    "username": "admin",
+    "password": "admin123",
+    "role": "ADMIN",
+    "fullName": "System Administrator",
+    "email": "admin@bupt.edu.cn",
+    "active": true,
+    "adminRoleTemplateId": "",
+    "createdAt": 1774368072206
+  }
+]

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Management | AD Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .sidebar-item-active { background-color: #EFF6FF; border-right: 4px solid #3B82F6; color: #1D4ED8; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
+        .modal-active { display: flex !important; }
+    </style>
+</head>
+<body class="flex min-h-screen text-slate-700">
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+<span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
+</div>
+<span class="text-xl font-bold tracking-tight text-blue-900">MO Admin</span>
+</div>
+<nav class="mt-4 flex-1">
+<div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="admin-dashboard.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:squares-2x2-20-solid"></span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="job-supervision.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:briefcase"></span>
+<span>Job Supervision</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="workload-overview.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:chart-bar"></span>
+<span>Workload Stats</span>
+</a>
+<a class="sidebar-item-active flex items-center px-6 py-3 gap-3 transition-all font-medium" href="user-management.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:users"></span>
+<span class="font-medium">User Management</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="password-reset-requests.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:key"></span>
+<span>Password Resets</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all font-medium" href="basic-statistics.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:presentation-chart-line"></span>
+<span>Basic Statistics</span>
+</a>
+<div class="px-4 py-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">System Config</div>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="system-settings.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:cog-6-tooth"></span>
+<span>Settings</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-3 text-slate-500 hover:bg-slate-50 transition-all" href="audit-logs.html">
+<span class="iconify w-5 h-5" data-icon="heroicons:shield-check"></span>
+<span>Audit Logs</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<div class="flex items-center gap-3 p-2 rounded-lg bg-slate-50">
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-slate-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold truncate" data-user-name>Admin</p>
+<p class="text-[10px] text-slate-500 uppercase" data-user-role>Administrator</p>
+</div>
+<button class="text-slate-400 hover:text-red-500" onclick="logout()">
+<span class="iconify w-4 h-4" data-icon="heroicons:arrow-right-start-on-rectangle"></span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 flex-1 flex flex-col min-h-screen overflow-hidden"><!-- Top Header -->
+<header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
+<div>
+<h1 class="text-xl font-semibold">User Management</h1>
+<p class="text-xs text-gray-400">Manage students, faculty, and administrative staff accounts</p>
+</div>
+<div class="flex items-center gap-3">
+<a href="password-reset-requests.html" class="px-4 py-2 border border-amber-200 text-amber-800 bg-amber-50 rounded-lg text-sm font-medium hover:bg-amber-100 transition-all flex items-center gap-2">
+<span class="iconify w-4 h-4" data-icon="heroicons:key"></span>
+                Password reset queue
+            </a>
+<button class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all flex items-center gap-2">
+<span class="iconify w-4 h-4" data-icon="material-symbols:cloud-upload"></span>
+                Bulk Import
+            </button>
+<button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm" onclick="toggleModal('newUserModal')">
+<span class="iconify w-4 h-4" data-icon="material-symbols:add"></span>
+                Add New User
+            </button>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+<div class="max-w-7xl mx-auto space-y-6">
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="user-stats">
+<div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+<span class="iconify w-6 h-6" data-icon="material-symbols:person-play"></span>
+</div>
+<div>
+<p class="text-2xl font-bold">2,482</p>
+<p class="text-xs text-gray-500 font-medium">Active Students</p>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+<span class="iconify w-6 h-6" data-icon="material-symbols:school-outline"></span>
+</div>
+<div>
+<p class="text-2xl font-bold">156</p>
+<p class="text-xs text-gray-500 font-medium">Faculty Members</p>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+<span class="iconify w-6 h-6" data-icon="material-symbols:shield-person-outline"></span>
+</div>
+<div>
+<p class="text-2xl font-bold">12</p>
+<p class="text-xs text-gray-500 font-medium">System Admins</p>
+</div>
+</div>
+</div>
+<!-- Tabs and Filters -->
+<section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden border-b-0">
+<div class="flex border-b border-gray-100 flex-wrap">
+<button type="button" class="px-8 py-4 text-sm font-semibold tab-active flex items-center gap-2" onclick="switchTab('students', this)">
+                        Students (TA)
+                    </button>
+<button type="button" class="px-8 py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2" onclick="switchTab('teachers', this)">
+                        Teachers (MO)
+                    </button>
+<button type="button" class="px-8 py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2" onclick="switchTab('admins', this)">
+                        Administrators
+                    </button>
+</div>
+<div class="p-4 bg-gray-50/50 border-b border-gray-100 grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="relative">
+<span class="iconify absolute left-3 top-2.5 text-gray-400" data-icon="material-symbols:search"></span>
+<input id="user-search-input" class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Search by name or ID..." type="text"/>
+</div>
+<select id="filter-status" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm outline-none cursor-pointer" title="Account status">
+<option value="all">All statuses</option>
+<option value="active">Active</option>
+<option value="suspended">Suspended</option>
+<option value="graduated">Graduated</option>
+</select>
+<select id="filter-year" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm outline-none cursor-pointer" title="Filter by registration year">
+<option value="all">All years</option>
+<option value="2026">Registered 2026</option>
+<option value="2025">Registered 2025</option>
+</select>
+<button type="button" id="btn-filter-users" class="bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-all flex items-center justify-center gap-2">
+<span class="iconify" data-icon="material-symbols:filter-list"></span>
+                        Filter Results
+                    </button>
+</div>
+<!-- User Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-gray-50 text-gray-500 uppercase text-[10px] tracking-wider border-b border-gray-100">
+<tr>
+<th class="px-6 py-4 font-bold">User</th>
+<th class="px-6 py-4 font-bold">ID / Account</th>
+<th class="px-6 py-4 font-bold">Affiliation / Role</th>
+<th class="px-6 py-4 font-bold">Account Status</th>
+<th class="px-6 py-4 font-bold">Registered</th>
+<th class="px-6 py-4 font-bold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-50" id="users-tbody">
+<tr id="users-loading-row"><td colspan="6" class="px-6 py-12 text-center text-gray-400">Loading users…</td></tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination summary (list is client-filtered) -->
+<div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+<p class="text-xs text-gray-500 font-medium tracking-tight" id="pagination-info">—</p>
+</div>
+</section>
+<!-- Roles Comparison & Management Section -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+<h3 class="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
+<span class="iconify text-blue-600" data-icon="material-symbols:shield"></span>
+                        Administrative Roles &amp; Permissions
+                    </h3>
+<p class="text-[11px] text-gray-500 mb-3 leading-relaxed">Optional labels for <strong>ADMIN</strong> accounts (stored in <code class="text-[10px] bg-gray-100 px-1 rounded">data/admin_role_templates.json</code>). Product roles remain TA / MO / ADMIN.</p>
+<div class="space-y-4 min-h-[80px]" id="admin-roles-container">
+<p class="text-xs text-gray-400 text-center py-2">Loading templates…</p>
+</div>
+<button type="button" class="w-full mt-4 py-3 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl border border-dashed border-gray-300 hover:bg-gray-100 hover:border-blue-300 transition-all cursor-pointer" onclick="onDefineNewRoleClick()">
+                        + Define New Administrative Role
+                    </button>
+</div>
+<!-- Password Reset Requests -->
+<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+<h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+<span class="iconify text-amber-600" data-icon="material-symbols:lock-reset"></span>
+Pending Password Resets
+</h3>
+<div class="space-y-3" id="password-resets-list">
+<p class="text-xs text-gray-400 text-center py-4">Loading...</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Modals -->
+<!-- New User Modal -->
+<div class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4" id="newUserModal">
+<div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
+<div class="p-6 border-b border-gray-100 flex items-center justify-between bg-blue-50/50">
+<h3 class="font-bold text-lg">Create New User Account</h3>
+<button class="text-gray-400 hover:text-gray-600" onclick="toggleModal('newUserModal')"><span class="iconify w-6 h-6" data-icon="material-symbols:close"></span></button>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Account Type</label>
+<select id="newUserRole" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+<option value="TA">Student (TA)</option>
+<option value="MO">Teacher (MO)</option>
+<option value="ADMIN">Admin</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Username</label>
+<input id="newUserUsername" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. john_doe" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Full Name</label>
+<input id="newUserFullName" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. John Doe" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Email Address</label>
+<input id="newUserEmail" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="user@example.com" type="email"/>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Password</label>
+<input id="newUserPassword" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="Initial password" type="password" value="123456"/>
+</div>
+<div class="bg-blue-50 rounded-xl p-3 flex gap-3">
+<span class="iconify text-blue-600 w-5 h-5 flex-shrink-0" data-icon="material-symbols:info-outline"></span>
+<p class="text-[11px] text-blue-700 leading-relaxed">Default password is 123456. User should change it after first login.</p>
+</div>
+</div>
+<div class="p-6 pt-0">
+<button class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-all" onclick="createUser()">Create Account</button>
+</div>
+</div>
+</div>
+<!-- Permissions Modal -->
+<div class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4" id="permModal">
+<div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden">
+<div class="p-6 border-b border-gray-100 flex items-center justify-between">
+<h3 class="font-bold text-lg">Modify Advanced Permissions</h3>
+<button class="text-gray-400 hover:text-gray-600" onclick="toggleModal('permModal')"><span class="iconify w-6 h-6" data-icon="material-symbols:close"></span></button>
+</div>
+<div class="p-6 space-y-6">
+<div class="flex items-center gap-3 mb-6">
+<img class="w-12 h-12 rounded-full border" src="https://modao.cc/agent/placeholder.svg"/>
+<div>
+<p class="font-bold">Sarah Henderson</p>
+<p class="text-xs text-gray-400">Role: Faculty • Assigned to: English Dept</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-semibold">Publish Announcements</p>
+<p class="text-xs text-gray-400">Can create campus-wide news &amp; alerts</p>
+</div>
+<div class="w-10 h-5 bg-blue-600 rounded-full relative cursor-pointer"><div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
+</div>
+<div class="flex items-center justify-between opacity-50">
+<div>
+<p class="text-sm font-semibold text-gray-400">Modify Financial Records</p>
+<p class="text-xs text-gray-400 italic">Faculty role restricted by policy</p>
+</div>
+<div class="w-10 h-5 bg-gray-200 rounded-full relative"><div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-semibold">Approve Leave Requests</p>
+<p class="text-xs text-gray-400">Can approve student absences</p>
+</div>
+<div class="w-10 h-5 bg-blue-600 rounded-full relative cursor-pointer"><div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div></div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-gray-50 bg-gray-50 flex gap-3">
+<button class="flex-1 py-3 bg-white border border-gray-200 font-bold rounded-xl text-xs hover:bg-gray-100" onclick="toggleModal('permModal')">Cancel</button>
+<button class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl text-xs hover:bg-blue-700 shadow-md">Update Privileges</button>
+</div>
+</div>
+</div>
+<!-- Assign basic role (AD_09) -->
+<div class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4" id="assignRoleModal">
+<div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
+<div class="p-6 border-b border-gray-100 flex items-center justify-between bg-indigo-50/50">
+<h3 class="font-bold text-lg">Assign basic role</h3>
+<button class="text-gray-400 hover:text-gray-600" onclick="toggleModal('assignRoleModal')" type="button"><span class="iconify w-6 h-6" data-icon="material-symbols:close"></span></button>
+</div>
+<div class="p-6 space-y-4">
+<p class="text-xs text-gray-500">Set role to TA, Module organizer (MO), or Admin. Permissions update on next request.</p>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Role</label>
+<select id="assignRoleSelect" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+<option value="TA">TA</option>
+<option value="MO">Module organizer (MO)</option>
+<option value="ADMIN">Admin</option>
+</select>
+<div id="assignAdminTemplateWrap" class="hidden space-y-2 pt-2 border-t border-gray-100 mt-2">
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Admin role template</label>
+<p class="text-[11px] text-gray-500">Only for <strong>Admin</strong> accounts. Links to Admission Officer / Financial Auditor etc. (TA/MO cannot use this.)</p>
+<select id="assignAdminTemplateSelect" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+<option value="">(None)</option>
+</select>
+</div>
+</div>
+<div class="p-6 pt-0 flex gap-2">
+<button type="button" class="flex-1 py-3 border border-gray-200 font-bold rounded-xl text-sm hover:bg-gray-50" onclick="toggleModal('assignRoleModal')">Cancel</button>
+<button type="button" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl text-sm hover:bg-blue-700 shadow-md" onclick="saveAssignRole()">Save role</button>
+</div>
+</div>
+</div>
+<!-- New / Edit admin role template (GET/POST/PUT/DELETE /api/admin/role-templates) -->
+<div class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center p-4" id="newRoleTemplateModal">
+<div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+<div class="p-6 border-b border-gray-100 flex items-center justify-between bg-indigo-50/50">
+<h3 class="font-bold text-lg" id="roleTplModalTitle">New Administrative Role Template</h3>
+<button type="button" class="text-gray-400 hover:text-gray-600" onclick="closeRoleTemplateModal()"><span class="iconify w-6 h-6" data-icon="material-symbols:close"></span></button>
+</div>
+<div class="p-6 space-y-4">
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Name</label>
+<input id="newTplName" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Admission Officer, Financial Auditor" type="text"/>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Description</label>
+<textarea id="newTplDesc" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px]" placeholder="What this role covers"></textarea>
+<label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tags (comma-separated, optional)</label>
+<input id="newTplTags" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="View Applications, Edit Students" type="text"/>
+</div>
+<div class="p-6 pt-0 flex gap-2">
+<button type="button" class="flex-1 py-3 border border-gray-200 font-bold rounded-xl text-sm hover:bg-gray-50" onclick="closeRoleTemplateModal()">Cancel</button>
+<button type="button" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl text-sm hover:bg-blue-700" onclick="submitRoleTemplate()">Save</button>
+</div>
+</div>
+</div>
+<script src="/js/api.js"></script>
+<script>
+let allUsers = [];
+let currentTab = 'TA';
+let assignUserId = null;
+window.roleTemplatesCache = [];
+let editingRoleTemplateId = null;
+
+function toggleModal(id) {
+    document.getElementById(id).classList.toggle('modal-active');
+}
+
+function closeRoleTemplateModal() {
+    editingRoleTemplateId = null;
+    document.getElementById('newRoleTemplateModal').classList.remove('modal-active');
+}
+
+function onRoleTemplateCardClick(id) {
+    const t = (window.roleTemplatesCache || []).find(function(x) { return x.id === id; });
+    if (!t) return;
+    var n = t.assignedCount != null ? t.assignedCount : 0;
+    showToast(t.name + ': ' + n + ' admin account(s) use this template.', 'info');
+}
+
+function onDefineNewRoleClick() {
+    editingRoleTemplateId = null;
+    var title = document.getElementById('roleTplModalTitle');
+    if (title) title.textContent = 'New Administrative Role Template';
+    document.getElementById('newTplName').value = '';
+    document.getElementById('newTplDesc').value = '';
+    document.getElementById('newTplTags').value = '';
+    document.getElementById('newRoleTemplateModal').classList.add('modal-active');
+}
+
+async function openEditRoleTemplate(id) {
+    var t = (window.roleTemplatesCache || []).find(function(x) { return x.id === id; });
+    if (!t) {
+        try {
+            t = await API.get('/api/admin/role-templates/' + encodeURIComponent(id));
+        } catch (e) {
+            showToast(e.message || 'Failed to load template', 'error');
+            return;
+        }
+    }
+    editingRoleTemplateId = id;
+    var title = document.getElementById('roleTplModalTitle');
+    if (title) title.textContent = 'Edit Administrative Role Template';
+    document.getElementById('newTplName').value = t.name || '';
+    document.getElementById('newTplDesc').value = t.description || '';
+    document.getElementById('newTplTags').value = (t.tags || []).join(', ');
+    document.getElementById('newRoleTemplateModal').classList.add('modal-active');
+}
+
+async function submitRoleTemplate() {
+    const name = document.getElementById('newTplName').value.trim();
+    const description = document.getElementById('newTplDesc').value.trim();
+    const tagsStr = document.getElementById('newTplTags').value.trim();
+    const tags = tagsStr ? tagsStr.split(/[,，]/).map(function(s) { return s.trim(); }).filter(Boolean) : [];
+    if (!name) { showToast('Name is required', 'warning'); return; }
+    try {
+        if (editingRoleTemplateId) {
+            await API.put('/api/admin/role-templates/' + encodeURIComponent(editingRoleTemplateId), { name: name, description: description, tags: tags });
+            showToast('Template updated', 'success');
+        } else {
+            await API.post('/api/admin/role-templates', { name: name, description: description, tags: tags });
+            showToast('Template created', 'success');
+        }
+        closeRoleTemplateModal();
+        await loadRoleTemplates();
+    } catch (e) {
+        showToast(e.message || 'Save failed', 'error');
+    }
+}
+
+async function deleteRoleTemplate(id) {
+    if (!confirm('Delete this template? Admins linked to it will have the link cleared.')) return;
+    try {
+        await API.del('/api/admin/role-templates/' + encodeURIComponent(id));
+        showToast('Template deleted', 'success');
+        allUsers = await API.get('/api/admin/users');
+        updateUserStats(allUsers);
+        renderUsers(getFilteredUsers());
+        await loadRoleTemplates();
+    } catch (e) {
+        showToast(e.message || 'Delete failed', 'error');
+    }
+}
+
+function renderAdminRoleTemplates(templates) {
+    const container = document.getElementById('admin-roles-container');
+    if (!container) return;
+    if (!templates || !templates.length) {
+        container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No role templates yet. Use the button below to create one.</p>';
+        return;
+    }
+    container.innerHTML = templates.map(function(t) {
+        const tagHtml = (t.tags || []).map(function(tag) {
+            return '<span class="px-2 py-0.5 bg-white border border-blue-200 rounded text-[10px] text-blue-700 font-medium">' + esc(tag) + '</span>';
+        }).join('');
+        const tagsBlock = tagHtml || '<span class="text-[10px] text-gray-400">No tags</span>';
+        const jid = safeJsStr(t.id);
+        const cnt = t.assignedCount != null ? t.assignedCount : 0;
+        return '<div class="p-4 rounded-xl border border-gray-200 hover:border-blue-200 transition-all">' +
+            '<div class="flex items-start justify-between gap-2 mb-2">' +
+            '<div class="flex-1 min-w-0 cursor-pointer" onclick="onRoleTemplateCardClick(\'' + jid + '\')">' +
+            '<div class="flex items-center justify-between gap-2 flex-wrap">' +
+            '<span class="text-sm font-bold text-gray-800">' + esc(t.name) + '</span>' +
+            '<span class="text-[10px] text-gray-500 shrink-0">' + cnt + ' assigned</span>' +
+            '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-1 shrink-0">' +
+            '<button type="button" class="text-blue-600 hover:bg-blue-50 px-2 py-1 rounded text-xs font-semibold" onclick="event.stopPropagation(); openEditRoleTemplate(\'' + jid + '\')">Edit</button>' +
+            '<button type="button" class="text-red-600 hover:bg-red-50 px-2 py-1 rounded text-xs font-semibold" onclick="event.stopPropagation(); deleteRoleTemplate(\'' + jid + '\')">Delete</button>' +
+            '</div>' +
+            '</div>' +
+            '<div class="cursor-pointer" onclick="onRoleTemplateCardClick(\'' + jid + '\')">' +
+            '<p class="text-xs text-gray-500 leading-relaxed mb-3">' + esc(t.description || '') + '</p>' +
+            '<div class="flex flex-wrap gap-2">' + tagsBlock + '</div>' +
+            '</div>' +
+            '</div>';
+    }).join('');
+}
+
+async function loadRoleTemplates() {
+    const container = document.getElementById('admin-roles-container');
+    try {
+        const list = await API.get('/api/admin/role-templates');
+        window.roleTemplatesCache = Array.isArray(list) ? list : [];
+        renderAdminRoleTemplates(window.roleTemplatesCache);
+    } catch (e) {
+        if (container) container.innerHTML = '<p class="text-xs text-red-500">Failed to load role templates. Check your network or the server.</p>';
+    }
+}
+
+window.onclick = function(event) {
+    if (event.target.id && event.target.id.includes('Modal')) {
+        if (event.target.id === 'newRoleTemplateModal') closeRoleTemplateModal();
+        else event.target.classList.remove('modal-active');
+    }
+};
+
+(async function() {
+    const user = requireAuth(['ADMIN']);
+    if (!user) return;
+    updateSidebarUser(user);
+
+    try {
+        allUsers = await API.get('/api/admin/users');
+        updateUserStats(allUsers);
+        renderUsers(getFilteredUsers());
+        loadPasswordResets();
+        loadRoleTemplates();
+    } catch (e) {
+        showToast('Failed to load users: ' + e.message, 'error');
+    }
+
+    const searchInput = document.getElementById('user-search-input');
+    if (searchInput) {
+        let timer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(timer);
+            timer = setTimeout(function() { renderUsers(getFilteredUsers()); }, 300);
+        });
+    }
+    document.getElementById('filter-status')?.addEventListener('change', function() { renderUsers(getFilteredUsers()); });
+    document.getElementById('filter-year')?.addEventListener('change', function() { renderUsers(getFilteredUsers()); });
+    document.getElementById('btn-filter-users')?.addEventListener('click', function() { renderUsers(getFilteredUsers()); });
+    document.getElementById('assignRoleSelect')?.addEventListener('change', updateAssignAdminTemplateVisibility);
+
+    if (getUrlParam('create') === '1') {
+        toggleModal('newUserModal');
+    }
+})();
+
+function getFilteredUsers() {
+    if (!Array.isArray(allUsers)) return [];
+    let list = allUsers.filter(function(u) { return u.role === currentTab; });
+    var q = (document.getElementById('user-search-input') && document.getElementById('user-search-input').value || '').trim().toLowerCase();
+    if (q) {
+        list = list.filter(function(u) {
+            return (u.username && u.username.toLowerCase().indexOf(q) !== -1) ||
+                (u.fullName && u.fullName.toLowerCase().indexOf(q) !== -1) ||
+                (u.email && u.email.toLowerCase().indexOf(q) !== -1) ||
+                (u.studentId && String(u.studentId).toLowerCase().indexOf(q) !== -1);
+        });
+    }
+    var status = (document.getElementById('filter-status') && document.getElementById('filter-status').value) || 'all';
+    if (status === 'active') list = list.filter(function(u) { return u.active; });
+    else if (status === 'suspended') list = list.filter(function(u) { return !u.active; });
+    else if (status === 'graduated') {
+        list = list.filter(function(u) {
+            var ys = String(u.yearOfStudy || '');
+            var deg = String(u.degree || '');
+            return /grad|graduated|alumni|completed\s*study/i.test(ys + deg);
+        });
+    }
+    var yearVal = document.getElementById('filter-year') && document.getElementById('filter-year').value;
+    if (yearVal && yearVal !== 'all') {
+        var y = parseInt(yearVal, 10);
+        if (!isNaN(y)) {
+            list = list.filter(function(u) {
+                if (!u.createdAt) return false;
+                return new Date(u.createdAt).getFullYear() === y;
+            });
+        }
+    }
+    return list;
+}
+
+function switchTab(type, btn) {
+    currentTab = type === 'students' ? 'TA' : type === 'teachers' ? 'MO' : 'ADMIN';
+    document.querySelectorAll('.border-b.border-gray-100 > button').forEach(t => {
+        t.classList.remove('tab-active');
+        t.classList.add('text-gray-400');
+    });
+    if (btn) {
+        btn.classList.add('tab-active');
+        btn.classList.remove('text-gray-400');
+    }
+    renderUsers(getFilteredUsers());
+}
+
+function openUserDetail(id) {
+    window.location.href = 'user-detail.html?id=' + encodeURIComponent(id);
+}
+
+async function openAssignRole(userId, role) {
+    assignUserId = userId;
+    const sel = document.getElementById('assignRoleSelect');
+    if (sel && (role === 'TA' || role === 'MO' || role === 'ADMIN')) sel.value = role;
+    if (!window.roleTemplatesCache || !window.roleTemplatesCache.length) {
+        try { await loadRoleTemplates(); } catch (e) { /* ignore */ }
+    }
+    const u = allUsers.find(function(x) { return x.id === userId; });
+    populateAssignAdminTemplateSelect(u && u.adminRoleTemplateId ? u.adminRoleTemplateId : '');
+    updateAssignAdminTemplateVisibility();
+    toggleModal('assignRoleModal');
+}
+
+function populateAssignAdminTemplateSelect(currentId) {
+    const select = document.getElementById('assignAdminTemplateSelect');
+    if (!select) return;
+    select.innerHTML = '';
+    const none = document.createElement('option');
+    none.value = '';
+    none.textContent = '(None)';
+    select.appendChild(none);
+    (window.roleTemplatesCache || []).forEach(function(t) {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name + ' (' + (t.assignedCount != null ? t.assignedCount : 0) + ' admins)';
+        select.appendChild(opt);
+    });
+    if (currentId) select.value = currentId;
+}
+
+function updateAssignAdminTemplateVisibility() {
+    const role = document.getElementById('assignRoleSelect') && document.getElementById('assignRoleSelect').value;
+    const wrap = document.getElementById('assignAdminTemplateWrap');
+    if (!wrap) return;
+    if (role === 'ADMIN') wrap.classList.remove('hidden');
+    else wrap.classList.add('hidden');
+}
+
+async function saveAssignRole() {
+    if (!assignUserId) return;
+    const role = document.getElementById('assignRoleSelect').value;
+    const body = { role: role };
+    if (role === 'ADMIN') {
+        const tid = document.getElementById('assignAdminTemplateSelect') && document.getElementById('assignAdminTemplateSelect').value;
+        body.adminRoleTemplateId = tid || '';
+    } else {
+        body.adminRoleTemplateId = '';
+    }
+    try {
+        await API.put('/api/admin/users/' + assignUserId, body);
+        showToast('Role updated', 'success');
+        toggleModal('assignRoleModal');
+        allUsers = await API.get('/api/admin/users');
+        updateUserStats(allUsers);
+        renderUsers(getFilteredUsers());
+        await loadRoleTemplates();
+    } catch (e) {
+        showToast('Failed: ' + e.message, 'error');
+    }
+}
+
+function updateUserStats(users) {
+    const cards = document.querySelectorAll('#user-stats > div');
+    const tas = users.filter(u => u.role === 'TA').length;
+    const mos = users.filter(u => u.role === 'MO').length;
+    const admins = users.filter(u => u.role === 'ADMIN').length;
+    if (cards[0]) cards[0].querySelector('p.text-2xl').textContent = tas.toLocaleString();
+    if (cards[1]) cards[1].querySelector('p.text-2xl').textContent = mos.toLocaleString();
+    if (cards[2]) cards[2].querySelector('p.text-2xl').textContent = admins.toLocaleString();
+}
+
+function renderUsers(users) {
+    const tbody = document.getElementById('users-tbody');
+    if (!users.length) {
+        var st = document.getElementById('filter-status') && document.getElementById('filter-status').value;
+        var hint = (st === 'suspended') ? '<p class="text-xs text-gray-400 mt-2">No suspended (deactivated) accounts under this tab.</p>' : (st === 'graduated') ? '<p class="text-xs text-gray-400 mt-2">No users matched graduation keywords in yearOfStudy / degree.</p>' : '';
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-gray-400">No users match the filters.' + hint + '</td></tr>';
+        updatePaginationInfo(0);
+        return;
+    }
+    tbody.innerHTML = users.map(u => {
+        const uid = safeJsStr(u.id);
+        const uname = safeJsStr(u.fullName || u.username);
+        const initials = (u.fullName || u.username || '??').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+        const statusClass = u.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+        const statusText = u.active ? 'ACTIVE' : 'DISABLED';
+        const roleBadge = u.role === 'ADMIN'
+            ? '<span class="text-xs text-blue-600 font-bold border border-blue-200 px-2 py-0.5 rounded">' + esc(u.role) + '</span>'
+            : '<span class="text-xs text-gray-600">' + esc(u.role) + '</span>';
+        return `<tr class="hover:bg-blue-50/20 transition-colors">
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xs font-bold">${esc(initials)}</div>
+                    <div>
+                        <p class="text-sm font-semibold">${esc(u.fullName || u.username)}</p>
+                        <p class="text-[11px] text-gray-400">${esc(u.email || '')}</p>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-sm font-medium text-gray-600">${esc(u.studentId || u.username)}</td>
+            <td class="px-6 py-4">${roleBadge}</td>
+            <td class="px-6 py-4 text-sm font-medium">
+                <span class="px-2.5 py-1 ${statusClass} text-[10px] font-bold rounded-full">${statusText}</span>
+            </td>
+            <td class="px-6 py-4 text-xs text-gray-400 font-mono">${u.createdAt ? formatDateTime(u.createdAt) : '-'}</td>
+            <td class="px-6 py-4 text-right">
+                <div class="flex flex-wrap justify-end gap-1 items-center">
+                    <button type="button" class="px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg" onclick="openUserDetail('${uid}')">View details</button>
+                    <button type="button" class="px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg" onclick="openAssignRole('${uid}', '${u.role}')">Assign role</button>
+                    <button type="button" class="px-2 py-1 text-xs font-semibold ${u.active ? 'text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100' : 'text-green-800 bg-green-50 border border-green-200 hover:bg-green-100'} rounded-lg" onclick="toggleActive('${uid}', ${u.active})">${u.active ? 'Deactivate' : 'Activate'}</button>
+                    <button type="button" class="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Reset password to 123456" onclick="resetPassword('${uid}', '${uname}')">
+                        <span class="iconify w-4 h-4" data-icon="material-symbols:lock-reset"></span>
+                    </button>
+                    <button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete user" onclick="deleteUser('${uid}', '${uname}')">
+                        <span class="iconify w-4 h-4" data-icon="material-symbols:delete-outline"></span>
+                    </button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+    updatePaginationInfo(users.length);
+}
+
+function updatePaginationInfo(count) {
+    const info = document.getElementById('pagination-info');
+    if (info) info.textContent = count === 0 ? 'No results' : ('Showing ' + count + ' user' + (count === 1 ? '' : 's') + ' (current tab + filters)');
+}
+
+async function toggleActive(id, currentActive) {
+    const action = currentActive ? 'disable' : 'enable';
+    if (!confirm('Are you sure you want to ' + action + ' this user?')) return;
+    try {
+        await API.put('/api/admin/users/' + id, { active: !currentActive });
+        showToast('User ' + action + 'd successfully', 'success');
+        allUsers = await API.get('/api/admin/users');
+        updateUserStats(allUsers);
+        renderUsers(getFilteredUsers());
+    } catch (e) {
+        showToast('Failed to update user: ' + e.message, 'error');
+    }
+}
+
+async function resetPassword(id, name) {
+    if (!confirm('Reset password for ' + name + ' to "123456"?')) return;
+    try {
+        await API.put('/api/admin/users/' + id, { password: '123456' });
+        showToast('Password reset successfully', 'success');
+    } catch (e) {
+        showToast('Failed to reset password: ' + e.message, 'error');
+    }
+}
+
+async function deleteUser(id, name) {
+    if (!confirm('Delete user "' + name + '"? This cannot be undone.')) return;
+    try {
+        await API.del('/api/admin/users/' + id);
+        showToast('User deleted', 'success');
+        allUsers = await API.get('/api/admin/users');
+        updateUserStats(allUsers);
+        renderUsers(getFilteredUsers());
+    } catch (e) {
+        showToast('Failed to delete user: ' + e.message, 'error');
+    }
+}
+
+async function createUser() {
+    const role = document.getElementById('newUserRole').value;
+    const username = document.getElementById('newUserUsername').value.trim();
+    const fullName = document.getElementById('newUserFullName').value.trim();
+    const email = document.getElementById('newUserEmail').value.trim();
+    const password = document.getElementById('newUserPassword').value;
+    if (!username) { showToast('Username is required', 'warning'); return; }
+    if (!password) { showToast('Password is required', 'warning'); return; }
+    try {
+        await API.post('/api/auth/register', { username, password, fullName, email, role });
+        showToast('User created successfully', 'success');
+        toggleModal('newUserModal');
+        allUsers = await API.get('/api/admin/users');
+        updateUserStats(allUsers);
+        renderUsers(getFilteredUsers());
+    } catch (e) {
+        showToast('Failed to create user: ' + e.message, 'error');
+    }
+}
+
+async function loadPasswordResets() {
+    const container = document.getElementById('password-resets-list');
+    try {
+        const resets = await API.get('/api/admin/password-resets?status=PENDING');
+        if (!resets || !resets.length) {
+            container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No pending password reset requests.</p>';
+            return;
+        }
+        container.innerHTML = resets.map(r => `
+            <div class="p-3 border border-gray-100 rounded-xl flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-semibold">${esc(r.fullName || r.studentId)}</p>
+                    <p class="text-[11px] text-gray-400">${esc(r.email || '')} &bull; ${esc(r.notes || '')}</p>
+                    <p class="text-[10px] text-gray-400">${timeAgo(r.createdAt)}</p>
+                </div>
+                <div class="flex gap-1">
+                    <button onclick="approveReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold text-green-600 bg-green-50 rounded hover:bg-green-100">Approve</button>
+                    <button onclick="rejectReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold text-red-600 bg-red-50 rounded hover:bg-red-100">Reject</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        container.innerHTML = '<p class="text-xs text-red-400 text-center py-4">Failed to load resets.</p>';
+    }
+}
+
+async function approveReset(id) {
+    try {
+        await API.put('/api/admin/password-resets/' + id, { action: 'APPROVE' });
+        showToast('Password reset approved', 'success');
+        loadPasswordResets();
+    } catch (e) {
+        showToast('Failed: ' + e.message, 'error');
+    }
+}
+
+async function rejectReset(id) {
+    const reason = prompt('Reason for rejection (optional):');
+    try {
+        await API.put('/api/admin/password-resets/' + id, { action: 'REJECT', reason: reason || '' });
+        showToast('Password reset rejected', 'success');
+        loadPasswordResets();
+    } catch (e) {
+        showToast('Failed: ' + e.message, 'error');
+    }
+}
+</script>
+</body>
+</html>

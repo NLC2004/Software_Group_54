@@ -1,0 +1,41 @@
+[
+  {
+    "id": "ex20260330a1",
+    "dataSubject": "Core Data Export",
+    "dateRange": "2026-03-01 to 2026-03-30",
+    "format": "CSV",
+    "status": "COMPLETED",
+    "generatorId": "admin001",
+    "generatorName": "System Administrator",
+    "fileName": "1743342000000_export_20260330.csv",
+    "errorMessage": "",
+    "createdAt": 1743342000000,
+    "updatedAt": 1743342000000
+  },
+  {
+    "id": "ex20260330b2",
+    "dataSubject": "Applicants Weekly Snapshot",
+    "dateRange": "2026-03-24 to 2026-03-30",
+    "format": "CSV",
+    "status": "PROCESSING",
+    "generatorId": "admin001",
+    "generatorName": "System Administrator",
+    "fileName": "",
+    "errorMessage": "",
+    "createdAt": 1743345600000,
+    "updatedAt": 1743345600000
+  },
+  {
+    "id": "ex20260330c3",
+    "dataSubject": "School Distribution Report",
+    "dateRange": "2026-02-01 to 2026-02-28",
+    "format": "CSV",
+    "status": "COMPLETED",
+    "generatorId": "admin001",
+    "generatorName": "System Administrator",
+    "fileName": "1774878753503_retry_export_1774878753498.csv",
+    "errorMessage": "",
+    "createdAt": 1743349200000,
+    "updatedAt": 1774878753517
+  }
+]

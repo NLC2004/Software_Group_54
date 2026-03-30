@@ -1,0 +1,17 @@
+=== USERS ===
+ID,Username,Role,FullName,Email,Phone,Active,CreatedAt
+91671c06,NLC,TA,ninglechen,ninglechen666@bupt.edu.cn,19991219967,true,1774368133519
+b398e651,NLC_lecturer,MO,ninglechen,ninglechen666@163.com,19991219967,true,1774368323989
+cf8587f1,SZJ,TA,Songzijun,,,true,1774708676746
+admin001,admin,ADMIN,System Administrator,admin@bupt.edu.cn,,true,1774368072206
+
+=== JOBS ===
+ID,Title,Type,CourseName,PostedBy,Quota,WeeklyHours,Status,CreatedAt
+3e8fd336,Python Lab Teaching Assistant,COURSE,Advanced Machine Learning,b398e651,3,10.0,OPEN,1774368446716
+0873046a,Lab Teaching Assistant,ACTIVITY,Physical Lab,b398e651,3,10.0,OPEN,1774368561992
+27dac4a9,Lab Teaching Assistant222,COURSE,Physical Lab,b398e651,3,10.0,OPEN,1774633110533
+
+=== APPLICATIONS ===
+ID,JobId,ApplicantId,Status,Priority,CvFile,CreatedAt,UpdatedAt
+260de52d,3e8fd336,91671c06,WITHDRAWN,1,1774368811339____-____.pdf,1774368811351,1774370066422
+61e239f2,3e8fd336,91671c06,APPROVED,1,1774370216192_______1.pdf,1774370216201,1774370250549

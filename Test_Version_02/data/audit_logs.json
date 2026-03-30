@@ -1,0 +1,634 @@
+[
+  {
+    "id": "47af0265",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "REGISTER",
+    "detail": "New TA registered",
+    "createdAt": 1774368133520
+  },
+  {
+    "id": "35fd7aee",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774368136986
+  },
+  {
+    "id": "b77a2592",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774368144655
+  },
+  {
+    "id": "a56bce5e",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "REGISTER",
+    "detail": "New MO registered",
+    "createdAt": 1774368323990
+  },
+  {
+    "id": "4cec14f3",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "CREATE_JOB",
+    "detail": "Created job: Python Lab Teaching Assistant",
+    "createdAt": 1774368446726
+  },
+  {
+    "id": "5774a658",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "CREATE_JOB",
+    "detail": "Created job: Lab Teaching Assistant",
+    "createdAt": 1774368561994
+  },
+  {
+    "id": "3ff14b35",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1774368668772
+  },
+  {
+    "id": "ad3c0847",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1774368703313
+  },
+  {
+    "id": "737b7275",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1774368725236
+  },
+  {
+    "id": "ae2920f5",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774368736695
+  },
+  {
+    "id": "21d43602",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774368745988
+  },
+  {
+    "id": "056bb5bb",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "APPLY",
+    "detail": "Applied for job: Python Lab Teaching Assistant",
+    "createdAt": 1774368811352
+  },
+  {
+    "id": "ad0ed524",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774368909271
+  },
+  {
+    "id": "599dc955",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774368946483
+  },
+  {
+    "id": "8d0a084c",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774369131877
+  },
+  {
+    "id": "23293dd2",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774369157915
+  },
+  {
+    "id": "b9036856",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774369167407
+  },
+  {
+    "id": "0ae5a408",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774369178508
+  },
+  {
+    "id": "f29acfc4",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774369186832
+  },
+  {
+    "id": "d1202a34",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774369929782
+  },
+  {
+    "id": "17d70884",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774370043857
+  },
+  {
+    "id": "0ad687c6",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774370050121
+  },
+  {
+    "id": "a6bdc370",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "APPLICATION_WITHDRAWN",
+    "detail": "Application 260de52d for Python Lab Teaching Assistant",
+    "createdAt": 1774370066424
+  },
+  {
+    "id": "7f274a4b",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "APPLY",
+    "detail": "Applied for job: Python Lab Teaching Assistant",
+    "createdAt": 1774370216202
+  },
+  {
+    "id": "437ba80a",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774370221761
+  },
+  {
+    "id": "4b4efcf9",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774370240385
+  },
+  {
+    "id": "dcf55ce8",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application 61e239f2 for Python Lab Teaching Assistant",
+    "createdAt": 1774370250559
+  },
+  {
+    "id": "b5c2bd49",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774371208760
+  },
+  {
+    "id": "660ec7b7",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371218247
+  },
+  {
+    "id": "a5fd9ce3",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371238200
+  },
+  {
+    "id": "346c9dd3",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774371263062
+  },
+  {
+    "id": "a8c45b3d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371271985
+  },
+  {
+    "id": "dcc34083",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371407803
+  },
+  {
+    "id": "45971db9",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371463955
+  },
+  {
+    "id": "38deb0c2",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774371488795
+  },
+  {
+    "id": "49ee5498",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774371528927
+  },
+  {
+    "id": "8d2c04ff",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1774371564332
+  },
+  {
+    "id": "3a77a416",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1774371580266
+  },
+  {
+    "id": "21a71380",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774632116471
+  },
+  {
+    "id": "dfaf8be0",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774632186302
+  },
+  {
+    "id": "038f5579",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "CREATE_JOB",
+    "detail": "Created job: Lab Teaching Assistant222",
+    "createdAt": 1774633110537
+  },
+  {
+    "id": "ada27e6b",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774633151992
+  },
+  {
+    "id": "e22c7ac1",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774633161371
+  },
+  {
+    "id": "49f0ee85",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774633332029
+  },
+  {
+    "id": "e3b6f054",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774633342257
+  },
+  {
+    "id": "afe77cab",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774633363322
+  },
+  {
+    "id": "ab9a72c7",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774633381455
+  },
+  {
+    "id": "a352a133",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774672522699
+  },
+  {
+    "id": "b60a772c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774672676645
+  },
+  {
+    "id": "0293d161",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774672682400
+  },
+  {
+    "id": "17a60ac8",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774672832170
+  },
+  {
+    "id": "5153fc2f",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774672855866
+  },
+  {
+    "id": "c4f4e78a",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774672913532
+  },
+  {
+    "id": "7011c66c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774673949799
+  },
+  {
+    "id": "8cd0d189",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774705180727
+  },
+  {
+    "id": "41a44758",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774705191622
+  },
+  {
+    "id": "ca210d18",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774705225183
+  },
+  {
+    "id": "3f4ca98c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774706444734
+  },
+  {
+    "id": "73d03078",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774706821121
+  },
+  {
+    "id": "9ea225b8",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774707066927
+  },
+  {
+    "id": "af668774",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774707558891
+  },
+  {
+    "id": "d656556d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin",
+    "createdAt": 1774707584223
+  },
+  {
+    "id": "f0c60f49",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin",
+    "createdAt": 1774707597558
+  },
+  {
+    "id": "53e062d1",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774708373370
+  },
+  {
+    "id": "65c15675",
+    "userId": "cf8587f1",
+    "username": "SZJ",
+    "action": "REGISTER",
+    "detail": "New TA registered",
+    "createdAt": 1774708676768
+  },
+  {
+    "id": "f9c821d4",
+    "userId": "cf8587f1",
+    "username": "SZJ",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1774708683191
+  },
+  {
+    "id": "34a8333a",
+    "userId": "",
+    "username": "2023213340",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from Songzijun",
+    "createdAt": 1774708704877
+  },
+  {
+    "id": "f1812250",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774708727255
+  },
+  {
+    "id": "a49788dd",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: Songzijun",
+    "createdAt": 1774708746449
+  },
+  {
+    "id": "0186d1a4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "ADMIN_ROLE_TEMPLATE_DELETE",
+    "detail": "Deleted template id: tpl-fin02",
+    "createdAt": 1774708969880
+  },
+  {
+    "id": "155619de",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774878118732
+  },
+  {
+    "id": "22a703d7",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774878728860
+  },
+  {
+    "id": "528850ee",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "EXPORT_RETRY",
+    "detail": "Retried export task\u003dex20260330c3",
+    "createdAt": 1774878753522
+  },
+  {
+    "id": "a708af22",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774879753208
+  },
+  {
+    "id": "38445168",
+    "userId": "cf8587f1",
+    "username": "SZJ",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774880683034
+  },
+  {
+    "id": "9c5d34f1",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774880707643
+  },
+  {
+    "id": "c4a4f8e4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1774881002552
+  },
+  {
+    "id": "23c31ef0",
+    "userId": "07532187",
+    "username": "SZJ666",
+    "action": "REGISTER",
+    "detail": "New TA registered",
+    "createdAt": 1774881067689
+  },
+  {
+    "id": "de245d54",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_DELETE",
+    "detail": "Deleted user: SZJ666",
+    "createdAt": 1774881083540
+  }
+]
