@@ -73,11 +73,15 @@ const API = {
 
 function redirectToLogin() {
     const path = window.location.pathname;
-    if (path.startsWith('/MO/') || path.startsWith('/admin/')) {
-        window.location.href = '/MO/index.html';
-    } else {
-        window.location.href = '/TA/index.html';
+    if (path.startsWith('/admin/')) {
+        window.location.href = '/admin/index.html';
+        return;
     }
+    if (path.startsWith('/MO/')) {
+        window.location.href = '/MO/index.html';
+        return;
+    }
+    window.location.href = '/TA/index.html';
 }
 
 function requireAuth(allowedRoles) {
