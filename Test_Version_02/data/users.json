@@ -38,5 +38,22 @@
     "studentId": "",
     "active": true,
     "createdAt": 1774368323989
+  },
+  {
+    "id": "6e6df15f",
+    "username": "Siying Li",
+    "password": "li123456",
+    "role": "TA",
+    "fullName": "Siying Li",
+    "email": "lisiying@bupt.edu.cn",
+    "phone": "13931092945",
+    "gender": "Female",
+    "studentId": "231225672",
+    "school": "International School",
+    "supervisor": "WangLiang",
+    "degree": "Masters (MSc)",
+    "yearOfStudy": "Year 3",
+    "active": true,
+    "createdAt": 1775365242930
   }
 ]

@@ -430,5 +430,45 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1774673949799
+  },
+  {
+    "id": "b67f77c0",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "REGISTER",
+    "detail": "New TA registered",
+    "createdAt": 1775365242949
+  },
+  {
+    "id": "23305b4d",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775365342105
+  },
+  {
+    "id": "48578140",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775365988428
+  },
+  {
+    "id": "f8d57f67",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775366019121
+  },
+  {
+    "id": "1f7a1bf2",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775366831973
   }
 ]
