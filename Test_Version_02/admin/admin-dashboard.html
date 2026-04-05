@@ -576,26 +576,7 @@
     });
   })();
   </script>
-  <script src="/js/tarecruit-api.js"></script>
-  <script src="/js/admin-portal.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-      if (!AdminPortal.safeGuard()) return;
-      try {
-        var s = await TR.adminStats();
-        var set = function (id, v) {
-          var el = document.getElementById(id);
-          if (el) el.textContent = v != null ? v : '—';
-        };
-        set('adm-stat-users', s.totalUsers);
-        set('adm-stat-openjobs', s.openJobs);
-        set('adm-stat-apps', s.totalApplications);
-        set('adm-stat-overload', s.overloadedTAs);
-      } catch (e) {
-        console.warn(e);
-      }
-    });
-  </script>
+  <script src="/js/api.js"></script>
 
 </body>
 

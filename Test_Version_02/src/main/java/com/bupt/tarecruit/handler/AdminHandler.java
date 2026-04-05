@@ -40,6 +40,9 @@ public class AdminHandler extends BaseHandler {
 
     private void handleUsers(HttpExchange ex, String path, String method, User admin) throws IOException {
         String[] parts = path.split("/");
+        boolean isSuperAdmin = (admin.username != null && admin.username.equals("admin"))
+                || (admin.studentId != null && admin.studentId.equals("admin"));
+
         if (parts.length == 4 && "GET".equals(method)) {
             String search = getQueryParam(ex, "search");
             String role = getQueryParam(ex, "role");
@@ -65,13 +68,70 @@ public class AdminHandler extends BaseHandler {
                 return m;
             }).collect(Collectors.toList());
             sendJson(ex, 200, result);
+        } else if (parts.length == 4 && "POST".equals(method)) {
+            if (!isSuperAdmin) {
+                sendError(ex, 403, "Only super admin can create admin accounts");
+                return;
+            }
+            JsonObject body = parseJson(readBody(ex));
+            String username = body.has("username") ? body.get("username").getAsString() : "";
+            String password = body.has("password") ? body.get("password").getAsString() : "";
+            String role = body.has("role") ? body.get("role").getAsString() : "";
+            String fullName = body.has("fullName") ? body.get("fullName").getAsString() : "";
+            String email = body.has("email") ? body.get("email").getAsString() : "";
+            String studentId = body.has("studentId") ? body.get("studentId").getAsString() : "";
+
+            if (username.trim().isEmpty() || password.trim().isEmpty() || role.trim().isEmpty()
+                    || fullName.trim().isEmpty() || email.trim().isEmpty() || studentId.trim().isEmpty()) {
+                sendError(ex, 400, "Please fill in all required fields");
+                return;
+            }
+            if (!"ADMIN".equalsIgnoreCase(role)) {
+                sendError(ex, 400, "Only admin accounts can be created here");
+                return;
+            }
+            if (ds.getUserByUsername(username) != null) {
+                sendError(ex, 409, "Username already exists");
+                return;
+            }
+
+            User newAdmin = new User();
+            newAdmin.username = username;
+            newAdmin.password = password;
+            newAdmin.role = "ADMIN";
+            newAdmin.fullName = fullName;
+            newAdmin.email = email;
+            newAdmin.studentId = studentId;
+
+            newAdmin = ds.addUser(newAdmin);
+            ds.addAuditLog(admin.id, admin.username, "ADMIN_CREATE", "Created admin: " + newAdmin.username);
+            Map<String, Object> resp = new LinkedHashMap<>();
+            resp.put("message", "Admin created");
+            resp.put("user", Map.of(
+                    "id", newAdmin.id,
+                    "username", newAdmin.username,
+                    "role", newAdmin.role,
+                    "fullName", newAdmin.fullName,
+                    "email", newAdmin.email,
+                    "studentId", newAdmin.studentId,
+                    "active", newAdmin.active,
+                    "createdAt", newAdmin.createdAt
+            ));
+            sendJson(ex, 201, resp);
         } else if (parts.length == 5 && "PUT".equals(method)) {
             String userId = parts[4];
             User target = ds.getUserById(userId);
             if (target == null) { sendError(ex, 404, "User not found"); return; }
             JsonObject body = parseJson(readBody(ex));
             if (body.has("active")) target.active = body.get("active").getAsBoolean();
-            if (body.has("role")) target.role = body.get("role").getAsString();
+            if (body.has("role")) {
+                String newRole = body.get("role").getAsString();
+                if ("ADMIN".equalsIgnoreCase(newRole) && !isSuperAdmin) {
+                    sendError(ex, 403, "Only super admin can promote to ADMIN");
+                    return;
+                }
+                target.role = newRole;
+            }
             if (body.has("password")) target.password = body.get("password").getAsString();
             ds.updateUser(target);
             ds.addAuditLog(admin.id, admin.username, "USER_UPDATE", "Updated user: " + target.username);
