@@ -84,6 +84,39 @@ Notifications
 <script>
 let allJobs = [];
 
+function parseDeadline(deadline) {
+    if (!deadline) return null;
+    const raw = String(deadline).trim();
+    if (!raw) return null;
+    const normalized = raw.replace(/\//g, '-');
+    const pureDateMatch = normalized.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (pureDateMatch) {
+        const [, year, month, day] = pureDateMatch;
+        return new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999).getTime();
+    }
+    let ts = Date.parse(raw);
+    if (!Number.isNaN(ts)) return ts;
+    ts = Date.parse(normalized);
+    return Number.isNaN(ts) ? null : ts;
+}
+
+function getDeadlineStatus(deadline) {
+    const deadlineTs = parseDeadline(deadline);
+    if (!deadlineTs) {
+        return { text: 'Open', className: 'bg-green-100 text-green-600' };
+    }
+    const now = Date.now();
+    const diff = deadlineTs - now;
+    const reminderWindowMs = 48 * 60 * 60 * 1000;
+    if (diff <= 0) {
+        return { text: 'Expired', className: 'bg-gray-200 text-gray-600' };
+    }
+    if (diff <= reminderWindowMs) {
+        return { text: 'Closing soon', className: 'bg-orange-100 text-orange-600' };
+    }
+    return { text: 'Open', className: 'bg-green-100 text-green-600' };
+}
+
 function renderJobs(jobs) {
     const container = document.getElementById('list-container');
     if (jobs.length === 0) {
@@ -93,16 +126,12 @@ function renderJobs(jobs) {
 
     container.innerHTML = jobs.map(job => {
         const deadline = job.deadline ? formatDate(job.deadline) : 'N/A';
-        const isClosingSoon = job.deadline && (new Date(job.deadline) - new Date()) < 5 * 24 * 60 * 60 * 1000;
-        const badgeClass = isClosingSoon
-            ? 'bg-orange-100 text-orange-600'
-            : 'bg-green-100 text-green-600';
-        const badgeText = isClosingSoon ? 'Closing soon' : 'Open';
+        const deadlineStatus = getDeadlineStatus(job.deadline);
 
         return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
             <div class="p-6 flex-1">
                 <div class="flex justify-between items-start mb-4">
-                    <span class="${badgeClass} text-xs px-2.5 py-1 rounded-full font-medium">${badgeText}</span>
+                    <span class="${deadlineStatus.className} text-xs px-2.5 py-1 rounded-full font-medium">${deadlineStatus.text}</span>
                     ${job.applicationCount != null ? `<span class="text-xs text-gray-400">${job.applicationCount} applied</span>` : ''}
                 </div>
                 <h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">${esc(job.title || job.courseName || '')}</h3>
