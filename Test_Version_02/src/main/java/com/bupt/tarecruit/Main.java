@@ -35,7 +35,7 @@ public class Main {
         System.out.println("===========================================");
         System.out.println("  TA Login:    http://localhost:" + port + "/TA/index.html");
         System.out.println("  MO Login:    http://localhost:" + port + "/MO/index.html");
-        System.out.println("  Admin Login: http://localhost:" + port + "/MO/index.html");
+        System.out.println("  Admin Login: http://localhost:" + port + "/admin/index.html");
         System.out.println("===========================================");
 
         try {

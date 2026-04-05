@@ -48,5 +48,119 @@
     "deadline": "2026-02-13",
     "status": "OPEN",
     "createdAt": 1774633110533
+  },
+  {
+    "id": "job001",
+    "postedBy": "mo001",
+    "title": "TA Needed: Programming Fundamentals",
+    "type": "COURSE",
+    "courseName": "Programming Fundamentals",
+    "description": "Support tutorials, grading and office hours.",
+    "requirements": [
+      "Strong Java basics",
+      "Good communication",
+      "Available weekly"
+    ],
+    "quota": 2,
+    "schedule": "Mon 18:00-20:00",
+    "weeklyHours": 6.0,
+    "deadline": "2026-05-01",
+    "status": "OPEN",
+    "createdAt": 1774948087810
+  },
+  {
+    "id": "job002",
+    "postedBy": "mo002",
+    "title": "TA Needed: Data Structures",
+    "type": "COURSE",
+    "courseName": "Data Structures",
+    "description": "Help with labs and assignments.",
+    "requirements": [
+      "Solid DS/Algo",
+      "Responsible",
+      "Teamwork"
+    ],
+    "quota": 1,
+    "schedule": "Wed 14:00-16:00",
+    "weeklyHours": 5.0,
+    "deadline": "2026-05-05",
+    "status": "OPEN",
+    "createdAt": 1775034487810
+  },
+  {
+    "id": "job003",
+    "postedBy": "mo003",
+    "title": "TA Needed: Database Systems",
+    "type": "COURSE",
+    "courseName": "Database Systems",
+    "description": "Assist with SQL labs and project support.",
+    "requirements": [
+      "SQL proficiency",
+      "Patience",
+      "Clear explanation"
+    ],
+    "quota": 2,
+    "schedule": "Thu 10:00-12:00",
+    "weeklyHours": 4.0,
+    "deadline": "2026-05-10",
+    "status": "OPEN",
+    "createdAt": 1775120887810
+  },
+  {
+    "id": "job004",
+    "postedBy": "mo004",
+    "title": "TA Needed: Software Engineering Project",
+    "type": "ACTIVITY",
+    "courseName": "SE Project",
+    "description": "Mentor team projects and demos.",
+    "requirements": [
+      "Project experience",
+      "Mentoring",
+      "Time management"
+    ],
+    "quota": 1,
+    "schedule": "Fri 16:00-18:00",
+    "weeklyHours": 3.0,
+    "deadline": "2026-04-25",
+    "status": "CLOSED",
+    "createdAt": 1774516087810
+  },
+  {
+    "id": "job005",
+    "postedBy": "mo005",
+    "title": "TA Needed: Computer Networks",
+    "type": "COURSE",
+    "courseName": "Computer Networks",
+    "description": "Assist with network labs and Q\u0026A.",
+    "requirements": [
+      "Basic networking",
+      "Hands-on",
+      "Reliable"
+    ],
+    "quota": 1,
+    "schedule": "Tue 08:00-10:00",
+    "weeklyHours": 4.0,
+    "deadline": "2026-05-15",
+    "status": "OPEN",
+    "createdAt": 1775207287810
+  },
+  {
+    "id": "job006",
+    "postedBy": "mo006",
+    "title": "TA Needed: AI Basics",
+    "type": "COURSE",
+    "courseName": "AI Basics",
+    "description": "Help with homework review and tutorials.",
+    "requirements": [
+      "ML fundamentals",
+      "Python basics",
+      "Communication"
+    ],
+    "quota": 2,
+    "schedule": "Sat 09:00-11:00",
+    "weeklyHours": 5.0,
+    "deadline": "2026-05-20",
+    "status": "OPEN",
+    "createdAt": 1775293687810
   }
 ]
