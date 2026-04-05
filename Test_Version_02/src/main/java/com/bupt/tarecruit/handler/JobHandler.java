@@ -186,12 +186,27 @@ public class JobHandler extends BaseHandler {
             sendError(ex, 409, "You have already applied for this position"); return;
         }
         JsonObject body = parseJson(readBody(ex));
+        int priority = body.has("priority") ? body.get("priority").getAsInt() : 0;
+        if (priority < 1 || priority > 3) {
+            sendError(ex, 400, "Priority must be 1, 2, or 3"); return;
+        }
+        List<Application> activeApplications = ds.getApplicationsByApplicant(user.id).stream()
+                .filter(a -> !"WITHDRAWN".equals(a.status) && !"REJECTED".equals(a.status))
+                .collect(Collectors.toList());
+        if (activeApplications.size() >= 3) {
+            sendError(ex, 409, "You already have 3 active applications"); return;
+        }
+        boolean duplicatePriority = activeApplications.stream()
+                .anyMatch(a -> a.priority == priority);
+        if (duplicatePriority) {
+            sendError(ex, 409, "This priority is already used by another active application"); return;
+        }
         Application app = new Application();
         app.jobId = jobId;
         app.applicantId = user.id;
         app.coverLetter = body.has("coverLetter") ? body.get("coverLetter").getAsString() : "";
         app.cvFileName = body.has("cvFileName") ? body.get("cvFileName").getAsString() : "";
-        app.priority = body.has("priority") ? body.get("priority").getAsInt() : 0;
+        app.priority = priority;
         app = ds.addApplication(app);
 
         ds.addAuditLog(user.id, user.username, "APPLY", "Applied for job: " + job.title);

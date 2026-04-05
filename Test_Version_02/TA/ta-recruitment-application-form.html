@@ -110,6 +110,36 @@
 </div>
 </section>
 <section>
+<h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">Preference Selection</h3>
+<div class="bg-blue-50 rounded-2xl border border-blue-100 p-5 space-y-4">
+<p class="text-xs text-blue-700 leading-relaxed">Select your preference rank for this position. Each active application can only use one unique priority, and you can keep at most three active preferences at the same time.</p>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Priority for this application <span class="text-red-500">*</span></label>
+<select class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="prioritySelect">
+<option value="">Select a priority</option>
+<option value="1">Priority 1</option>
+<option value="2">Priority 2</option>
+<option value="3">Priority 3</option>
+</select>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="priorityCards">
+<div class="bg-white border border-gray-200 rounded-2xl p-4">
+<p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority 1</p>
+<p class="text-sm text-gray-600 mt-2" id="priorityStatus1">Available</p>
+</div>
+<div class="bg-white border border-gray-200 rounded-2xl p-4">
+<p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority 2</p>
+<p class="text-sm text-gray-600 mt-2" id="priorityStatus2">Available</p>
+</div>
+<div class="bg-white border border-gray-200 rounded-2xl p-4">
+<p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority 3</p>
+<p class="text-sm text-gray-600 mt-2" id="priorityStatus3">Available</p>
+</div>
+</div>
+<p class="text-[11px] text-gray-400" id="priorityHint">Loading your current applications...</p>
+</div>
+</section>
+<section>
 <div class="bg-amber-50 rounded-2xl border border-amber-100 p-5 mb-6">
 <div class="flex items-start gap-3">
 <span class="iconify text-amber-500 text-xl mt-0.5" data-icon="mdi:information-outline"></span>
@@ -149,8 +179,10 @@
 </section>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 <button class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100" type="submit" id="submitBtn">Submit</button>
-<button class="w-full py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all" onclick="history.back()" type="button">Cancel</button>
+<button class="w-full py-4 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition-all" type="button" id="saveDraftBtn">Save progress</button>
+<button class="sm:col-span-2 w-full py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all" onclick="history.back()" type="button">Cancel</button>
 </div>
+<p class="text-xs text-gray-400 -mt-4" id="draftStatusText">Draft not saved yet.</p>
 </form>
 </div>
 </div>
@@ -165,6 +197,12 @@
     let resumeFile = null;
     let resumeObjectUrl = '';
     const jobId = getUrlParam('jobId');
+    const DRAFT_KEY_PREFIX = 'ta_application_draft_v1';
+    const RESUME_DB_NAME = 'ta_application_resume_db_v1';
+    const RESUME_STORE_NAME = 'resume';
+    const RESUME_KEY_PREFIX = 'job_';
+    const AUTO_SAVE_DELAY_MS = 5000;
+    let autoSaveTimer = null;
 
     const resumeFileInput = document.getElementById('resumeFile');
     const chooseFileBtn = document.getElementById('chooseFileBtn');
@@ -173,6 +211,256 @@
     const resumeError = document.getElementById('resumeError');
     const previewBtn = document.getElementById('previewBtn');
     const resumePreview = document.getElementById('resumePreview');
+    const coverLetterInput = document.getElementById('coverLetter');
+    const prioritySelect = document.getElementById('prioritySelect');
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+    const draftStatusText = document.getElementById('draftStatusText');
+    const priorityHint = document.getElementById('priorityHint');
+    let hasUnsavedChanges = false;
+    let activeApplications = [];
+    let occupiedPriorities = new Map();
+
+    function getDraftKey() {
+        return `${DRAFT_KEY_PREFIX}_${jobId || 'general'}`;
+    }
+
+    function getResumeKey() {
+        return `${RESUME_KEY_PREFIX}${jobId || 'general'}`;
+    }
+
+    function setDraftStatus(message) {
+        draftStatusText.textContent = message;
+    }
+
+    function getDraftPayload() {
+        return {
+            jobId: jobId || '',
+            coverLetter: coverLetterInput.value || '',
+            priority: prioritySelect.value || '',
+            updatedAt: Date.now()
+        };
+    }
+
+    function hasLocalDraftContent(payload) {
+        return !!((payload.coverLetter || '').trim() || String(payload.priority || '').trim());
+    }
+
+    function saveDraftToLocal(options = {}) {
+        const payload = getDraftPayload();
+        localStorage.setItem(getDraftKey(), JSON.stringify(payload));
+        const sourceLabel = options.source === 'auto' ? 'Auto-saved' : 'Draft saved';
+        setDraftStatus(sourceLabel + ' locally at ' + new Date(payload.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        hasUnsavedChanges = false;
+    }
+
+    function restoreDraftFromLocal() {
+        const raw = localStorage.getItem(getDraftKey());
+        if (!raw) return false;
+        try {
+            const draft = JSON.parse(raw);
+            if (typeof draft.coverLetter === 'string') {
+                coverLetterInput.value = draft.coverLetter;
+            }
+            if (draft.priority != null && draft.priority !== '') {
+                prioritySelect.value = String(draft.priority);
+            }
+            if (draft.updatedAt) {
+                setDraftStatus('Recovered draft saved at ' + formatDateTime(draft.updatedAt));
+            } else {
+                setDraftStatus('Recovered local draft.');
+            }
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    function clearDraftFromLocal() {
+        localStorage.removeItem(getDraftKey());
+        setDraftStatus('Draft cleared after submission.');
+        hasUnsavedChanges = false;
+    }
+
+    function markDirty() {
+        hasUnsavedChanges = true;
+        setDraftStatus('You have unsaved changes.');
+    }
+
+    function cancelAutoSave() {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = null;
+    }
+
+    function getActiveApplications(applications) {
+        return (applications || []).filter(app => !['WITHDRAWN', 'REJECTED'].includes(app.status));
+    }
+
+    function updatePriorityUi() {
+        const selected = prioritySelect.value;
+        const activeCount = activeApplications.length;
+        const blockNewSelection = activeCount >= 3;
+
+        ['1', '2', '3'].forEach((value) => {
+            const option = prioritySelect.querySelector(`option[value="${value}"]`);
+            const statusEl = document.getElementById('priorityStatus' + value);
+            const owner = occupiedPriorities.get(value);
+            const isSelected = selected === value;
+            const isBlocked = blockNewSelection ? !isSelected : !!owner && !isSelected;
+
+            if (option) option.disabled = isBlocked;
+
+            if (!statusEl) return;
+            if (blockNewSelection && !isSelected) {
+                statusEl.textContent = 'Unavailable: you already have 3 active applications';
+                statusEl.className = 'text-sm text-amber-600 mt-2';
+            } else if (owner && !isSelected) {
+                statusEl.textContent = `Used by ${owner}`;
+                statusEl.className = 'text-sm text-red-600 mt-2';
+            } else if (isSelected) {
+                statusEl.textContent = 'Selected for current draft';
+                statusEl.className = 'text-sm text-blue-600 mt-2 font-medium';
+            } else {
+                statusEl.textContent = 'Available';
+                statusEl.className = 'text-sm text-green-600 mt-2';
+            }
+        });
+
+        if (blockNewSelection && !selected) {
+            priorityHint.textContent = 'You already have 3 active applications. Withdraw one before creating a new preference.';
+            priorityHint.className = 'text-[11px] text-amber-600';
+        } else if (occupiedPriorities.size > 0) {
+            priorityHint.textContent = 'Used priorities are disabled automatically. Choose one of the remaining available ranks.';
+            priorityHint.className = 'text-[11px] text-gray-500';
+        } else {
+            priorityHint.textContent = 'All three priorities are currently available.';
+            priorityHint.className = 'text-[11px] text-gray-400';
+        }
+    }
+
+    async function loadExistingApplications() {
+        const applications = await API.get('/api/applications');
+        activeApplications = getActiveApplications(applications);
+        occupiedPriorities = new Map();
+        activeApplications.forEach((app) => {
+            const value = app.priority == null ? '' : String(app.priority);
+            if (!value || value === '0') return;
+            const title = app.jobTitle || `Application #${app.id}`;
+            occupiedPriorities.set(value, title);
+        });
+        updatePriorityUi();
+    }
+
+    function validatePrioritySelection() {
+        const selected = prioritySelect.value;
+        if (!selected) {
+            showToast('Please select a preference priority.', 'warning');
+            return false;
+        }
+        if (activeApplications.length >= 3 && !occupiedPriorities.has(selected)) {
+            showToast('You already have 3 active applications. Withdraw one before submitting a new preference.', 'warning');
+            return false;
+        }
+        if (occupiedPriorities.has(selected)) {
+            showToast('This priority is already used by another active application.', 'warning');
+            return false;
+        }
+        return true;
+    }
+
+    function openResumeDb() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(RESUME_DB_NAME, 1);
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(RESUME_STORE_NAME)) {
+                    db.createObjectStore(RESUME_STORE_NAME, { keyPath: 'id' });
+                }
+            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error || new Error('Failed to open resume storage'));
+        });
+    }
+
+    async function saveResumeToIndexedDb(file) {
+        if (!file) return;
+        const db = await openResumeDb();
+        const record = { id: getResumeKey(), file, updatedAt: Date.now() };
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(RESUME_STORE_NAME).put(record);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to save resume draft'));
+        });
+        db.close();
+    }
+
+    async function getResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        const result = await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readonly');
+            const req = tx.objectStore(RESUME_STORE_NAME).get(getResumeKey());
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error || new Error('Failed to read resume draft'));
+        });
+        db.close();
+        return result;
+    }
+
+    async function clearResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(RESUME_STORE_NAME).delete(getResumeKey());
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to clear resume draft'));
+        });
+        db.close();
+    }
+
+    function applyResumeFile(file, options = {}) {
+        if (!file) return;
+        resumeFile = file;
+        resumeFileNameEl.innerText = file.name;
+        resumeMeta.innerText = `${file.name} · ${formatBytes(file.size)}`;
+        previewBtn.disabled = false;
+        if (options.previewImmediately) {
+            if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
+            resumeObjectUrl = URL.createObjectURL(file);
+            resumePreview.src = resumeObjectUrl;
+        }
+    }
+
+    async function persistDraft(options = {}) {
+        const payload = getDraftPayload();
+        const hasDraftContent = hasLocalDraftContent(payload);
+        if (!hasDraftContent && !resumeFile) {
+            if (options.showToastMessage) {
+                showToast('There is no draft content to save yet.', 'warning');
+            }
+            setDraftStatus('Nothing to save yet.');
+            return;
+        }
+
+        saveDraftToLocal({ source: options.source });
+        if (resumeFile) {
+            await saveResumeToIndexedDb(resumeFile);
+            if (options.showToastMessage) {
+                showToast('Draft and resume saved locally.', 'success');
+            }
+        } else if (options.showToastMessage) {
+            showToast('Draft saved locally.', 'success');
+        }
+    }
+
+    function scheduleAutoSave() {
+        cancelAutoSave();
+        setDraftStatus('Autosave scheduled in 5 seconds...');
+        autoSaveTimer = setTimeout(() => {
+            persistDraft({ source: 'auto' }).catch(() => {
+                setDraftStatus('Draft autosave failed.');
+            });
+        }, AUTO_SAVE_DELAY_MS);
+    }
 
     function formatBytes(bytes) {
         const units = ['B', 'KB', 'MB', 'GB'];
@@ -189,7 +477,34 @@
 
     chooseFileBtn.addEventListener('click', () => resumeFileInput.click());
 
-    resumeFileInput.addEventListener('change', () => {
+    coverLetterInput.addEventListener('input', () => {
+        markDirty();
+        scheduleAutoSave();
+    });
+
+    prioritySelect.addEventListener('change', () => {
+        markDirty();
+        updatePriorityUi();
+        scheduleAutoSave();
+    });
+
+    saveDraftBtn.addEventListener('click', async () => {
+        cancelAutoSave();
+        saveDraftBtn.disabled = true;
+        const original = saveDraftBtn.innerHTML;
+        saveDraftBtn.innerHTML = '<span class="iconify animate-spin" data-icon="mdi:loading"></span> Saving...';
+        try {
+            await persistDraft({ showToastMessage: true, source: 'manual' });
+        } catch (err) {
+            showToast(err.message || 'Failed to save draft', 'error');
+            setDraftStatus('Manual save failed.');
+        } finally {
+            saveDraftBtn.disabled = false;
+            saveDraftBtn.innerHTML = original;
+        }
+    });
+
+    resumeFileInput.addEventListener('change', async () => {
         showResumeError('');
         const file = resumeFileInput.files && resumeFileInput.files[0];
         if (!file) { resumeFile = null; resumeFileNameEl.innerText = 'No file chosen'; resumeMeta.innerText = 'No file selected'; previewBtn.disabled = true; return; }
@@ -199,10 +514,9 @@
         if (file.size > 20 * 1024 * 1024) {
             showResumeError('File is too large. Maximum size is 20MB.'); resumeFileInput.value = ''; return;
         }
-        resumeFile = file;
-        resumeFileNameEl.innerText = file.name;
-        resumeMeta.innerText = `${file.name} · ${formatBytes(file.size)}`;
-        previewBtn.disabled = false;
+        applyResumeFile(file);
+        markDirty();
+        scheduleAutoSave();
     });
 
     previewBtn.addEventListener('click', () => {
@@ -233,12 +547,36 @@
             document.getElementById('infoApplicant').textContent = me.fullName || me.username || '--';
             document.getElementById('infoStudentId').textContent = me.studentId || '--';
         } catch (_) {}
+
+        try {
+            await loadExistingApplications();
+        } catch (err) {
+            priorityHint.textContent = 'Failed to load existing preferences. Priority validation will be limited.';
+            priorityHint.className = 'text-[11px] text-red-500';
+        }
+
+        restoreDraftFromLocal();
+        updatePriorityUi();
+        try {
+            const savedResume = await getResumeFromIndexedDb();
+            if (savedResume && savedResume.file) {
+                applyResumeFile(savedResume.file, { previewImmediately: true });
+                setDraftStatus('Recovered saved draft and resume at ' + formatDateTime(savedResume.updatedAt || Date.now()));
+            }
+        } catch (_) {}
     })();
+
+    window.addEventListener('beforeunload', (event) => {
+        if (!hasUnsavedChanges) return;
+        event.preventDefault();
+        event.returnValue = '';
+    });
 
     document.getElementById('applicationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const coverLetter = document.getElementById('coverLetter').value.trim();
         if (!coverLetter) { showToast('Please write a cover letter / motivation.', 'warning'); return; }
+        if (!validatePrioritySelection()) return;
 
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
@@ -254,8 +592,11 @@
             await API.post('/api/jobs/' + jobId + '/apply', {
                 coverLetter,
                 cvFileName,
-                priority: 1
+                priority: Number(prioritySelect.value)
             });
+
+            clearDraftFromLocal();
+            await clearResumeFromIndexedDb();
 
             showToast('Application submitted successfully!', 'success');
             setTimeout(() => { window.location.href = 'my-ta-applications.html'; }, 800);
