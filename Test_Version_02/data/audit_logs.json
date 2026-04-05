@@ -470,5 +470,45 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775366831973
+  },
+  {
+    "id": "c1c4af0a",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775367588472
+  },
+  {
+    "id": "bd076c45",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1775367859152
+  },
+  {
+    "id": "bbaee93e",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775368125987
+  },
+  {
+    "id": "e08cae21",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775368146003
+  },
+  {
+    "id": "8c6b0152",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775368474879
   }
 ]
