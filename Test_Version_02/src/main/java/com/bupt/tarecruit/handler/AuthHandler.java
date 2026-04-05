@@ -37,12 +37,12 @@ public class AuthHandler extends BaseHandler {
 
     private void login(HttpExchange ex) throws IOException {
         JsonObject body = parseJson(readBody(ex));
-        String username = body.get("username").getAsString();
+        String identifier = body.has("identifier") ? body.get("identifier").getAsString() : "";
         String password = body.get("password").getAsString();
 
-        User user = ds.getUserByUsername(username);
+        User user = ds.getUserByStudentIdOrEmail(identifier);
         if (user == null || !user.password.equals(password)) {
-            sendError(ex, 401, "Invalid username or password"); return;
+            sendError(ex, 401, "Invalid student ID, email, or password"); return;
         }
         if (!user.active) {
             sendError(ex, 403, "Account is deactivated, please contact admin"); return;

@@ -141,16 +141,23 @@
     const passwordInput = document.getElementById('password');
     const btnText = document.getElementById('btnText');
     const loadingIcon = document.getElementById('loadingIcon');
+    let alertTimer = null;
+
+    function hideAlert() {
+        clearTimeout(alertTimer);
+        alertBox.classList.add('hidden');
+    }
 
     function switchTab(tab) {
         document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
         document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
         loginForm.classList.toggle('hidden', tab !== 'login');
         registerForm.classList.toggle('hidden', tab !== 'register');
-        alertBox.classList.add('hidden');
+        hideAlert();
     }
 
-    function showAlert(type, message) {
+    function showAlert(type, message, options = {}) {
+        clearTimeout(alertTimer);
         alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
         if (type === 'error') {
             alertBox.classList.add('bg-red-50', 'text-red-700');
@@ -160,7 +167,19 @@
             alertIcon.setAttribute('data-icon', 'mdi:check-circle-outline');
         }
         alertMsg.innerText = message;
+        if (options.autoHideMs) {
+            alertTimer = setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, options.autoHideMs);
+        }
     }
+
+    usernameInput.addEventListener('input', hideAlert);
+    passwordInput.addEventListener('input', hideAlert);
+    document.getElementById('regFullName').addEventListener('input', hideAlert);
+    document.getElementById('regStudentId').addEventListener('input', hideAlert);
+    document.getElementById('regUsername').addEventListener('input', hideAlert);
+    document.getElementById('regPassword').addEventListener('input', hideAlert);
 
     function togglePassword() {
         const passIcon = document.getElementById('passIcon');
@@ -175,11 +194,11 @@
 
     loginForm.onsubmit = async (e) => {
         e.preventDefault();
-        const user = usernameInput.value.trim();
+        const identifier = usernameInput.value.trim();
         const pass = passwordInput.value.trim();
 
-        if (!user || !pass) {
-            showAlert('error', 'Please enter your account and password');
+        if (!identifier || !pass) {
+            showAlert('error', 'Please enter your student ID/email and password');
             return;
         }
 
@@ -187,7 +206,7 @@
         loadingIcon.classList.remove('hidden');
 
         try {
-            const res = await API.post('/api/auth/login', { username: user, password: pass });
+            const res = await API.post('/api/auth/login', { identifier, password: pass });
             if (res.user && res.user.role !== 'TA') {
                 showAlert('error', 'This portal is for TA accounts only.');
                 btnText.innerText = 'Login';
@@ -195,10 +214,10 @@
                 return;
             }
             API.setAuth(res.token, res.user);
-            showAlert('success', 'Login successful. Redirecting...');
+            showAlert('success', 'Login successful. Redirecting...', { autoHideMs: 2000 });
             setTimeout(() => { window.location.href = 'dashboard.html'; }, 600);
         } catch (err) {
-            showAlert('error', err.message || 'Invalid account or password');
+            showAlert('error', err.message || 'Invalid student ID, email, or password');
             btnText.innerText = 'Login';
             loadingIcon.classList.add('hidden');
         }
@@ -226,7 +245,7 @@
                 username, password, role: 'TA', fullName, studentId
             });
             API.setAuth(res.token, res.user);
-            showAlert('success', 'Registration successful. Redirecting...');
+            showAlert('success', 'Registration successful. Redirecting...', { autoHideMs: 2000 });
             setTimeout(() => { window.location.href = 'dashboard.html'; }, 600);
         } catch (err) {
             showAlert('error', err.message || 'Registration failed');

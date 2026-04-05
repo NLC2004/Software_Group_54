@@ -28,9 +28,13 @@ const API = {
         try {
             const res = await fetch(path, { ...options, headers });
             if (res.status === 401) {
-                this.clearAuth();
-                redirectToLogin();
-                return null;
+                const normalizedPath = typeof path === 'string' ? path.split('?')[0] : '';
+                const isLoginRequest = normalizedPath.endsWith('/api/auth/login');
+                if (!isLoginRequest) {
+                    this.clearAuth();
+                    redirectToLogin();
+                    return null;
+                }
             }
             if (res.headers.get('Content-Type')?.includes('text/csv')) {
                 return { blob: await res.blob(), ok: res.ok };

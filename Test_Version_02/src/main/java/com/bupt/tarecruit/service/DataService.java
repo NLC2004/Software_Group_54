@@ -55,6 +55,16 @@ public class DataService {
         return getAllUsers().stream().filter(u -> u.username.equals(username)).findFirst().orElse(null);
     }
 
+    public synchronized User getUserByStudentIdOrEmail(String identifier) {
+        String normalized = identifier == null ? "" : identifier.trim();
+        if (normalized.isEmpty()) return null;
+        return getAllUsers().stream()
+                .filter(u -> normalized.equalsIgnoreCase(u.studentId == null ? "" : u.studentId.trim())
+                        || normalized.equalsIgnoreCase(u.email == null ? "" : u.email.trim()))
+                .findFirst()
+                .orElse(null);
+    }
+
     public synchronized User addUser(User user) {
         List<User> users = getAllUsers();
         user.id = UUID.randomUUID().toString().substring(0, 8);
