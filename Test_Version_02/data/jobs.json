@@ -162,5 +162,20 @@
     "deadline": "2026-05-20",
     "status": "OPEN",
     "createdAt": 1775293687810
+  },
+  {
+    "id": "055a8cbf",
+    "postedBy": "mo001",
+    "title": "MO zzj",
+    "type": "COURSE",
+    "courseName": "a test course",
+    "description": "",
+    "requirements": [],
+    "quota": 2,
+    "schedule": "Tue 10:00-14:00",
+    "weeklyHours": 10.0,
+    "deadline": "2026-04-05",
+    "status": "OPEN",
+    "createdAt": 1775400289019
   }
 ]
