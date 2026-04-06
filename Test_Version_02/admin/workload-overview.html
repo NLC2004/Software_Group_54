@@ -94,16 +94,16 @@
 <input class="pl-10 pr-4 py-1.5 bg-gray-100 border-transparent rounded-full text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all w-64" placeholder="Search TA Name or ID..." type="text"/>
 </div>
 <div class="flex items-center space-x-3">
-<button class="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+<button id="btnWorkloadBell" type="button" class="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors" title="Open password reset requests">
 <span class="iconify text-xl" data-icon="solar:bell-linear"></span>
-<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+<span id="workloadBellDot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
 </button>
 <div class="h-6 w-px bg-gray-200"></div>
 <div class="text-right hidden sm:block">
 <p class="text-[10px] text-gray-400 uppercase leading-none mb-1">System Status</p>
 <div class="flex items-center text-[10px] font-bold text-green-500 space-x-1">
 <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-<span>CONNECTED · 2026-03-21</span>
+<span id="workloadSyncDate">CONNECTED · -</span>
 </div>
 </div>
 </div>
@@ -118,23 +118,26 @@
 <p class="text-sm text-gray-500 mt-1">Real-time supervision of Teaching Assistant hours and allocation status across all departments.</p>
 </div>
 <div class="flex items-center space-x-3 bg-white p-1 rounded-xl card-shadow border border-gray-100">
-<select class="bg-transparent text-sm font-medium px-4 py-2 border-none focus:ring-0 cursor-pointer text-gray-600 hover:text-blue-600 transition-colors">
-<option>All Faculties</option>
-<option>Engineering</option>
-<option>Science</option>
-<option>Business</option>
-<option>Art &amp; Design</option>
+<select id="facultyFilter" class="bg-transparent text-sm font-medium px-4 py-2 border-none focus:ring-0 cursor-pointer text-gray-600 hover:text-blue-600 transition-colors">
+<option value="all">All Faculties</option>
+<option value="engineering">Engineering</option>
+<option value="science">Science</option>
+<option value="business">Business</option>
+<option value="art">Art &amp; Design</option>
 </select>
 <div class="w-px h-6 bg-gray-100"></div>
-<select class="bg-transparent text-sm font-medium px-4 py-2 border-none focus:ring-0 cursor-pointer text-gray-600 hover:text-blue-600 transition-colors">
-<option>All Status</option>
-<option>Normal</option>
-<option>Warning</option>
-<option>Overload</option>
+<select id="statusFilter" class="bg-transparent text-sm font-medium px-4 py-2 border-none focus:ring-0 cursor-pointer text-gray-600 hover:text-blue-600 transition-colors">
+<option value="all">All Status</option>
+<option value="normal">Normal</option>
+<option value="warning">Warning</option>
+<option value="overload">Overload</option>
 </select>
-<button class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all flex items-center">
+<button id="btnApplyFilters" class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all flex items-center">
 <span class="iconify mr-2" data-icon="solar:filter-linear"></span>
                         Apply Filters
+                    </button>
+<button id="btnResetFilters" class="bg-white text-gray-600 px-4 py-2 rounded-lg text-sm font-semibold border border-gray-200 hover:bg-gray-50 transition-all">
+                        Reset
                     </button>
 </div>
 </div>
@@ -441,17 +444,18 @@
 </div>
 <!-- Footer Pagination -->
 <div class="px-6 py-4 flex items-center justify-between bg-gray-50/50">
-<p class="text-xs text-gray-500">Showing <span class="font-bold text-gray-900">1 to 5</span> of 248 assistants</p>
+<p id="workloadPaginationInfo" class="text-xs text-gray-500">Showing <span class="font-bold text-gray-900">0 to 0</span> of 0 assistants</p>
 <div class="flex items-center space-x-1">
-<button class="p-1 px-2.5 bg-white border border-gray-200 text-gray-400 rounded-lg hover:bg-gray-100 transition-colors">
+<select id="workloadPageSize" class="bg-white border border-gray-200 px-2 py-1 rounded text-xs outline-none mr-2">
+<option value="5">5</option>
+<option value="10">10</option>
+<option value="20">20</option>
+</select>
+<button id="workloadPrevPage" class="p-1 px-2.5 bg-white border border-gray-200 text-gray-400 rounded-lg hover:bg-gray-100 transition-colors">
 <span class="iconify" data-icon="solar:alt-arrow-left-linear"></span>
 </button>
-<button class="w-8 h-8 rounded-lg bg-blue-600 text-white text-xs font-bold">1</button>
-<button class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">2</button>
-<button class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">3</button>
-<span class="px-1 text-gray-400 uppercase text-[10px] font-bold">...</span>
-<button class="w-8 h-8 rounded-lg bg-white border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-100 transition-colors">49</button>
-<button class="p-1 px-2.5 bg-white border border-gray-200 text-gray-400 rounded-lg hover:bg-gray-100 transition-colors">
+<span id="workloadPageNumbers" class="flex items-center space-x-1"></span>
+<button id="workloadNextPage" class="p-1 px-2.5 bg-white border border-gray-200 text-gray-400 rounded-lg hover:bg-gray-100 transition-colors">
 <span class="iconify" data-icon="solar:alt-arrow-right-linear"></span>
 </button>
 </div>
@@ -464,7 +468,7 @@
 </div>
 <h4 class="text-lg font-bold text-gray-900">No matching TAs found</h4>
 <p class="text-sm text-gray-500 max-w-xs mx-auto mt-2">We couldn't find any results matching your filter criteria. Try adjusting your filters or search keywords.</p>
-<button class="mt-6 text-blue-600 font-bold text-sm hover:underline">Clear all filters</button>
+<button id="btnClearNoDataFilters" class="mt-6 text-blue-600 font-bold text-sm hover:underline">Clear all filters</button>
 </div>
 <!-- Analytics Integration Preview -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -491,18 +495,27 @@
 </main>
 <script src="/js/api.js"></script>
 <script>
+let allWorkload = [];
+let filteredWorkload = [];
+let currentWorkloadPage = 1;
+let workloadPageSize = 5;
+let currentWorkloadQuery = '';
+let distChart, trendChart;
+
 (async function() {
   const user = requireAuth(['ADMIN']);
   if (!user) return;
   updateSidebarUser(user);
+  document.getElementById('btnWorkloadBell')?.addEventListener('click', function() {
+    window.location.href = 'password-reset-requests.html';
+  });
+  updateWorkloadHeaderSyncTime();
+  await refreshWorkloadBellDot();
 
-  let distChart, trendChart;
   try {
-    const workload = await API.get('/api/admin/workload');
-    renderWorkloadTable(workload);
-    updateWorkloadStats(workload);
-    distChart = initDistChart(workload);
-    trendChart = initTrendChart(workload);
+    allWorkload = await loadWorkloadByFilters();
+    applyWorkloadFiltersAndRender();
+    rebuildWorkloadCharts(filteredWorkload);
   } catch (e) {
     showToast('Failed to load workload data: ' + e.message, 'error');
   }
@@ -514,11 +527,81 @@
 
   const searchInput = document.querySelector('input[type="text"]');
   if (searchInput) {
-    searchInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') filterWorkload(this.value);
+    let timer;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        currentWorkloadQuery = this.value || '';
+        currentWorkloadPage = 1;
+        applyWorkloadFiltersAndRender();
+      }, 250);
     });
   }
+  document.getElementById('btnApplyFilters')?.addEventListener('click', function() {
+    currentWorkloadQuery = searchInput ? (searchInput.value || '') : '';
+    currentWorkloadPage = 1;
+    filterWorkload(currentWorkloadQuery);
+  });
+  document.getElementById('btnResetFilters')?.addEventListener('click', function() {
+    document.getElementById('facultyFilter').value = 'all';
+    document.getElementById('statusFilter').value = 'all';
+    if (searchInput) searchInput.value = '';
+    currentWorkloadQuery = '';
+    currentWorkloadPage = 1;
+    filterWorkload('');
+  });
+  document.getElementById('btnClearNoDataFilters')?.addEventListener('click', function() {
+    document.getElementById('btnResetFilters')?.click();
+  });
+  document.getElementById('workloadPageSize')?.addEventListener('change', function() {
+    workloadPageSize = parseInt(this.value, 10) || 5;
+    currentWorkloadPage = 1;
+    renderWorkloadTable(filteredWorkload);
+  });
+  document.getElementById('workloadPrevPage')?.addEventListener('click', function() {
+    if (currentWorkloadPage > 1) {
+      currentWorkloadPage--;
+      renderWorkloadTable(filteredWorkload);
+    }
+  });
+  document.getElementById('workloadNextPage')?.addEventListener('click', function() {
+    const totalPages = Math.max(1, Math.ceil(filteredWorkload.length / workloadPageSize));
+    if (currentWorkloadPage < totalPages) {
+      currentWorkloadPage++;
+      renderWorkloadTable(filteredWorkload);
+    }
+  });
 })();
+
+function updateWorkloadHeaderSyncTime() {
+  const syncEl = document.getElementById('workloadSyncDate');
+  if (!syncEl) return;
+  const now = new Date();
+  const dateText = now.toISOString().slice(0, 10);
+  const timeText = now.toTimeString().slice(0, 5);
+  syncEl.textContent = 'CONNECTED · ' + dateText + ' ' + timeText;
+}
+
+async function refreshWorkloadBellDot() {
+  const dot = document.getElementById('workloadBellDot');
+  if (!dot) return;
+  try {
+    const resets = await API.get('/api/admin/password-resets?status=PENDING');
+    const pendingCount = Array.isArray(resets) ? resets.length : 0;
+    dot.classList.toggle('hidden', pendingCount <= 0);
+  } catch (e) {
+    dot.classList.add('hidden');
+  }
+}
+
+async function loadWorkloadByFilters() {
+  const faculty = document.getElementById('facultyFilter')?.value || 'all';
+  const status = document.getElementById('statusFilter')?.value || 'all';
+  const qs = new URLSearchParams();
+  if (faculty && faculty !== 'all') qs.set('faculty', faculty);
+  if (status && status !== 'all') qs.set('status', status);
+  return API.get('/api/admin/workload' + (qs.toString() ? ('?' + qs.toString()) : ''));
+}
 
 function updateWorkloadStats(data) {
   const cards = document.querySelectorAll('#stats-cards > div');
@@ -538,12 +621,25 @@ function updateWorkloadStats(data) {
 }
 
 function renderWorkloadTable(data) {
+  const noData = document.getElementById('no-data');
+  const tableWrap = document.querySelector('#workload-tbody')?.closest('.bg-white.rounded-2xl');
   const tbody = document.getElementById('workload-tbody');
-  if (!data.length) {
+  const total = data.length;
+  const totalPages = Math.max(1, Math.ceil(total / workloadPageSize));
+  if (currentWorkloadPage > totalPages) currentWorkloadPage = totalPages;
+  const startIdx = (currentWorkloadPage - 1) * workloadPageSize;
+  const pageData = data.slice(startIdx, startIdx + workloadPageSize);
+
+  if (!pageData.length) {
     tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-gray-400">No workload data found.</td></tr>';
+    if (noData) noData.classList.remove('hidden');
+    if (tableWrap) tableWrap.classList.add('hidden');
+    updateWorkloadPagination(total, 0, 0);
     return;
   }
-  tbody.innerHTML = data.map(ta => {
+  if (noData) noData.classList.add('hidden');
+  if (tableWrap) tableWrap.classList.remove('hidden');
+  tbody.innerHTML = pageData.map(ta => {
     const pct = ta.maxHours ? Math.min(100, Math.round((ta.totalWeeklyHours / ta.maxHours) * 100)) : 0;
     const barColor = ta.overloaded ? 'bg-red-600' : pct >= 80 ? 'bg-amber-500' : 'bg-green-500';
     const statusColor = ta.overloaded ? 'bg-red-100 text-red-600' : pct >= 80 ? 'bg-amber-100 text-amber-600' : 'bg-green-100 text-green-600';
@@ -586,8 +682,54 @@ function renderWorkloadTable(data) {
       </td>
     </tr>`;
   }).join('');
-  const footer = document.querySelector('.bg-gray-50\\/50 p');
-  if (footer) footer.innerHTML = 'Showing <span class="font-bold text-gray-900">1 to ' + data.length + '</span> of ' + data.length + ' assistants';
+  updateWorkloadPagination(total, startIdx + 1, startIdx + pageData.length);
+}
+
+function updateWorkloadPagination(total, from, to) {
+  const info = document.getElementById('workloadPaginationInfo');
+  const pageNumbers = document.getElementById('workloadPageNumbers');
+  const prev = document.getElementById('workloadPrevPage');
+  const next = document.getElementById('workloadNextPage');
+  const totalPages = Math.max(1, Math.ceil(total / workloadPageSize));
+  if (info) info.innerHTML = 'Showing <span class="font-bold text-gray-900">' + from + ' to ' + to + '</span> of ' + total + ' assistants';
+  if (prev) {
+    prev.disabled = currentWorkloadPage <= 1;
+    prev.classList.toggle('opacity-50', currentWorkloadPage <= 1);
+  }
+  if (next) {
+    next.disabled = currentWorkloadPage >= totalPages;
+    next.classList.toggle('opacity-50', currentWorkloadPage >= totalPages);
+  }
+  if (pageNumbers) {
+    const items = buildWorkloadPageItems(totalPages, currentWorkloadPage);
+    pageNumbers.innerHTML = items.map(function(it) {
+      if (it === '...') return '<span class="px-1 text-gray-400 uppercase text-[10px] font-bold">...</span>';
+      const active = it === currentWorkloadPage;
+      return '<button type="button" onclick="goToWorkloadPage(' + it + ')" class="w-8 h-8 rounded-lg text-xs font-bold ' +
+          (active ? 'bg-blue-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors') + '">' + it + '</button>';
+    }).join('');
+  }
+}
+
+function buildWorkloadPageItems(totalPages, current) {
+  if (totalPages <= 7) {
+    const arr = [];
+    for (let i = 1; i <= totalPages; i++) arr.push(i);
+    return arr;
+  }
+  const out = [1];
+  const left = Math.max(2, current - 1);
+  const right = Math.min(totalPages - 1, current + 1);
+  if (left > 2) out.push('...');
+  for (let p = left; p <= right; p++) out.push(p);
+  if (right < totalPages - 1) out.push('...');
+  out.push(totalPages);
+  return out;
+}
+
+function goToWorkloadPage(p) {
+  currentWorkloadPage = p;
+  renderWorkloadTable(filteredWorkload);
 }
 
 function initDistChart(data) {
@@ -632,17 +774,31 @@ function initTrendChart(data) {
   return chart;
 }
 
-let allWorkload = [];
+function applyWorkloadFiltersAndRender() {
+  const q = (currentWorkloadQuery || '').trim().toLowerCase();
+  filteredWorkload = q ? allWorkload.filter(d =>
+      (d.fullName || '').toLowerCase().includes(q) ||
+      (d.username || '').toLowerCase().includes(q) ||
+      (d.email || '').toLowerCase().includes(q)
+  ) : allWorkload.slice();
+  updateWorkloadStats(filteredWorkload);
+  renderWorkloadTable(filteredWorkload);
+  rebuildWorkloadCharts(filteredWorkload);
+}
+
+function rebuildWorkloadCharts(data) {
+  if (distChart) distChart.dispose();
+  if (trendChart) trendChart.dispose();
+  distChart = initDistChart(data);
+  trendChart = initTrendChart(data);
+}
+
 async function filterWorkload(query) {
   try {
-    const data = await API.get('/api/admin/workload');
+    const data = await loadWorkloadByFilters();
     allWorkload = data;
-    const filtered = query ? data.filter(d =>
-      (d.fullName || '').toLowerCase().includes(query.toLowerCase()) ||
-      (d.username || '').toLowerCase().includes(query.toLowerCase())
-    ) : data;
-    renderWorkloadTable(filtered);
-    updateWorkloadStats(filtered);
+    currentWorkloadQuery = query || '';
+    applyWorkloadFiltersAndRender();
   } catch(e) {
     showToast('Filter failed: ' + e.message, 'error');
   }

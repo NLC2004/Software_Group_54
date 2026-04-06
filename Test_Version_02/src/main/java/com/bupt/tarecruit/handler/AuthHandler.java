@@ -42,15 +42,16 @@ public class AuthHandler extends BaseHandler {
         String portalRole = body.has("portalRole") ? body.get("portalRole").getAsString() : "";
 
         User user = ds.getUserByStudentIdOrEmail(identifier);
-        if (user == null && portalRole != null && portalRole.trim().equalsIgnoreCase("ADMIN")) {
-            user = ds.getUserByUsername(identifier);
-        }
+        // Allow username login as fallback (needed for admin account "admin" on MO portal).
+        if (user == null) user = ds.getUserByUsername(identifier);
         if (user == null || !user.password.equals(password)) {
             sendError(ex, 401, "Invalid student ID, email, or password"); return;
         }
         if (portalRole != null && !portalRole.trim().isEmpty()) {
             String pr = portalRole.trim().toUpperCase();
-            if (!pr.equals(user.role)) {
+            // Keep MO portal backward compatible: admin can still login from MO window.
+            boolean moPortalAllowAdmin = "MO".equals(pr) && "ADMIN".equals(user.role);
+            if (!pr.equals(user.role) && !moPortalAllowAdmin) {
                 sendError(ex, 403, "This portal is for " + pr + " accounts only");
                 return;
             }
