@@ -98,7 +98,7 @@
 </div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Deadline for Application</label>
-<input class="form-input" id="deadline" type="date"/>
+<input class="form-input" id="deadline" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="YYYY-MM-DD" title="Format: YYYY-MM-DD (e.g. 2026-04-05)"/>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Quota (number of positions)</label>
@@ -152,6 +152,19 @@
 
         const requirements = [];
 
+        function parseDeadlineField(raw) {
+            const t = String(raw || '').trim();
+            if (!t) return { ok: true, value: null };
+            const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
+            if (!m) return { ok: false, message: 'Please enter deadline as YYYY-MM-DD (e.g. 2026-04-05).' };
+            const y = +m[1], mo = +m[2], d = +m[3];
+            const dt = new Date(y, mo - 1, d);
+            if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) {
+                return { ok: false, message: 'Invalid deadline date.' };
+            }
+            return { ok: true, value: t };
+        }
+
         document.getElementById('reqInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') { e.preventDefault(); addRequirement(); }
         });
@@ -182,6 +195,9 @@
             const title = document.getElementById('jobTitle').value.trim();
             if (!title) { showToast('Please enter a job title', 'warning'); return; }
 
+            const dl = parseDeadlineField(document.getElementById('deadline').value);
+            if (!dl.ok) { showToast(dl.message, 'warning'); return; }
+
             const btn = document.getElementById('publishBtn');
             btn.disabled = true;
             btn.textContent = 'Publishing...';
@@ -195,7 +211,7 @@
                 quota: parseInt(document.getElementById('quota').value) || 1,
                 weeklyHours: parseFloat(document.getElementById('weeklyHours').value) || 0,
                 schedule: document.getElementById('schedule').value.trim(),
-                deadline: document.getElementById('deadline').value || null
+                deadline: dl.value
             };
 
             try {

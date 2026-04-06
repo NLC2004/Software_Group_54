@@ -766,5 +766,77 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775398408448
+  },
+  {
+    "id": "82edf5ef",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775399556738
+  },
+  {
+    "id": "e383ba0d",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775399561418
+  },
+  {
+    "id": "f56d4d40",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775399569967
+  },
+  {
+    "id": "4590a484",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "CREATE_JOB",
+    "detail": "Created job: MO zzj",
+    "createdAt": 1775400289023
+  },
+  {
+    "id": "9e9936c4",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400341098
+  },
+  {
+    "id": "17f1f946",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775400347366
+  },
+  {
+    "id": "f08b927a",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400349612
+  },
+  {
+    "id": "801b0c77",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400479023
+  },
+  {
+    "id": "22d94494",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400614144
   }
 ]
