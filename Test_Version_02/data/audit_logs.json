@@ -838,5 +838,61 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775400614144
+  },
+  {
+    "id": "28f87699",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775469253162
+  },
+  {
+    "id": "24de14a6",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775490875325
+  },
+  {
+    "id": "a6979fd4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "EXPORT_CORE_DATA",
+    "detail": "Exported core data CSV task\u003d38034998",
+    "createdAt": 1775492657247
+  },
+  {
+    "id": "4135d202",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495249700
+  },
+  {
+    "id": "84d8d130",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495672081
+  },
+  {
+    "id": "07d8bb5e",
+    "userId": "ta002",
+    "username": "231225270",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495772457
+  },
+  {
+    "id": "8343d4e0",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495826805
   }
 ]
