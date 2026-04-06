@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TA Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+</head>
+<body class="bg-[#F5F7FA] font-sans text-gray-800">
+<div class="flex min-h-screen">
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full shadow-sm">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-100">
+<span class="iconify text-white text-xl" data-icon="mdi:school"></span>
+</div>
+<span class="font-bold text-lg text-gray-800 tracking-tight">BUPT TA System</span>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-blue-50 rounded-xl font-medium transition-all" href="dashboard.html">
+<span class="iconify text-xl" data-icon="mdi:view-dashboard"></span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="ta-recruitment-list.html">
+<span class="iconify text-xl" data-icon="mdi:account-group"></span>
+                    TA Recruitment
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="my-ta-applications.html">
+<span class="iconify text-xl" data-icon="mdi:clipboard-text-clock-outline"></span>
+                    My Applications
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="personal-information.html">
+<span class="iconify text-xl" data-icon="mdi:account-circle-outline"></span>
+                    Profile
+                </a>
+<div class="pt-4 border-t border-gray-100 mt-4">
+<p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Management</p>
+<a class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="notifications.html">
+<span class="iconify text-xl" data-icon="mdi:bell-outline"></span>
+                        Notifications
+                    </a>
+</div>
+</nav>
+<div class="p-4 border-t border-gray-100">
+<div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+<img alt="Avatar" class="w-10 h-10 rounded-full border border-gray-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold truncate" data-user-name>--</p>
+<p class="text-[10px] text-gray-400 truncate" data-user-role>--</p>
+</div>
+<button class="text-gray-400 hover:text-red-500" title="Logout" onclick="logout()">
+<span class="iconify text-lg" data-icon="mdi:logout"></span>
+</button>
+</div>
+</div>
+</aside>
+<main class="flex-1 ml-64 p-8">
+<header class="flex justify-between items-center mb-8">
+<div>
+<h1 class="text-2xl font-bold" id="welcomeMsg">Welcome back</h1>
+<p class="text-gray-400 text-sm mt-1" id="subMsg">Loading...</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<input class="bg-white border text-sm border-gray-200 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none w-64 transition-all" placeholder="Search tasks or courses..." type="text"/>
+<span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:magnify"></span>
+</span>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-blue-50 p-2 rounded-lg text-blue-500">
+<span class="iconify text-2xl" data-icon="mdi:file-document-edit-outline"></span>
+</div>
+</div>
+<p class="text-gray-400 text-sm">Total Applications</p>
+<h3 class="text-2xl font-bold mt-1" id="kpiTotal">--</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-purple-50 p-2 rounded-lg text-purple-500">
+<span class="iconify text-2xl" data-icon="mdi:clock-check-outline"></span>
+</div>
+</div>
+<p class="text-gray-400 text-sm">Pending</p>
+<h3 class="text-2xl font-bold mt-1" id="kpiPending">--</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-green-50 p-2 rounded-lg text-green-500">
+<span class="iconify text-2xl" data-icon="mdi:check-circle-outline"></span>
+</div>
+</div>
+<p class="text-gray-400 text-sm">Approved</p>
+<h3 class="text-2xl font-bold mt-1" id="kpiApproved">--</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm transition-transform hover:-translate-y-1">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-orange-50 p-2 rounded-lg text-orange-500">
+<span class="iconify text-2xl" data-icon="mdi:human-greeting-variant"></span>
+</div>
+</div>
+<p class="text-gray-400 text-sm">Open Positions</p>
+<h3 class="text-2xl font-bold mt-1" id="kpiPositions">--</h3>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-8">
+<div class="col-span-2 space-y-8">
+<div class="bg-amber-50 rounded-2xl border border-amber-100 shadow-sm overflow-hidden" id="deadlineReminderCard">
+<div class="p-6 border-b border-amber-100 flex justify-between items-center">
+<div>
+<h4 class="font-bold text-amber-900">Deadline Reminder</h4>
+<p class="text-xs text-amber-700 mt-1">Positions closing within the next 48 hours.</p>
+</div>
+<a class="text-amber-700 text-xs font-bold hover:underline" href="notifications.html">View reminders</a>
+</div>
+<div class="divide-y divide-amber-100" id="deadlineReminderList">
+<div class="p-6 text-center text-amber-700 text-sm">Checking upcoming deadlines...</div>
+</div>
+</div>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm">
+<div class="p-6 border-b border-gray-100 flex justify-between items-center">
+<h4 class="font-bold">Recent Applications</h4>
+<a class="text-blue-500 text-xs hover:underline" href="my-ta-applications.html">View all</a>
+</div>
+<div class="divide-y divide-gray-50" id="recentActivity">
+<div class="p-6 text-center text-gray-400 text-sm">Loading...</div>
+</div>
+</div>
+</div>
+<div class="space-y-8">
+<div class="bg-blue-600 p-6 rounded-2xl shadow-lg shadow-blue-200 text-white relative overflow-hidden cursor-pointer hover:bg-blue-700 transition-colors" onclick="window.location.href='ta-recruitment-list.html'">
+<span class="iconify absolute -right-6 -bottom-6 text-9xl opacity-10" data-icon="mdi:rocket-launch-outline"></span>
+<h4 class="font-bold relative z-10">Browse Open Positions</h4>
+<p class="text-xs opacity-80 mt-2 relative z-10">Find TA opportunities that fit your skills.</p>
+<button class="mt-4 bg-white text-blue-600 px-4 py-2 rounded-lg text-xs font-bold relative z-10" type="button" onclick="window.location.href='ta-recruitment-list.html'">View positions</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="/js/api.js"></script>
+<script>
+function parseDeadline(deadline) {
+    if (!deadline) return null;
+    const raw = String(deadline).trim();
+    if (!raw) return null;
+    const normalized = raw.replace(/\//g, '-');
+    const pureDateMatch = normalized.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (pureDateMatch) {
+        const [, year, month, day] = pureDateMatch;
+        return new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999).getTime();
+    }
+    let ts = Date.parse(raw);
+    if (!Number.isNaN(ts)) return ts;
+    ts = Date.parse(normalized);
+    return Number.isNaN(ts) ? null : ts;
+}
+
+function getDeadlineReminderJobs(jobs, applications) {
+    const now = Date.now();
+    const upcomingWindow = 48 * 60 * 60 * 1000;
+    const appliedJobIds = new Set((applications || []).map(app => app.jobId));
+    return (jobs || [])
+        .map(job => ({ ...job, deadlineTs: parseDeadline(job.deadline) }))
+        .filter(job => job.deadlineTs && job.deadlineTs > now && job.deadlineTs - now <= upcomingWindow)
+        .filter(job => !appliedJobIds.has(job.id))
+        .sort((a, b) => a.deadlineTs - b.deadlineTs);
+}
+
+function formatTimeRemaining(deadlineTs) {
+    const diff = deadlineTs - Date.now();
+    if (diff <= 0) return 'Deadline reached';
+    const hours = Math.floor(diff / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    if (hours >= 24) {
+        const days = Math.floor(hours / 24);
+        const remainingHours = hours % 24;
+        return `${days}d ${remainingHours}h left`;
+    }
+    if (hours > 0) return `${hours}h ${mins}m left`;
+    return `${Math.max(mins, 1)}m left`;
+}
+
+function renderDeadlineReminders(jobs) {
+    const card = document.getElementById('deadlineReminderCard');
+    const container = document.getElementById('deadlineReminderList');
+    if (!jobs.length) {
+        card.classList.add('hidden');
+        return;
+    }
+    card.classList.remove('hidden');
+    container.innerHTML = jobs.map(job => `
+        <div class="p-6 flex items-start justify-between gap-4 hover:bg-amber-100/40 transition-colors cursor-pointer" onclick="window.location.href='ta-recruitment-detail.html?id=${job.id}'">
+            <div>
+                <p class="font-bold text-gray-900">${esc(job.title || job.courseName || 'TA Position')}</p>
+                <p class="text-xs text-gray-500 mt-1">${esc(job.courseName || '')}</p>
+                <p class="text-xs text-amber-700 mt-2">Deadline: ${esc(job.deadline || 'N/A')}</p>
+            </div>
+            <div class="text-right shrink-0">
+                <p class="text-xs font-bold text-amber-700 uppercase tracking-wider">Reminder</p>
+                <p class="text-sm font-bold text-amber-900 mt-1">${formatTimeRemaining(job.deadlineTs)}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+(async function init() {
+    const user = requireAuth(['TA']);
+    if (!user) return;
+
+    updateSidebarUser(user);
+    document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + esc(user.fullName || user.username);
+
+    try {
+        const [applications, jobs] = await Promise.all([
+            API.get('/api/applications'),
+            API.get('/api/jobs?status=OPEN')
+        ]);
+
+        const total = applications.length;
+        const pending = applications.filter(a => a.status === 'PENDING').length;
+        const approved = applications.filter(a => a.status === 'APPROVED').length;
+
+        document.getElementById('kpiTotal').textContent = total;
+        document.getElementById('kpiPending').textContent = pending;
+        document.getElementById('kpiApproved').textContent = approved;
+        document.getElementById('kpiPositions').textContent = jobs.length;
+        document.getElementById('subMsg').textContent =
+            'You have ' + total + ' application(s) and ' + pending + ' pending.';
+
+        renderDeadlineReminders(getDeadlineReminderJobs(jobs, applications));
+
+        const container = document.getElementById('recentActivity');
+        const recent = applications.slice(0, 5);
+        if (recent.length === 0) {
+            container.innerHTML = '<div class="p-6 text-center text-gray-400 text-sm">No applications yet. <a href="ta-recruitment-list.html" class="text-blue-600 hover:underline">Browse positions</a></div>';
+            return;
+        }
+
+        container.innerHTML = recent.map(app => {
+            const icons = { PENDING: 'mdi:clock-outline', APPROVED: 'mdi:check-circle-outline', REJECTED: 'mdi:close-circle-outline', WITHDRAWN: 'mdi:undo' };
+            const colors = { PENDING: 'blue', APPROVED: 'green', REJECTED: 'red', WITHDRAWN: 'gray' };
+            const c = colors[app.status] || 'gray';
+            return `<div class="p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='application-review-detail.html?id=${app.id}'">
+                <div class="w-12 h-12 rounded-xl bg-${c}-50 flex items-center justify-center text-${c}-600 shrink-0">
+                    <span class="iconify text-2xl" data-icon="${icons[app.status] || 'mdi:file-outline'}"></span>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-gray-800">${esc(app.jobTitle || 'Application')}</p>
+                    <p class="text-xs text-gray-400 mt-1">${app.createdAt ? timeAgo(app.createdAt) : ''}</p>
+                </div>
+                ${statusBadge(app.status)}
+            </div>`;
+        }).join('');
+    } catch (err) {
+        document.getElementById('subMsg').textContent = 'Failed to load data.';
+        showToast(err.message || 'Failed to load dashboard data', 'error');
+    }
+})();
+</script>
+</body>
+</html>
