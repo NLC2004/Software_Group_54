@@ -510,5 +510,21 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775368474879
+  },
+  {
+    "id": "a15ce4f5",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775492170713
+  },
+  {
+    "id": "874a9d30",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "APPLY",
+    "detail": "Applied for job: Python Lab Teaching Assistant",
+    "createdAt": 1775492285140
   }
 ]
