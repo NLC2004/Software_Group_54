@@ -1,3 +1,0 @@
-@echo off
-echo Starting TA Recruitment System v2...
-java -cp "out;lib\gson-2.10.1.jar" com.bupt.tarecruit.Main %*
