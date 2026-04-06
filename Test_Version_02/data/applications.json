@@ -20,5 +20,16 @@
     "priority": 1,
     "createdAt": 1774370216201,
     "updatedAt": 1774370250549
+  },
+  {
+    "id": "296195bb",
+    "jobId": "3e8fd336",
+    "applicantId": "6e6df15f",
+    "cvFileName": "1775492285106_EBU6304_01_Introduction_to_Software_Engineering.pdf",
+    "coverLetter": "I am good at programming and communicating with others.",
+    "status": "PENDING",
+    "priority": 1,
+    "createdAt": 1775492285133,
+    "updatedAt": 1775492285133
   }
 ]
