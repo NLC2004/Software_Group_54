@@ -43,5 +43,14 @@
     "type": "APPLICATION",
     "read": true,
     "createdAt": 1775552318678
+  },
+  {
+    "id": "eba535fd",
+    "userId": "6e6df15f",
+    "title": "Application Approved",
+    "content": "Your application for TA Needed: Database Systems has been approved!",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775553944991
   }
 ]
