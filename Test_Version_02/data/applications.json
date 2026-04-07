@@ -71,9 +71,9 @@
     "applicantId": "6e6df15f",
     "cvFileName": "1775552318640_EBU6304_01_Introduction_to_Software_Engineering.pdf",
     "coverLetter": "I am good at SQL,etc.",
-    "status": "PENDING",
+    "status": "APPROVED",
     "priority": 1,
     "createdAt": 1775552318666,
-    "updatedAt": 1775552318666
+    "updatedAt": 1775553944965
   }
 ]
