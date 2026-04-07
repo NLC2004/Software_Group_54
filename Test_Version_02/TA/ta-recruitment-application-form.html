@@ -300,6 +300,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     let activeApplications = [];
     let occupiedPriorities = new Map();
     let serverDraftResumeFileName = '';
+    let profileDefaults = null;
 
     function getRadioValue(name) {
         const el = document.querySelector(`input[name="${name}"]:checked`);
@@ -396,6 +397,46 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         }
         hasUnsavedChanges = false;
         return true;
+    }
+
+    function normalizeProfileDefaults(user) {
+        if (!user || typeof user !== 'object') return null;
+        return {
+            confirmFullName: user.fullName || user.username || '',
+            confirmStudentId: user.studentId || '',
+            confirmPhone: user.phone || '',
+            confirmSchool: user.school || '',
+            confirmGender: user.gender || '',
+            confirmYear: user.yearOfStudy || ''
+        };
+    }
+
+    function applyProfileDefaults(user) {
+        const defaults = normalizeProfileDefaults(user);
+        if (!defaults) return;
+        profileDefaults = defaults;
+        if (!confirmFullNameInput.value.trim()) confirmFullNameInput.value = defaults.confirmFullName;
+        if (!confirmStudentIdInput.value.trim()) confirmStudentIdInput.value = defaults.confirmStudentId;
+        if (!confirmPhoneInput.value.trim()) confirmPhoneInput.value = defaults.confirmPhone;
+        if (!confirmSchoolSelect.value) confirmSchoolSelect.value = defaults.confirmSchool;
+        if (!getRadioValue('confirmGender')) setRadioValue('confirmGender', defaults.confirmGender);
+        if (!getRadioValue('confirmYear')) setRadioValue('confirmYear', defaults.confirmYear);
+    }
+
+    function hasMeaningfulValue(value) {
+        return typeof value === 'string' ? !!value.trim() : value != null && value !== '';
+    }
+
+    function isDraftUsingProfileDefaults(payload) {
+        if (!profileDefaults) return false;
+        return (
+            (!hasMeaningfulValue(payload.confirmStudentId) || payload.confirmStudentId === profileDefaults.confirmStudentId) &&
+            (!hasMeaningfulValue(payload.confirmFullName) || payload.confirmFullName === profileDefaults.confirmFullName) &&
+            (!hasMeaningfulValue(payload.confirmPhone) || payload.confirmPhone === profileDefaults.confirmPhone) &&
+            (!hasMeaningfulValue(payload.confirmSchool) || payload.confirmSchool === profileDefaults.confirmSchool) &&
+            (!hasMeaningfulValue(payload.confirmGender) || payload.confirmGender === profileDefaults.confirmGender) &&
+            (!hasMeaningfulValue(payload.confirmYear) || payload.confirmYear === profileDefaults.confirmYear)
+        );
     }
 
     function hasLocalDraftContent(payload) {
@@ -645,7 +686,10 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     async function persistDraft(options = {}) {
         const payload = getDraftPayload();
         const hasDraftContent = hasLocalDraftContent(payload);
-        if (!hasDraftContent && !resumeFile) {
+        const onlyProfileDefaults = isDraftUsingProfileDefaults(payload)
+            && !(payload.coverLetter || '').trim()
+            && !String(payload.priority || '').trim();
+        if ((!hasDraftContent || onlyProfileDefaults) && !resumeFile && !serverDraftResumeFileName) {
             if (options.showToastMessage) {
                 showToast('There is no draft content to save yet.', 'warning');
             }
@@ -794,15 +838,6 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         }
     });
 
-    function applyProfileDefaults(user) {
-        if (!confirmFullNameInput.value) confirmFullNameInput.value = user.fullName || user.username || '';
-        if (!confirmStudentIdInput.value) confirmStudentIdInput.value = user.studentId || '';
-        if (!confirmPhoneInput.value) confirmPhoneInput.value = user.phone || '';
-        if (!confirmSchoolSelect.value) confirmSchoolSelect.value = user.school || '';
-        if (!getRadioValue('confirmGender')) setRadioValue('confirmGender', user.gender || '');
-        if (!getRadioValue('confirmYear')) setRadioValue('confirmYear', user.yearOfStudy || '');
-    }
-
     function buildApplicationCoverLetter() {
         return [
             '[Basic Information]',
@@ -862,6 +897,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         if (!restored) {
             restoreDraftFromLocal();
         }
+        applyProfileDefaults(profileDefaults);
         updatePriorityUi();
         try {
             const savedResume = await getResumeFromIndexedDb();
@@ -872,7 +908,9 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
                 const profileResume = await getProfileResumeFromIndexedDb();
                 if (profileResume && profileResume.file) {
                     applyResumeFile(profileResume.file, { preserveServerFileName: true });
-                    setDraftStatus('Loaded resume from your profile cache.');
+                    if (!restored) {
+                        setDraftStatus('Loaded resume from your profile cache.');
+                    }
                 }
             }
         } catch (_) {}
