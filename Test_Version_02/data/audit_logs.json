@@ -886,5 +886,13 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775554822726
+  },
+  {
+    "id": "305f3f28",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775564886781
   }
 ]
