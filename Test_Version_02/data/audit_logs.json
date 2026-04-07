@@ -512,178 +512,22 @@
     "createdAt": 1775368474879
   },
   {
-    "id": "1e246f89",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "REGISTER",
-    "detail": "New TA registered",
-    "createdAt": 1775371488180
-  },
-  {
-    "id": "b5d8bdfe",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1775371602777
-  },
-  {
-    "id": "872cc4e8",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775371617641
-  },
-  {
-    "id": "43851d62",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1775371626634
-  },
-  {
-    "id": "b6c7aa93",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775372089214
-  },
-  {
-    "id": "437e9b9f",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775373586891
-  },
-  {
-    "id": "0abf0757",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1775373644898
-  },
-  {
-    "id": "c670cb9f",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775373666591
-  },
-  {
-    "id": "3797af1a",
-    "userId": "7067ef7b",
-    "username": "teacher1",
-    "action": "REGISTER",
-    "detail": "New MO registered",
-    "createdAt": 1775373757621
-  },
-  {
-    "id": "eb1c3748",
-    "userId": "7067ef7b",
-    "username": "teacher1",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1775373760358
-  },
-  {
-    "id": "a927746c",
-    "userId": "7067ef7b",
-    "username": "teacher1",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775373769332
-  },
-  {
-    "id": "3c30eb2a",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775374267128
-  },
-  {
-    "id": "72d39984",
-    "userId": "7067ef7b",
-    "username": "teacher1",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775374287543
-  },
-  {
-    "id": "8ef8b449",
-    "userId": "1509be6d",
-    "username": "Mei",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775374306013
-  },
-  {
-    "id": "3553d3f4",
-    "userId": "admin001",
-    "username": "admin",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775374969582
-  },
-  {
-    "id": "dad065f9",
-    "userId": "ta004",
-    "username": "231225557",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775380098831
-  },
-  {
-    "id": "c3badda9",
-    "userId": "admin001",
-    "username": "admin",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775380229270
-  },
-  {
-    "id": "604d74ce",
+    "id": "a15ce4f5",
     "userId": "6e6df15f",
     "username": "Siying Li",
     "action": "LOGIN",
     "detail": "User logged in",
-    "createdAt": 1775380314528
+    "createdAt": 1775492170713
   },
   {
-    "id": "7da95822",
+    "id": "874a9d30",
     "userId": "6e6df15f",
     "username": "Siying Li",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1775380364018
-  },
-  {
-    "id": "761eba0b",
-    "userId": "ta002",
-    "username": "231225270",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775380368443
-  },
-  {
-    "id": "860598fb",
-    "userId": "ta004",
-    "username": "231225557",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1775393204233
-  },
-  {
-    "id": "9f17bc14",
-    "userId": "ta004",
-    "username": "231225557",
     "action": "APPLY",
+<<<<<<< Updated upstream
+    "detail": "Applied for job: Python Lab Teaching Assistant",
+    "createdAt": 1775492285140
+=======
     "detail": "Applied for job: TA Needed: Database Systems",
     "createdAt": 1775393879350
   },
@@ -894,5 +738,62 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775495826805
+  },
+  {
+    "id": "3a4480fa",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775532092443
+  },
+  {
+    "id": "64447342",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775532134221
+  },
+  {
+    "id": "26112ed1",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775532162885
+  },
+  {
+    "id": "856b0c7e",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application c7f25fb6 for TA Needed: Database Systems",
+    "createdAt": 1775532372736
+  },
+  {
+    "id": "8b1a70cc",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775533517399
+  },
+  {
+    "id": "860c629e",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775534641758
+  },
+  {
+    "id": "273c1a95",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775534735679
+>>>>>>> Stashed changes
   }
 ]

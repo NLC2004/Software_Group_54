@@ -157,6 +157,42 @@ public class DataService {
         writeList("applications.json", apps);
     }
 
+    public synchronized List<ApplicationDraft> getAllApplicationDrafts() {
+        return readList("application_drafts.json", new TypeToken<List<ApplicationDraft>>(){}.getType());
+    }
+
+    public synchronized ApplicationDraft getApplicationDraft(String userId, String jobId) {
+        String normalizedJobId = jobId == null ? "" : jobId.trim();
+        return getAllApplicationDrafts().stream()
+                .filter(d -> Objects.equals(d.userId, userId)
+                        && Objects.equals(d.jobId == null ? "" : d.jobId.trim(), normalizedJobId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public synchronized ApplicationDraft saveApplicationDraft(ApplicationDraft draft) {
+        List<ApplicationDraft> drafts = getAllApplicationDrafts();
+        long now = System.currentTimeMillis();
+        if (draft.id == null || draft.id.isBlank()) {
+            draft.id = UUID.randomUUID().toString().substring(0, 8);
+            draft.createdAt = now;
+        }
+        draft.updatedAt = now;
+        drafts.removeIf(d -> Objects.equals(d.userId, draft.userId)
+                && Objects.equals(d.jobId == null ? "" : d.jobId.trim(), draft.jobId == null ? "" : draft.jobId.trim()));
+        drafts.add(draft);
+        writeList("application_drafts.json", drafts);
+        return draft;
+    }
+
+    public synchronized void deleteApplicationDraft(String userId, String jobId) {
+        List<ApplicationDraft> drafts = getAllApplicationDrafts();
+        String normalizedJobId = jobId == null ? "" : jobId.trim();
+        drafts.removeIf(d -> Objects.equals(d.userId, userId)
+                && Objects.equals(d.jobId == null ? "" : d.jobId.trim(), normalizedJobId));
+        writeList("application_drafts.json", drafts);
+    }
+
     // ==================== Notifications ====================
 
     public synchronized List<Notification> getAllNotifications() {
@@ -233,75 +269,6 @@ public class DataService {
         writeList("password_resets.json", list);
     }
 
-    // ==================== Admin Role Templates ====================
-
-    public synchronized List<AdminRoleTemplate> getAllAdminRoleTemplates() {
-        return readList("admin_role_templates.json", new TypeToken<List<AdminRoleTemplate>>(){}.getType());
-    }
-
-    public synchronized AdminRoleTemplate getAdminRoleTemplateById(String id) {
-        return getAllAdminRoleTemplates().stream()
-                .filter(t -> t.id != null && t.id.equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public synchronized AdminRoleTemplate addAdminRoleTemplate(AdminRoleTemplate template) {
-        List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
-        template.id = UUID.randomUUID().toString().substring(0, 8);
-        template.createdAt = System.currentTimeMillis();
-        if (template.tags == null) template.tags = new ArrayList<>();
-        list.add(template);
-        writeList("admin_role_templates.json", list);
-        return template;
-    }
-
-    public synchronized void updateAdminRoleTemplate(AdminRoleTemplate template) {
-        List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
-        list.removeIf(t -> t.id != null && t.id.equals(template.id));
-        if (template.tags == null) template.tags = new ArrayList<>();
-        list.add(template);
-        writeList("admin_role_templates.json", list);
-    }
-
-    public synchronized void deleteAdminRoleTemplate(String id) {
-        List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
-        list.removeIf(t -> t.id != null && t.id.equals(id));
-        writeList("admin_role_templates.json", list);
-    }
-
-    // ==================== Export Tasks ====================
-
-    public synchronized List<ExportTask> getAllExportTasks() {
-        return readList("export_tasks.json", new TypeToken<List<ExportTask>>(){}.getType());
-    }
-
-    public synchronized ExportTask getExportTaskById(String id) {
-        return getAllExportTasks().stream()
-                .filter(t -> t.id != null && t.id.equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public synchronized ExportTask addExportTask(ExportTask task) {
-        List<ExportTask> list = getAllExportTasks();
-        long now = System.currentTimeMillis();
-        task.id = UUID.randomUUID().toString().substring(0, 8);
-        task.createdAt = now;
-        task.updatedAt = now;
-        list.add(task);
-        writeList("export_tasks.json", list);
-        return task;
-    }
-
-    public synchronized void updateExportTask(ExportTask task) {
-        List<ExportTask> list = getAllExportTasks();
-        task.updatedAt = System.currentTimeMillis();
-        list.removeIf(t -> t.id != null && t.id.equals(task.id));
-        list.add(task);
-        writeList("export_tasks.json", list);
-    }
-
     // ==================== Settings ====================
 
     public synchronized Map<String, String> getSettings() {
@@ -337,29 +304,25 @@ public class DataService {
     // ==================== Export ====================
 
     public String exportAllDataCsv() {
-        return exportAllDataCsv(null, null);
-    }
-
-    public String exportAllDataCsv(Long startMs, Long endMs) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("=== USERS ===\n");
         sb.append("ID,Username,Role,FullName,Email,Phone,Active,CreatedAt\n");
-        for (User u : getAllUsers().stream().filter(u -> inRange(u.createdAt, startMs, endMs)).collect(Collectors.toList())) {
+        for (User u : getAllUsers()) {
             sb.append(String.format("%s,%s,%s,%s,%s,%s,%s,%d\n",
                     u.id, u.username, u.role, safe(u.fullName), safe(u.email), safe(u.phone), u.active, u.createdAt));
         }
 
         sb.append("\n=== JOBS ===\n");
         sb.append("ID,Title,Type,CourseName,PostedBy,Quota,WeeklyHours,Status,CreatedAt\n");
-        for (Job j : getAllJobs().stream().filter(j -> inRange(j.createdAt, startMs, endMs)).collect(Collectors.toList())) {
+        for (Job j : getAllJobs()) {
             sb.append(String.format("%s,%s,%s,%s,%s,%d,%.1f,%s,%d\n",
                     j.id, safe(j.title), j.type, safe(j.courseName), j.postedBy, j.quota, j.weeklyHours, j.status, j.createdAt));
         }
 
         sb.append("\n=== APPLICATIONS ===\n");
         sb.append("ID,JobId,ApplicantId,Status,Priority,CvFile,CreatedAt,UpdatedAt\n");
-        for (Application a : getAllApplications().stream().filter(a -> inRange(a.createdAt, startMs, endMs)).collect(Collectors.toList())) {
+        for (Application a : getAllApplications()) {
             sb.append(String.format("%s,%s,%s,%s,%d,%s,%d,%d\n",
                     a.id, a.jobId, a.applicantId, a.status, a.priority, safe(a.cvFileName), a.createdAt, a.updatedAt));
         }
@@ -368,12 +331,6 @@ public class DataService {
     }
 
     private String safe(String s) { return s == null ? "" : s.replace(",", ";"); }
-
-    private boolean inRange(long ts, Long startMs, Long endMs) {
-        if (startMs != null && ts < startMs) return false;
-        if (endMs != null && ts > endMs) return false;
-        return true;
-    }
 
     // ==================== Internal ====================
 
@@ -396,95 +353,15 @@ public class DataService {
     }
 
     private void initDefaultData() {
-        // Ensure seeded data exists even if JSON files already exist.
-        // We do incremental upsert by ID to avoid deleting existing data.
-        boolean usersChanged = false;
-        List<User> users = getAllUsers();
-
-        java.util.function.Function<String, User> findUserById = (uid) -> {
-            for (User u : users) {
-                if (u != null && u.id != null && u.id.equals(uid)) return u;
-            }
-            return null;
-        };
-
-        java.util.function.BiFunction<String, String, User> findUserByRoleAndStudentId = (role, sid) -> {
-            for (User u : users) {
-                if (u == null) continue;
-                if (u.role != null && u.role.equals(role) && u.studentId != null && u.studentId.equals(sid)) return u;
-            }
-            return null;
-        };
-
-        java.util.function.BiFunction<String, String, User> findUserByRoleAndEmail = (role, email) -> {
-            for (User u : users) {
-                if (u == null) continue;
-                if (u.role != null && u.role.equals(role) && u.email != null && u.email.equalsIgnoreCase(email)) return u;
-            }
-            return null;
-        };
-
-        java.util.function.Function<User, Boolean> upsertUser = (seed) -> {
-            User existing = findUserById.apply(seed.id);
-            if (existing == null && seed.studentId != null && !seed.studentId.isBlank()) {
-                existing = findUserByRoleAndStudentId.apply(seed.role, seed.studentId);
-            }
-            if (existing == null && seed.email != null && !seed.email.isBlank()) {
-                existing = findUserByRoleAndEmail.apply(seed.role, seed.email);
-            }
-
-            if (existing == null) {
-                users.add(seed);
-                return true;
-            }
-
-            boolean changed = false;
-            // Do not overwrite password for existing accounts.
-            if ((existing.username == null || existing.username.isBlank()) && seed.username != null) {
-                existing.username = seed.username;
-                changed = true;
-            }
-            if ((existing.fullName == null || existing.fullName.isBlank()) && seed.fullName != null) {
-                existing.fullName = seed.fullName;
-                changed = true;
-            }
-            if ((existing.email == null || existing.email.isBlank()) && seed.email != null) {
-                existing.email = seed.email;
-                changed = true;
-            }
-            if ((existing.studentId == null || existing.studentId.isBlank()) && seed.studentId != null) {
-                existing.studentId = seed.studentId;
-                changed = true;
-            }
-            if (existing.role == null || existing.role.isBlank()) {
-                existing.role = seed.role;
-                changed = true;
-            }
-            if (!existing.active) {
-                existing.active = true;
-                changed = true;
-            }
-            if (existing.createdAt == 0) {
-                existing.createdAt = seed.createdAt;
-                changed = true;
-            }
-            return changed;
-        };
-
-        User superAdmin = new User("admin001", "admin", "admin123", "ADMIN");
-        superAdmin.fullName = "System Administrator";
-        superAdmin.email = "admin@bupt.edu.cn";
-        superAdmin.studentId = "admin";
-        usersChanged |= upsertUser.apply(superAdmin);
-
-        for (int i = 1; i <= 3; i++) {
-            String adminId = "admin" + i;
-            User subAdmin = new User("admin00" + (i + 1), adminId, "admin123", "ADMIN");
-            subAdmin.fullName = "Administrator " + i;
-            subAdmin.email = adminId + "@bupt.edu.cn";
-            subAdmin.studentId = adminId;
-            usersChanged |= upsertUser.apply(subAdmin);
+        if (!Files.exists(dataDir.resolve("users.json"))) {
+            User admin = new User("admin001", "admin", "admin123", "ADMIN");
+            admin.fullName = "System Administrator";
+            admin.email = "admin@bupt.edu.cn";
+            writeList("users.json", List.of(admin));
         }
+<<<<<<< Updated upstream
+        String[] emptyLists = {"jobs.json", "applications.json", "notifications.json", "audit_logs.json", "password_resets.json"};
+=======
 
         String[][] taSeed = new String[][]{
             {"231225731", "Zijie Zhang"},
@@ -789,7 +666,8 @@ public class DataService {
 
         if (notificationsChanged) writeList("notifications.json", ns);
 
-        String[] emptyLists = {"audit_logs.json", "password_resets.json", "export_tasks.json", "admin_role_templates.json"};
+        String[] emptyLists = {"audit_logs.json", "password_resets.json", "export_tasks.json", "admin_role_templates.json", "application_drafts.json"};
+>>>>>>> Stashed changes
         for (String f : emptyLists) {
             if (!Files.exists(dataDir.resolve(f))) writeList(f, new ArrayList<>());
         }
