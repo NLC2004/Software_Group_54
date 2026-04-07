@@ -20,6 +20,7 @@ public class Main {
         server.createContext("/api/auth", new AuthHandler(ds));
         server.createContext("/api/jobs", new JobHandler(ds));
         server.createContext("/api/applications", new ApplicationHandler(ds));
+        server.createContext("/api/drafts", new DraftHandler(ds));
         server.createContext("/api/admin", new AdminHandler(ds));
         server.createContext("/api/upload", new UploadHandler(ds));
         server.createContext("/api/notifications", new NotificationHandler(ds));
