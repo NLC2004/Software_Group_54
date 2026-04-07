@@ -36,12 +36,15 @@
     "createdAt": 1774370250568
   },
   {
-    "id": "noti001",
-    "userId": "mo001",
+    "id": "4541b1e4",
+    "userId": "b398e651",
     "title": "New Application",
-    "content": "Zijie Zhang applied for TA Needed: Programming Fundamentals",
+    "content": "Siying Li applied for Python Lab Teaching Assistant",
     "type": "APPLICATION",
     "read": false,
+<<<<<<< Updated upstream
+    "createdAt": 1775492285150
+=======
     "createdAt": 1775336887820
   },
   {
@@ -88,5 +91,15 @@
     "type": "APPLICATION",
     "read": false,
     "createdAt": 1775397393166
+  },
+  {
+    "id": "0c982f72",
+    "userId": "ta004",
+    "title": "Application Approved",
+    "content": "Your application for TA Needed: Database Systems has been approved!",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775532372747
+>>>>>>> Stashed changes
   }
 ]
