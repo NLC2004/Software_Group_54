@@ -92,11 +92,13 @@
 <div class="flex items-center gap-6">
 <div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-<span class="text-xs text-green-700 font-medium">Synced: 2026-03-21 14:30</span>
+<span id="basicStatsSyncDate" class="text-xs text-green-700 font-medium">Synced: -</span>
 </div>
 <div class="relative">
-<span class="iconify text-2xl text-gray-400 cursor-pointer hover:text-blue-500 transition-colors" data-icon="solar:bell-bing-linear"></span>
-<span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+<button id="btnBasicStatsBell" type="button" class="relative text-2xl text-gray-400 hover:text-blue-500 transition-colors" title="Open password reset requests">
+<span class="iconify" data-icon="solar:bell-bing-linear"></span>
+<span id="basicStatsBellDot" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
 </div>
 <div class="h-6 w-px bg-gray-200"></div>
 <div class="flex items-center gap-3 cursor-pointer">
@@ -117,12 +119,14 @@
 <div class="flex items-center gap-3">
 <div class="flex items-center bg-white border border-gray-200 rounded-xl px-3 py-2 gap-2 shadow-sm">
 <span class="iconify text-gray-400" data-icon="solar:calendar-date-bold"></span>
-<input class="bg-transparent border-none focus:ring-0 text-sm font-medium w-48 pointer-events-none" type="text" value="Mar 01, 2026 - Mar 21, 2026"/>
-<span class="iconify text-gray-400 cursor-pointer" data-icon="solar:alt-arrow-down-linear"></span>
+<input id="statsStartDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="date"/>
+<span class="text-gray-300">~</span>
+<input id="statsEndDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="date"/>
 </div>
-<button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-200 transition-all font-medium">
+<button type="button" id="btnApplyDateRange" class="px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50">Apply</button>
+<button type="button" id="btnExportCoreData" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-200 transition-all font-medium" title="Export users, jobs, and applications">
 <span class="iconify text-lg" data-icon="solar:download-square-bold"></span>
-                        Quick Export
+                        Export Core Data
                     </button>
 </div>
 </div>
@@ -218,9 +222,9 @@
 <div class="flex gap-2">
 <div class="relative">
 <span class="iconify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" data-icon="solar:magnifer-linear"></span>
-<input class="pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm w-64 focus:ring-2 focus:ring-blue-100 transition-all" placeholder="Search tasks..." type="text"/>
+<input id="exportSearchInput" class="pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm w-64 focus:ring-2 focus:ring-blue-100 transition-all" placeholder="Search tasks..." type="text"/>
 </div>
-<button class="p-2 border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
+<button id="btnExportTaskSearch" class="p-2 border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors" title="Search">
 <span class="iconify" data-icon="solar:filter-bold"></span>
 </button>
 </div>
@@ -237,107 +241,20 @@
 <th class="px-6 py-4 font-semibold text-gray-600 text-right">Action</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-gray-100">
-<!-- Row 1 -->
-<tr class="hover:bg-gray-50/50 transition-colors">
-<td class="px-6 py-4 font-mono text-gray-400 italic">EX-20260321-001</td>
-<td class="px-6 py-4">
-<span class="font-medium text-gray-900 leading-tight">TA Application Statistics Full</span>
-<p class="text-xs text-blue-500 mt-0.5 capitalize">Excel Format (.xlsx)</p>
-</td>
-<td class="px-6 py-4 text-gray-500">2026-03-01 to 2026-03-21</td>
-<td class="px-6 py-4">
-<span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold border border-green-100">COMPLETED</span>
-</td>
-<td class="px-6 py-4 flex items-center gap-2">
-<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white">ZW</div>
-<span>Zhang Wei</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 ml-auto">
-<span class="iconify" data-icon="solar:download-square-linear"></span> Download
-                                    </button>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-gray-50/50 transition-colors">
-<td class="px-6 py-4 font-mono text-gray-400 italic">EX-20260320-098</td>
-<td class="px-6 py-4">
-<span class="font-medium text-gray-900 leading-tight">School of CS - Monthly Report</span>
-<p class="text-xs text-blue-500 mt-0.5 capitalize">PDF Format (.pdf)</p>
-</td>
-<td class="px-6 py-4 text-gray-500">2026-02-01 to 2026-02-28</td>
-<td class="px-6 py-4">
-<span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold border border-green-100">COMPLETED</span>
-</td>
-<td class="px-6 py-4 flex items-center gap-2">
-<div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-[10px] text-white">AS</div>
-<span>AI System</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 ml-auto">
-<span class="iconify" data-icon="solar:download-square-linear"></span> Download
-                                    </button>
-</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-gray-50/50 transition-colors">
-<td class="px-6 py-4 font-mono text-gray-400 italic">EX-20260321-015</td>
-<td class="px-6 py-4">
-<span class="font-medium text-gray-900 leading-tight">Rejected Candidates Feedback</span>
-<p class="text-xs text-blue-500 mt-0.5 capitalize">CSV Format (.csv)</p>
-</td>
-<td class="px-6 py-4 text-gray-500">2026-03-01 to 2026-03-21</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2 text-blue-600">
-<span class="iconify animate-spin" data-icon="solar:restart-linear"></span>
-<span class="text-xs font-bold uppercase tracking-wider">Processing...</span>
-</div>
-</td>
-<td class="px-6 py-4 flex items-center gap-2">
-<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white">ZW</div>
-<span>Zhang Wei</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-gray-300 cursor-not-allowed font-bold">Download</button>
-</td>
-</tr>
-<!-- Row 4 -->
-<tr class="hover:bg-gray-50/50 transition-colors">
-<td class="px-6 py-4 font-mono text-gray-400 italic">EX-20260319-042</td>
-<td class="px-6 py-4">
-<span class="font-medium text-gray-900 leading-tight">Quarterly Recruitment Insight</span>
-<p class="text-xs text-blue-500 mt-0.5 capitalize">Excel Format (.xlsx)</p>
-</td>
-<td class="px-6 py-4 text-gray-500">2026-01-01 to 2026-03-31</td>
-<td class="px-6 py-4">
-<span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold border border-red-100">FAILED</span>
-</td>
-<td class="px-6 py-4 flex items-center gap-2">
-<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white">ZW</div>
-<span>Zhang Wei</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-orange-600 hover:text-orange-800 font-bold flex items-center gap-1 ml-auto">
-<span class="iconify" data-icon="solar:refresh-linear"></span> Retry
-                                    </button>
-</td>
-</tr>
+<tbody class="divide-y divide-gray-100" id="exportTasksTbody">
+<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">Loading export history...</td></tr>
 </tbody>
 </table>
 </div>
 <!-- Pagination -->
 <div class="p-6 border-t border-gray-100 flex items-center justify-between">
-<p class="text-sm text-gray-500 font-medium">Showing 1 to 4 of 24 records</p>
+<p id="exportPaginationInfo" class="text-sm text-gray-500 font-medium">Showing 0 to 0 of 0 records</p>
 <div class="flex items-center gap-1">
-<button class="p-2 border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50">
+<button id="exportPrevBtn" class="p-2 border border-gray-200 rounded-lg text-gray-400 hover:bg-gray-50">
 <span class="iconify" data-icon="material-symbols:chevron-left"></span>
 </button>
-<button class="w-8 h-8 rounded-lg bg-blue-600 text-white text-sm font-bold shadow-md shadow-blue-100">1</button>
-<button class="w-8 h-8 rounded-lg text-gray-600 hover:bg-gray-100 text-sm font-medium">2</button>
-<button class="w-8 h-8 rounded-lg text-gray-600 hover:bg-gray-100 text-sm font-medium">3</button>
-<span class="px-2 text-gray-400">...</span>
-<button class="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
+<span id="exportPageText" class="px-3 text-gray-600 text-sm font-medium">1 / 1</span>
+<button id="exportNextBtn" class="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50">
 <span class="iconify" data-icon="material-symbols:chevron-right"></span>
 </button>
 </div>
@@ -364,31 +281,139 @@
 </footer>
 </div>
 </main>
+<script src="/admin/js/basic-stats-data.js"></script>
 <script src="/js/api.js"></script>
 <script>
 let trendChart, distChart;
+let exportTaskPage = 1;
+const exportTaskPageSize = 8;
+let exportTaskTotal = 0;
+let activeStartDate = '';
+let activeEndDate = '';
 
 (async function() {
     const user = requireAuth(['ADMIN']);
     if (!user) return;
     updateSidebarUser(user);
+    document.getElementById('btnBasicStatsBell')?.addEventListener('click', function() {
+        window.location.href = 'password-reset-requests.html';
+    });
+    updateBasicStatsSyncTime();
+    await refreshBasicStatsBellDot();
+    const startEl = document.getElementById('statsStartDate');
+    const endEl = document.getElementById('statsEndDate');
+    const now = new Date();
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    if (startEl) startEl.value = toDateInputValue(monthAgo);
+    if (endEl) endEl.value = toDateInputValue(now);
+    activeStartDate = startEl ? startEl.value : '';
+    activeEndDate = endEl ? endEl.value : '';
 
-    try {
-        const stats = await API.get('/api/admin/stats');
-        updateStatsCards(stats);
-        trendChart = initTrendChart(stats);
-        distChart = initDistChart(stats);
-    } catch (e) {
-        showToast('Failed to load statistics: ' + e.message, 'error');
-    }
+    await loadStats();
 
     window.addEventListener('resize', () => {
         if (trendChart) trendChart.resize();
         if (distChart) distChart.resize();
     });
 
-    document.querySelector('button.bg-blue-600')?.addEventListener('click', exportCSV);
+    document.getElementById('btnExportCoreData')?.addEventListener('click', exportCSV);
+    document.getElementById('btnApplyDateRange')?.addEventListener('click', async function() {
+        const s = document.getElementById('statsStartDate')?.value || '';
+        const e = document.getElementById('statsEndDate')?.value || '';
+        if (s && e && s > e) {
+            showToast('Start date cannot be later than end date', 'warning');
+            return;
+        }
+        activeStartDate = s;
+        activeEndDate = e;
+        exportTaskPage = 1;
+        await loadStats();
+        await loadExportTasks();
+    });
+    document.getElementById('btnExportTaskSearch')?.addEventListener('click', function() {
+        exportTaskPage = 1;
+        loadExportTasks();
+    });
+    document.getElementById('exportSearchInput')?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            exportTaskPage = 1;
+            loadExportTasks();
+        }
+    });
+    document.getElementById('exportPrevBtn')?.addEventListener('click', function() {
+        if (exportTaskPage > 1) {
+            exportTaskPage--;
+            loadExportTasks();
+        }
+    });
+    document.getElementById('exportNextBtn')?.addEventListener('click', function() {
+        const maxPage = Math.max(1, Math.ceil(exportTaskTotal / exportTaskPageSize));
+        if (exportTaskPage < maxPage) {
+            exportTaskPage++;
+            loadExportTasks();
+        }
+    });
+    await loadExportTasks();
 })();
+
+function updateBasicStatsSyncTime() {
+    const syncEl = document.getElementById('basicStatsSyncDate');
+    if (!syncEl) return;
+    const now = new Date();
+    const dateText = now.toISOString().slice(0, 10);
+    const timeText = now.toTimeString().slice(0, 5);
+    syncEl.textContent = 'Synced: ' + dateText + ' ' + timeText;
+}
+
+async function refreshBasicStatsBellDot() {
+    const dot = document.getElementById('basicStatsBellDot');
+    if (!dot) return;
+    try {
+        const resets = await API.get('/api/admin/password-resets?status=PENDING');
+        const pendingCount = Array.isArray(resets) ? resets.length : 0;
+        dot.classList.toggle('hidden', pendingCount <= 0);
+    } catch (e) {
+        dot.classList.add('hidden');
+    }
+}
+
+function toDateInputValue(d) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return yyyy + '-' + mm + '-' + dd;
+}
+
+function buildDateQuery() {
+    const p = new URLSearchParams();
+    if (activeStartDate) p.set('startDate', activeStartDate);
+    if (activeEndDate) p.set('endDate', activeEndDate);
+    const s = p.toString();
+    return s ? ('?' + s) : '';
+}
+
+function currentDateRangeText() {
+    if (activeStartDate && activeEndDate) return activeStartDate + ' to ' + activeEndDate;
+    if (activeStartDate) return activeStartDate + ' to now';
+    if (activeEndDate) return 'up to ' + activeEndDate;
+    return 'All time';
+}
+
+async function loadStats() {
+    try {
+        const stats = await API.get('/api/admin/stats' + buildDateQuery());
+        updateStatsCards(stats);
+        trendChart = initTrendChart(stats);
+        distChart = initDistChart(stats);
+    } catch (e) {
+        showToast('Failed to load statistics: ' + e.message, 'error');
+        if (window.BASIC_STATS_DATA) {
+            updateStatsCards(window.BASIC_STATS_DATA);
+            trendChart = initTrendChart(window.BASIC_STATS_DATA);
+            distChart = initDistChart(window.BASIC_STATS_DATA);
+        }
+    }
+}
 
 function updateStatsCards(stats) {
     const cards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 > div');
@@ -454,7 +479,11 @@ function initDistChart(stats) {
 
 async function exportCSV() {
     try {
-        const res = await fetch('/api/admin/export', {
+        const qp = new URLSearchParams();
+        if (activeStartDate) qp.set('startDate', activeStartDate);
+        if (activeEndDate) qp.set('endDate', activeEndDate);
+        qp.set('dateRange', currentDateRangeText());
+        const res = await fetch('/api/admin/export?' + qp.toString(), {
             headers: { 'Authorization': 'Bearer ' + API.getToken() }
         });
         if (!res.ok) throw new Error('Export failed');
@@ -464,8 +493,108 @@ async function exportCSV() {
         a.href = url; a.download = 'export.csv'; a.click();
         URL.revokeObjectURL(url);
         showToast('Export downloaded successfully', 'success');
+        await loadExportTasks();
     } catch (e) {
         showToast('Export failed: ' + e.message, 'error');
+    }
+}
+
+function exportStatusBadge(status) {
+    if (status === 'COMPLETED') {
+        return '<span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold border border-green-100">COMPLETED</span>';
+    }
+    if (status === 'FAILED') {
+        return '<span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold border border-red-100">FAILED</span>';
+    }
+    return '<div class="flex items-center gap-2 text-blue-600"><span class="iconify animate-spin" data-icon="solar:restart-linear"></span><span class="text-xs font-bold uppercase tracking-wider">PROCESSING...</span></div>';
+}
+
+function taskInitials(name) {
+    const n = String(name || 'AD').trim();
+    if (!n) return 'AD';
+    return n.split(/\s+/).map(function(w) { return w[0] || ''; }).join('').substring(0, 2).toUpperCase();
+}
+
+function updateExportPagination(total, page, pageSize) {
+    exportTaskTotal = total || 0;
+    const info = document.getElementById('exportPaginationInfo');
+    const pageText = document.getElementById('exportPageText');
+    const prev = document.getElementById('exportPrevBtn');
+    const next = document.getElementById('exportNextBtn');
+    const maxPage = Math.max(1, Math.ceil(exportTaskTotal / pageSize));
+    const from = exportTaskTotal === 0 ? 0 : ((page - 1) * pageSize + 1);
+    const to = Math.min(page * pageSize, exportTaskTotal);
+    if (info) info.textContent = 'Showing ' + from + ' to ' + to + ' of ' + exportTaskTotal + ' records';
+    if (pageText) pageText.textContent = page + ' / ' + maxPage;
+    if (prev) prev.disabled = page <= 1;
+    if (next) next.disabled = page >= maxPage;
+}
+
+async function loadExportTasks() {
+    const tbody = document.getElementById('exportTasksTbody');
+    if (!tbody) return;
+    const q = (document.getElementById('exportSearchInput')?.value || '').trim();
+    try {
+        const qp = new URLSearchParams();
+        qp.set('page', String(exportTaskPage));
+        qp.set('pageSize', String(exportTaskPageSize));
+        qp.set('search', q);
+        if (activeStartDate) qp.set('startDate', activeStartDate);
+        if (activeEndDate) qp.set('endDate', activeEndDate);
+        const data = await API.get('/api/admin/export-tasks?' + qp.toString());
+        const items = (data && data.items) ? data.items : [];
+        updateExportPagination(data.total || 0, data.page || exportTaskPage, data.pageSize || exportTaskPageSize);
+        if (!items.length) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400">No export tasks found.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = items.map(function(t) {
+            const initials = taskInitials(t.generatorName);
+            const fmt = (t.format || 'CSV').toUpperCase();
+            const action = t.status === 'COMPLETED'
+                ? '<button class="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 ml-auto" onclick="downloadExportTask(\'' + safeJsStr(t.id) + '\')"><span class="iconify" data-icon="solar:download-square-linear"></span> Download</button>'
+                : (t.status === 'FAILED'
+                    ? '<button class="text-orange-600 hover:text-orange-800 font-bold flex items-center gap-1 ml-auto" onclick="retryExportTask(\'' + safeJsStr(t.id) + '\')"><span class="iconify" data-icon="solar:refresh-linear"></span> Retry</button>'
+                    : '<button class="text-gray-300 cursor-not-allowed font-bold">Download</button>');
+            return '<tr class="hover:bg-gray-50/50 transition-colors">' +
+                '<td class="px-6 py-4 font-mono text-gray-400 italic">' + esc(t.id || '-') + '</td>' +
+                '<td class="px-6 py-4"><span class="font-medium text-gray-900 leading-tight">' + esc(t.dataSubject || 'Core Data Export') + '</span><p class="text-xs text-blue-500 mt-0.5 capitalize">' + esc(fmt + ' Format') + '</p></td>' +
+                '<td class="px-6 py-4 text-gray-500">' + esc(t.dateRange || 'All time') + '</td>' +
+                '<td class="px-6 py-4">' + exportStatusBadge(t.status || '') + '</td>' +
+                '<td class="px-6 py-4 flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white">' + esc(initials) + '</div><span>' + esc(t.generatorName || 'Admin') + '</span></td>' +
+                '<td class="px-6 py-4 text-right">' + action + '</td>' +
+                '</tr>';
+        }).join('');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-red-400">Failed to load export history.</td></tr>';
+    }
+}
+
+async function downloadExportTask(taskId) {
+    try {
+        const res = await fetch('/api/admin/export-tasks/' + encodeURIComponent(taskId) + '/download', {
+            headers: { 'Authorization': 'Bearer ' + API.getToken() }
+        });
+        if (!res.ok) throw new Error('Download failed');
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'export_' + taskId + '.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        showToast('Download failed: ' + e.message, 'error');
+    }
+}
+
+async function retryExportTask(taskId) {
+    try {
+        await API.post('/api/admin/export-tasks/' + encodeURIComponent(taskId) + '/retry', {});
+        showToast('Retry completed', 'success');
+        await loadExportTasks();
+    } catch (e) {
+        showToast('Retry failed: ' + e.message, 'error');
     }
 }
 </script>
