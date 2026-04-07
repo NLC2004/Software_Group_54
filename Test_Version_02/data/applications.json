@@ -1,40 +1,14 @@
 [
   {
-    "id": "260de52d",
-    "jobId": "3e8fd336",
-    "applicantId": "91671c06",
-    "cvFileName": "1774368811339____-____.pdf",
-    "coverLetter": "good at all",
-    "status": "WITHDRAWN",
-    "priority": 1,
-    "createdAt": 1774368811351,
-    "updatedAt": 1774370066422
-  },
-  {
-    "id": "61e239f2",
-    "jobId": "3e8fd336",
-    "applicantId": "91671c06",
-    "cvFileName": "1774370216192_______1.pdf",
-    "coverLetter": "aaaa",
-    "status": "APPROVED",
-    "priority": 1,
-    "createdAt": 1774370216201,
-    "updatedAt": 1774370250549
-  },
-  {
-    "id": "296195bb",
-    "jobId": "3e8fd336",
-    "applicantId": "6e6df15f",
-    "cvFileName": "1775492285106_EBU6304_01_Introduction_to_Software_Engineering.pdf",
-    "coverLetter": "I am good at programming and communicating with others.",
+    "id": "app001",
+    "jobId": "job001",
+    "applicantId": "ta001",
+    "cvFileName": "cv_ta001.pdf",
+    "coverLetter": "Interested in teaching and helping peers.",
     "status": "PENDING",
     "priority": 1,
-<<<<<<< Updated upstream
-    "createdAt": 1775492285133,
-    "updatedAt": 1775492285133
-=======
-    "createdAt": 1775336887817,
-    "updatedAt": 1775336887817
+    "createdAt": 1775508962240,
+    "updatedAt": 1775508962240
   },
   {
     "id": "app002",
@@ -44,8 +18,8 @@
     "coverLetter": "Have experience as course helper.",
     "status": "APPROVED",
     "priority": 2,
-    "createdAt": 1775272087817,
-    "updatedAt": 1775308087817
+    "createdAt": 1775444162240,
+    "updatedAt": 1775480162240
   },
   {
     "id": "app003",
@@ -55,8 +29,8 @@
     "coverLetter": "Strong DS/Algo, can assist labs.",
     "status": "REJECTED",
     "priority": 1,
-    "createdAt": 1775200087817,
-    "updatedAt": 1775236087817
+    "createdAt": 1775372162240,
+    "updatedAt": 1775408162240
   },
   {
     "id": "app004",
@@ -66,8 +40,8 @@
     "coverLetter": "I like database and can help with SQL labs.",
     "status": "WITHDRAWN",
     "priority": 3,
-    "createdAt": 1775250487817,
-    "updatedAt": 1775344087817
+    "createdAt": 1775422562240,
+    "updatedAt": 1775516162240
   },
   {
     "id": "app005",
@@ -77,8 +51,8 @@
     "coverLetter": "Familiar with Python and ML basics.",
     "status": "PENDING",
     "priority": 1,
-    "createdAt": 1775358487817,
-    "updatedAt": 1775358487817
+    "createdAt": 1775530562240,
+    "updatedAt": 1775530562240
   },
   {
     "id": "app006",
@@ -88,30 +62,18 @@
     "coverLetter": "Hands-on labs and networking basics.",
     "status": "APPROVED",
     "priority": 2,
-    "createdAt": 1775128087817,
-    "updatedAt": 1775164087817
+    "createdAt": 1775300162240,
+    "updatedAt": 1775336162240
   },
   {
-    "id": "f394df05",
-    "jobId": "job006",
-    "applicantId": "ta004",
-    "cvFileName": "1775397393148________.pdf",
-    "coverLetter": "[Basic Information]\nStudent ID: 231225557\nFull Name: Lingxiang Mei\nPhone: 15656360213\nGender: Male\nSchool: International School\nYear: Year 3\n\n[Cover Letter / Motivation]\n哈哈哈",
-    "status": "PENDING",
-    "priority": 2,
-    "createdAt": 1775397393155,
-    "updatedAt": 1775397393155
-  },
-  {
-    "id": "c7f25fb6",
+    "id": "ec9d3db2",
     "jobId": "job003",
-    "applicantId": "ta004",
-    "cvFileName": "1775393879338________.pdf",
-    "coverLetter": "[Basic Information]\nStudent ID: 231225557\nFull Name: Lingxiang Mei\nPhone: 15656360213\nGender: Male\nSchool: International School\nYear: Year 3\n\n[Cover Letter / Motivation]\nEnglish",
-    "status": "APPROVED",
+    "applicantId": "6e6df15f",
+    "cvFileName": "1775552318640_EBU6304_01_Introduction_to_Software_Engineering.pdf",
+    "coverLetter": "I am good at SQL,etc.",
+    "status": "PENDING",
     "priority": 1,
-    "createdAt": 1775393879348,
-    "updatedAt": 1775532372723
->>>>>>> Stashed changes
+    "createdAt": 1775552318666,
+    "updatedAt": 1775552318666
   }
 ]
