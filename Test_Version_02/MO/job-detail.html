@@ -82,6 +82,22 @@
     Applicants
     <span class="ml-3 px-3 py-1 bg-blue-100 text-blue-600 text-xs rounded-full" id="applicantCount">0</span>
 </h3>
+<div class="flex flex-wrap items-center gap-3">
+<select class="px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-700 bg-white" id="moApplicantSort">
+<option value="priority-asc">Sort: Priority 1 → 3</option>
+<option value="priority-desc">Sort: Priority 3 → 1</option>
+<option value="submitted-desc">Sort: Latest first</option>
+<option value="submitted-asc">Sort: Earliest first</option>
+</select>
+<label class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-700">
+<input id="filterPriority1" type="checkbox"/>
+                        show only priority 1
+                    </label>
+<label class="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-700">
+<input id="filterPendingOnly" type="checkbox"/>
+                        show only pending
+                    </label>
+</div>
 </div>
 <div class="space-y-4" id="applicantList">
 <div class="text-center py-8 text-gray-400">Loading applicants...</div>
@@ -109,6 +125,9 @@
 <script>
         let jobId = null;
         let currentApplications = [];
+        let moApplicantSort = 'priority-asc';
+        let moPriority1Only = false;
+        let moPendingOnly = false;
 
         (async function init() {
             const user = requireAuth(['MO']);
@@ -130,6 +149,36 @@
                 showToast(err.message || 'Failed to load data', 'error');
             }
         })();
+
+        function getPriorityRank(value) {
+            const num = Number(value || 0);
+            return num > 0 ? num : 99;
+        }
+
+        function getFilteredApplicants(applications) {
+            let list = Array.isArray(applications) ? [...applications] : [];
+            if (moPriority1Only) {
+                list = list.filter(app => Number(app.priority || 0) === 1);
+            }
+            if (moPendingOnly) {
+                list = list.filter(app => String(app.status || '') === 'PENDING');
+            }
+            list.sort((a, b) => {
+                if (moApplicantSort === 'priority-desc') {
+                    const diff = getPriorityRank(b.priority) - getPriorityRank(a.priority);
+                    if (diff !== 0) return diff;
+                } else if (moApplicantSort === 'submitted-desc') {
+                    return Number(b.createdAt || 0) - Number(a.createdAt || 0);
+                } else if (moApplicantSort === 'submitted-asc') {
+                    return Number(a.createdAt || 0) - Number(b.createdAt || 0);
+                } else {
+                    const diff = getPriorityRank(a.priority) - getPriorityRank(b.priority);
+                    if (diff !== 0) return diff;
+                }
+                return Number(b.createdAt || 0) - Number(a.createdAt || 0);
+            });
+            return list;
+        }
 
         function renderJobInfo(job) {
             document.getElementById('breadcrumbTitle').textContent = job.title || 'Job Detail';
@@ -180,19 +229,25 @@
         }
 
         function renderApplicants(applications) {
-            document.getElementById('applicantCount').textContent = applications.length + ' Total';
             const container = document.getElementById('applicantList');
             currentApplications = applications || [];
+            const visibleApplications = getFilteredApplicants(currentApplications);
+            document.getElementById('applicantCount').textContent = visibleApplications.length + ' Visible';
 
-            if (applications.length === 0) {
+            if (visibleApplications.length === 0) {
                 container.innerHTML = '<div class="bg-white p-8 rounded-3xl border border-gray-50 card-shadow text-center text-gray-400">No applications yet</div>';
                 return;
             }
 
-            container.innerHTML = applications.map(app => {
+            container.innerHTML = visibleApplications.map(app => {
                 const statusColor = app.status === 'APPROVED' ? 'text-green-500'
                     : app.status === 'REJECTED' ? 'text-red-500'
                     : 'text-blue-400';
+                const priorityValue = Number(app.priority || 0);
+                const priorityLabel = priorityValue > 0 ? `Priority ${priorityValue}` : 'No priority';
+                const priorityBadgeClass = priorityValue > 0
+                    ? 'bg-indigo-50 text-indigo-600 border-indigo-100'
+                    : 'bg-gray-100 text-gray-500 border-gray-200';
 
                 const cvButton = app.cvFileName
                     ? `<button onclick="event.stopPropagation(); viewCV('${safeJsStr(app.cvFileName)}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100" title="View CV"><span class="iconify text-xl" data-icon="solar:document-bold"></span></button>`
@@ -212,6 +267,7 @@
                         <div>
                             <h4 class="font-bold text-gray-800">${esc(app.applicantName || 'Unknown')}</h4>
                             <p class="text-xs text-gray-400">${esc(app.applicantEmail || '')} ${app.applicantStudentId ? '&middot; ID: ' + esc(app.applicantStudentId) : ''}</p>
+                            <div class="mt-2"><span class="inline-flex px-3 py-1 rounded-full border text-[11px] font-bold ${priorityBadgeClass}">${esc(priorityLabel)}</span></div>
                             <p class="text-[10px] text-gray-300 mt-1">${app.createdAt ? timeAgo(app.createdAt) : ''}</p>
                         </div>
                     </div>
@@ -322,6 +378,10 @@
                             <p class="text-sm text-gray-800 font-medium mt-1">${esc(app.applicantStudentId || 'N/A')}</p>
                         </div>
                         <div>
+                            <p class="text-[10px] text-gray-400 uppercase font-bold">Priority</p>
+                            <p class="text-sm text-gray-800 font-medium mt-1">${app.priority ? 'Priority ' + esc(String(app.priority)) : 'Not set'}</p>
+                        </div>
+                        <div>
                             <p class="text-[10px] text-gray-400 uppercase font-bold">Submitted</p>
                             <p class="text-sm text-gray-800 font-medium mt-1">${app.createdAt ? formatDateTime(app.createdAt) : 'N/A'}</p>
                         </div>
@@ -405,6 +465,18 @@
         document.getElementById('closeAppDetailBtn').addEventListener('click', closeApplicationDetail);
         document.getElementById('appDetailModal').addEventListener('click', (e) => {
             if (e.target && e.target.id === 'appDetailModal') closeApplicationDetail();
+        });
+        document.getElementById('moApplicantSort').addEventListener('change', (e) => {
+            moApplicantSort = e.target.value;
+            renderApplicants(currentApplications);
+        });
+        document.getElementById('filterPriority1').addEventListener('change', (e) => {
+            moPriority1Only = e.target.checked;
+            renderApplicants(currentApplications);
+        });
+        document.getElementById('filterPendingOnly').addEventListener('change', (e) => {
+            moPendingOnly = e.target.checked;
+            renderApplicants(currentApplications);
         });
     </script>
 </body>

@@ -499,9 +499,7 @@
         resumeMeta.innerText = `${file.name} · ${formatBytes(file.size)}`;
         previewBtn.disabled = false;
         if (options.previewImmediately) {
-            if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
-            resumeObjectUrl = URL.createObjectURL(file);
-            resumePreview.src = resumeObjectUrl;
+            setResumePreviewSource(URL.createObjectURL(file), { revokePrevious: true });
         }
     }
 
@@ -560,6 +558,17 @@
         resumeError.innerText = msg;
     }
 
+    function setResumePreviewSource(url, options = {}) {
+        if (options.revokePrevious && resumeObjectUrl) {
+            URL.revokeObjectURL(resumeObjectUrl);
+            resumeObjectUrl = '';
+        }
+        resumePreview.src = url || 'about:blank';
+        if (url && String(url).startsWith('blob:')) {
+            resumeObjectUrl = url;
+        }
+    }
+
     chooseFileBtn.addEventListener('click', () => resumeFileInput.click());
 
     coverLetterInput.addEventListener('input', () => {
@@ -592,7 +601,7 @@
     resumeFileInput.addEventListener('change', async () => {
         showResumeError('');
         const file = resumeFileInput.files && resumeFileInput.files[0];
-        if (!file) { resumeFile = null; resumeFileNameEl.innerText = 'No file chosen'; resumeMeta.innerText = 'No file selected'; previewBtn.disabled = true; return; }
+        if (!file) { resumeFile = null; resumeFileNameEl.innerText = 'No file chosen'; resumeMeta.innerText = 'No file selected'; previewBtn.disabled = true; setResumePreviewSource('about:blank', { revokePrevious: true }); return; }
         if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
             showResumeError('Only PDF files are allowed.'); resumeFileInput.value = ''; return;
         }
@@ -608,8 +617,6 @@
         if (!resumeFile && !serverDraftResumeFileName) { showResumeError('Please upload a PDF file first.'); return; }
         if (!resumeFile && serverDraftResumeFileName) {
             (async () => {
-                const w = openPdfPreviewWindow('Resume Preview');
-                if (!w) return;
                 try {
                     const token = API.getToken();
                     const res = await fetch('/api/upload/' + encodeURIComponent(serverDraftResumeFileName), {
@@ -617,25 +624,19 @@
                     });
                     if (!res.ok) throw new Error('Failed to open saved draft resume');
                     const blob = await res.blob();
-                    if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
-                    resumeObjectUrl = URL.createObjectURL(blob);
-                    renderPdfInWindow(w, resumeObjectUrl, 'Resume Preview');
+                    setResumePreviewSource(URL.createObjectURL(blob), { revokePrevious: true });
+                    showToast('Resume preview loaded.', 'success');
                 } catch (err) {
                     showToast(err.message || 'Failed to preview saved resume', 'error');
-                    try { w.close(); } catch (_) {}
                 }
             })();
             return;
         }
-        const w = openPdfPreviewWindow('Resume Preview');
-        if (!w) return;
         try {
-            if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
-            resumeObjectUrl = URL.createObjectURL(resumeFile);
-            renderPdfInWindow(w, resumeObjectUrl, 'Resume Preview');
+            setResumePreviewSource(URL.createObjectURL(resumeFile), { revokePrevious: true });
+            showToast('Resume preview loaded.', 'success');
         } catch (err) {
             showToast(err.message || 'Failed to preview resume', 'error');
-            try { w.close(); } catch (_) {}
         }
     });
 

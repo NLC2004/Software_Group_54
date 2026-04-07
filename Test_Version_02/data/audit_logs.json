@@ -700,7 +700,7 @@
     "userId": "admin001",
     "username": "admin",
     "action": "EXPORT_CORE_DATA",
-    "detail": "Exported core data CSV task=38034998",
+    "detail": "Exported core data CSV task\u003d38034998",
     "createdAt": 1775492657247
   },
   {
@@ -790,5 +790,53 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775534735679
+  },
+  {
+    "id": "ebff4a44",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552230218
+  },
+  {
+    "id": "752a1ae0",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "APPLY",
+    "detail": "Applied for job: TA Needed: Database Systems",
+    "createdAt": 1775552318671
+  },
+  {
+    "id": "abb3f4bc",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552514151
+  },
+  {
+    "id": "982b2da2",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552530087
+  },
+  {
+    "id": "18af4b8e",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552558896
+  },
+  {
+    "id": "48d7a591",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552884142
   }
 ]
