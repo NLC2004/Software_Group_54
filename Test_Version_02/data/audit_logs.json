@@ -838,5 +838,53 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775552884142
+  },
+  {
+    "id": "f4543054",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775553855980
+  },
+  {
+    "id": "f84711e8",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775553892505
+  },
+  {
+    "id": "b0ee7e68",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application ec9d3db2 for TA Needed: Database Systems",
+    "createdAt": 1775553944978
+  },
+  {
+    "id": "e6031b34",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775554104347
+  },
+  {
+    "id": "1c6da5a6",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775554193135
+  },
+  {
+    "id": "4ea18558",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775554822726
   }
 ]
