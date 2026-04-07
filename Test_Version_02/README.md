@@ -32,6 +32,7 @@ Test_Version_02/
 │   │   ├── User.java
 │   │   ├── Job.java
 │   │   ├── Application.java
+│   │   ├── ApplicationDraft.java
 │   │   ├── Notification.java
 │   │   ├── AuditLog.java
 │   │   └── PasswordResetRequest.java
@@ -42,6 +43,7 @@ Test_Version_02/
 │       ├── AuthHandler.java         # Login, register, profile, password
 │       ├── JobHandler.java          # Job CRUD + apply
 │       ├── ApplicationHandler.java  # Application list, detail, status
+│       ├── DraftHandler.java        # TA application drafts (server-side)
 │       ├── AdminHandler.java        # Users, workload, stats, settings, audit
 │       ├── UploadHandler.java       # File upload/download (base64)
 │       ├── NotificationHandler.java # User notifications
@@ -63,6 +65,7 @@ All data stored in `data/` as JSON files (no database):
 - `users.json` — User accounts (TA, MO, ADMIN)
 - `jobs.json` — Job postings
 - `applications.json` — TA applications
+- `application_drafts.json` — TA application drafts (server-side, per user + job)
 - `notifications.json` — System notifications
 - `audit_logs.json` — Audit trail
 - `password_resets.json` — Password reset requests
@@ -115,6 +118,27 @@ Uploaded files (CVs) stored in `uploads/`.
 | PUT | `/api/admin/password-resets/{id}` | Admin | Approve/reject reset |
 | GET | `/api/admin/export` | Admin | Export data as CSV |
 
+### Drafts (`/api/drafts`)
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/drafts/application?jobId={jobId}` | TA | Get current user's application draft for a job |
+| PUT | `/api/drafts/application?jobId={jobId}` | TA | Create/update current user's application draft for a job |
+| DELETE | `/api/drafts/application?jobId={jobId}` | TA | Delete current user's application draft for a job |
+
+## TA_09 Server-side Drafts
+
+The TA application form (`/TA/ta-recruitment-application-form.html`) supports saving drafts to the backend for cross-device recovery.
+
+- **Draft data** is stored in `data/application_drafts.json` (scoped by `userId + jobId`).
+- **Draft resume** is stored as an uploaded file in `uploads/`, and the draft stores `resumeDraftFileName`.
+
+### Verify
+
+1. Login as a TA and open a job application form.
+2. Fill in some fields and click `Save progress`.
+3. Refresh the page: the draft should be restored.
+4. Open the same job application form in another browser/device with the same TA account: the draft should be restored.
+
 ### Other
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
@@ -145,6 +169,7 @@ Uploaded files (CVs) stored in `uploads/`.
 - **TA_03** Integrated CV Submission
 - **TA_06** Forgot Password — Direct Admin Contact
 - **TA_08** Document Preview Before Upload
+- **TA_09** Save as Draft (server-side, supports cross-device recovery)
 - **MO_04** Simplified Approval Process
 - **MO_06** Applicant CV Review
 - **MO_07** Applicant Selection & Approval

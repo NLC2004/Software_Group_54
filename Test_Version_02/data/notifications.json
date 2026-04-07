@@ -42,6 +42,64 @@
     "content": "Siying Li applied for Python Lab Teaching Assistant",
     "type": "APPLICATION",
     "read": false,
+<<<<<<< Updated upstream
     "createdAt": 1775492285150
+=======
+    "createdAt": 1775336887820
+  },
+  {
+    "id": "noti002",
+    "userId": "ta002",
+    "title": "Application Approved",
+    "content": "Your application for TA Needed: Programming Fundamentals has been approved!",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775308087820
+  },
+  {
+    "id": "noti003",
+    "userId": "ta003",
+    "title": "Application Rejected",
+    "content": "Your application for TA Needed: Data Structures has been rejected.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775236087820
+  },
+  {
+    "id": "noti004",
+    "userId": "ta004",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for TA Needed: Database Systems.",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1775344087820
+  },
+  {
+    "id": "59e6f199",
+    "userId": "mo003",
+    "title": "New Application",
+    "content": "Lingxiang Mei applied for TA Needed: Database Systems",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1775393879354
+  },
+  {
+    "id": "9d57b8a9",
+    "userId": "mo006",
+    "title": "New Application",
+    "content": "Lingxiang Mei applied for TA Needed: AI Basics",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775397393166
+  },
+  {
+    "id": "0c982f72",
+    "userId": "ta004",
+    "title": "Application Approved",
+    "content": "Your application for TA Needed: Database Systems has been approved!",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775532372747
+>>>>>>> Stashed changes
   }
 ]
