@@ -43,12 +43,12 @@
 
 <form class="space-y-6" id="loginForm">
 <div>
-<label class="block text-sm font-semibold text-gray-700 mb-2">MO Account / Email</label>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Teacher ID / Email</label>
 <div class="relative">
 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
 <span class="iconify" data-icon="mdi:account-outline"></span>
 </span>
-<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="username" placeholder="Enter MO account" type="text"/>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="username" placeholder="Enter your teacher ID or email" type="text"/>
 </div>
 </div>
 <div>
@@ -92,6 +92,15 @@
 </div>
 </div>
 <div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Teacher ID</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:card-account-details-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regStudentId" placeholder="Enter your teacher ID" type="text"/>
+</div>
+</div>
+<div>
 <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
 <div class="relative">
 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
@@ -107,6 +116,15 @@
 <span class="iconify" data-icon="mdi:lock-outline"></span>
 </span>
 <input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regPassword" placeholder="Min 6 characters" type="password"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regConfirmPassword" placeholder="Confirm your password" type="password"/>
 </div>
 </div>
 <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-blue-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
@@ -189,10 +207,10 @@
 
         document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
-            const username = document.getElementById('username').value.trim();
+            const identifier = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
-            if (!username || !password) {
-                showAlert('error', 'Please enter your account and password');
+            if (!identifier || !password) {
+                showAlert('error', 'Please enter your teacher ID/email and password');
                 return;
             }
             const btnText = document.getElementById('btnText');
@@ -200,7 +218,7 @@
             btnText.innerText = 'Verifying...';
             loadingIcon.classList.remove('hidden');
             try {
-                const res = await API.post('/api/auth/login', { username, password });
+                const res = await API.post('/api/auth/login', { identifier, password });
                 API.setAuth(res.token, res.user);
                 showAlert('success', 'Login successful. Redirecting...');
                 setTimeout(() => {
@@ -224,10 +242,16 @@
             e.preventDefault();
             const fullName = document.getElementById('regFullName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
+            const studentId = document.getElementById('regStudentId').value.trim();
             const username = document.getElementById('regUsername').value.trim();
             const password = document.getElementById('regPassword').value.trim();
-            if (!fullName || !email || !username || !password) {
+            const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
+            if (!fullName || !email || !studentId || !username || !password || !confirmPassword) {
                 showAlert('error', 'Please fill in all fields');
+                return;
+            }
+            if (password !== confirmPassword) {
+                showAlert('error', 'Passwords do not match');
                 return;
             }
             const btn = document.getElementById('regBtnText');
@@ -235,7 +259,7 @@
             btn.innerText = 'Creating...';
             icon.classList.remove('hidden');
             try {
-                const res = await API.post('/api/auth/register', { username, password, role: 'MO', fullName, email });
+                const res = await API.post('/api/auth/register', { username, password, role: 'MO', fullName, email, studentId });
                 API.setAuth(res.token, res.user);
                 showAlert('success', 'Account created! Redirecting...');
                 setTimeout(() => { window.location.href = '/MO/my-job-list.html'; }, 600);

@@ -16,6 +16,8 @@ public class User {
     public String yearOfStudy;
     public boolean active = true;
     public long createdAt;
+    // Optional template for ADMIN fine-grained role labeling.
+    public String adminRoleTemplateId = "";
 
     public User() {}
 
