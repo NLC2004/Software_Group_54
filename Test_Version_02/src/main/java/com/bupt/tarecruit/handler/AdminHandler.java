@@ -282,6 +282,9 @@ public class AdminHandler extends BaseHandler {
         List<User> users = ds.getAllUsers().stream().filter(u -> inRange(u.createdAt, startMs, endMs)).collect(Collectors.toList());
         List<Job> jobs = ds.getAllJobs().stream().filter(j -> inRange(j.createdAt, startMs, endMs)).collect(Collectors.toList());
         List<Application> apps = ds.getAllApplications().stream().filter(a -> inRange(a.createdAt, startMs, endMs)).collect(Collectors.toList());
+        List<Application> activeApps = apps.stream()
+                .filter(a -> !"WITHDRAWN".equals(a.status) && !"REJECTED".equals(a.status))
+                .collect(Collectors.toList());
 
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("totalUsers", users.size());
@@ -319,7 +322,41 @@ public class AdminHandler extends BaseHandler {
         long pendingResets = ds.getAllPasswordResets().stream().filter(r -> "PENDING".equals(r.status)).count();
         stats.put("pendingPasswordResets", pendingResets);
 
+        Map<String, Object> activePreferenceUsage = new LinkedHashMap<>();
+        activePreferenceUsage.put("priority1", activeApps.stream().filter(a -> a.priority == 1).count());
+        activePreferenceUsage.put("priority2", activeApps.stream().filter(a -> a.priority == 2).count());
+        activePreferenceUsage.put("priority3", activeApps.stream().filter(a -> a.priority == 3).count());
+        activePreferenceUsage.put("withoutPriority", activeApps.stream().filter(a -> a.priority <= 0).count());
+        activePreferenceUsage.put("totalActivePreferences", activeApps.size());
+        stats.put("activePreferenceUsage", activePreferenceUsage);
+
+        Map<String, Object> taPriorityDistribution = new LinkedHashMap<>();
+        List<User> taUsers = users.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList());
+        taPriorityDistribution.put("tasWithPriority1", countDistinctApplicantsByPriority(activeApps, 1));
+        taPriorityDistribution.put("tasWithPriority2", countDistinctApplicantsByPriority(activeApps, 2));
+        taPriorityDistribution.put("tasWithPriority3", countDistinctApplicantsByPriority(activeApps, 3));
+        taPriorityDistribution.put("tasWithoutActivePreference", Math.max(0, taUsers.size() - countDistinctApplicants(activeApps)));
+        taPriorityDistribution.put("totalTAsInRange", taUsers.size());
+        stats.put("taPriorityDistribution", taPriorityDistribution);
+
         sendJson(ex, 200, stats);
+    }
+
+    private long countDistinctApplicantsByPriority(List<Application> apps, int priority) {
+        return apps.stream()
+                .filter(a -> a.priority == priority)
+                .map(a -> a.applicantId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .count();
+    }
+
+    private long countDistinctApplicants(List<Application> apps) {
+        return apps.stream()
+                .map(a -> a.applicantId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .count();
     }
 
     private void handleSettings(HttpExchange ex, String method, User admin) throws IOException {

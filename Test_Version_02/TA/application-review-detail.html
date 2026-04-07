@@ -146,19 +146,23 @@
     }
 
     async function previewPdf(fileName) {
+        const w = window.open('about:blank', '_blank');
+        if (!w) { showToast('Popup was blocked. Please allow popups for preview.', 'warning'); return; }
         try {
+            w.document.open();
+            w.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>${esc(fileName)}</title><style>html,body{height:100%;margin:0;font-family:Arial,sans-serif;background:#f8fafc;} .wrap{height:100%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;} iframe{width:100%;height:100%;border:0;}</style></head><body><div class="wrap">Loading preview...</div></body></html>`);
+            w.document.close();
             const resp = await fetch('/api/upload/' + encodeURIComponent(fileName), {
                 headers: { 'Authorization': 'Bearer ' + API.getToken() }
             });
             if (!resp.ok) throw new Error('Failed to load PDF');
             const blob = await resp.blob();
             const url = URL.createObjectURL(blob);
-            const w = window.open('', '_blank', 'noopener,noreferrer');
-            if (!w) { showToast('Popup was blocked. Please allow popups for preview.', 'warning'); return; }
             w.document.open();
             w.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>${esc(fileName)}</title><style>html,body{height:100%;margin:0;} iframe{width:100%;height:100%;border:0;}</style></head><body><iframe src="${url}"></iframe></body></html>`);
             w.document.close();
         } catch (err) {
+            try { w.close(); } catch (_) {}
             showToast(err.message || 'Preview failed', 'error');
         }
     }

@@ -269,6 +269,75 @@ public class DataService {
         writeList("password_resets.json", list);
     }
 
+    // ==================== Admin Role Templates ====================
+
+    public synchronized List<AdminRoleTemplate> getAllAdminRoleTemplates() {
+        return readList("admin_role_templates.json", new TypeToken<List<AdminRoleTemplate>>(){}.getType());
+    }
+
+    public synchronized AdminRoleTemplate getAdminRoleTemplateById(String id) {
+        return getAllAdminRoleTemplates().stream()
+                .filter(t -> Objects.equals(t.id, id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public synchronized AdminRoleTemplate addAdminRoleTemplate(AdminRoleTemplate template) {
+        List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
+        template.id = UUID.randomUUID().toString().substring(0, 8);
+        template.createdAt = System.currentTimeMillis();
+        if (template.tags == null) template.tags = new ArrayList<>();
+        list.add(template);
+        writeList("admin_role_templates.json", list);
+        return template;
+    }
+
+    public synchronized void updateAdminRoleTemplate(AdminRoleTemplate template) {
+        List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
+        if (template.tags == null) template.tags = new ArrayList<>();
+        list.removeIf(t -> Objects.equals(t.id, template.id));
+        list.add(template);
+        writeList("admin_role_templates.json", list);
+    }
+
+    public synchronized void deleteAdminRoleTemplate(String id) {
+        List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
+        list.removeIf(t -> Objects.equals(t.id, id));
+        writeList("admin_role_templates.json", list);
+    }
+
+    // ==================== Export Tasks ====================
+
+    public synchronized List<ExportTask> getAllExportTasks() {
+        return readList("export_tasks.json", new TypeToken<List<ExportTask>>(){}.getType());
+    }
+
+    public synchronized ExportTask getExportTaskById(String id) {
+        return getAllExportTasks().stream()
+                .filter(t -> Objects.equals(t.id, id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public synchronized ExportTask addExportTask(ExportTask task) {
+        List<ExportTask> list = getAllExportTasks();
+        long now = System.currentTimeMillis();
+        task.id = UUID.randomUUID().toString().substring(0, 8);
+        task.createdAt = now;
+        task.updatedAt = now;
+        list.add(task);
+        writeList("export_tasks.json", list);
+        return task;
+    }
+
+    public synchronized void updateExportTask(ExportTask task) {
+        List<ExportTask> list = getAllExportTasks();
+        task.updatedAt = System.currentTimeMillis();
+        list.removeIf(t -> Objects.equals(t.id, task.id));
+        list.add(task);
+        writeList("export_tasks.json", list);
+    }
+
     // ==================== Settings ====================
 
     public synchronized Map<String, String> getSettings() {
@@ -304,25 +373,29 @@ public class DataService {
     // ==================== Export ====================
 
     public String exportAllDataCsv() {
+        return exportAllDataCsv(null, null);
+    }
+
+    public String exportAllDataCsv(Long startMs, Long endMs) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("=== USERS ===\n");
         sb.append("ID,Username,Role,FullName,Email,Phone,Active,CreatedAt\n");
-        for (User u : getAllUsers()) {
+        for (User u : getAllUsers().stream().filter(u -> inRange(u.createdAt, startMs, endMs)).collect(Collectors.toList())) {
             sb.append(String.format("%s,%s,%s,%s,%s,%s,%s,%d\n",
                     u.id, u.username, u.role, safe(u.fullName), safe(u.email), safe(u.phone), u.active, u.createdAt));
         }
 
         sb.append("\n=== JOBS ===\n");
         sb.append("ID,Title,Type,CourseName,PostedBy,Quota,WeeklyHours,Status,CreatedAt\n");
-        for (Job j : getAllJobs()) {
+        for (Job j : getAllJobs().stream().filter(j -> inRange(j.createdAt, startMs, endMs)).collect(Collectors.toList())) {
             sb.append(String.format("%s,%s,%s,%s,%s,%d,%.1f,%s,%d\n",
                     j.id, safe(j.title), j.type, safe(j.courseName), j.postedBy, j.quota, j.weeklyHours, j.status, j.createdAt));
         }
 
         sb.append("\n=== APPLICATIONS ===\n");
         sb.append("ID,JobId,ApplicantId,Status,Priority,CvFile,CreatedAt,UpdatedAt\n");
-        for (Application a : getAllApplications()) {
+        for (Application a : getAllApplications().stream().filter(a -> inRange(a.createdAt, startMs, endMs)).collect(Collectors.toList())) {
             sb.append(String.format("%s,%s,%s,%s,%d,%s,%d,%d\n",
                     a.id, a.jobId, a.applicantId, a.status, a.priority, safe(a.cvFileName), a.createdAt, a.updatedAt));
         }
@@ -331,6 +404,12 @@ public class DataService {
     }
 
     private String safe(String s) { return s == null ? "" : s.replace(",", ";"); }
+
+    private boolean inRange(long value, Long startMs, Long endMs) {
+        if (startMs != null && value < startMs) return false;
+        if (endMs != null && value > endMs) return false;
+        return true;
+    }
 
     // ==================== Internal ====================
 
@@ -359,9 +438,24 @@ public class DataService {
             admin.email = "admin@bupt.edu.cn";
             writeList("users.json", List.of(admin));
         }
-<<<<<<< Updated upstream
-        String[] emptyLists = {"jobs.json", "applications.json", "notifications.json", "audit_logs.json", "password_resets.json"};
-=======
+
+        boolean usersChanged = false;
+        List<User> users = getAllUsers();
+        java.util.function.Function<String, User> findUserById = (uid) -> {
+            for (User u : users) {
+                if (u != null && u.id != null && u.id.equals(uid)) return u;
+            }
+            return null;
+        };
+
+        java.util.function.Function<User, Boolean> upsertUser = (seed) -> {
+            User existing = findUserById.apply(seed.id);
+            if (existing == null) {
+                users.add(seed);
+                return true;
+            }
+            return false;
+        };
 
         String[][] taSeed = new String[][]{
             {"231225731", "Zijie Zhang"},
@@ -667,7 +761,6 @@ public class DataService {
         if (notificationsChanged) writeList("notifications.json", ns);
 
         String[] emptyLists = {"audit_logs.json", "password_resets.json", "export_tasks.json", "admin_role_templates.json", "application_drafts.json"};
->>>>>>> Stashed changes
         for (String f : emptyLists) {
             if (!Files.exists(dataDir.resolve(f))) writeList(f, new ArrayList<>());
         }
