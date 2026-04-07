@@ -314,26 +314,6 @@
     }
 
     function restoreDraftFromLocal() {
-<<<<<<< Updated upstream
-        const raw = localStorage.getItem(getDraftKey());
-        if (!raw) return false;
-        try {
-            const draft = JSON.parse(raw);
-            if (typeof draft.coverLetter === 'string') {
-                coverLetterInput.value = draft.coverLetter;
-            }
-            if (draft.priority != null && draft.priority !== '') {
-                prioritySelect.value = String(draft.priority);
-            }
-            if (draft.updatedAt) {
-                setDraftStatus('Recovered draft saved at ' + formatDateTime(draft.updatedAt));
-            } else {
-                setDraftStatus('Recovered local draft.');
-            }
-            return true;
-        } catch (_) {
-            return false;
-=======
         const draft = parseLocalDraft();
         if (!draft) return false;
         return applyDraftToForm(draft, { label: 'Recovered local draft' });
@@ -346,7 +326,6 @@
             const uploadRes = await API.uploadFile(resumeFile);
             resumeDraftFileName = uploadRes.fileName;
             serverDraftResumeFileName = resumeDraftFileName;
->>>>>>> Stashed changes
         }
         const res = await API.put(getDraftApiPath(), { ...payload, priority: Number(payload.priority || 0), resumeDraftFileName });
         const savedDraft = res && res.draft ? res.draft : null;
@@ -626,12 +605,6 @@
     });
 
     previewBtn.addEventListener('click', () => {
-<<<<<<< Updated upstream
-        if (!resumeFile) { showResumeError('Please upload a PDF file first.'); return; }
-        if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
-        resumeObjectUrl = URL.createObjectURL(resumeFile);
-        resumePreview.src = resumeObjectUrl;
-=======
         if (!resumeFile && !serverDraftResumeFileName) { showResumeError('Please upload a PDF file first.'); return; }
         if (!resumeFile && serverDraftResumeFileName) {
             (async () => {
@@ -664,7 +637,6 @@
             showToast(err.message || 'Failed to preview resume', 'error');
             try { w.close(); } catch (_) {}
         }
->>>>>>> Stashed changes
     });
 
     (async function init() {
@@ -714,11 +686,7 @@
         try {
             const savedResume = await getResumeFromIndexedDb();
             if (savedResume && savedResume.file) {
-<<<<<<< Updated upstream
-                applyResumeFile(savedResume.file, { previewImmediately: true });
-=======
                 applyResumeFile(savedResume.file, { preserveServerFileName: true });
->>>>>>> Stashed changes
                 setDraftStatus('Recovered saved draft and resume at ' + formatDateTime(savedResume.updatedAt || Date.now()));
             }
         } catch (_) {}
