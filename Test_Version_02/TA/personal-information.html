@@ -140,14 +140,18 @@
 <div class="input-group">
 <label class="label-text">Which School are you from at BUPT?</label>
 <select class="input-box bg-white appearance-none" id="schoolInput">
-<option value="">Select a school</option>
+<option value="" disabled selected hidden>Which School are you from at BUPT?</option>
+<option value="School of Future Technology">School of Future Technology</option>
 <option value="International School">International School</option>
-<option value="School of Computer Science">School of Computer Science</option>
+<option value="Queen Mary University of London, Hainan College">Queen Mary University of London, Hainan College</option>
 <option value="School of Information and Communication Engineering">School of Information and Communication Engineering</option>
-<option value="School of Software">School of Software</option>
+<option value="School of Electronic Engineering">School of Electronic Engineering</option>
+<option value="School of Computer Science">School of Computer Science</option>
+<option value="School of Cyber Security">School of Cyber Security</option>
 <option value="School of Artificial Intelligence">School of Artificial Intelligence</option>
-<option value="School of Automation">School of Automation</option>
-<option value="School of Economics and Management">School of Economics and Management</option>
+<option value="School of Integrated Circuits">School of Integrated Circuits</option>
+<option value="School of Intelligent Engineering and Automation">School of Intelligent Engineering and Automation</option>
+<option value="Elite Engineer College">Elite Engineer College</option>
 </select>
 </div>
 <div class="input-group">
@@ -174,6 +178,32 @@
 </select>
 </div>
 </div>
+
+<div class="mt-6 rounded-2xl border border-gray-100 bg-white p-5">
+<div class="flex items-center justify-between gap-4">
+<div>
+<p class="text-sm font-bold text-gray-800">Resume / CV (PDF)</p>
+<p class="text-xs text-gray-400 mt-1">Imported locally and cached for auto-fill in application forms.</p>
+</div>
+</div>
+<div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+<div class="md:col-span-2">
+<input class="hidden" id="profileResumeFile" accept="application/pdf" type="file"/>
+<div class="flex flex-wrap items-center gap-3">
+<button class="px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all" id="chooseProfileResumeBtn" type="button">Choose PDF</button>
+<button class="px-4 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="previewProfileResumeBtn" type="button" disabled>Preview</button>
+<button class="px-4 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="clearProfileResumeBtn" type="button" disabled>Clear</button>
+</div>
+<p class="text-xs text-gray-400 mt-3 truncate" id="profileResumeName">No PDF selected</p>
+<p class="text-[11px] text-gray-400 mt-1" id="profileResumeStatus">Not cached yet.</p>
+<p class="text-[11px] text-red-500 mt-2 hidden" id="profileResumeError"></p>
+</div>
+<div class="bg-gray-50 border border-gray-100 rounded-2xl p-4">
+<p class="text-[11px] text-gray-500 leading-relaxed">Tip: This file is stored in your browser only. You can reuse it on application forms without re-selecting it each time.</p>
+</div>
+</div>
+</div>
+
 <div class="flex items-center gap-4 pt-4">
 <button class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100" type="submit">
                                 Save changes
@@ -256,6 +286,10 @@ Cancel
 </div>
 <script src="/js/api.js"></script>
 <script>
+    const PROFILE_RESUME_DB_NAME = 'ta_application_resume_db_v1';
+    const PROFILE_RESUME_STORE_NAME = 'resume';
+    const PROFILE_RESUME_KEY = 'profile_default';
+
     function getRadioValue(name) {
         const el = document.querySelector(`input[name="${name}"]:checked`);
         return el ? el.value : '';
@@ -265,6 +299,128 @@ Cancel
         document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
             el.checked = el.value === value;
         });
+    }
+
+    function openResumeDb() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(PROFILE_RESUME_DB_NAME, 1);
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(PROFILE_RESUME_STORE_NAME)) {
+                    db.createObjectStore(PROFILE_RESUME_STORE_NAME, { keyPath: 'id' });
+                }
+            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error || new Error('Failed to open resume cache'));
+        });
+    }
+
+    async function saveProfileResumeToIndexedDb(file) {
+        if (!file) return;
+        const db = await openResumeDb();
+        const record = { id: PROFILE_RESUME_KEY, file, fileName: file.name, updatedAt: Date.now() };
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(PROFILE_RESUME_STORE_NAME).put(record);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to cache resume'));
+        });
+        db.close();
+    }
+
+    async function getProfileResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        const result = await new Promise((resolve, reject) => {
+            const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readonly');
+            const req = tx.objectStore(PROFILE_RESUME_STORE_NAME).get(PROFILE_RESUME_KEY);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error || new Error('Failed to read cached resume'));
+        });
+        db.close();
+        return result;
+    }
+
+    async function clearProfileResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(PROFILE_RESUME_STORE_NAME).delete(PROFILE_RESUME_KEY);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to clear cached resume'));
+        });
+        db.close();
+    }
+
+    function formatBytes(bytes) {
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = bytes, idx = 0;
+        while (size >= 1024 && idx < units.length - 1) { size /= 1024; idx++; }
+        return `${size.toFixed(idx === 0 ? 0 : 1)} ${units[idx]}`;
+    }
+
+    function showProfileResumeError(msg) {
+        const el = document.getElementById('profileResumeError');
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.classList.remove('hidden');
+        el.textContent = msg;
+    }
+
+    function setProfileResumeUi(file, meta = {}) {
+        const nameEl = document.getElementById('profileResumeName');
+        const statusEl = document.getElementById('profileResumeStatus');
+        const previewBtn = document.getElementById('previewProfileResumeBtn');
+        const clearBtn = document.getElementById('clearProfileResumeBtn');
+
+        if (!file) {
+            nameEl.textContent = 'No PDF selected';
+            statusEl.textContent = meta.statusText || 'Not cached yet.';
+            previewBtn.disabled = true;
+            clearBtn.disabled = true;
+            return;
+        }
+        nameEl.textContent = `${file.name} · ${formatBytes(file.size)}`;
+        statusEl.textContent = meta.statusText || 'Ready.';
+        previewBtn.disabled = false;
+        clearBtn.disabled = false;
+    }
+
+    function openPdfPreviewWindow(title) {
+        const w = window.open('about:blank', '_blank');
+        if (!w) {
+            showToast('Popup was blocked. Please allow popups for preview.', 'warning');
+            return null;
+        }
+        const safeTitle = String(title || 'PDF Preview').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        w.document.open();
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>${safeTitle}</title><style>html,body{height:100%;margin:0;font-family:Arial,sans-serif;} .wrap{height:100%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;} iframe{width:100%;height:100%;border:0;}</style></head><body><div class="wrap">Loading preview...</div></body></html>`);
+        w.document.close();
+        return w;
+    }
+
+    function renderPdfInWindow(w, blobUrl, title) {
+        if (!w) return;
+        try {
+            w.location.href = blobUrl;
+        } catch (_) {
+            try {
+                w.location.href = blobUrl;
+            } catch (_) {}
+        }
+    }
+
+    async function previewProfileResume() {
+        const w = openPdfPreviewWindow('Resume Preview');
+        if (!w) return;
+        try {
+            const saved = await getProfileResumeFromIndexedDb();
+            const file = saved && saved.file ? saved.file : null;
+            if (!file) { showToast('No cached PDF resume found.', 'warning'); try { w.close(); } catch (_) {} return; }
+            const url = URL.createObjectURL(file);
+            renderPdfInWindow(w, url, 'Resume Preview');
+        } catch (err) {
+            showToast(err.message || 'Failed to preview resume', 'error');
+            try { w.close(); } catch (_) {}
+        }
     }
 
     function populateProfile(u) {
@@ -297,7 +453,63 @@ Cancel
         if (!user) return;
         updateSidebarUser(user);
         await loadProfile();
+
+        try {
+            const saved = await getProfileResumeFromIndexedDb();
+            if (saved && saved.file) {
+                setProfileResumeUi(saved.file, { statusText: 'Cached locally at ' + formatDateTime(saved.updatedAt || Date.now()) });
+            } else {
+                setProfileResumeUi(null);
+            }
+        } catch (_) {
+            setProfileResumeUi(null, { statusText: 'Resume cache is unavailable in this browser.' });
+        }
     })();
+
+    const profileResumeFileInput = document.getElementById('profileResumeFile');
+    const chooseProfileResumeBtn = document.getElementById('chooseProfileResumeBtn');
+    const previewProfileResumeBtn = document.getElementById('previewProfileResumeBtn');
+    const clearProfileResumeBtn = document.getElementById('clearProfileResumeBtn');
+
+    chooseProfileResumeBtn.addEventListener('click', () => profileResumeFileInput.click());
+
+    profileResumeFileInput.addEventListener('change', async () => {
+        showProfileResumeError('');
+        const file = profileResumeFileInput.files && profileResumeFileInput.files[0];
+        if (!file) return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            showProfileResumeError('Only PDF files are allowed.');
+            profileResumeFileInput.value = '';
+            return;
+        }
+        if (file.size > 20 * 1024 * 1024) {
+            showProfileResumeError('File is too large. Maximum size is 20MB.');
+            profileResumeFileInput.value = '';
+            return;
+        }
+        try {
+            await saveProfileResumeToIndexedDb(file);
+            setProfileResumeUi(file, { statusText: 'Cached locally at ' + formatDateTime(Date.now()) });
+            showToast('Resume cached locally.', 'success');
+        } catch (err) {
+            showToast(err.message || 'Failed to cache resume', 'error');
+        }
+    });
+
+    previewProfileResumeBtn.addEventListener('click', () => {
+        previewProfileResume();
+    });
+
+    clearProfileResumeBtn.addEventListener('click', async () => {
+        try {
+            await clearProfileResumeFromIndexedDb();
+            setProfileResumeUi(null, { statusText: 'Cleared.' });
+            profileResumeFileInput.value = '';
+            showToast('Cached resume cleared.', 'success');
+        } catch (err) {
+            showToast(err.message || 'Failed to clear cached resume', 'error');
+        }
+    });
 
     document.getElementById('infoForm').addEventListener('submit', async function(e) {
         e.preventDefault();

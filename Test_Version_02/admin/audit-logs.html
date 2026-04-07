@@ -7,6 +7,8 @@
 <title>Audit Logs | AD Admin Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
@@ -81,10 +83,10 @@
 <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
 <div>
 <h1 class="text-xl font-semibold">Audit Logs</h1>
-<p class="text-xs text-gray-400">Current Date: March 21, 2026 • Real-time Monitoring Active</p>
+<p class="text-xs text-gray-400">Current Date: <span id="auditCurrentDate">-</span> • Real-time Monitoring Active</p>
 </div>
 <div class="flex items-center gap-4">
-<button class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all flex items-center gap-2">
+<button id="btnExportAuditReport" type="button" class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all flex items-center gap-2">
 <span class="iconify w-4 h-4" data-icon="material-symbols:download"></span>
                 Export Report
             </button>
@@ -139,33 +141,33 @@
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Quick Search</label>
 <div class="relative">
 <span class="iconify absolute left-3 top-2.5 text-gray-400" data-icon="material-symbols:search"></span>
-<input class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Search by user, IP or action..." type="text"/>
+<input id="auditSearchInput" class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Search by user, IP or action..." type="text"/>
 </div>
 </div>
 <div>
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Date Range</label>
-<input class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none" type="date" value="2026-03-21"/>
+<input id="auditDateInput" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="YYYY-MM-DD"/>
 </div>
 <div>
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">User Role</label>
-<select class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
-<option>All Roles</option>
-<option>Super Admin</option>
-<option>Academic Director</option>
-<option>Finance Manager</option>
+<select id="auditRoleSelect" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
+<option value="ALL">All Roles</option>
+<option value="ADMIN">Admin</option>
+<option value="MO">Module Organizer</option>
+<option value="TA">TA</option>
 </select>
 </div>
 <div>
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Status</label>
-<select class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
-<option>All Status</option>
-<option>Success</option>
-<option>Warning</option>
-<option>Failed</option>
+<select id="auditStatusSelect" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
+<option value="ALL">All Status</option>
+<option value="SUCCESS">Success</option>
+<option value="WARNING">Warning</option>
+<option value="FAILED">Failed</option>
 </select>
 </div>
 <div class="flex items-end">
-<button class="w-full h-[38px] bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-all">Apply Filter</button>
+<button id="auditApplyBtn" class="w-full h-[38px] bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-all">Apply Filter</button>
 </div>
 </div>
 </section>
@@ -174,13 +176,13 @@
 <!-- Navigation Tabs -->
 <div class="px-6 border-b border-gray-100 flex items-center justify-between">
 <div class="flex gap-8">
-<button class="py-4 text-sm font-semibold tab-active flex items-center gap-2">
+<button data-tab="OPERATION" class="py-4 text-sm font-semibold tab-active flex items-center gap-2">
                             Operation Logs <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded-full">842</span>
 </button>
-<button class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
+<button data-tab="SECURITY" class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
                             Security Events <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full">12</span>
 </button>
-<button class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
+<button data-tab="SYSTEM" class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
                             System Logs <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full">56</span>
 </button>
 </div>
@@ -453,6 +455,7 @@
 <script>
 let allLogs = [];
 let selectedLog = null;
+let activeAuditTab = 'OPERATION';
 
 function openLogDetails(log) {
     selectedLog = log;
@@ -481,6 +484,8 @@ function closeLogDetails() {
     const user = requireAuth(['ADMIN']);
     if (!user) return;
     updateSidebarUser(user);
+    const dateEl = document.getElementById('auditCurrentDate');
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
     try {
         allLogs = await API.get('/api/admin/audit-logs');
@@ -490,7 +495,7 @@ function closeLogDetails() {
         showToast('Failed to load audit logs: ' + e.message, 'error');
     }
 
-    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    const searchInput = document.getElementById('auditSearchInput');
     if (searchInput) {
         let timer;
         searchInput.addEventListener('input', function() {
@@ -499,9 +504,53 @@ function closeLogDetails() {
         });
     }
 
-    const actionFilter = document.querySelectorAll('select');
-    actionFilter.forEach(sel => {
-        sel.addEventListener('change', () => filterLogs());
+    document.getElementById('auditRoleSelect')?.addEventListener('change', filterLogs);
+    document.getElementById('auditStatusSelect')?.addEventListener('change', filterLogs);
+    document.getElementById('auditDateInput')?.addEventListener('change', filterLogs);
+    document.getElementById('auditApplyBtn')?.addEventListener('click', filterLogs);
+
+    const dateInput = document.getElementById('auditDateInput');
+    if (dateInput && typeof flatpickr === 'function') {
+        flatpickr(dateInput, {
+            dateFormat: 'Y-m-d',
+            allowInput: true,
+            clickOpens: true,
+            monthSelectorType: 'dropdown',
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    longhand: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    longhand: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                },
+                rangeSeparator: ' to ',
+                weekAbbreviation: 'Wk',
+                scrollTitle: 'Scroll to increment',
+                toggleTitle: 'Click to toggle',
+                amPM: ['AM', 'PM'],
+                yearAriaLabel: 'Year',
+                monthAriaLabel: 'Month',
+                hourAriaLabel: 'Hour',
+                minuteAriaLabel: 'Minute',
+                time_24hr: true
+            }
+        });
+    }
+
+    document.querySelectorAll('button[data-tab]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            activeAuditTab = this.getAttribute('data-tab') || 'OPERATION';
+            document.querySelectorAll('button[data-tab]').forEach(x => {
+                x.classList.remove('tab-active');
+                x.classList.add('text-gray-400');
+            });
+            this.classList.add('tab-active');
+            this.classList.remove('text-gray-400');
+            filterLogs();
+        });
     });
 
     document.querySelector('button.bg-blue-600')?.addEventListener('click', async function() {
@@ -512,6 +561,28 @@ function closeLogDetails() {
             showToast('Logs refreshed', 'success');
         } catch (e) {
             showToast('Refresh failed: ' + e.message, 'error');
+        }
+    });
+
+    document.getElementById('btnExportAuditReport')?.addEventListener('click', async function() {
+        try {
+            const dateVal = document.getElementById('auditDateInput')?.value || '';
+            const q = dateVal ? ('?startDate=' + encodeURIComponent(dateVal) + '&endDate=' + encodeURIComponent(dateVal)) : '';
+            const res = await API.get('/api/admin/export' + q);
+            if (!res || !res.blob) {
+                throw new Error('No export file received');
+            }
+            const url = URL.createObjectURL(res.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'audit-export.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast('Audit report exported', 'success');
+        } catch (e) {
+            showToast('Export failed: ' + e.message, 'error');
         }
     });
 })();
@@ -580,19 +651,56 @@ function updatePagination(count) {
 }
 
 async function filterLogs() {
-    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    const searchInput = document.getElementById('auditSearchInput');
+    const roleVal = document.getElementById('auditRoleSelect')?.value || 'ALL';
+    const statusVal = document.getElementById('auditStatusSelect')?.value || 'ALL';
+    const dateVal = document.getElementById('auditDateInput')?.value || '';
     const query = searchInput ? searchInput.value.trim() : '';
     try {
         let url = '/api/admin/audit-logs';
         const params = [];
         if (query) params.push('search=' + encodeURIComponent(query));
         if (params.length) url += '?' + params.join('&');
-        allLogs = await API.get(url);
+        const logs = await API.get(url);
+        allLogs = (logs || []).filter(function(l) {
+            const action = String(l.action || '').toUpperCase();
+            const detail = String(l.detail || '').toUpperCase();
+            if (activeAuditTab === 'SECURITY') {
+                if (!/(LOGIN|LOGOUT|PASSWORD|AUTH|SECURITY|RESET|LOCK|UNAUTHORIZED|FORBIDDEN)/.test(action + ' ' + detail)) return false;
+            } else if (activeAuditTab === 'SYSTEM') {
+                if (!/(SETTINGS|EXPORT|SYSTEM|BACKUP|SERVER|CONFIG)/.test(action + ' ' + detail)) return false;
+            } else {
+                if (/(SETTINGS|EXPORT|SYSTEM|BACKUP|SERVER|CONFIG|PASSWORD|AUTH|SECURITY)/.test(action + ' ' + detail)) return false;
+            }
+            if (dateVal) {
+                const d = l.createdAt ? new Date(l.createdAt) : null;
+                if (!d || isNaN(d.getTime())) return false;
+                if (d.toISOString().slice(0, 10) !== dateVal) return false;
+            }
+            if (roleVal !== 'ALL') {
+                const uname = String(l.username || '').toLowerCase();
+                if (roleVal === 'ADMIN' && uname.indexOf('admin') === -1) return false;
+                if (roleVal === 'MO' && uname.indexOf('mo') === -1) return false;
+                if (roleVal === 'TA' && uname.indexOf('ta') === -1) return false;
+            }
+            if (statusVal !== 'ALL') {
+                const s = inferAuditStatus(l);
+                if (s !== statusVal) return false;
+            }
+            return true;
+        });
         renderLogs(allLogs);
         updateLogStats(allLogs);
     } catch (e) {
         showToast('Filter failed: ' + e.message, 'error');
     }
+}
+
+function inferAuditStatus(log) {
+    const t = (String(log.action || '') + ' ' + String(log.detail || '')).toUpperCase();
+    if (/(FAIL|ERROR|REJECT|DENY|CANCEL)/.test(t)) return 'FAILED';
+    if (/(WARN|WARNING|LOCK|OVERLOAD|PENDING)/.test(t)) return 'WARNING';
+    return 'SUCCESS';
 }
 </script>
 </body>
