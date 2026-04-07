@@ -101,6 +101,82 @@
 <div class="col-span-2 p-10">
 <form class="space-y-8" id="applicationForm">
 <section>
+<h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">Personal Information</h3>
+<div class="bg-gray-50 rounded-2xl border border-gray-100 p-5 space-y-5">
+<p class="text-xs text-gray-500 leading-relaxed">These fields are auto-filled from your profile. You can adjust them for this application, and they will be saved in your draft.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Full Name</label>
+<input class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmFullName" type="text" placeholder="Your full name"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Student ID</label>
+<input class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmStudentId" type="text" placeholder="Your student ID"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Phone Number</label>
+<input class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmPhone" type="tel" placeholder="Your phone number"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">School</label>
+<select class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmSchool">
+<option value="">Select school</option>
+<option value="School of Future Technology">School of Future Technology</option>
+<option value="International School">International School</option>
+<option value="Queen Mary University of London, Hainan College">Queen Mary University of London, Hainan College</option>
+<option value="School of Information and Communication Engineering">School of Information and Communication Engineering</option>
+<option value="School of Electronic Engineering">School of Electronic Engineering</option>
+<option value="School of Computer Science">School of Computer Science</option>
+<option value="School of Cyber Security">School of Cyber Security</option>
+<option value="School of Artificial Intelligence">School of Artificial Intelligence</option>
+<option value="School of Integrated Circuits">School of Integrated Circuits</option>
+<option value="School of Intelligent Engineering and Automation">School of Intelligent Engineering and Automation</option>
+<option value="Elite Engineer College">Elite Engineer College</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Gender</label>
+<div class="flex items-center gap-6 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm text-gray-700">
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmGender" type="radio" value="Female"/>
+<span>Female</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmGender" type="radio" value="Male"/>
+<span>Male</span>
+</label>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Year of Study</label>
+<div class="flex flex-wrap items-center gap-4 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm text-gray-700">
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 1"/>
+<span>Year 1</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 2"/>
+<span>Year 2</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 3"/>
+<span>Year 3</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 4"/>
+<span>Year 4</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 5"/>
+<span>Year 5</span>
+</label>
+</div>
+</div>
+</div>
+</section>
+<section>
 <h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">Cover Letter / Motivation</h3>
 <div class="space-y-5">
 <div>
@@ -152,11 +228,11 @@
 <div class="flex items-center justify-between gap-4">
 <div>
 <h3 class="text-sm font-bold text-gray-900">Resume attachment</h3>
-<p class="text-xs text-gray-400 mt-1">PDF only &middot; Up to 20MB</p>
+<p class="text-xs text-gray-400 mt-1">PDF only &middot; Up to 20MB &middot; Profile resume will be auto-loaded when available</p>
 </div>
 </div>
-<div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-<div>
+<div class="mt-6 grid grid-cols-1 gap-6 items-start">
+<div class="max-w-xl">
 <label class="block text-xs font-bold text-gray-500 mb-2">Upload PDF</label>
 <div class="flex items-center gap-3">
 <input class="hidden" id="resumeFile" accept="application/pdf" type="file"/>
@@ -170,8 +246,8 @@
 <p class="text-[11px] text-red-500 mt-2 hidden" id="resumeError"></p>
 </div>
 <div>
-<div class="w-full bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden" style="height: 420px;">
-<iframe class="w-full h-full" id="resumePreview" title="Resume preview" src="about:blank"></iframe>
+<div class="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-[11px] text-gray-500 leading-relaxed" id="resumePreviewPanel">
+Preview opens in a popup window, consistent with the MO side. If you uploaded a resume in Profile, it will be reused automatically here.
 </div>
 </div>
 </div>
@@ -201,6 +277,7 @@
     const RESUME_DB_NAME = 'ta_application_resume_db_v1';
     const RESUME_STORE_NAME = 'resume';
     const RESUME_KEY_PREFIX = 'job_';
+    const PROFILE_RESUME_KEY = 'profile_default';
     const AUTO_SAVE_DELAY_MS = 5000;
     let autoSaveTimer = null;
 
@@ -210,16 +287,30 @@
     const resumeMeta = document.getElementById('resumeMeta');
     const resumeError = document.getElementById('resumeError');
     const previewBtn = document.getElementById('previewBtn');
-    const resumePreview = document.getElementById('resumePreview');
     const coverLetterInput = document.getElementById('coverLetter');
     const prioritySelect = document.getElementById('prioritySelect');
     const saveDraftBtn = document.getElementById('saveDraftBtn');
     const draftStatusText = document.getElementById('draftStatusText');
     const priorityHint = document.getElementById('priorityHint');
+    const confirmStudentIdInput = document.getElementById('confirmStudentId');
+    const confirmFullNameInput = document.getElementById('confirmFullName');
+    const confirmPhoneInput = document.getElementById('confirmPhone');
+    const confirmSchoolSelect = document.getElementById('confirmSchool');
     let hasUnsavedChanges = false;
     let activeApplications = [];
     let occupiedPriorities = new Map();
     let serverDraftResumeFileName = '';
+
+    function getRadioValue(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : '';
+    }
+
+    function setRadioValue(name, value) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+            el.checked = el.value === value;
+        });
+    }
 
     function getDraftKey() {
         return `${DRAFT_KEY_PREFIX}_${jobId || 'general'}`;
@@ -240,6 +331,12 @@
     function getDraftPayload() {
         return {
             jobId: jobId || '',
+            confirmStudentId: confirmStudentIdInput.value || '',
+            confirmFullName: confirmFullNameInput.value || '',
+            confirmPhone: confirmPhoneInput.value || '',
+            confirmGender: getRadioValue('confirmGender'),
+            confirmSchool: confirmSchoolSelect.value || '',
+            confirmYear: getRadioValue('confirmYear'),
             coverLetter: coverLetterInput.value || '',
             priority: prioritySelect.value || '',
             updatedAt: Date.now()
@@ -302,7 +399,16 @@
     }
 
     function hasLocalDraftContent(payload) {
-        return !!((payload.coverLetter || '').trim() || String(payload.priority || '').trim());
+        return !!(
+            (payload.confirmStudentId || '').trim() ||
+            (payload.confirmFullName || '').trim() ||
+            (payload.confirmPhone || '').trim() ||
+            (payload.confirmGender || '').trim() ||
+            (payload.confirmSchool || '').trim() ||
+            (payload.confirmYear || '').trim() ||
+            (payload.coverLetter || '').trim() ||
+            String(payload.priority || '').trim()
+        );
     }
 
     function saveDraftToLocal(options = {}) {
@@ -480,6 +586,18 @@
         return result;
     }
 
+    async function getProfileResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        const result = await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readonly');
+            const req = tx.objectStore(RESUME_STORE_NAME).get(PROFILE_RESUME_KEY);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error || new Error('Failed to read cached profile resume'));
+        });
+        db.close();
+        return result;
+    }
+
     async function clearResumeFromIndexedDb() {
         const db = await openResumeDb();
         await new Promise((resolve, reject) => {
@@ -498,8 +616,29 @@
         resumeFileNameEl.innerText = file.name;
         resumeMeta.innerText = `${file.name} · ${formatBytes(file.size)}`;
         previewBtn.disabled = false;
-        if (options.previewImmediately) {
-            setResumePreviewSource(URL.createObjectURL(file), { revokePrevious: true });
+    }
+
+    function openPdfPreviewWindow(title) {
+        const w = window.open('about:blank', '_blank');
+        if (!w) {
+            showToast('Popup was blocked. Please allow popups for preview.', 'warning');
+            return null;
+        }
+        const safeTitle = String(title || 'PDF Preview').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        w.document.open();
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>${safeTitle}</title><style>html,body{height:100%;margin:0;font-family:Arial,sans-serif;} .wrap{height:100%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;} iframe{width:100%;height:100%;border:0;}</style></head><body><div class="wrap">Loading preview...</div></body></html>`);
+        w.document.close();
+        return w;
+    }
+
+    function renderPdfInWindow(w, blobUrl, title) {
+        if (!w) return;
+        try {
+            w.location.href = blobUrl;
+        } catch (_) {
+            try {
+                w.location.href = blobUrl;
+            } catch (_) {}
         }
     }
 
@@ -558,18 +697,25 @@
         resumeError.innerText = msg;
     }
 
-    function setResumePreviewSource(url, options = {}) {
-        if (options.revokePrevious && resumeObjectUrl) {
-            URL.revokeObjectURL(resumeObjectUrl);
-            resumeObjectUrl = '';
-        }
-        resumePreview.src = url || 'about:blank';
-        if (url && String(url).startsWith('blob:')) {
-            resumeObjectUrl = url;
-        }
-    }
-
     chooseFileBtn.addEventListener('click', () => resumeFileInput.click());
+
+    [confirmStudentIdInput, confirmFullNameInput, confirmPhoneInput, confirmSchoolSelect].forEach((el) => {
+        el.addEventListener('input', () => {
+            markDirty();
+            scheduleAutoSave();
+        });
+        el.addEventListener('change', () => {
+            markDirty();
+            scheduleAutoSave();
+        });
+    });
+
+    document.querySelectorAll('input[name="confirmGender"], input[name="confirmYear"]').forEach((el) => {
+        el.addEventListener('change', () => {
+            markDirty();
+            scheduleAutoSave();
+        });
+    });
 
     coverLetterInput.addEventListener('input', () => {
         markDirty();
@@ -601,7 +747,7 @@
     resumeFileInput.addEventListener('change', async () => {
         showResumeError('');
         const file = resumeFileInput.files && resumeFileInput.files[0];
-        if (!file) { resumeFile = null; resumeFileNameEl.innerText = 'No file chosen'; resumeMeta.innerText = 'No file selected'; previewBtn.disabled = true; setResumePreviewSource('about:blank', { revokePrevious: true }); return; }
+        if (!file) { resumeFile = null; resumeFileNameEl.innerText = 'No file chosen'; resumeMeta.innerText = 'No file selected'; previewBtn.disabled = true; return; }
         if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
             showResumeError('Only PDF files are allowed.'); resumeFileInput.value = ''; return;
         }
@@ -617,6 +763,8 @@
         if (!resumeFile && !serverDraftResumeFileName) { showResumeError('Please upload a PDF file first.'); return; }
         if (!resumeFile && serverDraftResumeFileName) {
             (async () => {
+                const w = openPdfPreviewWindow('Resume Preview');
+                if (!w) return;
                 try {
                     const token = API.getToken();
                     const res = await fetch('/api/upload/' + encodeURIComponent(serverDraftResumeFileName), {
@@ -624,21 +772,51 @@
                     });
                     if (!res.ok) throw new Error('Failed to open saved draft resume');
                     const blob = await res.blob();
-                    setResumePreviewSource(URL.createObjectURL(blob), { revokePrevious: true });
-                    showToast('Resume preview loaded.', 'success');
+                    if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
+                    resumeObjectUrl = URL.createObjectURL(blob);
+                    renderPdfInWindow(w, resumeObjectUrl, 'Resume Preview');
                 } catch (err) {
                     showToast(err.message || 'Failed to preview saved resume', 'error');
+                    try { w.close(); } catch (_) {}
                 }
             })();
             return;
         }
+        const w = openPdfPreviewWindow('Resume Preview');
+        if (!w) return;
         try {
-            setResumePreviewSource(URL.createObjectURL(resumeFile), { revokePrevious: true });
-            showToast('Resume preview loaded.', 'success');
+            if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
+            resumeObjectUrl = URL.createObjectURL(resumeFile);
+            renderPdfInWindow(w, resumeObjectUrl, 'Resume Preview');
         } catch (err) {
             showToast(err.message || 'Failed to preview resume', 'error');
+            try { w.close(); } catch (_) {}
         }
     });
+
+    function applyProfileDefaults(user) {
+        if (!confirmFullNameInput.value) confirmFullNameInput.value = user.fullName || user.username || '';
+        if (!confirmStudentIdInput.value) confirmStudentIdInput.value = user.studentId || '';
+        if (!confirmPhoneInput.value) confirmPhoneInput.value = user.phone || '';
+        if (!confirmSchoolSelect.value) confirmSchoolSelect.value = user.school || '';
+        if (!getRadioValue('confirmGender')) setRadioValue('confirmGender', user.gender || '');
+        if (!getRadioValue('confirmYear')) setRadioValue('confirmYear', user.yearOfStudy || '');
+    }
+
+    function buildApplicationCoverLetter() {
+        return [
+            '[Basic Information]',
+            `Full Name: ${confirmFullNameInput.value.trim()}`,
+            `Student ID: ${confirmStudentIdInput.value.trim()}`,
+            `Phone: ${confirmPhoneInput.value.trim()}`,
+            `Gender: ${getRadioValue('confirmGender')}`,
+            `School: ${confirmSchoolSelect.value}`,
+            `Year of Study: ${getRadioValue('confirmYear')}`,
+            '',
+            '[Cover Letter / Motivation]',
+            coverLetterInput.value.trim()
+        ].join('\n');
+    }
 
     (async function init() {
         const user = requireAuth(['TA']);
@@ -660,6 +838,7 @@
             const me = await API.get('/api/auth/me');
             document.getElementById('infoApplicant').textContent = me.fullName || me.username || '--';
             document.getElementById('infoStudentId').textContent = me.studentId || '--';
+            applyProfileDefaults(me);
         } catch (_) {}
 
         try {
@@ -689,6 +868,12 @@
             if (savedResume && savedResume.file) {
                 applyResumeFile(savedResume.file, { preserveServerFileName: true });
                 setDraftStatus('Recovered saved draft and resume at ' + formatDateTime(savedResume.updatedAt || Date.now()));
+            } else {
+                const profileResume = await getProfileResumeFromIndexedDb();
+                if (profileResume && profileResume.file) {
+                    applyResumeFile(profileResume.file, { preserveServerFileName: true });
+                    setDraftStatus('Loaded resume from your profile cache.');
+                }
             }
         } catch (_) {}
     })();
@@ -703,6 +888,7 @@
         e.preventDefault();
         const coverLetter = document.getElementById('coverLetter').value.trim();
         if (!coverLetter) { showToast('Please write a cover letter / motivation.', 'warning'); return; }
+        if (!confirmFullNameInput.value.trim() || !confirmStudentIdInput.value.trim()) { showToast('Please confirm your personal information before submitting.', 'warning'); return; }
         if (!validatePrioritySelection()) return;
 
         const btn = document.getElementById('submitBtn');
@@ -719,7 +905,7 @@
             }
 
             await API.post('/api/jobs/' + jobId + '/apply', {
-                coverLetter,
+                coverLetter: buildApplicationCoverLetter(),
                 cvFileName,
                 priority: Number(prioritySelect.value)
             });

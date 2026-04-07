@@ -25,10 +25,10 @@
     "confirmGender": "",
     "confirmSchool": "",
     "confirmYear": "",
-    "coverLetter": "I am good at grogramming.",
-    "priority": 3,
-    "resumeDraftFileName": "1775552928031_EBU6304_01_Introduction_to_Software_Engineering.pdf",
+    "coverLetter": "",
+    "priority": 0,
+    "resumeDraftFileName": "1775554216980_EBU6304_01_Introduction_to_Software_Engineering.pdf",
     "createdAt": 1775552917684,
-    "updatedAt": 1775552928062
+    "updatedAt": 1775554217021
   }
 ]
