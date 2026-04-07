@@ -212,6 +212,48 @@
 <div class="w-full h-[300px]" id="distChart"></div>
 </div>
 </div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h4 class="font-bold text-gray-800">Active Preference Usage</h4>
+<p class="text-xs text-gray-500 mt-1">Current active application preferences by priority.</p>
+</div>
+</div>
+<div class="w-full h-[300px]" id="activePreferenceChart"></div>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h4 class="font-bold text-gray-800">TA Priority Distribution</h4>
+<p class="text-xs text-gray-500 mt-1">How many TAs currently occupy each preference rank.</p>
+</div>
+</div>
+<div class="w-full h-[300px]" id="priorityDistributionChart"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6" id="priority-summary-cards">
+<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-bold text-gray-400 uppercase mb-2">Priority 1 in use</p>
+<h3 class="text-2xl font-bold text-gray-900">0</h3>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-bold text-gray-400 uppercase mb-2">Priority 2 in use</p>
+<h3 class="text-2xl font-bold text-gray-900">0</h3>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-bold text-gray-400 uppercase mb-2">Priority 3 in use</p>
+<h3 class="text-2xl font-bold text-gray-900">0</h3>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-bold text-gray-400 uppercase mb-2">TAs with active preferences</p>
+<h3 class="text-2xl font-bold text-gray-900">0</h3>
+</div>
+<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-bold text-gray-400 uppercase mb-2">TAs without active preferences</p>
+<h3 class="text-2xl font-bold text-gray-900">0</h3>
+</div>
+</div>
 <!-- Table Section: Export History -->
 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 <div class="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -276,7 +318,7 @@
 </div>
 </div>
 <div class="text-center mt-12 text-gray-400 text-xs">
-                    © 2026 Modern Campus AD System. All rights reserved. Terminal ID: AD-SERV-0221.
+                    &copy; 2026 Modern Campus AD System. All rights reserved. Terminal ID: AD-SERV-0221.
                 </div>
 </footer>
 </div>
@@ -284,7 +326,7 @@
 <script src="/admin/js/basic-stats-data.js"></script>
 <script src="/js/api.js"></script>
 <script>
-let trendChart, distChart;
+let trendChart, distChart, activePreferenceChart, priorityDistributionChart;
 let exportTaskPage = 1;
 const exportTaskPageSize = 8;
 let exportTaskTotal = 0;
@@ -314,6 +356,8 @@ let activeEndDate = '';
     window.addEventListener('resize', () => {
         if (trendChart) trendChart.resize();
         if (distChart) distChart.resize();
+        if (activePreferenceChart) activePreferenceChart.resize();
+        if (priorityDistributionChart) priorityDistributionChart.resize();
     });
 
     document.getElementById('btnExportCoreData')?.addEventListener('click', exportCSV);
@@ -405,12 +449,16 @@ async function loadStats() {
         updateStatsCards(stats);
         trendChart = initTrendChart(stats);
         distChart = initDistChart(stats);
+        activePreferenceChart = initActivePreferenceChart(stats);
+        priorityDistributionChart = initPriorityDistributionChart(stats);
     } catch (e) {
         showToast('Failed to load statistics: ' + e.message, 'error');
         if (window.BASIC_STATS_DATA) {
             updateStatsCards(window.BASIC_STATS_DATA);
             trendChart = initTrendChart(window.BASIC_STATS_DATA);
             distChart = initDistChart(window.BASIC_STATS_DATA);
+            activePreferenceChart = initActivePreferenceChart(window.BASIC_STATS_DATA);
+            priorityDistributionChart = initPriorityDistributionChart(window.BASIC_STATS_DATA);
         }
     }
 }
@@ -426,6 +474,18 @@ function updateStatsCards(stats) {
             : '0.0';
         cards[3].querySelector('h3').textContent = rate + '%';
     }
+
+    const priorityCards = document.querySelectorAll('#priority-summary-cards > div');
+    const usage = stats.activePreferenceUsage || {};
+    const distribution = stats.taPriorityDistribution || {};
+    if (priorityCards[0]) priorityCards[0].querySelector('h3').textContent = Number(usage.priority1 || 0).toLocaleString();
+    if (priorityCards[1]) priorityCards[1].querySelector('h3').textContent = Number(usage.priority2 || 0).toLocaleString();
+    if (priorityCards[2]) priorityCards[2].querySelector('h3').textContent = Number(usage.priority3 || 0).toLocaleString();
+    if (priorityCards[3]) {
+        const withActive = Number(distribution.totalTAsInRange || 0) - Number(distribution.tasWithoutActivePreference || 0);
+        priorityCards[3].querySelector('h3').textContent = Math.max(0, withActive).toLocaleString();
+    }
+    if (priorityCards[4]) priorityCards[4].querySelector('h3').textContent = Number(distribution.tasWithoutActivePreference || 0).toLocaleString();
 }
 
 function initTrendChart(stats) {
@@ -471,6 +531,64 @@ function initDistChart(stats) {
                 { value: stats.approvedApplications || 0, name: 'Approved', itemStyle: { color: '#10B981' } },
                 { value: stats.rejectedApplications || 0, name: 'Rejected', itemStyle: { color: '#EF4444' } },
                 { value: stats.withdrawnApplications || 0, name: 'Withdrawn', itemStyle: { color: '#94A3B8' } }
+            ]
+        }]
+    });
+    return chart;
+}
+
+function initActivePreferenceChart(stats) {
+    const chart = echarts.init(document.getElementById('activePreferenceChart'));
+    const usage = stats.activePreferenceUsage || {};
+    chart.setOption({
+        tooltip: { trigger: 'axis' },
+        grid: { top: 20, right: 20, bottom: 40, left: 40, containLabel: true },
+        xAxis: {
+            type: 'category',
+            data: ['Priority 1', 'Priority 2', 'Priority 3', 'No Priority'],
+            axisLine: { lineStyle: { color: '#E5E7EB' } },
+            axisLabel: { color: '#9CA3AF' }
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: { lineStyle: { type: 'dashed' } },
+            axisLabel: { color: '#9CA3AF' }
+        },
+        series: [{
+            data: [usage.priority1 || 0, usage.priority2 || 0, usage.priority3 || 0, usage.withoutPriority || 0],
+            type: 'bar',
+            barWidth: '45%',
+            itemStyle: {
+                color: function(params) {
+                    return ['#4F46E5', '#14B8A6', '#F59E0B', '#94A3B8'][params.dataIndex] || '#3B82F6';
+                },
+                borderRadius: [8, 8, 0, 0]
+            }
+        }]
+    });
+    return chart;
+}
+
+function initPriorityDistributionChart(stats) {
+    const chart = echarts.init(document.getElementById('priorityDistributionChart'));
+    const dist = stats.taPriorityDistribution || {};
+    chart.setOption({
+        tooltip: { trigger: 'item' },
+        legend: { bottom: '0%', left: 'center', itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 10 } },
+        series: [{
+            name: 'TAs',
+            type: 'pie',
+            radius: ['35%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+            label: { show: false },
+            emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
+            labelLine: { show: false },
+            data: [
+                { value: dist.tasWithPriority1 || 0, name: 'TAs with Priority 1', itemStyle: { color: '#4F46E5' } },
+                { value: dist.tasWithPriority2 || 0, name: 'TAs with Priority 2', itemStyle: { color: '#14B8A6' } },
+                { value: dist.tasWithPriority3 || 0, name: 'TAs with Priority 3', itemStyle: { color: '#F59E0B' } },
+                { value: dist.tasWithoutActivePreference || 0, name: 'No Active Preference', itemStyle: { color: '#CBD5E1' } }
             ]
         }]
     });

@@ -89,13 +89,14 @@
 <tr class="text-gray-400 text-xs font-bold uppercase tracking-wider border-b border-gray-50">
 <th class="pb-4 pl-2">Position</th>
 <th class="pb-4">Type</th>
+<th class="pb-4">Priority</th>
 <th class="pb-4">Submitted</th>
 <th class="pb-4">Status</th>
 <th class="pb-4 text-right pr-2">Actions</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-gray-50" id="records-container">
-<tr><td colspan="5" class="py-8 text-center text-gray-400">Loading...</td></tr>
+<tr><td colspan="6" class="py-8 text-center text-gray-400">Loading...</td></tr>
 </tbody>
 </table>
 </div>
@@ -138,11 +139,16 @@
         filtered.forEach(rec => {
             const tr = document.createElement('tr');
             tr.className = "group hover:bg-gray-50 transition-colors";
+            const priorityText = rec.priority && Number(rec.priority) > 0 ? `Priority ${Number(rec.priority)}` : 'Not set';
+            const priorityClass = rec.priority && Number(rec.priority) > 0
+                ? 'inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold'
+                : 'inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-medium';
             tr.innerHTML = `
                 <td class="py-4 pl-2">
                     <div class="font-bold text-gray-900">${esc(rec.jobTitle || 'N/A')}</div>
                 </td>
                 <td class="py-4 text-sm text-gray-600">${esc(rec.jobType || '')}</td>
+                <td class="py-4"><span class="${priorityClass}">${esc(priorityText)}</span></td>
                 <td class="py-4 text-sm text-gray-600">${rec.createdAt ? formatDateTime(rec.createdAt) : ''}</td>
                 <td class="py-4">${statusBadge(rec.status)}</td>
                 <td class="py-4 text-right pr-2">
@@ -207,7 +213,7 @@
             renderRecords('all');
         } catch (err) {
             document.getElementById('records-container').innerHTML =
-                '<tr><td colspan="5" class="py-8 text-center text-red-500">Failed to load applications</td></tr>';
+                '<tr><td colspan="6" class="py-8 text-center text-red-500">Failed to load applications</td></tr>';
             showToast(err.message || 'Failed to load applications', 'error');
         }
     })();

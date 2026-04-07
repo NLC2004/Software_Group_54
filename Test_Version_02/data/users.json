@@ -8,7 +8,8 @@
     "email": "admin@bupt.edu.cn",
     "studentId": "admin",
     "active": true,
-    "createdAt": 1774368072206
+    "createdAt": 1774368072206,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "91671c06",
@@ -25,7 +26,8 @@
     "degree": "Masters (MSc)",
     "yearOfStudy": "Year 3",
     "active": true,
-    "createdAt": 1774368133519
+    "createdAt": 1774368133519,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "b398e651",
@@ -38,7 +40,8 @@
     "gender": "",
     "studentId": "",
     "active": true,
-    "createdAt": 1774368323989
+    "createdAt": 1774368323989,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "6e6df15f",
@@ -55,7 +58,8 @@
     "degree": "Masters (MSc)",
     "yearOfStudy": "Year 3",
     "active": true,
-    "createdAt": 1775365242930
+    "createdAt": 1775365242930,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "1509be6d",
@@ -72,7 +76,8 @@
     "degree": "",
     "yearOfStudy": "",
     "active": true,
-    "createdAt": 1775371488174
+    "createdAt": 1775371488174,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "7067ef7b",
@@ -83,7 +88,8 @@
     "email": "teacher001@bupt.edu.cn",
     "studentId": "teacher001",
     "active": true,
-    "createdAt": 1775373757612
+    "createdAt": 1775373757612,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "admin002",
@@ -94,7 +100,8 @@
     "email": "admin1@bupt.edu.cn",
     "studentId": "admin1",
     "active": true,
-    "createdAt": 1775380087787
+    "createdAt": 1775380087787,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "admin003",
@@ -105,7 +112,8 @@
     "email": "admin2@bupt.edu.cn",
     "studentId": "admin2",
     "active": true,
-    "createdAt": 1775380087787
+    "createdAt": 1775380087787,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "admin004",
@@ -116,7 +124,8 @@
     "email": "admin3@bupt.edu.cn",
     "studentId": "admin3",
     "active": true,
-    "createdAt": 1775380087787
+    "createdAt": 1775380087787,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "ta001",
@@ -127,7 +136,8 @@
     "email": "231225731@bupt.edu.cn",
     "studentId": "231225731",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "ta002",
@@ -138,7 +148,8 @@
     "email": "231225270@bupt.edu.cn",
     "studentId": "231225270",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "ta005",
@@ -149,7 +160,8 @@
     "email": "231225339@bupt.edu.cn",
     "studentId": "231225339",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "ta006",
@@ -160,7 +172,8 @@
     "email": "231225649@bupt.edu.cn",
     "studentId": "231225649",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "mo001",
@@ -171,7 +184,8 @@
     "email": "teacher01@bupt.edu.cn",
     "studentId": "teacher01",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "mo002",
@@ -182,7 +196,8 @@
     "email": "teacher02@bupt.edu.cn",
     "studentId": "teacher02",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "mo003",
@@ -193,7 +208,8 @@
     "email": "teacher03@bupt.edu.cn",
     "studentId": "teacher03",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "mo004",
@@ -204,7 +220,8 @@
     "email": "teacher04@bupt.edu.cn",
     "studentId": "teacher04",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "mo005",
@@ -215,7 +232,8 @@
     "email": "teacher05@bupt.edu.cn",
     "studentId": "teacher05",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "mo006",
@@ -226,7 +244,8 @@
     "email": "teacher06@bupt.edu.cn",
     "studentId": "teacher06",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
   },
   {
     "id": "ta004",
@@ -243,6 +262,19 @@
     "degree": "",
     "yearOfStudy": "Year 3",
     "active": true,
-    "createdAt": 1775380087804
+    "createdAt": 1775380087804,
+    "adminRoleTemplateId": ""
+  },
+  {
+    "id": "ta003",
+    "username": "231225672",
+    "password": "123456",
+    "role": "TA",
+    "fullName": "Siying Li",
+    "email": "231225672@bupt.edu.cn",
+    "studentId": "231225672",
+    "active": true,
+    "createdAt": 1775552162173,
+    "adminRoleTemplateId": ""
   }
 ]
