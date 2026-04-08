@@ -18,7 +18,7 @@
     <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
       <span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
     </div>
-    <span class="text-xl font-bold tracking-tight text-blue-900">MO Admin</span>
+    <span class="text-xl font-bold tracking-tight text-blue-900">Admin</span>
   </div>
   <nav class="mt-4 flex-1">
     <div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
@@ -75,12 +75,15 @@
     <div>
       <a href="user-management.html" class="text-sm text-blue-600 hover:underline mb-1 inline-block">← Back to User Management</a>
       <h1 class="text-xl font-semibold">User detail</h1>
-      <p class="text-xs text-gray-400">查看该用户的基本信息、角色与账号状态</p>
+      <p class="text-xs text-gray-400" id="userDetailSubTitle">查看该用户的基本信息、角色与账号状态</p>
     </div>
   </header>
   <div class="flex-1 overflow-y-auto p-8">
     <div class="max-w-2xl mx-auto bg-white rounded-2xl border border-gray-200 shadow-sm p-8" id="detailCard">
       <p class="text-gray-400 text-sm" id="loadingMsg">Loading…</p>
+      <div id="readonlyDetailNotice" class="hidden mb-4 p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-sm">
+        Current account is standard admin (read-only mode). Changes must be made by super admin `admin`.
+      </div>
       <div id="detailContent" class="hidden space-y-6">
         <div class="flex items-center gap-4">
           <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl font-bold" id="detailInitials">—</div>
@@ -129,11 +132,24 @@
   const params = new URLSearchParams(window.location.search);
   const userId = params.get('id');
   let currentUser = null;
+  const currentAdminUser = API.getUser();
+
+  function isSuperAdminAccount() {
+    return !!(currentAdminUser
+      && currentAdminUser.role === 'ADMIN'
+      && String(currentAdminUser.username || '').toLowerCase() === 'admin');
+  }
 
   (async function init() {
     const me = requireAuth(['ADMIN']);
     if (!me) return;
     updateSidebarUser(me);
+    if (!isSuperAdminAccount()) {
+      const notice = document.getElementById('readonlyDetailNotice');
+      if (notice) notice.classList.remove('hidden');
+      const sub = document.getElementById('userDetailSubTitle');
+      if (sub) sub.textContent = '标准管理员仅可查看，修改请联系超级管理员 admin';
+    }
     if (!userId) {
       document.getElementById('loadingMsg').textContent = 'Missing user id.';
       return;
@@ -168,6 +184,12 @@
     document.getElementById('roleSelect').value = u.role === 'MO' || u.role === 'TA' || u.role === 'ADMIN' ? u.role : 'TA';
 
     var btnDe = document.getElementById('btnDeactivate');
+    const btnAssign = document.getElementById('btnAssignRole');
+    if (!isSuperAdminAccount()) {
+      btnDe.classList.add('hidden');
+      if (btnAssign) btnAssign.classList.add('hidden');
+      return;
+    }
     if (u.active) {
       btnDe.textContent = 'Deactivate';
       btnDe.className = 'px-4 py-2 rounded-lg text-sm font-medium border border-red-200 text-red-700 bg-red-50 hover:bg-red-100';

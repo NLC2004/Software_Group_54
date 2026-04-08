@@ -16,7 +16,8 @@ public class StaticHandler implements HttpHandler {
         String path = ex.getRequestURI().getPath();
 
         if ("/".equals(path)) {
-            ex.getResponseHeaders().set("Location", "/TA/index.html");
+            // Use MO login as the shared entry page for MO/Admin.
+            ex.getResponseHeaders().set("Location", "/MO/index.html");
             ex.sendResponseHeaders(302, -1);
             return;
         }
