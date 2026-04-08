@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        .input-box { width: 100%; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 14px; transition: all 0.2s; }
+        .input-box:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        .label-text { display: block; font-size: 13px; font-weight: 600; color: #4B5563; margin-bottom: 8px; }
+        .input-group { margin-bottom: 20px; }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] text-gray-800">
+<div class="flex min-h-screen">
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full shadow-sm">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-100">
+<span class="iconify text-white text-xl" data-icon="mdi:school"></span>
+</div>
+<span class="font-bold text-lg text-gray-800 tracking-tight">BUPT TA System</span>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="dashboard.html">
+<span class="iconify text-xl" data-icon="mdi:view-dashboard"></span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="ta-recruitment-list.html">
+<span class="iconify text-xl" data-icon="mdi:account-group"></span>
+                TA Recruitment
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="my-ta-applications.html">
+<span class="iconify text-xl" data-icon="mdi:clipboard-text-clock-outline"></span>
+                My Applications
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-600 bg-blue-50 rounded-xl font-medium transition-all" href="personal-information.html">
+<span class="iconify text-xl" data-icon="mdi:account-circle-outline"></span>
+                Profile
+            </a>
+<div class="pt-4 border-t border-gray-100 mt-4">
+<p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Management</p>
+<a class="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition-all" href="notifications.html">
+<span class="iconify text-xl" data-icon="mdi:bell-outline"></span>
+                    Notifications
+                </a>
+</div>
+</nav>
+<div class="p-4 border-t border-gray-100">
+<div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3">
+<img alt="Avatar" class="w-10 h-10 rounded-full border border-gray-200" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"/>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold truncate" data-user-name>--</p>
+<p class="text-[10px] text-gray-400 truncate" data-user-role>--</p>
+</div>
+<button class="text-gray-400 hover:text-red-500" title="Logout" onclick="logout()">
+<span class="iconify text-lg" data-icon="mdi:logout"></span>
+</button>
+</div>
+</div>
+</aside>
+<main class="flex-1 ml-64 p-8">
+<nav class="flex items-center text-sm text-gray-500 mb-6">
+<a class="hover:text-blue-600" href="dashboard.html">Home</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900 font-medium">Profile</span>
+</nav>
+<header class="mb-8">
+<h1 class="text-2xl font-bold">Profile</h1>
+<p class="text-gray-400 text-sm mt-1">Maintain your profile so forms can be auto-filled when you apply for TA positions.</p>
+</header>
+<div class="grid grid-cols-3 gap-8">
+<div class="col-span-1">
+<div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
+<div class="relative w-32 h-32 mx-auto mb-4">
+<img alt="Large Avatar" class="w-full h-full rounded-2xl border-4 border-blue-50 object-cover shadow-lg" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"/>
+</div>
+<h2 class="text-xl font-bold" id="profileName">--</h2>
+<p class="text-gray-400 text-sm mb-6" id="profileSub">--</p>
+<div class="bg-gray-50 rounded-xl p-4 text-left space-y-3">
+<div class="flex justify-between items-center text-sm">
+<span class="text-gray-400 font-medium">Student ID</span>
+<span class="text-gray-700 font-mono font-bold" id="fixedStudentId">--</span>
+</div>
+<div class="flex justify-between items-center text-sm border-t border-gray-100 pt-3">
+<span class="text-gray-400 font-medium">Email</span>
+<span class="text-gray-700 truncate ml-4" id="fixedEmail">--</span>
+</div>
+<div class="pt-3 border-t border-gray-100">
+<button class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-600 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" id="openPasswordModal" type="button">
+<span class="iconify text-xl" data-icon="mdi:lock-reset"></span>
+                         Change password
+                     </button>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-2">
+<div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+<form id="infoForm">
+<div class="mb-6 rounded-xl border border-gray-100 bg-gray-50 p-4">
+<p class="text-sm font-bold text-gray-800">TA application profile</p>
+<p class="text-xs text-gray-500 mt-1">These fields can be used to auto-fill future TA application forms.</p>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="input-group">
+<label class="label-text">Full Name</label>
+<input class="input-box" id="fullNameInput" placeholder="e.g. Zhang San" type="text"/>
+</div>
+<div class="input-group">
+<label class="label-text">Email</label>
+<input class="input-box" id="emailInput" placeholder="e.g. student@bupt.edu.cn" type="email"/>
+</div>
+<div class="input-group">
+<label class="label-text">Mobile/Cell phone number</label>
+<input class="input-box" id="phoneInput" placeholder="e.g. 13800138000" type="tel"/>
+</div>
+<div class="input-group">
+<label class="label-text">Gender</label>
+<div class="flex items-center gap-6 pt-2" id="genderGroup">
+<label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+<input name="gender" type="radio" value="Female"/>
+<span>Female</span>
+</label>
+<label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+<input name="gender" type="radio" value="Male"/>
+<span>Male</span>
+</label>
+</div>
+</div>
+<div class="input-group">
+<label class="label-text">Student ID</label>
+<input class="input-box" id="studentIdInput" placeholder="e.g. 2022212345" type="text"/>
+</div>
+<div class="input-group">
+<label class="label-text">Which School are you from at BUPT?</label>
+<select class="input-box bg-white appearance-none" id="schoolInput">
+<option value="" disabled selected hidden>Which School are you from at BUPT?</option>
+<option value="School of Future Technology">School of Future Technology</option>
+<option value="International School">International School</option>
+<option value="Queen Mary University of London, Hainan College">Queen Mary University of London, Hainan College</option>
+<option value="School of Information and Communication Engineering">School of Information and Communication Engineering</option>
+<option value="School of Electronic Engineering">School of Electronic Engineering</option>
+<option value="School of Computer Science">School of Computer Science</option>
+<option value="School of Cyber Security">School of Cyber Security</option>
+<option value="School of Artificial Intelligence">School of Artificial Intelligence</option>
+<option value="School of Integrated Circuits">School of Integrated Circuits</option>
+<option value="School of Intelligent Engineering and Automation">School of Intelligent Engineering and Automation</option>
+<option value="Elite Engineer College">Elite Engineer College</option>
+</select>
+</div>
+<div class="input-group">
+<label class="label-text">Supervisor</label>
+<input class="input-box" id="supervisorInput" placeholder="e.g. Li Ming" type="text"/>
+</div>
+<div class="input-group">
+<label class="label-text">Degree</label>
+<select class="input-box bg-white appearance-none" id="degreeInput">
+<option value="">Select degree</option>
+<option value="Masters (MSc)">Masters (MSc)</option>
+<option value="PhD">PhD</option>
+</select>
+</div>
+<div class="input-group">
+<label class="label-text">Year of Study</label>
+<select class="input-box bg-white appearance-none" id="yearInput">
+<option value="">Select year</option>
+<option value="Year 1">Year 1</option>
+<option value="Year 2">Year 2</option>
+<option value="Year 3">Year 3</option>
+<option value="Year 4">Year 4</option>
+<option value="Year 5">Year 5</option>
+</select>
+</div>
+</div>
+
+<div class="mt-6 rounded-2xl border border-gray-100 bg-white p-5">
+<div class="flex items-center justify-between gap-4">
+<div>
+<p class="text-sm font-bold text-gray-800">Resume / CV (PDF)</p>
+<p class="text-xs text-gray-400 mt-1">Imported locally and cached for auto-fill in application forms.</p>
+</div>
+</div>
+<div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+<div class="md:col-span-2">
+<input class="hidden" id="profileResumeFile" accept="application/pdf" type="file"/>
+<div class="flex flex-wrap items-center gap-3">
+<button class="px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all" id="chooseProfileResumeBtn" type="button">Choose PDF</button>
+<button class="px-4 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="previewProfileResumeBtn" type="button" disabled>Preview</button>
+<button class="px-4 py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed" id="clearProfileResumeBtn" type="button" disabled>Clear</button>
+</div>
+<p class="text-xs text-gray-400 mt-3 truncate" id="profileResumeName">No PDF selected</p>
+<p class="text-[11px] text-gray-400 mt-1" id="profileResumeStatus">Not cached yet.</p>
+<p class="text-[11px] text-red-500 mt-2 hidden" id="profileResumeError"></p>
+</div>
+<div class="bg-gray-50 border border-gray-100 rounded-2xl p-4">
+<p class="text-[11px] text-gray-500 leading-relaxed">Tip: This file is stored in your browser only. You can reuse it on application forms without re-selecting it each time.</p>
+</div>
+</div>
+</div>
+
+<div class="flex items-center gap-4 pt-4">
+<button class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100" type="submit">
+                                Save changes
+                            </button>
+<button class="px-8 py-3 bg-white text-gray-500 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" onclick="loadProfile()" type="button">
+                                Reset
+                            </button>
+</div>
+</form>
+<div class="hidden fixed inset-0 z-50" id="passwordModal">
+<div class="absolute inset-0 bg-black/30" id="passwordModalOverlay"></div>
+<div class="relative min-h-full flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+<div class="h-2 bg-blue-600 w-full"></div>
+<div class="p-8">
+<div class="flex items-center justify-between gap-4 mb-6">
+<div>
+<h3 class="text-xl font-bold text-gray-800">Change password</h3>
+<p class="text-xs text-gray-400 mt-1">Verify your current password and set a new one.</p>
+</div>
+<button class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500" id="closePasswordModal" type="button">
+<span class="iconify text-xl" data-icon="mdi:close"></span>
+</button>
+</div>
+<form class="space-y-5" id="passwordForm">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Current password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="currentPassword" placeholder="Enter current password" type="password"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">New password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-reset"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="newPassword" placeholder="Enter new password" type="password"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">Confirm new password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+<span class="iconify" data-icon="mdi:lock-check-outline"></span>
+</span>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="confirmPassword" placeholder="Re-enter new password" type="password"/>
+</div>
+</div>
+<div class="pt-2 flex items-center gap-3">
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-blue-200 transition-all transform active:scale-[0.98]" type="submit">
+Update password
+</button>
+<button class="px-5 py-3.5 bg-white text-gray-500 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" id="cancelPasswordModal" type="button">
+Cancel
+</button>
+</div>
+<div class="mt-2 text-center">
+<a class="text-xs text-gray-400 hover:text-blue-600 transition-colors" href="forgot-password.html">Forgot password? Submit a reset request</a>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex items-start gap-3 bg-blue-50 p-4 rounded-xl border border-blue-100">
+<span class="iconify text-blue-500 text-xl mt-0.5" data-icon="mdi:information-outline"></span>
+<p class="text-sm text-blue-700 leading-relaxed">
+                            The information you enter here will be <strong>auto-filled</strong> in future application forms.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="/js/api.js"></script>
+<script>
+    const PROFILE_RESUME_DB_NAME = 'ta_application_resume_db_v1';
+    const PROFILE_RESUME_STORE_NAME = 'resume';
+    const PROFILE_RESUME_KEY = 'profile_default';
+
+    function getRadioValue(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : '';
+    }
+
+    function setRadioValue(name, value) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+            el.checked = el.value === value;
+        });
+    }
+
+    function openResumeDb() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(PROFILE_RESUME_DB_NAME, 1);
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(PROFILE_RESUME_STORE_NAME)) {
+                    db.createObjectStore(PROFILE_RESUME_STORE_NAME, { keyPath: 'id' });
+                }
+            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error || new Error('Failed to open resume cache'));
+        });
+    }
+
+    async function saveProfileResumeToIndexedDb(file) {
+        if (!file) return;
+        const db = await openResumeDb();
+        const record = { id: PROFILE_RESUME_KEY, file, fileName: file.name, updatedAt: Date.now() };
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(PROFILE_RESUME_STORE_NAME).put(record);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to cache resume'));
+        });
+        db.close();
+    }
+
+    async function getProfileResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        const result = await new Promise((resolve, reject) => {
+            const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readonly');
+            const req = tx.objectStore(PROFILE_RESUME_STORE_NAME).get(PROFILE_RESUME_KEY);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error || new Error('Failed to read cached resume'));
+        });
+        db.close();
+        return result;
+    }
+
+    async function clearProfileResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(PROFILE_RESUME_STORE_NAME).delete(PROFILE_RESUME_KEY);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to clear cached resume'));
+        });
+        db.close();
+    }
+
+    function formatBytes(bytes) {
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = bytes, idx = 0;
+        while (size >= 1024 && idx < units.length - 1) { size /= 1024; idx++; }
+        return `${size.toFixed(idx === 0 ? 0 : 1)} ${units[idx]}`;
+    }
+
+    function showProfileResumeError(msg) {
+        const el = document.getElementById('profileResumeError');
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.classList.remove('hidden');
+        el.textContent = msg;
+    }
+
+    function setProfileResumeUi(file, meta = {}) {
+        const nameEl = document.getElementById('profileResumeName');
+        const statusEl = document.getElementById('profileResumeStatus');
+        const previewBtn = document.getElementById('previewProfileResumeBtn');
+        const clearBtn = document.getElementById('clearProfileResumeBtn');
+
+        if (!file) {
+            nameEl.textContent = 'No PDF selected';
+            statusEl.textContent = meta.statusText || 'Not cached yet.';
+            previewBtn.disabled = true;
+            clearBtn.disabled = true;
+            return;
+        }
+        nameEl.textContent = `${file.name} · ${formatBytes(file.size)}`;
+        statusEl.textContent = meta.statusText || 'Ready.';
+        previewBtn.disabled = false;
+        clearBtn.disabled = false;
+    }
+
+    function openPdfPreviewWindow(title) {
+        const w = window.open('about:blank', '_blank');
+        if (!w) {
+            showToast('Popup was blocked. Please allow popups for preview.', 'warning');
+            return null;
+        }
+        const safeTitle = String(title || 'PDF Preview').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        w.document.open();
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>${safeTitle}</title><style>html,body{height:100%;margin:0;font-family:Arial,sans-serif;} .wrap{height:100%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;} iframe{width:100%;height:100%;border:0;}</style></head><body><div class="wrap">Loading preview...</div></body></html>`);
+        w.document.close();
+        return w;
+    }
+
+    function renderPdfInWindow(w, blobUrl, title) {
+        if (!w) return;
+        try {
+            w.location.href = blobUrl;
+        } catch (_) {
+            try {
+                w.location.href = blobUrl;
+            } catch (_) {}
+        }
+    }
+
+    async function previewProfileResume() {
+        const w = openPdfPreviewWindow('Resume Preview');
+        if (!w) return;
+        try {
+            const saved = await getProfileResumeFromIndexedDb();
+            const file = saved && saved.file ? saved.file : null;
+            if (!file) { showToast('No cached PDF resume found.', 'warning'); try { w.close(); } catch (_) {} return; }
+            const url = URL.createObjectURL(file);
+            renderPdfInWindow(w, url, 'Resume Preview');
+        } catch (err) {
+            showToast(err.message || 'Failed to preview resume', 'error');
+            try { w.close(); } catch (_) {}
+        }
+    }
+
+    function populateProfile(u) {
+        document.getElementById('profileName').textContent = u.fullName || u.username || '--';
+        document.getElementById('profileSub').textContent = (u.school || '') + (u.degree ? ' · ' + u.degree : '');
+        document.getElementById('fixedStudentId').textContent = u.studentId || '--';
+        document.getElementById('fixedEmail').textContent = u.email || '--';
+        document.getElementById('fullNameInput').value = u.fullName || '';
+        document.getElementById('emailInput').value = u.email || '';
+        document.getElementById('phoneInput').value = u.phone || '';
+        document.getElementById('studentIdInput').value = u.studentId || '';
+        document.getElementById('schoolInput').value = u.school || '';
+        document.getElementById('supervisorInput').value = u.supervisor || '';
+        document.getElementById('degreeInput').value = u.degree || '';
+        document.getElementById('yearInput').value = u.yearOfStudy || '';
+        setRadioValue('gender', u.gender || '');
+    }
+
+    async function loadProfile() {
+        try {
+            const u = await API.get('/api/auth/me');
+            populateProfile(u);
+        } catch (err) {
+            showToast(err.message || 'Failed to load profile', 'error');
+        }
+    }
+
+    (async function init() {
+        const user = requireAuth(['TA']);
+        if (!user) return;
+        updateSidebarUser(user);
+        await loadProfile();
+
+        try {
+            const saved = await getProfileResumeFromIndexedDb();
+            if (saved && saved.file) {
+                setProfileResumeUi(saved.file, { statusText: 'Cached locally at ' + formatDateTime(saved.updatedAt || Date.now()) });
+            } else {
+                setProfileResumeUi(null);
+            }
+        } catch (_) {
+            setProfileResumeUi(null, { statusText: 'Resume cache is unavailable in this browser.' });
+        }
+    })();
+
+    const profileResumeFileInput = document.getElementById('profileResumeFile');
+    const chooseProfileResumeBtn = document.getElementById('chooseProfileResumeBtn');
+    const previewProfileResumeBtn = document.getElementById('previewProfileResumeBtn');
+    const clearProfileResumeBtn = document.getElementById('clearProfileResumeBtn');
+
+    chooseProfileResumeBtn.addEventListener('click', () => profileResumeFileInput.click());
+
+    profileResumeFileInput.addEventListener('change', async () => {
+        showProfileResumeError('');
+        const file = profileResumeFileInput.files && profileResumeFileInput.files[0];
+        if (!file) return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            showProfileResumeError('Only PDF files are allowed.');
+            profileResumeFileInput.value = '';
+            return;
+        }
+        if (file.size > 20 * 1024 * 1024) {
+            showProfileResumeError('File is too large. Maximum size is 20MB.');
+            profileResumeFileInput.value = '';
+            return;
+        }
+        try {
+            await saveProfileResumeToIndexedDb(file);
+            setProfileResumeUi(file, { statusText: 'Cached locally at ' + formatDateTime(Date.now()) });
+            showToast('Resume cached locally.', 'success');
+        } catch (err) {
+            showToast(err.message || 'Failed to cache resume', 'error');
+        }
+    });
+
+    previewProfileResumeBtn.addEventListener('click', () => {
+        previewProfileResume();
+    });
+
+    clearProfileResumeBtn.addEventListener('click', async () => {
+        try {
+            await clearProfileResumeFromIndexedDb();
+            setProfileResumeUi(null, { statusText: 'Cleared.' });
+            profileResumeFileInput.value = '';
+            showToast('Cached resume cleared.', 'success');
+        } catch (err) {
+            showToast(err.message || 'Failed to clear cached resume', 'error');
+        }
+    });
+
+    document.getElementById('infoForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        try {
+            const body = {
+                fullName: document.getElementById('fullNameInput').value.trim(),
+                email: document.getElementById('emailInput').value.trim(),
+                phone: document.getElementById('phoneInput').value.trim(),
+                gender: getRadioValue('gender'),
+                studentId: document.getElementById('studentIdInput').value.trim(),
+                school: document.getElementById('schoolInput').value,
+                supervisor: document.getElementById('supervisorInput').value.trim(),
+                degree: document.getElementById('degreeInput').value,
+                yearOfStudy: document.getElementById('yearInput').value
+            };
+            const updated = await API.put('/api/auth/profile', body);
+            populateProfile(updated);
+            updateSidebarUser(updated);
+            showToast('Profile updated successfully.', 'success');
+        } catch (err) {
+            showToast(err.message || 'Failed to update profile', 'error');
+        }
+    });
+
+    const passwordModal = document.getElementById('passwordModal');
+    document.getElementById('openPasswordModal').addEventListener('click', () => {
+        passwordModal.classList.remove('hidden');
+        document.getElementById('passwordForm').reset();
+    });
+    function closePwdModal() { passwordModal.classList.add('hidden'); }
+    document.getElementById('closePasswordModal').addEventListener('click', closePwdModal);
+    document.getElementById('cancelPasswordModal').addEventListener('click', closePwdModal);
+    document.getElementById('passwordModalOverlay').addEventListener('click', closePwdModal);
+
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const oldPassword = document.getElementById('currentPassword').value.trim();
+        const newPassword = document.getElementById('newPassword').value.trim();
+        const confirmPwd = document.getElementById('confirmPassword').value.trim();
+
+        if (!oldPassword || !newPassword || !confirmPwd) {
+            showToast('Please fill in all password fields.', 'warning');
+            return;
+        }
+        if (newPassword.length < 6) {
+            showToast('New password must be at least 6 characters.', 'warning');
+            return;
+        }
+        if (newPassword !== confirmPwd) {
+            showToast('The new passwords do not match.', 'warning');
+            return;
+        }
+
+        try {
+            await API.put('/api/auth/password', { oldPassword, newPassword });
+            showToast('Password updated successfully.', 'success');
+            closePwdModal();
+        } catch (err) {
+            showToast(err.message || 'Failed to update password', 'error');
+        }
+    });
+</script>
+</body>
+</html>
