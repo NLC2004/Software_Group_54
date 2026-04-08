@@ -25,7 +25,7 @@
 <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
 <span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
 </div>
-<span class="text-xl font-bold tracking-tight text-blue-900">MO Admin</span>
+<span class="text-xl font-bold tracking-tight text-blue-900">Admin</span>
 </div>
 <nav class="mt-4 flex-1">
 <div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
@@ -81,7 +81,7 @@
 <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
 <div>
 <h1 class="text-xl font-semibold">User Management</h1>
-<p class="text-xs text-gray-400">Manage students, faculty, and administrative staff accounts</p>
+<p class="text-xs text-gray-400" id="userMgmtSubTitle">Manage students, faculty, and administrative staff accounts</p>
 </div>
 <div class="flex items-center gap-3">
 <a href="password-reset-requests.html" class="px-4 py-2 border border-amber-200 text-amber-800 bg-amber-50 rounded-lg text-sm font-medium hover:bg-amber-100 transition-all flex items-center gap-2">
@@ -101,6 +101,9 @@
 <!-- Scrollable Content -->
 <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
 <div class="max-w-7xl mx-auto space-y-6">
+<div id="readonlyAdminNotice" class="hidden p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-sm">
+    Current account is standard admin (read-only mode). Sensitive operations must be completed by super admin `admin`.
+</div>
 <!-- Quick Stats -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="user-stats">
 <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
@@ -362,6 +365,25 @@ let currentTab = 'TA';
 let assignUserId = null;
 window.roleTemplatesCache = [];
 let editingRoleTemplateId = null;
+const currentAdminUser = API.getUser();
+
+function isSuperAdminAccount() {
+    return !!(currentAdminUser
+        && currentAdminUser.role === 'ADMIN'
+        && String(currentAdminUser.username || '').toLowerCase() === 'admin');
+}
+
+function enforceReadOnlyUiForStandardAdmin() {
+    if (isSuperAdminAccount()) return;
+    const notice = document.getElementById('readonlyAdminNotice');
+    if (notice) notice.classList.remove('hidden');
+    const subTitle = document.getElementById('userMgmtSubTitle');
+    if (subTitle) subTitle.textContent = 'View users and requests (standard admin read-only)';
+    const addBtn = document.querySelector('button[onclick*="newUserModal"]');
+    if (addBtn) addBtn.classList.add('hidden');
+    const bulkBtn = document.querySelector('button .iconify[data-icon="material-symbols:cloud-upload"]')?.closest('button');
+    if (bulkBtn) bulkBtn.classList.add('hidden');
+}
 
 function toggleModal(id) {
     document.getElementById(id).classList.toggle('modal-active');
@@ -409,6 +431,10 @@ async function openEditRoleTemplate(id) {
 }
 
 async function submitRoleTemplate() {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can modify templates', 'warning');
+        return;
+    }
     const name = document.getElementById('newTplName').value.trim();
     const description = document.getElementById('newTplDesc').value.trim();
     const tagsStr = document.getElementById('newTplTags').value.trim();
@@ -430,6 +456,10 @@ async function submitRoleTemplate() {
 }
 
 async function deleteRoleTemplate(id) {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can modify templates', 'warning');
+        return;
+    }
     if (!confirm('Delete this template? Admins linked to it will have the link cleared.')) return;
     try {
         await API.del('/api/admin/role-templates/' + encodeURIComponent(id));
@@ -500,6 +530,7 @@ window.onclick = function(event) {
     const user = requireAuth(['ADMIN']);
     if (!user) return;
     updateSidebarUser(user);
+    enforceReadOnlyUiForStandardAdmin();
 
     try {
         allUsers = await API.get('/api/admin/users');
@@ -582,6 +613,10 @@ function openUserDetail(id) {
 }
 
 async function openAssignRole(userId, role) {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can assign roles', 'warning');
+        return;
+    }
     assignUserId = userId;
     const sel = document.getElementById('assignRoleSelect');
     if (sel && (role === 'TA' || role === 'MO' || role === 'ADMIN')) sel.value = role;
@@ -620,6 +655,10 @@ function updateAssignAdminTemplateVisibility() {
 }
 
 async function saveAssignRole() {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can assign roles', 'warning');
+        return;
+    }
     if (!assignUserId) return;
     const role = document.getElementById('assignRoleSelect').value;
     const body = { role: role };
@@ -670,6 +709,26 @@ function renderUsers(users) {
         const roleBadge = u.role === 'ADMIN'
             ? '<span class="text-xs text-blue-600 font-bold border border-blue-200 px-2 py-0.5 rounded">' + esc(u.role) + '</span>'
             : '<span class="text-xs text-gray-600">' + esc(u.role) + '</span>';
+        const readOnly = !isSuperAdminAccount();
+        const resetLocked = readOnly || (u.role === 'TA' || u.role === 'MO');
+        const resetBtn = resetLocked
+            ? `<button type="button" class="px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Notify super admin to process password reset" onclick="requestSuperAdminPasswordReset('${uid}')">
+                        Notify super admin
+                    </button>`
+            : `<button type="button" class="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Reset password to 123456" onclick="resetPassword('${uid}', '${uname}')">
+                        <span class="iconify w-4 h-4" data-icon="material-symbols:lock-reset"></span>
+                    </button>`;
+        const assignRoleBtn = readOnly
+            ? ''
+            : `<button type="button" class="px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg" onclick="openAssignRole('${uid}', '${u.role}')">Assign role</button>`;
+        const toggleActiveBtn = readOnly
+            ? ''
+            : `<button type="button" class="px-2 py-1 text-xs font-semibold ${u.active ? 'text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100' : 'text-green-800 bg-green-50 border border-green-200 hover:bg-green-100'} rounded-lg" onclick="toggleActive('${uid}', ${u.active})">${u.active ? 'Deactivate' : 'Activate'}</button>`;
+        const deleteBtn = readOnly
+            ? ''
+            : `<button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete user" onclick="deleteUser('${uid}', '${uname}')">
+                        <span class="iconify w-4 h-4" data-icon="material-symbols:delete-outline"></span>
+                    </button>`;
         return `<tr class="hover:bg-blue-50/20 transition-colors">
             <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
@@ -689,14 +748,10 @@ function renderUsers(users) {
             <td class="px-6 py-4 text-right">
                 <div class="flex flex-wrap justify-end gap-1 items-center">
                     <button type="button" class="px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg" onclick="openUserDetail('${uid}')">View details</button>
-                    <button type="button" class="px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg" onclick="openAssignRole('${uid}', '${u.role}')">Assign role</button>
-                    <button type="button" class="px-2 py-1 text-xs font-semibold ${u.active ? 'text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100' : 'text-green-800 bg-green-50 border border-green-200 hover:bg-green-100'} rounded-lg" onclick="toggleActive('${uid}', ${u.active})">${u.active ? 'Deactivate' : 'Activate'}</button>
-                    <button type="button" class="p-2 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Reset password to 123456" onclick="resetPassword('${uid}', '${uname}')">
-                        <span class="iconify w-4 h-4" data-icon="material-symbols:lock-reset"></span>
-                    </button>
-                    <button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete user" onclick="deleteUser('${uid}', '${uname}')">
-                        <span class="iconify w-4 h-4" data-icon="material-symbols:delete-outline"></span>
-                    </button>
+                    ${assignRoleBtn}
+                    ${toggleActiveBtn}
+                    ${resetBtn}
+                    ${deleteBtn}
                 </div>
             </td>
         </tr>`;
@@ -710,6 +765,10 @@ function updatePaginationInfo(count) {
 }
 
 async function toggleActive(id, currentActive) {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can change account status', 'warning');
+        return;
+    }
     const action = currentActive ? 'disable' : 'enable';
     if (!confirm('Are you sure you want to ' + action + ' this user?')) return;
     try {
@@ -724,6 +783,11 @@ async function toggleActive(id, currentActive) {
 }
 
 async function resetPassword(id, name) {
+    const target = Array.isArray(allUsers) ? allUsers.find(function(u) { return u.id === id; }) : null;
+    if (target && (target.role === 'TA' || target.role === 'MO') && !isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can reset TA/MO password', 'warning');
+        return;
+    }
     if (!confirm('Reset password for ' + name + ' to "123456"?')) return;
     try {
         await API.put('/api/admin/users/' + id, { password: '123456' });
@@ -733,7 +797,20 @@ async function resetPassword(id, name) {
     }
 }
 
+async function requestSuperAdminPasswordReset(id) {
+    try {
+        await API.post('/api/admin/users/' + encodeURIComponent(id) + '/notify-password-reset', {});
+        showToast('Escalation sent to super admin', 'success');
+    } catch (e) {
+        showToast(e.message || 'Escalation failed', 'error');
+    }
+}
+
 async function deleteUser(id, name) {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can delete users', 'warning');
+        return;
+    }
     if (!confirm('Delete user "' + name + '"? This cannot be undone.')) return;
     try {
         await API.del('/api/admin/users/' + id);
@@ -747,6 +824,10 @@ async function deleteUser(id, name) {
 }
 
 async function createUser() {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can create users', 'warning');
+        return;
+    }
     const role = document.getElementById('newUserRole').value;
     const username = document.getElementById('newUserUsername').value.trim();
     const fullName = document.getElementById('newUserFullName').value.trim();
@@ -777,6 +858,7 @@ async function loadPasswordResets() {
             container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">No pending password reset requests.</p>';
             return;
         }
+        const locked = !isSuperAdminAccount();
         container.innerHTML = resets.map(r => `
             <div class="p-3 border border-gray-100 rounded-xl flex items-center justify-between">
                 <div>
@@ -785,8 +867,8 @@ async function loadPasswordResets() {
                     <p class="text-[10px] text-gray-400">${timeAgo(r.createdAt)}</p>
                 </div>
                 <div class="flex gap-1">
-                    <button onclick="approveReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold text-green-600 bg-green-50 rounded hover:bg-green-100">Approve</button>
-                    <button onclick="rejectReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold text-red-600 bg-red-50 rounded hover:bg-red-100">Reject</button>
+                    <button onclick="approveReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold ${locked ? 'text-gray-300 bg-gray-100 cursor-not-allowed' : 'text-green-600 bg-green-50 hover:bg-green-100'} rounded" ${locked ? 'disabled title="Only super admin (admin) can process TA/MO resets"' : ''}>Approve</button>
+                    <button onclick="rejectReset('${safeJsStr(r.id)}')" class="px-3 py-1 text-xs font-bold ${locked ? 'text-gray-300 bg-gray-100 cursor-not-allowed' : 'text-red-600 bg-red-50 hover:bg-red-100'} rounded" ${locked ? 'disabled title="Only super admin (admin) can process TA/MO resets"' : ''}>Reject</button>
                 </div>
             </div>
         `).join('');
@@ -796,6 +878,10 @@ async function loadPasswordResets() {
 }
 
 async function approveReset(id) {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can process TA/MO resets', 'warning');
+        return;
+    }
     try {
         await API.put('/api/admin/password-resets/' + id, { action: 'APPROVE' });
         showToast('Password reset approved', 'success');
@@ -806,6 +892,10 @@ async function approveReset(id) {
 }
 
 async function rejectReset(id) {
+    if (!isSuperAdminAccount()) {
+        showToast('Only super admin (admin) can process TA/MO resets', 'warning');
+        return;
+    }
     const reason = prompt('Reason for rejection (optional):');
     try {
         await API.put('/api/admin/password-resets/' + id, { action: 'REJECT', reason: reason || '' });
