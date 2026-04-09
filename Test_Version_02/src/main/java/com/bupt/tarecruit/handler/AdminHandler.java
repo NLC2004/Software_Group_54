@@ -18,6 +18,19 @@ public class AdminHandler extends BaseHandler {
 
     public AdminHandler(DataService ds) { super(ds); }
 
+    private boolean isSuperAdmin(User user) {
+        return user != null
+                && "ADMIN".equals(user.role)
+                && user.username != null
+                && "admin".equalsIgnoreCase(user.username.trim());
+    }
+
+    private boolean ensureSuperAdminForWrite(HttpExchange ex, User user, String action) throws IOException {
+        if (isSuperAdmin(user)) return true;
+        sendError(ex, 403, "Only super admin (admin) can " + action);
+        return false;
+    }
+
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;
@@ -85,6 +98,7 @@ public class AdminHandler extends BaseHandler {
             }).collect(Collectors.toList());
             sendJson(ex, 200, result);
         } else if (parts.length == 4 && "POST".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "create users")) return;
             JsonObject body = parseJson(readBody(ex));
             String username = body.has("username") ? body.get("username").getAsString().trim() : "";
             String password = body.has("password") ? body.get("password").getAsString() : "";
@@ -127,10 +141,18 @@ public class AdminHandler extends BaseHandler {
             ds.addAuditLog(admin.id, admin.username, "USER_CREATE", "Created user: " + created.username + " (" + created.role + ")");
             sendJson(ex, 201, Map.of("id", created.id, "message", "User created"));
         } else if (parts.length == 5 && "PUT".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "update user permissions")) return;
             String userId = parts[4];
             User target = ds.getUserById(userId);
             if (target == null) { sendError(ex, 404, "User not found"); return; }
             JsonObject body = parseJson(readBody(ex));
+            if (body.has("password")) {
+                String targetRole = target.role == null ? "" : target.role.toUpperCase(Locale.ROOT);
+                if (("TA".equals(targetRole) || "MO".equals(targetRole)) && !isSuperAdmin(admin)) {
+                    sendError(ex, 403, "Only super admin (admin) can reset TA/MO passwords");
+                    return;
+                }
+            }
             if (body.has("active")) target.active = body.get("active").getAsBoolean();
             if (body.has("role")) target.role = body.get("role").getAsString();
             if (body.has("password")) target.password = body.get("password").getAsString();
@@ -148,7 +170,32 @@ public class AdminHandler extends BaseHandler {
             ds.updateUser(target);
             ds.addAuditLog(admin.id, admin.username, "USER_UPDATE", "Updated user: " + target.username);
             sendJson(ex, 200, Map.of("message", "User updated"));
+        } else if (parts.length == 6 && "POST".equals(method) && "notify-password-reset".equals(parts[5])) {
+            String userId = parts[4];
+            User target = ds.getUserById(userId);
+            if (target == null) { sendError(ex, 404, "User not found"); return; }
+            if (!"TA".equalsIgnoreCase(target.role) && !"MO".equalsIgnoreCase(target.role)) {
+                sendError(ex, 400, "Only TA/MO accounts support password reset escalation");
+                return;
+            }
+            User superAdmin = ds.getUserByUsername("admin");
+            if (superAdmin == null) {
+                sendError(ex, 500, "Super admin account not found");
+                return;
+            }
+            Notification n = new Notification();
+            n.userId = superAdmin.id;
+            n.title = "Password Reset Escalation";
+            n.content = "Admin " + admin.username + " requested super-admin password reset for user: "
+                    + (target.fullName != null && !target.fullName.isEmpty() ? target.fullName : target.username)
+                    + " (" + target.role + ", id=" + target.id + ").";
+            n.type = "PASSWORD_RESET";
+            ds.addNotification(n);
+            ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_ESCALATE",
+                    "Escalated password reset for user: " + target.username + " (" + target.role + ")");
+            sendJson(ex, 200, Map.of("message", "Escalation sent to super admin"));
         } else if (parts.length == 5 && "DELETE".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "delete users")) return;
             User target = ds.getUserById(parts[4]);
             ds.deleteUser(parts[4]);
             ds.addAuditLog(admin.id, admin.username, "USER_DELETE", "Deleted user: " + (target != null ? target.username : parts[4]));
@@ -169,22 +216,31 @@ public class AdminHandler extends BaseHandler {
             reqs.sort((a, b) -> Long.compare(b.createdAt, a.createdAt));
             sendJson(ex, 200, reqs);
         } else if ("PUT".equals(method) && parts.length == 5) {
+            if (!ensureSuperAdminForWrite(ex, admin, "process password reset requests")) return;
             String reqId = parts[4];
             PasswordResetRequest req = ds.getPasswordResetById(reqId);
             if (req == null) { sendError(ex, 404, "Request not found"); return; }
             JsonObject body = parseJson(readBody(ex));
             String action = body.get("action").getAsString();
+
+            User target = null;
+            if (req.studentId != null && !req.studentId.isEmpty()) {
+                target = ds.getAllUsers().stream()
+                        .filter(u -> req.studentId.equals(u.studentId) || req.studentId.equals(u.username))
+                        .findFirst().orElse(null);
+            }
+            if (target != null) {
+                String targetRole = target.role == null ? "" : target.role.toUpperCase(Locale.ROOT);
+                if (("TA".equals(targetRole) || "MO".equals(targetRole)) && !isSuperAdmin(admin)) {
+                    sendError(ex, 403, "Only super admin (admin) can process TA/MO password reset requests");
+                    return;
+                }
+            }
+
             if ("APPROVE".equals(action)) {
                 req.status = "APPROVED";
                 req.processedAt = System.currentTimeMillis();
                 ds.updatePasswordReset(req);
-
-                User target = null;
-                if (req.studentId != null && !req.studentId.isEmpty()) {
-                    target = ds.getAllUsers().stream()
-                        .filter(u -> req.studentId.equals(u.studentId) || req.studentId.equals(u.username))
-                        .findFirst().orElse(null);
-                }
                 if (target != null) {
                     target.password = "123456";
                     ds.updateUser(target);
@@ -208,6 +264,26 @@ public class AdminHandler extends BaseHandler {
             } else {
                 sendError(ex, 400, "Invalid action");
             }
+        } else if ("POST".equals(method) && parts.length == 6 && "escalate".equals(parts[5])) {
+            String reqId = parts[4];
+            PasswordResetRequest req = ds.getPasswordResetById(reqId);
+            if (req == null) { sendError(ex, 404, "Request not found"); return; }
+            User superAdmin = ds.getUserByUsername("admin");
+            if (superAdmin == null) {
+                sendError(ex, 500, "Super admin account not found");
+                return;
+            }
+            Notification n = new Notification();
+            n.userId = superAdmin.id;
+            n.title = "Password Reset Request Escalation";
+            n.content = "Admin " + admin.username + " escalated reset request: "
+                    + (req.fullName != null ? req.fullName : "")
+                    + " (studentId=" + (req.studentId != null ? req.studentId : "") + ").";
+            n.type = "PASSWORD_RESET";
+            ds.addNotification(n);
+            ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_REQUEST_ESCALATE",
+                    "Escalated reset request id=" + req.id + " for " + (req.fullName != null ? req.fullName : req.studentId));
+            sendJson(ex, 200, Map.of("message", "Escalation sent to super admin"));
         } else {
             sendError(ex, 404, "Not found");
         }
@@ -363,6 +439,7 @@ public class AdminHandler extends BaseHandler {
         if ("GET".equals(method)) {
             sendJson(ex, 200, ds.getSettings());
         } else if ("PUT".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "update system settings")) return;
             JsonObject body = parseJson(readBody(ex));
             Map<String, String> settings = ds.getSettings();
             body.entrySet().forEach(e -> settings.put(e.getKey(), e.getValue().getAsString()));
@@ -429,6 +506,7 @@ public class AdminHandler extends BaseHandler {
             }
             sendJson(ex, 200, out);
         } else if (parts.length == 4 && "POST".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "create role templates")) return;
             JsonObject body = parseJson(readBody(ex));
             AdminRoleTemplate t = new AdminRoleTemplate();
             t.name = body.has("name") ? body.get("name").getAsString().trim() : "Unnamed";
@@ -444,6 +522,7 @@ public class AdminHandler extends BaseHandler {
             ds.addAuditLog(admin.id, admin.username, "ADMIN_ROLE_TEMPLATE_CREATE", "Created template: " + t.name);
             sendJson(ex, 201, Map.of("id", t.id, "message", "Created"));
         } else if (parts.length == 5 && "PUT".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "update role templates")) return;
             String id = parts[4];
             AdminRoleTemplate existing = ds.getAdminRoleTemplateById(id);
             if (existing == null) { sendError(ex, 404, "Not found"); return; }
@@ -464,6 +543,7 @@ public class AdminHandler extends BaseHandler {
             ds.addAuditLog(admin.id, admin.username, "ADMIN_ROLE_TEMPLATE_UPDATE", "Updated template: " + existing.name);
             sendJson(ex, 200, Map.of("message", "Updated"));
         } else if (parts.length == 5 && "DELETE".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "delete role templates")) return;
             String id = parts[4];
             if (ds.getAdminRoleTemplateById(id) == null) { sendError(ex, 404, "Not found"); return; }
             ds.deleteAdminRoleTemplate(id);
@@ -592,6 +672,7 @@ public class AdminHandler extends BaseHandler {
             sendError(ex, 405, "Method not allowed");
             return;
         }
+        if (!ensureSuperAdminForWrite(ex, admin, "send bulk notifications")) return;
         JsonObject body = parseJson(readBody(ex));
         String title = body.has("title") ? body.get("title").getAsString().trim() : "";
         String message = body.has("message") ? body.get("message").getAsString().trim() : "";
