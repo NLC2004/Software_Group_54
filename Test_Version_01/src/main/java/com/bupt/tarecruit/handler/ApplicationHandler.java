@@ -83,11 +83,25 @@ public class ApplicationHandler extends BaseHandler {
         if ("TA".equals(user.role)) {
             if (!app.applicantId.equals(user.id)) { sendError(ex, 403, "Not your application"); return; }
             if (!"WITHDRAWN".equals(newStatus)) { sendError(ex, 400, "TAs can only withdraw applications"); return; }
+            if (!"PENDING".equals(app.status)) {
+                sendError(ex, 400, "Only pending applications can be withdrawn"); return;
+            }
         } else if ("MO".equals(user.role)) {
             Job job = ds.getJobById(app.jobId);
             if (job == null || !job.postedBy.equals(user.id)) { sendError(ex, 403, "Not your job posting"); return; }
             if (!"APPROVED".equals(newStatus) && !"REJECTED".equals(newStatus)) {
                 sendError(ex, 400, "Invalid status"); return;
+            }
+            if (!"PENDING".equals(app.status)) {
+                sendError(ex, 400, "Only pending applications can be reviewed"); return;
+            }
+            if ("APPROVED".equals(newStatus)) {
+                long approvedCount = ds.getApplicationsByJob(app.jobId).stream()
+                        .filter(a -> "APPROVED".equals(a.status) && !a.id.equals(app.id))
+                        .count();
+                if (approvedCount >= job.quota) {
+                    sendError(ex, 400, "Quota reached for this position"); return;
+                }
             }
         } else if (!"ADMIN".equals(user.role)) {
             sendError(ex, 403, "Not authorized"); return;
@@ -95,6 +109,20 @@ public class ApplicationHandler extends BaseHandler {
 
         app.status = newStatus;
         ds.updateApplication(app);
+
+        if ("APPROVED".equals(newStatus)) {
+            Job job = ds.getJobById(app.jobId);
+            if (job != null) {
+                long approvedCount = ds.getApplicationsByJob(app.jobId).stream()
+                        .filter(a -> "APPROVED".equals(a.status))
+                        .count();
+                if (approvedCount >= job.quota && "OPEN".equals(job.status)) {
+                    job.status = "CLOSED";
+                    ds.updateJob(job);
+                }
+            }
+        }
+
         sendJson(ex, 200, Map.of("message", "Status updated", "status", newStatus));
     }
 }

@@ -1,6 +1,6 @@
-# BUPT International School — TA Recruitment System
+# BUPT International School — TA Recruitment System (Test_Version_01)
 
-Standalone Java web application for recruiting Teaching Assistants (TAs): applicants browse and apply, Module Organisers (MOs) post positions and review applications, and Admins oversee users, postings, and TA workload.
+Standalone Java web application for recruiting Teaching Assistants (TAs): applicants browse and apply, Module Organisers (MOs) post positions and review applications, and Admins oversee users, postings, reset requests, and TA workload.
 
 Designed for **EBU6304** coursework constraints: **Java only**, **no database** (JSON/text files), **Agile** delivery.
 
@@ -9,123 +9,184 @@ Designed for **EBU6304** coursework constraints: **Java only**, **no database** 
 ## Requirements
 
 - **JDK 17+** (tested with OpenJDK 24)
-- **Windows**: use `build.bat` / `run.bat` as below  
-- **macOS / Linux**: same steps with `javac`/`java` and classpath separator `:` instead of `;`
+- **Windows**: use `build.bat` / `run.bat`
+- **macOS / Linux**: use `javac`/`java` manually (`:` classpath separator)
 
 ---
 
 ## Quick start
 
-1. Open a terminal in this folder (`NLC_test`).
+1. Open terminal in `Test_Version_01/`.
 
 2. **Build** (downloads Gson if missing, compiles to `out/`):
 
-   ```bat
-   build.bat
-   ```
+```bat
+build.bat
+```
 
 3. **Run** (starts HTTP server, default port **8080**):
 
-   ```bat
-   run.bat
-   ```
+```bat
+run.bat
+```
 
-   Or with a custom port:
+Or custom port:
 
-   ```bat
-   run.bat 9090
-   ```
+```bat
+run.bat 9090
+```
 
-4. Open a browser: **http://localhost:8080** (or your port).  
-   The app may try to open the browser automatically on Windows.
+4. Open browser: **http://localhost:8080** (or your custom port).
 
-5. **Stop**: press `Ctrl+C` in the terminal where the server is running.
+5. Stop server with `Ctrl+C`.
 
 ---
 
 ## Default account
 
-| Username | Password | Role  |
-|----------|----------|-------|
-| `admin`  | `admin123` | Admin |
+| Username | Password   | Role  |
+|----------|------------|-------|
+| `admin`  | `admin123` | ADMIN |
 
-On first run, `data/users.json` is created with this admin user. **Change the password** before any real deployment.
-
----
-
-## Roles and typical flow
-
-| Role | What they do |
-|------|----------------|
-| **TA** | Register/login, edit profile, browse open jobs (course vs activity), upload CV and apply, track status, withdraw pending applications. |
-| **MO** | Register/login, post jobs (course TA or activity e.g. invigilation), review applicants, approve/reject, open/close postings. |
-| **Admin** | Dashboard stats, manage users (activate/deactivate, reset password), view/remove any job, workload view (weekly hours vs limit), recruitment settings (dates, max hours). |
-
-**Suggested demo path:** register one MO and one TA → MO posts a job → TA applies → MO reviews → Admin checks workload.
+On first run, `data/users.json` is auto-created with this admin.
 
 ---
 
-## Data and uploads
+## Main features by role
 
-All persistence is under the **current working directory** when you start the server (normally the project root):
+### TA
+- Register/login
+- Maintain personal profile
+- Browse OPEN jobs (Course TA / Activity)
+- Apply with optional CV upload
+- View application status
+- Withdraw **pending** applications only
+- Account security page:
+  - Change password (logged-in)
+  - Submit forgot-password request for admin review
+
+### MO
+- Post job vacancies
+- Review applications for own postings
+- Approve / reject **pending** applications
+- Quota protection: cannot approve beyond job `quota`
+- When approved count reaches quota, job auto-switches to `CLOSED`
+
+### ADMIN
+- Dashboard statistics
+- User management (activate/deactivate, reset password to `123456`)
+- Review password-reset requests (approve/reject)
+- Audit log view for admin actions
+- View/remove all jobs
+- TA workload view (weekly hours vs configured max)
+- Recruitment settings (start/end date + max weekly hours)
+
+---
+
+## Real-time UI behavior
+
+For key management pages, frontend auto-refreshes every ~8 seconds (when tab is visible):
+
+- `MO -> Review Applicants`
+- `ADMIN -> Reset Requests`
+- `ADMIN -> Workload`
+
+This helps demo multi-user updates without manual refresh.
+
+---
+
+## Data files and uploads
+
+All persistence is local file storage under project runtime directory:
 
 | Path | Purpose |
 |------|---------|
 | `data/users.json` | User accounts |
 | `data/jobs.json` | Job postings |
 | `data/applications.json` | Applications |
-| `data/settings.json` | Admin settings (optional; created when saved) |
+| `data/password_reset_requests.json` | Forgot-password requests |
+| `data/audit_logs.json` | Admin action audit records |
+| `data/settings.json` | Recruitment settings |
 | `uploads/` | Uploaded CV files |
 
-To **reset** the system, stop the server and delete `data/` and `uploads/` (a fresh admin will be recreated on next start).
+To reset environment: stop server and delete `data/` + `uploads/`.
 
 ---
 
 ## Project layout
 
-```
-NLC_test/
-├── build.bat / run.bat     # Windows build & run
-├── lib/gson-2.10.1.jar     # JSON (downloaded by build.bat)
-├── out/                    # Compiled .class files
-├── data/                   # Runtime JSON data (gitignored recommended)
-├── uploads/                # Uploaded files
-├── src/main/java/...       # Java source (HttpServer + REST-style API)
-└── src/main/resources/static/  # Web UI (HTML, CSS, JS)
+```text
+Test_Version_01/
+├── build.bat / run.bat
+├── lib/gson-2.10.1.jar
+├── out/
+├── data/
+├── uploads/
+├── src/main/java/com/bupt/tarecruit/
+│   ├── Main.java
+│   ├── handler/
+│   ├── model/
+│   └── service/
+└── src/main/resources/static/
+    ├── login.html
+    ├── dashboard.html
+    ├── css/style.css
+    └── js/app.js
 ```
 
 ---
 
-## API (for debugging)
+## API summary (debug use)
 
 Base URL: `http://localhost:<port>/api`
 
-- `POST /api/auth/login`, `POST /api/auth/register`, `GET /api/auth/me`, `PUT /api/auth/profile`, …
-- `GET/POST /api/jobs`, `POST /api/jobs/{id}/apply`, …
-- `GET /api/applications`, `PUT /api/applications/{id}/status`
-- `GET/PUT /api/admin/...` (Admin only)
-- `POST /api/upload` — include header `Authorization: Bearer <token>` for protected routes
+- Auth:
+  - `POST /auth/login`
+  - `POST /auth/register`
+  - `GET /auth/me`
+  - `PUT /auth/profile`
+  - `PUT /auth/password`
+  - `POST /auth/forgot-password`
+- Jobs:
+  - `GET/POST /jobs`
+  - `GET/PUT/DELETE /jobs/{id}`
+  - `POST /jobs/{id}/apply`
+- Applications:
+  - `GET /applications`
+  - `PUT /applications/{id}/status`
+- Admin:
+  - `GET /admin/stats`
+  - `GET /admin/users`, `PUT /admin/users/{id}`, `DELETE /admin/users/{id}`
+  - `GET /admin/reset-requests`
+  - `PUT /admin/reset-requests/{id}/review`
+  - `GET /admin/audit-logs`
+  - `GET /admin/workload`
+  - `GET/PUT /admin/settings`
+- Upload:
+  - `POST /upload`
+  - `GET /upload/{fileName}`
 
-Static pages: `/`, `/login.html`, `/dashboard.html`, `/css/style.css`, `/js/app.js`.
+Static pages: `/`, `/login.html`, `/dashboard.html`.
 
 ---
 
 ## Troubleshooting
 
-- **Port in use**: another process is using 8080 — close it or run `run.bat 9090`.
-- **Blank page / 404**: run from the **project root** so `src/main/resources/static` exists relative to `user.dir`.
-- **Build fails**: ensure `javac` is on `PATH` and `lib/gson-2.10.1.jar` exists (re-run `build.bat`).
+- **Port conflict**: use another port (`run.bat 9090`).
+- **Page/resource not found**: ensure running from `Test_Version_01` root.
+- **Build error**: check `javac` in PATH, then rerun `build.bat`.
+- **Chinese garbled output in cmd**: this does not affect compile result; use PowerShell/UTF-8 terminal if needed.
 
 ---
 
 ## Course alignment (EBU6304)
 
-- Implementation: **standalone Java** with embedded HTTP server (not Spring Boot).
-- Storage: **JSON files** — no SQL database.
-- Optional “AI” features from the handout (e.g. skill matching) are **not required**; if added, document them clearly and keep outputs explainable.
+- Standalone Java + embedded `HttpServer` (no Spring Boot).
+- File-based JSON storage (no SQL DB).
+- Supports iterative delivery and traceable feature increments.
 
 ---
 
-## Licence / course use
+## Note
 
-Course group project — use and modify according to your module rules.
+This repository includes generated/runtime files (`out/`, `data/`) in current workspace status. For cleaner submissions, consider `.gitignore` rules for build artifacts and local runtime data.

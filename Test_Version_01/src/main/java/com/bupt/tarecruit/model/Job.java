@@ -13,6 +13,8 @@ public class Job {
     public List<String> requirements = new ArrayList<>();
     public int quota;
     public String schedule;
+    public String deadline;
+    public String salary;
     public double weeklyHours;
     public String status = "OPEN"; // OPEN, CLOSED
     public long createdAt;

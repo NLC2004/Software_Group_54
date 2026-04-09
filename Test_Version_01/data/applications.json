@@ -5,9 +5,31 @@
     "applicantId": "f6c5b117",
     "cvFileName": "1774075859029_EBU6304_GroupProjectHandout.pdf",
     "coverLetter": "I is good for communication",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1774075859041,
-    "updatedAt": 1774075859041
+    "updatedAt": 1775636644575
+  },
+  {
+    "id": "f3a309fd",
+    "jobId": "0c8d46ab",
+    "applicantId": "f6c5b117",
+    "cvFileName": "1775648078566_Tutorial_1.pdf",
+    "coverLetter": "dfsfsfs",
+    "status": "REJECTED",
+    "priority": 1,
+    "createdAt": 1775648078582,
+    "updatedAt": 1775648156106
+  },
+  {
+    "id": "0a5a499d",
+    "jobId": "a9e67d95",
+    "applicantId": "f6c5b117",
+    "cvFileName": "1775648208389_Lecture_3_Wireless_Communication_Principle.pdf",
+    "coverLetter": "sfsffds",
+    "status": "WITHDRAWN",
+    "priority": 3,
+    "createdAt": 1775648208400,
+    "updatedAt": 1775648226996
   }
 ]
