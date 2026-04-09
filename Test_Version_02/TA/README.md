@@ -60,13 +60,19 @@
 
 - **页面**：`ta-recruitment-application-form.html`
 - **表单草稿**：`localStorage`
-  - Key：`ta_application_draft_v1`
+  - Key：`ta_application_draft_v1_${jobId}`（按岗位区分；若无 `jobId` 则使用 `general`）
+  - 保存内容：
+    - cover letter / motivation
+    - 当前岗位的 preference priority
   - 触发：输入/选择后会自动保存（定时防抖），“Save progress”也会手动保存
 - **简历 PDF**：`IndexedDB`
   - DB：`ta_application_resume_db_v1`
   - Store：`resume`
-  - Key：`current`
+  - Key：`job_${jobId}`
   - 用途：支持刷新页面/重进页面后恢复简历文件并继续预览
+ - **离开页面前提醒**：
+   - 当用户修改了表单但尚未保存时，浏览器会弹出离开提醒
+   - 自动保存或手动保存完成后，提醒状态会清除
 
 ### 4) 简历 PDF 上传与预览
 
@@ -77,13 +83,37 @@
 ### 5) 提交校验与提交成功跳转
 
 - **页面**：`ta-recruitment-application-form.html`
-- **校验**：必填项 + 手机号格式 + 学号格式（前端校验）
-- **提交成功**：跳转到 `application-success.html`
+- **校验**：必填项 + 当前岗位 preference priority 必选 + 最多保留 3 个有效 preference（前端校验）
+- **提交成功**：当前版本提交成功后跳转到 `my-ta-applications.html`，并清除当前岗位草稿与本地简历缓存
 
-### 6) 密码相关流程（原型）
+### 6) Preference Selection（当前版本）
+
+- **页面**：`ta-recruitment-application-form.html`
+- **行为**：
+  - TA 在申请当前岗位时，需要选择该岗位的 `Priority 1 / 2 / 3`
+  - 页面会读取当前用户已有申请，展示已占用的 priority
+  - 已被其他有效申请占用的 priority 不可重复选择
+  - 若用户已有 3 个未撤回/未拒绝的申请，则页面会阻止继续提交新的 preference
+- **说明**：
+  - 该实现基于当前项目“按岗位逐条申请”的提交流程，因此将 TA_12 落地为“当前岗位的 preference rank 选择与约束”
+
+### 7) 密码相关流程（原型）
 
 - **修改密码（登录态自助）**：`personal-information.html` 的弹窗（mock 校验与提示）
 - **忘记密码（提交重置请求）**：`forgot-password.html`（mock 提交流程，强调需要管理员审核）
+
+### 8) Application Deadline Reminder（当前版本）
+
+- **页面**：`dashboard.html`、`notifications.html`
+- **行为**：
+  - 系统会读取当前开放岗位的 `deadline`
+  - 对于 **48 小时内即将截止** 且 **当前 TA 尚未申请** 的岗位，前端会生成提醒
+  - Dashboard 会在顶部显示 `Deadline Reminder` 卡片
+  - Notifications 页面会将 deadline reminder 与系统通知一起展示
+- **展示规则**：
+  - 仅提醒仍处于 `OPEN` 状态的岗位
+  - 已经申请过的岗位不再重复提醒
+  - Reminder 支持跳转到对应岗位详情页面
 
 ---
 
@@ -127,4 +157,5 @@ python -m http.server 5500
   - 新增/重命名 `.html` 时同步更新侧边栏链接与本 README。
   - 若调整表单字段 `id/name`，注意同步更新：
     - 申请草稿保存/恢复逻辑
+    - preference priority 保存/恢复逻辑
     - 个人资料预填映射逻辑
