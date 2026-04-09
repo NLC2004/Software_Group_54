@@ -62,6 +62,10 @@
 <span class="iconify text-lg" data-icon="mdi:logout"></span>
 </a>
 </div>
+<a class="mt-3 hidden w-full items-center justify-center px-3 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-all" href="../admin/job-supervision.html" id="backToAdminBtn">
+<span class="iconify mr-2 text-base" data-icon="solar:arrow-left-linear"></span>
+Back to Admin
+</a>
 </div>
 </aside>
 <!-- Main Content -->
@@ -97,10 +101,17 @@
         let notifications = [];
 
         (async function init() {
-            const user = requireAuth(['MO']);
+            const user = requireAuth(['MO', 'ADMIN']);
             if (!user) return;
             updateSidebarUser(user);
             document.getElementById('logoutBtn').onclick = () => logout();
+            if (user.role === 'ADMIN') {
+                const backBtn = document.getElementById('backToAdminBtn');
+                if (backBtn) {
+                    backBtn.classList.remove('hidden');
+                    backBtn.classList.add('flex');
+                }
+            }
             document.getElementById('markAllReadBtn').onclick = markAllRead;
 
             await loadNotifications();
