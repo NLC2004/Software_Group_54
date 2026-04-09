@@ -147,6 +147,54 @@ public class DataService {
         writeList("applications.json", apps);
     }
 
+    // ---------- Password Reset Requests ----------
+
+    public synchronized List<PasswordResetRequest> getAllPasswordResetRequests() {
+        return readList("password_reset_requests.json", new TypeToken<List<PasswordResetRequest>>(){}.getType());
+    }
+
+    public synchronized PasswordResetRequest getPasswordResetRequestById(String id) {
+        return getAllPasswordResetRequests().stream().filter(r -> r.id.equals(id)).findFirst().orElse(null);
+    }
+
+    public synchronized List<PasswordResetRequest> getPasswordResetRequestsByUserId(String userId) {
+        return getAllPasswordResetRequests().stream().filter(r -> r.userId.equals(userId)).collect(Collectors.toList());
+    }
+
+    public synchronized PasswordResetRequest addPasswordResetRequest(PasswordResetRequest req) {
+        List<PasswordResetRequest> list = getAllPasswordResetRequests();
+        req.id = UUID.randomUUID().toString().substring(0, 8);
+        req.createdAt = System.currentTimeMillis();
+        req.updatedAt = req.createdAt;
+        req.status = "PENDING";
+        list.add(req);
+        writeList("password_reset_requests.json", list);
+        return req;
+    }
+
+    public synchronized void updatePasswordResetRequest(PasswordResetRequest req) {
+        List<PasswordResetRequest> list = getAllPasswordResetRequests();
+        req.updatedAt = System.currentTimeMillis();
+        list.removeIf(r -> r.id.equals(req.id));
+        list.add(req);
+        writeList("password_reset_requests.json", list);
+    }
+
+    // ---------- Audit logs ----------
+
+    public synchronized List<AdminAuditLog> getAllAuditLogs() {
+        return readList("audit_logs.json", new TypeToken<List<AdminAuditLog>>(){}.getType());
+    }
+
+    public synchronized AdminAuditLog addAuditLog(AdminAuditLog log) {
+        List<AdminAuditLog> logs = getAllAuditLogs();
+        log.id = UUID.randomUUID().toString().substring(0, 8);
+        log.createdAt = System.currentTimeMillis();
+        logs.add(log);
+        writeList("audit_logs.json", logs);
+        return log;
+    }
+
     // ---------- Settings ----------
 
     public synchronized Map<String, String> getSettings() {
@@ -208,6 +256,12 @@ public class DataService {
         }
         if (!Files.exists(dataDir.resolve("applications.json"))) {
             writeList("applications.json", new ArrayList<>());
+        }
+        if (!Files.exists(dataDir.resolve("password_reset_requests.json"))) {
+            writeList("password_reset_requests.json", new ArrayList<>());
+        }
+        if (!Files.exists(dataDir.resolve("audit_logs.json"))) {
+            writeList("audit_logs.json", new ArrayList<>());
         }
     }
 }

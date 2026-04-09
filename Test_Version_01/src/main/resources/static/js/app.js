@@ -47,9 +47,22 @@ const S = {
     user: JSON.parse(localStorage.getItem('user') || 'null'),
     view: null,
     viewData: null,
+    refreshTimer: null,
 };
 
 if (!S.user || !API.token) { localStorage.clear(); location.href = '/login.html'; }
+
+function roleHomePage(role) {
+    if (role === 'MO') return '/mo.html';
+    if (role === 'ADMIN') return '/admin.html';
+    return '/ta.html';
+}
+
+function roleLoginPage(role) {
+    if (role === 'MO') return '/mo-login.html';
+    if (role === 'ADMIN') return '/admin-login.html';
+    return '/ta-login.html';
+}
 
 // ==================== Toast ====================
 
@@ -101,18 +114,20 @@ function initials(name) { return (name || '?').split(' ').map(w => w[0]).join(''
 const NAV = {
     TA: [
         { id: 'ta-dashboard', label: 'Dashboard', icon: I.dashboard },
-        { id: 'ta-profile', label: 'My Profile', icon: I.user },
         { id: 'ta-jobs', label: 'Browse Jobs', icon: I.briefcase },
         { id: 'ta-applications', label: 'My Applications', icon: I.file },
+        { id: 'ta-security', label: 'My Account', icon: I.user },
     ],
     MO: [
         { id: 'mo-dashboard', label: 'Dashboard', icon: I.dashboard },
         { id: 'mo-post', label: 'Post Job', icon: I.plus },
         { id: 'mo-postings', label: 'My Postings', icon: I.list },
         { id: 'mo-applicants', label: 'Review Applicants', icon: I.users },
+        { id: 'mo-security', label: 'Account Security', icon: I.settings },
     ],
     ADMIN: [
         { id: 'admin-dashboard', label: 'Dashboard', icon: I.dashboard },
+        { id: 'admin-reset-requests', label: 'Reset Requests', icon: I.file },
         { id: 'admin-users', label: 'Users', icon: I.users },
         { id: 'admin-jobs', label: 'All Jobs', icon: I.briefcase },
         { id: 'admin-workload', label: 'Workload', icon: I.bar },
@@ -123,6 +138,7 @@ const NAV = {
 function navigate(view, data = null) {
     S.view = view;
     S.viewData = data;
+    setupAutoRefresh();
     renderSidebar();
     renderContent();
 }
@@ -142,25 +158,53 @@ function renderSidebar() {
 }
 
 async function doLogout() {
+    const currentRole = S.user?.role || JSON.parse(localStorage.getItem('user') || 'null')?.role || 'TA';
+    if (S.refreshTimer) {
+        clearInterval(S.refreshTimer);
+        S.refreshTimer = null;
+    }
     try { await API.post('/api/auth/logout'); } catch(e) {}
     localStorage.clear();
-    location.href = '/login.html';
+    location.href = roleLoginPage(currentRole);
+}
+
+function setupAutoRefresh() {
+    if (S.refreshTimer) {
+        clearInterval(S.refreshTimer);
+        S.refreshTimer = null;
+    }
+
+    const realtimeViews = new Set(['mo-applicants', 'admin-reset-requests', 'admin-workload']);
+    if (!realtimeViews.has(S.view)) return;
+
+    S.refreshTimer = setInterval(() => {
+        if (document.hidden) return;
+        if (S.view && VIEWS[S.view]) {
+            VIEWS[S.view](document.getElementById('content'));
+        }
+    }, 8000);
 }
 
 // ==================== Content Router ====================
 
 const VIEWS = {
-    'ta-dashboard': taDashboard, 'ta-profile': taProfile, 'ta-jobs': taJobs, 'ta-applications': taApplications,
-    'mo-dashboard': moDashboard, 'mo-post': moPostJob, 'mo-postings': moPostings, 'mo-applicants': moApplicants,
-    'admin-dashboard': adminDashboard, 'admin-users': adminUsers, 'admin-jobs': adminJobs, 'admin-workload': adminWorkload, 'admin-settings': adminSettings,
+    'ta-dashboard': taDashboard, 'ta-jobs': taJobs, 'ta-applications': taApplications, 'ta-security': taSecurity,
+    'mo-dashboard': moDashboard, 'mo-post': moPostJob, 'mo-postings': moPostings, 'mo-applicants': moApplicants, 'mo-security': moSecurity,
+    'admin-dashboard': adminDashboard, 'admin-reset-requests': adminResetRequests, 'admin-users': adminUsers, 'admin-jobs': adminJobs, 'admin-workload': adminWorkload, 'admin-settings': adminSettings,
+};
+
+const VIEW_OWNERS = {
+    'ta-dashboard': 'TA', 'ta-jobs': 'TA', 'ta-applications': 'TA', 'ta-security': 'TA',
+    'mo-dashboard': 'MO', 'mo-post': 'MO', 'mo-postings': 'MO', 'mo-applicants': 'MO', 'mo-security': 'MO',
+    'admin-dashboard': 'ADMIN', 'admin-reset-requests': 'ADMIN', 'admin-users': 'ADMIN', 'admin-jobs': 'ADMIN', 'admin-workload': 'ADMIN', 'admin-settings': 'ADMIN',
 };
 
 function renderContent() {
     const el = document.getElementById('content');
     const fn = VIEWS[S.view];
-    const titles = { 'ta-dashboard':'Dashboard','ta-profile':'My Profile','ta-jobs':'Browse Jobs','ta-applications':'My Applications',
-        'mo-dashboard':'Dashboard','mo-post':'Post a Job','mo-postings':'My Job Postings','mo-applicants':'Review Applicants',
-        'admin-dashboard':'Dashboard','admin-users':'User Management','admin-jobs':'All Job Postings','admin-workload':'TA Workload','admin-settings':'System Settings' };
+    const titles = { 'ta-dashboard':'Dashboard','ta-jobs':'Browse Jobs','ta-applications':'My Applications','ta-security':'My Account',
+        'mo-dashboard':'Dashboard','mo-post':'Post a Job','mo-postings':'My Job Postings','mo-applicants':'Review Applicants','mo-security':'Account Security',
+        'admin-dashboard':'Dashboard','admin-reset-requests':'Password Reset Reviews','admin-users':'User Management','admin-jobs':'All Job Postings','admin-workload':'TA Workload','admin-settings':'System Settings' };
     document.getElementById('topbar').innerHTML = `<h1>${titles[S.view] || 'Dashboard'}</h1><div class="topbar-actions"><span class="text-sm">${fmtDate(Date.now())}</span></div>`;
     if (fn) fn(el); else el.innerHTML = '<p>View not found.</p>';
 }
@@ -194,11 +238,14 @@ async function taProfile(el) {
         <div class="card"><div class="card-header"><h3>Personal Information</h3></div><div class="card-body">
             <form id="profileForm">
                 <div class="form-row">
+                    <div class="form-group"><label>Student ID / ID</label><input name="studentId" value="${u.studentId||''}" placeholder="Your student number or ID"></div>
                     <div class="form-group"><label>Full Name</label><input name="fullName" value="${u.fullName||''}" placeholder="Your full name"></div>
-                    <div class="form-group"><label>Email</label><input name="email" type="email" value="${u.email||''}" placeholder="Email address"></div>
                 </div>
                 <div class="form-row">
+                    <div class="form-group"><label>Email</label><input name="email" type="email" value="${u.email||''}" placeholder="Email address"></div>
                     <div class="form-group"><label>Phone</label><input name="phone" value="${u.phone||''}" placeholder="Phone number"></div>
+                </div>
+                <div class="form-row">
                     <div class="form-group"><label>Gender</label><select name="gender"><option value="">-- Select --</option><option ${u.gender==='Male'?'selected':''}>Male</option><option ${u.gender==='Female'?'selected':''}>Female</option><option ${u.gender==='Other'?'selected':''}>Other</option></select></div>
                 </div>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -263,9 +310,11 @@ function jobCard(j, showApply = false) {
         ${j.courseName ? `<div class="job-course">${esc(j.courseName)}</div>` : ''}
         <div class="job-desc">${esc(j.description || 'No description provided.')}</div>
         <div class="job-meta">
+            <span>${I.users} TAs Needed: ${j.tasNeeded ?? j.quota ?? 0}</span>
+            <span>${I.users} Current Applicants: ${j.currentApplicants ?? j.applicationCount ?? 0}</span>
             <span>${I.clock} ${j.weeklyHours || 0} hrs/week</span>
-            <span>${I.users} ${j.applicationCount ?? '?'} applied</span>
-            <span>Quota: ${j.approvedCount ?? 0}/${j.quota}</span>
+            <span>Deadline: ${esc(j.deadline || '-')}</span>
+            <span>Salary: ${esc(j.salary || '-')}</span>
         </div>
         ${reqs ? '<div>' + reqs + '</div>' : ''}
         <div class="job-card-footer">
@@ -275,9 +324,22 @@ function jobCard(j, showApply = false) {
     </div>`;
 }
 
-function openApplyModal(jobId, title) {
+async function openApplyModal(jobId, title) {
+    let profile = {};
+    try {
+        profile = await API.get('/api/auth/me');
+    } catch (e) {}
+
     openModal('Apply for ' + title, `
         <form id="applyForm">
+            <div class="form-row">
+                <div class="form-group"><label>Student ID / ID (auto-filled)</label><input value="${esc(profile.studentId || '')}" readonly></div>
+                <div class="form-group"><label>Full Name (auto-filled)</label><input value="${esc(profile.fullName || '')}" readonly></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Phone (auto-filled)</label><input value="${esc(profile.phone || '')}" readonly></div>
+                <div class="form-group"><label>Gender (auto-filled)</label><input value="${esc(profile.gender || '')}" readonly></div>
+            </div>
             <div class="form-group"><label>Cover Letter</label><textarea name="coverLetter" placeholder="Why are you a good fit for this position?" rows="4"></textarea></div>
             <div class="form-group"><label>CV / Resume (optional)</label><input type="file" id="cvFile" accept=".pdf,.doc,.docx,.txt"></div>
             <div class="form-group"><label>Priority (1 = highest)</label><select name="priority"><option value="1">1 - Top choice</option><option value="2">2 - Second choice</option><option value="3">3 - Third choice</option></select></div>
@@ -409,6 +471,10 @@ async function moPostJob(el) {
                 <div class="form-group"><label>Weekly Hours</label><input name="weeklyHours" type="number" step="0.5" min="0" value="4" placeholder="Hours per week"></div>
                 <div class="form-group"><label>Schedule / Dates</label><input name="schedule" placeholder="e.g. Mon/Wed 14:00-16:00"></div>
             </div>
+            <div class="form-row">
+                <div class="form-group"><label>Deadline</label><input name="deadline" type="date"></div>
+                <div class="form-group"><label>Salary</label><input name="salary" placeholder="e.g. 150 RMB/hour"></div>
+            </div>
             <div class="form-group"><label>Description</label><textarea name="description" rows="3" placeholder="Describe the responsibilities..."></textarea></div>
             <div class="form-group"><label>Required Skills (comma-separated)</label><input name="requirements" placeholder="e.g. Java, Python, Data Structures"></div>
             <button type="submit" class="btn btn-primary">Publish Position</button>
@@ -422,7 +488,8 @@ async function moPostJob(el) {
             await API.post('/api/jobs', {
                 title: fd.get('title'), type: fd.get('type'), courseName: fd.get('courseName'),
                 quota: parseInt(fd.get('quota')), weeklyHours: parseFloat(fd.get('weeklyHours')) || 0,
-                schedule: fd.get('schedule'), description: fd.get('description'), requirements: reqs,
+                schedule: fd.get('schedule'), deadline: fd.get('deadline'), salary: fd.get('salary'),
+                description: fd.get('description'), requirements: reqs,
             });
             toast('Job posted successfully!', 'success');
             navigate('mo-postings');
@@ -447,9 +514,11 @@ function moJobCard(j) {
         <h3>${esc(j.title)}</h3>
         ${j.courseName ? `<div class="job-course">${esc(j.courseName)}</div>` : ''}
         <div class="job-meta">
-            <span>${I.users} ${j.applicationCount??0} applicants</span>
+            <span>${I.users} ${j.currentApplicants ?? j.applicationCount ?? 0} applicants</span>
+            <span>TAs Needed: ${j.tasNeeded ?? j.quota}</span>
             <span>Filled: ${j.approvedCount??0}/${j.quota}</span>
             <span>${I.clock} ${j.weeklyHours||0} hrs/week</span>
+            <span>Deadline: ${esc(j.deadline || '-')}</span>
         </div>
         <div class="job-card-footer">
             <button class="btn btn-sm btn-primary" onclick="navigate('mo-applicants','${j.id}')">Review Applicants</button>
@@ -525,6 +594,81 @@ async function viewCV(fileName) {
     } catch(e) { toast('Could not open file: ' + e.message, 'error'); }
 }
 
+// ==================== Security Views (TA / MO) ====================
+
+async function taSecurity(el) {
+    await renderProfileAndPassword(el);
+}
+
+async function moSecurity(el) {
+    await renderProfileAndPassword(el);
+}
+
+async function renderProfileAndPassword(el) {
+    el.innerHTML = '<div class="loading-spinner"></div>';
+    try {
+        const u = await API.get('/api/auth/me');
+        S.user = u;
+        localStorage.setItem('user', JSON.stringify(u));
+
+        el.innerHTML = `
+        <div class="card"><div class="card-header"><h3>Personal Information</h3></div><div class="card-body">
+            <form id="profileMaintainForm">
+                <div class="form-row">
+                    <div class="form-group"><label>Student ID / ID</label><input name="studentId" value="${esc(u.studentId||'')}" placeholder="Your student number or ID"></div>
+                    <div class="form-group"><label>Full Name</label><input name="fullName" value="${esc(u.fullName||'')}" placeholder="Your full name"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Email</label><input name="email" type="email" value="${esc(u.email||'')}" placeholder="Email address"></div>
+                    <div class="form-group"><label>Phone</label><input name="phone" value="${esc(u.phone||'')}" placeholder="Phone number"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Gender</label><select name="gender"><option value="">-- Select --</option><option ${u.gender==='Male'?'selected':''}>Male</option><option ${u.gender==='Female'?'selected':''}>Female</option><option ${u.gender==='Other'?'selected':''}>Other</option></select></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Personal Information</button>
+            </form>
+        </div></div>
+
+        <div class="card"><div class="card-header"><h3>Change Password</h3></div><div class="card-body">
+            <form id="secPwdForm">
+                <div class="form-row">
+                    <div class="form-group"><label>Current Password</label><input name="oldPassword" type="password" required></div>
+                    <div class="form-group"><label>New Password</label><input name="newPassword" type="password" required minlength="4"></div>
+                </div>
+                <button type="submit" class="btn btn-outline">Update Password</button>
+            </form>
+        </div></div>`;
+
+        document.getElementById('profileMaintainForm').onsubmit = async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            try {
+                const updated = await API.put('/api/auth/profile', Object.fromEntries(fd));
+                S.user = updated;
+                localStorage.setItem('user', JSON.stringify(updated));
+                renderSidebar();
+                toast('Personal information saved', 'success');
+            } catch (err) {
+                toast(err.message, 'error');
+            }
+        };
+
+        document.getElementById('secPwdForm').onsubmit = async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            try {
+                await API.put('/api/auth/password', Object.fromEntries(fd));
+                toast('Password updated', 'success');
+                e.target.reset();
+            } catch (err) {
+                toast(err.message, 'error');
+            }
+        };
+    } catch (e) {
+        el.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+    }
+}
+
 // ==================== Admin Views ====================
 
 async function adminDashboard(el) {
@@ -547,6 +691,55 @@ async function adminDashboard(el) {
     } catch(e) { el.innerHTML = `<div class="alert alert-error">${e.message}</div>`; }
 }
 
+async function adminResetRequests(el) {
+    el.innerHTML = '<div class="loading-spinner"></div>';
+    try {
+        const [reqs, logs] = await Promise.all([
+            API.get('/api/admin/reset-requests'),
+            API.get('/api/admin/audit-logs')
+        ]);
+        el.innerHTML = `
+            <div class="card mb-4"><div class="card-header"><h3>Password Reset Requests</h3></div>
+            <div class="card-body no-pad">${reqs.length ? `<table class="data-table"><thead><tr><th>User</th><th>Role</th><th>Contact</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+            ${reqs.map(r => `<tr>
+                <td><strong>${esc(r.username)}</strong><br><span class="text-muted text-sm">${esc(r.fullName||'-')}</span></td>
+                <td>${roleBadge(r.role)}</td>
+                <td>${esc(r.phone||'-')}<br>${esc(r.email||'-')}</td>
+                <td>${esc(r.reason||'-')}</td>
+                <td>${statusBadge(r.status)}</td>
+                <td>${r.status === 'PENDING' ? `
+                    <button class="btn btn-sm btn-success" onclick="reviewResetRequest('${r.id}','APPROVED')">Approve</button>
+                    <button class="btn btn-sm btn-danger" onclick="reviewResetRequest('${r.id}','REJECTED')">Reject</button>
+                ` : '<span class="text-muted">Processed</span>'}</td>
+            </tr>`).join('')}</tbody></table>` : emptyState('No reset requests', 'Requests will appear here')}</div></div>
+
+            <div class="card"><div class="card-header"><h3>Admin Audit Logs</h3></div>
+            <div class="card-body no-pad">${logs.length ? `<table class="data-table"><thead><tr><th>Time</th><th>Admin</th><th>Action</th><th>Target</th><th>Detail</th></tr></thead><tbody>
+            ${logs.slice(0, 50).map(l => `<tr>
+                <td>${fmtDate(l.createdAt)}</td>
+                <td>${esc(l.adminUsername||'-')}</td>
+                <td>${esc(l.action||'-')}</td>
+                <td>${esc(l.targetType||'-')} / ${esc(l.targetId||'-')}</td>
+                <td>${esc(l.detail||'-')}</td>
+            </tr>`).join('')}</tbody></table>` : emptyState('No audit logs', 'Admin operations will be recorded here')}</div></div>
+        `;
+    } catch(e) { el.innerHTML = `<div class="alert alert-error">${e.message}</div>`; }
+}
+
+async function reviewResetRequest(requestId, status) {
+    let reviewComment = '';
+    if (status === 'REJECTED') {
+        reviewComment = prompt('Please enter rejection reason:') || '';
+    }
+    try {
+        await API.put('/api/admin/reset-requests/' + requestId + '/review', { status, reviewComment });
+        toast(status === 'APPROVED' ? 'Request approved. Password reset to 123456' : 'Request rejected', 'success');
+        navigate('admin-reset-requests');
+    } catch (e) {
+        toast(e.message, 'error');
+    }
+}
+
 async function adminUsers(el) {
     el.innerHTML = '<div class="loading-spinner"></div>';
     try {
@@ -557,16 +750,17 @@ async function adminUsers(el) {
                     <input class="search-input" id="userSearch" placeholder="Search users..." value="">
                 </div>
                 <div class="card"><div class="card-body no-pad">
-                <table class="data-table"><thead><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+                <table class="data-table"><thead><tr><th>Username</th><th>Student ID</th><th>Full Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>
                 ${list.map(u => `<tr>
                     <td><strong>${esc(u.username)}</strong></td>
+                    <td>${esc(u.studentId||'-')}</td>
                     <td>${esc(u.fullName||'-')}</td>
                     <td>${esc(u.email||'-')}</td>
                     <td>${roleBadge(u.role)}</td>
                     <td>${u.active ? '<span class="badge badge-approved">Active</span>' : '<span class="badge badge-rejected">Inactive</span>'}</td>
                     <td>
                         <button class="btn btn-sm ${u.active?'btn-outline-danger':'btn-success'}" onclick="toggleUserActive('${u.id}',${!u.active})">${u.active?'Deactivate':'Activate'}</button>
-                        <button class="btn btn-sm btn-outline" onclick="resetUserPwd('${u.id}','${esc(u.username)}')">Reset Pwd</button>
+                        <button class="btn btn-sm btn-outline" onclick="resetUserPwd('${u.id}','${esc(u.username)}')">Reset 123456</button>
                     </td>
                 </tr>`).join('')}</tbody></table></div></div>`;
             document.getElementById('userSearch').addEventListener('input', e => {
@@ -587,9 +781,9 @@ async function toggleUserActive(id, active) {
 }
 
 async function resetUserPwd(id, username) {
-    const newPwd = 'pass' + Math.random().toString(36).slice(2, 6);
-    if (!confirm(`Reset password for "${username}" to: ${newPwd}?`)) return;
-    try { await API.put('/api/admin/users/' + id, { password: newPwd }); toast('Password reset to: ' + newPwd, 'success'); }
+    const newPwd = '123456';
+    if (!confirm(`Reset password for "${username}" to initial password 123456?`)) return;
+    try { await API.put('/api/admin/users/' + id, { password: newPwd }); toast('Password reset to 123456', 'success'); }
     catch(e) { toast(e.message, 'error'); }
 }
 
@@ -663,15 +857,29 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s || 
 
 // ==================== Init ====================
 (async function init() {
+    const currentPage = (location.pathname || '').toLowerCase();
+    const pageRole = currentPage.endsWith('/admin.html') ? 'ADMIN'
+        : currentPage.endsWith('/mo.html') ? 'MO'
+        : currentPage.endsWith('/ta.html') ? 'TA'
+        : null;
+
     try {
         const me = await API.get('/api/auth/me');
         S.user = me;
         localStorage.setItem('user', JSON.stringify(me));
+
+        if (pageRole && me.role !== pageRole) {
+            localStorage.clear();
+            location.href = '/login.html';
+            return;
+        }
     } catch (e) {
         localStorage.clear();
         location.href = '/login.html';
         return;
     }
+
     const defaultView = { TA: 'ta-dashboard', MO: 'mo-dashboard', ADMIN: 'admin-dashboard' };
-    navigate(defaultView[S.user.role] || 'ta-dashboard');
+    const view = defaultView[S.user.role] || 'ta-dashboard';
+    navigate(view);
 })();
