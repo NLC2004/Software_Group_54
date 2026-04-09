@@ -23,7 +23,9 @@ public class AdminHandler extends BaseHandler {
         String path = ex.getRequestURI().getPath();
         String method = ex.getRequestMethod();
         try {
-            if (path.contains("/users")) handleUsers(ex, path, method);
+            if (path.contains("/users")) handleUsers(ex, path, method, user);
+            else if (path.contains("/reset-requests")) handleResetRequests(ex, path, method, user);
+            else if (path.endsWith("/audit-logs")) getAuditLogs(ex);
             else if (path.endsWith("/workload")) getWorkload(ex);
             else if (path.endsWith("/stats")) getStats(ex);
             else if (path.contains("/settings")) handleSettings(ex, method);
@@ -34,7 +36,7 @@ public class AdminHandler extends BaseHandler {
         }
     }
 
-    private void handleUsers(HttpExchange ex, String path, String method) throws IOException {
+    private void handleUsers(HttpExchange ex, String path, String method, User admin) throws IOException {
         String[] parts = path.split("/");
         if (parts.length == 4 && "GET".equals(method)) {
             String search = getQueryParam(ex, "search");
@@ -47,13 +49,7 @@ public class AdminHandler extends BaseHandler {
                         (u.email != null && u.email.toLowerCase().contains(q))
                 ).collect(Collectors.toList());
             }
-            List<Map<String, Object>> result = users.stream().map(u -> {
-                Map<String, Object> m = new LinkedHashMap<>();
-                m.put("id", u.id); m.put("username", u.username); m.put("role", u.role);
-                m.put("fullName", u.fullName); m.put("email", u.email);
-                m.put("active", u.active); m.put("createdAt", u.createdAt);
-                return m;
-            }).collect(Collectors.toList());
+            List<Map<String, Object>> result = users.stream().map(this::sanitizeUser).collect(Collectors.toList());
             sendJson(ex, 200, result);
         } else if (parts.length == 5 && "PUT".equals(method)) {
             String userId = parts[4];
@@ -64,13 +60,75 @@ public class AdminHandler extends BaseHandler {
             if (body.has("role")) target.role = body.get("role").getAsString();
             if (body.has("password")) target.password = body.get("password").getAsString();
             ds.updateUser(target);
+
+            String action = body.has("password") ? "RESET_PASSWORD" : "UPDATE_USER";
+            addAudit(admin, action, "USER", target.id, "Updated user account: " + target.username);
             sendJson(ex, 200, Map.of("message", "User updated"));
         } else if (parts.length == 5 && "DELETE".equals(method)) {
+            User target = ds.getUserById(parts[4]);
             ds.deleteUser(parts[4]);
+            addAudit(admin, "DELETE_USER", "USER", parts[4], "Deleted user: " + (target == null ? "unknown" : target.username));
             sendJson(ex, 200, Map.of("message", "User deleted"));
         } else {
             sendError(ex, 404, "Not found");
         }
+    }
+
+    private void handleResetRequests(HttpExchange ex, String path, String method, User admin) throws IOException {
+        String[] parts = path.split("/");
+        if (parts.length == 4 && "GET".equals(method)) {
+            String status = getQueryParam(ex, "status");
+            List<PasswordResetRequest> list = ds.getAllPasswordResetRequests();
+            if (status != null && !status.isBlank()) {
+                list = list.stream().filter(r -> status.equalsIgnoreCase(r.status)).collect(Collectors.toList());
+            }
+            list.sort(Comparator.comparingLong(r -> -r.createdAt));
+            sendJson(ex, 200, list);
+            return;
+        }
+
+        if (parts.length == 6 && "PUT".equals(method) && "review".equals(parts[5])) {
+            String requestId = parts[4];
+            PasswordResetRequest req = ds.getPasswordResetRequestById(requestId);
+            if (req == null) { sendError(ex, 404, "Reset request not found"); return; }
+            if (!"PENDING".equals(req.status)) { sendError(ex, 400, "Request has been processed"); return; }
+
+            JsonObject body = parseJson(readBody(ex));
+            String status = body.has("status") ? body.get("status").getAsString() : "";
+            if (!"APPROVED".equals(status) && !"REJECTED".equals(status)) {
+                sendError(ex, 400, "Invalid review status"); return;
+            }
+            String comment = body.has("reviewComment") ? body.get("reviewComment").getAsString() : "";
+
+            req.status = status;
+            req.reviewComment = comment;
+            req.reviewedBy = admin.id;
+            ds.updatePasswordResetRequest(req);
+
+            if ("APPROVED".equals(status)) {
+                User target = ds.getUserById(req.userId);
+                if (target != null) {
+                    target.password = "123456";
+                    ds.updateUser(target);
+                }
+                addAudit(admin, "APPROVE_RESET", "RESET_REQUEST", req.id,
+                        "Approved reset for user " + req.username + ", password reset to 123456");
+            } else {
+                addAudit(admin, "REJECT_RESET", "RESET_REQUEST", req.id,
+                        "Rejected reset for user " + req.username + " comment=" + comment);
+            }
+
+            sendJson(ex, 200, Map.of("message", "Review completed", "status", req.status));
+            return;
+        }
+
+        sendError(ex, 404, "Not found");
+    }
+
+    private void getAuditLogs(HttpExchange ex) throws IOException {
+        List<AdminAuditLog> logs = ds.getAllAuditLogs();
+        logs.sort(Comparator.comparingLong(l -> -l.createdAt));
+        sendJson(ex, 200, logs);
     }
 
     private void getWorkload(HttpExchange ex) throws IOException {
@@ -122,16 +180,19 @@ public class AdminHandler extends BaseHandler {
 
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("totalUsers", users.size());
+        stats.put("activeUsers", users.stream().filter(u -> u.active).count());
         stats.put("totalTAs", users.stream().filter(u -> "TA".equals(u.role)).count());
         stats.put("totalMOs", users.stream().filter(u -> "MO".equals(u.role)).count());
         stats.put("totalJobs", jobs.size());
         stats.put("openJobs", jobs.stream().filter(j -> "OPEN".equals(j.status)).count());
         stats.put("closedJobs", jobs.stream().filter(j -> "CLOSED".equals(j.status)).count());
+        stats.put("validJobs", jobs.stream().filter(j -> "OPEN".equals(j.status)).count());
         stats.put("totalApplications", apps.size());
         stats.put("pendingApplications", apps.stream().filter(a -> "PENDING".equals(a.status)).count());
         stats.put("approvedApplications", apps.stream().filter(a -> "APPROVED".equals(a.status)).count());
         stats.put("rejectedApplications", apps.stream().filter(a -> "REJECTED".equals(a.status)).count());
         stats.put("withdrawnApplications", apps.stream().filter(a -> "WITHDRAWN".equals(a.status)).count());
+        stats.put("pendingResetRequests", ds.getAllPasswordResetRequests().stream().filter(r -> "PENDING".equals(r.status)).count());
 
         long overloaded = 0;
         Map<String, String> settings = ds.getSettings();
@@ -162,5 +223,25 @@ public class AdminHandler extends BaseHandler {
         } else {
             sendError(ex, 405, "Method not allowed");
         }
+    }
+
+    private Map<String, Object> sanitizeUser(User u) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("id", u.id); m.put("username", u.username); m.put("role", u.role);
+        m.put("studentId", u.studentId); m.put("fullName", u.fullName); m.put("email", u.email);
+        m.put("phone", u.phone); m.put("gender", u.gender);
+        m.put("active", u.active); m.put("createdAt", u.createdAt);
+        return m;
+    }
+
+    private void addAudit(User admin, String action, String targetType, String targetId, String detail) {
+        AdminAuditLog log = new AdminAuditLog();
+        log.adminUserId = admin.id;
+        log.adminUsername = admin.username;
+        log.action = action;
+        log.targetType = targetType;
+        log.targetId = targetId;
+        log.detail = detail;
+        ds.addAuditLog(log);
     }
 }
