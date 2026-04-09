@@ -119,6 +119,56 @@
     let allNotifications = [];
     let currentFilter = 'all';
 
+    function parseDeadline(deadline) {
+        if (!deadline) return null;
+        const raw = String(deadline).trim();
+        if (!raw) return null;
+        const normalized = raw.replace(/\//g, '-');
+        const pureDateMatch = normalized.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (pureDateMatch) {
+            const [, year, month, day] = pureDateMatch;
+            return new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999).getTime();
+        }
+        let ts = Date.parse(raw);
+        if (!Number.isNaN(ts)) return ts;
+        ts = Date.parse(normalized);
+        return Number.isNaN(ts) ? null : ts;
+    }
+
+    function formatTimeRemaining(deadlineTs) {
+        const diff = deadlineTs - Date.now();
+        if (diff <= 0) return 'Deadline reached';
+        const hours = Math.floor(diff / 3600000);
+        const mins = Math.floor((diff % 3600000) / 60000);
+        if (hours >= 24) {
+            const days = Math.floor(hours / 24);
+            const remainingHours = hours % 24;
+            return `${days}d ${remainingHours}h left`;
+        }
+        if (hours > 0) return `${hours}h ${mins}m left`;
+        return `${Math.max(mins, 1)}m left`;
+    }
+
+    function buildDeadlineReminders(jobs, applications) {
+        const now = Date.now();
+        const windowMs = 48 * 60 * 60 * 1000;
+        const appliedJobIds = new Set((applications || []).map(app => app.jobId));
+        return (jobs || [])
+            .map(job => ({ ...job, deadlineTs: parseDeadline(job.deadline) }))
+            .filter(job => job.deadlineTs && job.deadlineTs > now && job.deadlineTs - now <= windowMs)
+            .filter(job => !appliedJobIds.has(job.id))
+            .sort((a, b) => a.deadlineTs - b.deadlineTs)
+            .map(job => ({
+                id: 'deadline_' + job.id,
+                title: 'Application Deadline Reminder',
+                content: `${job.title || job.courseName || 'A TA position'} closes soon (${formatTimeRemaining(job.deadlineTs)}). Submit before ${job.deadline || 'the deadline'}.`,
+                type: 'DEADLINE',
+                read: false,
+                createdAt: Date.now(),
+                link: 'ta-recruitment-detail.html?id=' + job.id
+            }));
+    }
+
     const iconMap = {
         security: { icon: 'mdi:shield-alert-outline', bg: 'red', label: 'Security' },
         announcement: { icon: 'mdi:bullhorn-outline', bg: 'blue', label: 'Announcement' },
@@ -162,6 +212,7 @@
                             <span class="text-xs text-gray-400">${n.createdAt ? timeAgo(n.createdAt) : ''}</span>
                         </div>
                         <p class="text-sm text-gray-500 mt-2 leading-relaxed">${esc(n.content || '')}</p>
+                        ${n.link ? `<div class="mt-3"><a href="${n.link}" class="text-xs font-bold text-blue-600 hover:underline">View position</a></div>` : ''}
                         ${!n.read ? `<div class="mt-3">
                             <button class="px-4 py-2 bg-white text-gray-600 rounded-xl text-xs font-bold border border-gray-200 hover:bg-gray-50 transition-all" onclick="markAsRead('${safeJsStr(n.id)}')">Mark as read</button>
                         </div>` : ''}
@@ -187,6 +238,13 @@
     }
 
     async function markAsRead(id) {
+        if (String(id).startsWith('deadline_')) {
+            const n = allNotifications.find(x => x.id === id);
+            if (n) n.read = true;
+            filterNotifications(currentFilter);
+            showToast('Marked as read', 'success');
+            return;
+        }
         try {
             await API.put('/api/notifications/' + id + '/read');
             const n = allNotifications.find(x => x.id === id);
@@ -199,13 +257,20 @@
     }
 
     document.getElementById('markAllBtn').addEventListener('click', async () => {
+        const localDeadlineNotifications = allNotifications.filter(n => String(n.id).startsWith('deadline_'));
+        localDeadlineNotifications.forEach(n => n.read = true);
         try {
             await API.put('/api/notifications/read-all');
             allNotifications.forEach(n => n.read = true);
             filterNotifications(currentFilter);
             showToast('All notifications marked as read', 'success');
         } catch (err) {
-            showToast(err.message || 'Failed to mark all as read', 'error');
+            if (localDeadlineNotifications.length) {
+                filterNotifications(currentFilter);
+                showToast('Local deadline reminders marked as read. Server notifications failed to update.', 'warning');
+            } else {
+                showToast(err.message || 'Failed to mark all as read', 'error');
+            }
         }
     });
 
@@ -215,7 +280,14 @@
         updateSidebarUser(user);
 
         try {
-            allNotifications = await API.get('/api/notifications');
+            const [serverNotifications, applications, jobs] = await Promise.all([
+                API.get('/api/notifications'),
+                API.get('/api/applications'),
+                API.get('/api/jobs?status=OPEN')
+            ]);
+            const deadlineReminders = buildDeadlineReminders(jobs, applications);
+            allNotifications = [...deadlineReminders, ...serverNotifications]
+                .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
             renderNotifications(allNotifications);
         } catch (err) {
             document.getElementById('notificationsList').innerHTML =

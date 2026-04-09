@@ -7,6 +7,8 @@
 <title>Audit Logs | AD Admin Dashboard</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
@@ -24,7 +26,7 @@
 <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
 <span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
 </div>
-<span class="text-xl font-bold tracking-tight text-blue-900">MO Admin</span>
+<span class="text-xl font-bold tracking-tight text-blue-900">Admin</span>
 </div>
 <nav class="mt-4 flex-1">
 <div class="px-4 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Menu</div>
@@ -81,10 +83,10 @@
 <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
 <div>
 <h1 class="text-xl font-semibold">Audit Logs</h1>
-<p class="text-xs text-gray-400">Current Date: March 21, 2026 • Real-time Monitoring Active</p>
+<p class="text-xs text-gray-400">Current Date: <span id="auditCurrentDate">-</span> • Real-time Monitoring Active</p>
 </div>
 <div class="flex items-center gap-4">
-<button class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all flex items-center gap-2">
+<button id="btnExportAuditReport" type="button" class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all flex items-center gap-2">
 <span class="iconify w-4 h-4" data-icon="material-symbols:download"></span>
                 Export Report
             </button>
@@ -139,33 +141,33 @@
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Quick Search</label>
 <div class="relative">
 <span class="iconify absolute left-3 top-2.5 text-gray-400" data-icon="material-symbols:search"></span>
-<input class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Search by user, IP or action..." type="text"/>
+<input id="auditSearchInput" class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Search by user, IP or action..." type="text"/>
 </div>
 </div>
 <div>
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Date Range</label>
-<input class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none" type="date" value="2026-03-21"/>
+<input id="auditDateInput" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="YYYY-MM-DD"/>
 </div>
 <div>
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">User Role</label>
-<select class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
-<option>All Roles</option>
-<option>Super Admin</option>
-<option>Academic Director</option>
-<option>Finance Manager</option>
+<select id="auditRoleSelect" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
+<option value="ALL">All Roles</option>
+<option value="ADMIN">Admin</option>
+<option value="MO">Module Organizer</option>
+<option value="TA">TA</option>
 </select>
 </div>
 <div>
 <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Status</label>
-<select class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
-<option>All Status</option>
-<option>Success</option>
-<option>Warning</option>
-<option>Failed</option>
+<select id="auditStatusSelect" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none cursor-pointer">
+<option value="ALL">All Status</option>
+<option value="SUCCESS">Success</option>
+<option value="WARNING">Warning</option>
+<option value="FAILED">Failed</option>
 </select>
 </div>
 <div class="flex items-end">
-<button class="w-full h-[38px] bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-all">Apply Filter</button>
+<button id="auditApplyBtn" class="w-full h-[38px] bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 transition-all">Apply Filter</button>
 </div>
 </div>
 </section>
@@ -174,14 +176,14 @@
 <!-- Navigation Tabs -->
 <div class="px-6 border-b border-gray-100 flex items-center justify-between">
 <div class="flex gap-8">
-<button class="py-4 text-sm font-semibold tab-active flex items-center gap-2">
-                            Operation Logs <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded-full">842</span>
+<button data-tab="OPERATION" class="py-4 text-sm font-semibold tab-active flex items-center gap-2">
+                            Operation Logs <span class="bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded-full" id="tabCountOperation">0</span>
 </button>
-<button class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
-                            Security Events <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full">12</span>
+<button data-tab="SECURITY" class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
+                            Security Events <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full" id="tabCountSecurity">0</span>
 </button>
-<button class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
-                            System Logs <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full">56</span>
+<button data-tab="SYSTEM" class="py-4 text-sm font-semibold text-gray-400 hover:text-gray-600 flex items-center gap-2">
+                            System Logs <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full" id="tabCountSystem">0</span>
 </button>
 </div>
 <div class="flex items-center gap-2 text-xs text-gray-400 uppercase font-bold">
@@ -360,15 +362,8 @@
 </div>
 <!-- Pagination -->
 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
-<p class="text-xs text-gray-500 font-medium">Showing 1 to 5 of 842 records</p>
-<div class="flex gap-2">
-<button class="px-3 py-1 bg-white border border-gray-200 rounded text-xs font-semibold hover:bg-gray-50 disabled:opacity-50" disabled="">Previous</button>
-<button class="px-3 py-1 bg-blue-600 text-white border border-blue-600 rounded text-xs font-semibold">1</button>
-<button class="px-3 py-1 bg-white border border-gray-200 rounded text-xs font-semibold hover:bg-gray-50">2</button>
-<button class="px-3 py-1 bg-white border border-gray-200 rounded text-xs font-semibold hover:bg-gray-50">3</button>
-<span class="px-2 text-gray-400">...</span>
-<button class="px-3 py-1 bg-white border border-gray-200 rounded text-xs font-semibold hover:bg-gray-50">169</button>
-<button class="px-3 py-1 bg-white border border-gray-200 rounded text-xs font-semibold hover:bg-gray-50">Next</button>
+<p class="text-xs text-gray-500 font-medium" id="auditPaginationInfo">Showing 0 to 0 of 0 records</p>
+<div class="flex gap-2" id="auditPaginationControls">
 </div>
 </div>
 </section>
@@ -453,6 +448,11 @@
 <script>
 let allLogs = [];
 let selectedLog = null;
+let activeAuditTab = 'OPERATION';
+let currentPage = 1;
+const pageSize = 10;
+let userRoleById = {};
+let userRoleByUsername = {};
 
 function openLogDetails(log) {
     selectedLog = log;
@@ -481,16 +481,23 @@ function closeLogDetails() {
     const user = requireAuth(['ADMIN']);
     if (!user) return;
     updateSidebarUser(user);
+    const dateEl = document.getElementById('auditCurrentDate');
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
     try {
-        allLogs = await API.get('/api/admin/audit-logs');
+        await preloadUserRoleMap();
+        const logs = await API.get('/api/admin/audit-logs');
+        updateTabCounts(logs || []);
+        ensureActiveTabHasData(logs || []);
+        allLogs = getTabFilteredLogs(logs || []);
+        currentPage = 1;
         renderLogs(allLogs);
         updateLogStats(allLogs);
     } catch (e) {
         showToast('Failed to load audit logs: ' + e.message, 'error');
     }
 
-    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    const searchInput = document.getElementById('auditSearchInput');
     if (searchInput) {
         let timer;
         searchInput.addEventListener('input', function() {
@@ -499,19 +506,84 @@ function closeLogDetails() {
         });
     }
 
-    const actionFilter = document.querySelectorAll('select');
-    actionFilter.forEach(sel => {
-        sel.addEventListener('change', () => filterLogs());
+    document.getElementById('auditRoleSelect')?.addEventListener('change', filterLogs);
+    document.getElementById('auditStatusSelect')?.addEventListener('change', filterLogs);
+    document.getElementById('auditDateInput')?.addEventListener('change', filterLogs);
+    document.getElementById('auditApplyBtn')?.addEventListener('click', filterLogs);
+
+    const dateInput = document.getElementById('auditDateInput');
+    if (dateInput && typeof flatpickr === 'function') {
+        flatpickr(dateInput, {
+            dateFormat: 'Y-m-d',
+            allowInput: true,
+            clickOpens: true,
+            monthSelectorType: 'dropdown',
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    longhand: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                },
+                months: {
+                    shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    longhand: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+                },
+                rangeSeparator: ' to ',
+                weekAbbreviation: 'Wk',
+                scrollTitle: 'Scroll to increment',
+                toggleTitle: 'Click to toggle',
+                amPM: ['AM', 'PM'],
+                yearAriaLabel: 'Year',
+                monthAriaLabel: 'Month',
+                hourAriaLabel: 'Hour',
+                minuteAriaLabel: 'Minute',
+                time_24hr: true
+            }
+        });
+    }
+
+    document.querySelectorAll('button[data-tab]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            setActiveTab(this.getAttribute('data-tab') || 'OPERATION');
+            filterLogs();
+        });
     });
 
     document.querySelector('button.bg-blue-600')?.addEventListener('click', async function() {
         try {
-            allLogs = await API.get('/api/admin/audit-logs');
+            await preloadUserRoleMap();
+            const logs = await API.get('/api/admin/audit-logs');
+            updateTabCounts(logs || []);
+            ensureActiveTabHasData(logs || []);
+            allLogs = getTabFilteredLogs(logs || []);
+            currentPage = 1;
             renderLogs(allLogs);
             updateLogStats(allLogs);
             showToast('Logs refreshed', 'success');
         } catch (e) {
             showToast('Refresh failed: ' + e.message, 'error');
+        }
+    });
+
+    document.getElementById('btnExportAuditReport')?.addEventListener('click', async function() {
+        try {
+            const dateVal = document.getElementById('auditDateInput')?.value || '';
+            const q = dateVal ? ('?startDate=' + encodeURIComponent(dateVal) + '&endDate=' + encodeURIComponent(dateVal)) : '';
+            const res = await API.get('/api/admin/export' + q);
+            if (!res || !res.blob) {
+                throw new Error('No export file received');
+            }
+            const url = URL.createObjectURL(res.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'audit-export.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast('Audit report exported', 'success');
+        } catch (e) {
+            showToast('Export failed: ' + e.message, 'error');
         }
     });
 })();
@@ -527,12 +599,19 @@ function updateLogStats(logs) {
 function renderLogs(logs) {
     const tbody = document.querySelector('section.bg-white.rounded-2xl table tbody');
     if (!tbody) return;
-    if (!logs.length) {
+    const safeLogs = Array.isArray(logs) ? logs : [];
+    const total = safeLogs.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    const startIdx = (currentPage - 1) * pageSize;
+    const pageLogs = safeLogs.slice(startIdx, startIdx + pageSize);
+    if (!pageLogs.length) {
         tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-gray-400">No audit logs found.</td></tr>';
-        updatePagination(0);
+        updatePagination(total);
         return;
     }
-    tbody.innerHTML = logs.map((log, idx) => {
+    tbody.innerHTML = pageLogs.map((log, idx) => {
         const initials = (log.username || '??').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
         const bgColors = ['bg-blue-100 text-blue-600', 'bg-purple-100 text-purple-600', 'bg-gray-100 text-gray-500', 'bg-red-100 text-red-600', 'bg-green-100 text-green-600'];
         const bgColor = bgColors[(log.userId || idx) % bgColors.length];
@@ -545,7 +624,7 @@ function renderLogs(logs) {
         };
         const ac = actionColors[log.action] || 'bg-gray-100 text-gray-700';
         return `<tr class="hover:bg-blue-50/30 transition-colors cursor-pointer" onclick='openLogDetails(${JSON.stringify(log).replace(/'/g, "&#39;")})'>
-            <td class="px-6 py-4 text-xs text-gray-400 text-center">${log.id || idx + 1}</td>
+            <td class="px-6 py-4 text-xs text-gray-400 text-center">${log.id || (startIdx + idx + 1)}</td>
             <td class="px-6 py-4">
                 <p class="text-sm font-medium">${log.createdAt ? formatDate(log.createdAt) : '-'}</p>
                 <p class="text-[11px] text-gray-400">${log.createdAt ? new Date(log.createdAt).toLocaleTimeString() : ''}</p>
@@ -571,28 +650,201 @@ function renderLogs(logs) {
             </td>
         </tr>`;
     }).join('');
-    updatePagination(logs.length);
+    updatePagination(total);
 }
 
 function updatePagination(count) {
-    const info = document.querySelector('.bg-gray-50.border-t p');
-    if (info) info.textContent = 'Showing 1 to ' + Math.min(count, 50) + ' of ' + count + ' records';
+    const info = document.getElementById('auditPaginationInfo');
+    const controls = document.getElementById('auditPaginationControls');
+    const total = Number(count || 0);
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const start = total === 0 ? 0 : ((currentPage - 1) * pageSize + 1);
+    const end = total === 0 ? 0 : Math.min(currentPage * pageSize, total);
+    if (info) info.textContent = 'Showing ' + start + ' to ' + end + ' of ' + total + ' records';
+    if (!controls) return;
+
+    if (total === 0) {
+        controls.innerHTML = '';
+        return;
+    }
+
+    function pageBtn(label, page, disabled, active) {
+        return `<button data-page="${page}" ${disabled ? 'disabled' : ''} class="px-3 py-1 ${active ? 'bg-blue-600 text-white border border-blue-600' : 'bg-white border border-gray-200'} rounded text-xs font-semibold hover:bg-gray-50 disabled:opacity-50">${label}</button>`;
+    }
+
+    const pages = [];
+    pages.push(1);
+    if (currentPage - 1 > 1) pages.push(currentPage - 1);
+    if (currentPage !== 1 && currentPage !== totalPages) pages.push(currentPage);
+    if (currentPage + 1 < totalPages) pages.push(currentPage + 1);
+    if (totalPages > 1) pages.push(totalPages);
+    const uniq = [...new Set(pages)].filter(p => p >= 1 && p <= totalPages).sort((a, b) => a - b);
+
+    let html = '';
+    html += pageBtn('Previous', currentPage - 1, currentPage === 1, false);
+    for (let i = 0; i < uniq.length; i++) {
+        const p = uniq[i];
+        if (i > 0 && p - uniq[i - 1] > 1) {
+            html += '<span class="px-2 text-gray-400">...</span>';
+        }
+        html += pageBtn(String(p), p, false, p === currentPage);
+    }
+    html += pageBtn('Next', currentPage + 1, currentPage === totalPages, false);
+    controls.innerHTML = html;
+
+    controls.querySelectorAll('button[data-page]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const p = Number(this.getAttribute('data-page') || currentPage);
+            if (p < 1 || p > totalPages || p === currentPage) return;
+            currentPage = p;
+            renderLogs(allLogs);
+        });
+    });
+}
+
+function isSecurityLog(log) {
+    const action = String(log.action || '').toUpperCase();
+    const detail = String(log.detail || '').toUpperCase();
+    return /(LOGIN|LOGOUT|PASSWORD|AUTH|SECURITY|RESET|LOCK|UNAUTHORIZED|FORBIDDEN)/.test(action + ' ' + detail);
+}
+
+function isSystemLog(log) {
+    const action = String(log.action || '').toUpperCase();
+    const detail = String(log.detail || '').toUpperCase();
+    return /(SETTINGS|EXPORT|SYSTEM|BACKUP|SERVER|CONFIG)/.test(action + ' ' + detail);
+}
+
+function getTabFilteredLogs(logs) {
+    return (logs || []).filter(function(l) {
+        if (activeAuditTab === 'SECURITY') return isSecurityLog(l);
+        if (activeAuditTab === 'SYSTEM') return isSystemLog(l);
+        return !isSecurityLog(l) && !isSystemLog(l);
+    });
+}
+
+function updateTabCounts(logs) {
+    const base = logs || [];
+    const operationCount = base.filter(l => !isSecurityLog(l) && !isSystemLog(l)).length;
+    const securityCount = base.filter(isSecurityLog).length;
+    const systemCount = base.filter(isSystemLog).length;
+    const opEl = document.getElementById('tabCountOperation');
+    const secEl = document.getElementById('tabCountSecurity');
+    const sysEl = document.getElementById('tabCountSystem');
+    if (opEl) opEl.textContent = operationCount.toLocaleString();
+    if (secEl) secEl.textContent = securityCount.toLocaleString();
+    if (sysEl) sysEl.textContent = systemCount.toLocaleString();
+}
+
+function setActiveTab(tab) {
+    activeAuditTab = tab || 'OPERATION';
+    document.querySelectorAll('button[data-tab]').forEach(x => {
+        x.classList.remove('tab-active');
+        x.classList.add('text-gray-400');
+    });
+    const activeBtn = document.querySelector('button[data-tab="' + activeAuditTab + '"]');
+    if (activeBtn) {
+        activeBtn.classList.add('tab-active');
+        activeBtn.classList.remove('text-gray-400');
+    }
+}
+
+function ensureActiveTabHasData(baseLogs) {
+    const op = (baseLogs || []).filter(l => !isSecurityLog(l) && !isSystemLog(l)).length;
+    const sec = (baseLogs || []).filter(isSecurityLog).length;
+    const sys = (baseLogs || []).filter(isSystemLog).length;
+    const currentCount = activeAuditTab === 'SECURITY' ? sec : (activeAuditTab === 'SYSTEM' ? sys : op);
+    if (currentCount > 0) return;
+    if (op > 0) return setActiveTab('OPERATION');
+    if (sec > 0) return setActiveTab('SECURITY');
+    if (sys > 0) return setActiveTab('SYSTEM');
+}
+
+async function preloadUserRoleMap() {
+    try {
+        const users = await API.get('/api/admin/users');
+        const idMap = {};
+        const unameMap = {};
+        (users || []).forEach(u => {
+            const role = String(u.role || '').toUpperCase();
+            if (u.id) idMap[String(u.id)] = role;
+            if (u.username) unameMap[String(u.username).toLowerCase()] = role;
+        });
+        userRoleById = idMap;
+        userRoleByUsername = unameMap;
+    } catch (e) {
+        userRoleById = {};
+        userRoleByUsername = {};
+    }
+}
+
+function inferLogActorRole(log) {
+    if (!log) return '';
+    const uid = String(log.userId || '');
+    const uname = String(log.username || '').toLowerCase();
+    if (uid && userRoleById[uid]) return userRoleById[uid];
+    if (uname && userRoleByUsername[uname]) return userRoleByUsername[uname];
+
+    const action = String(log.action || '').toUpperCase();
+    const detail = String(log.detail || '').toUpperCase();
+    if (/^USER_|^SETTINGS_|^EXPORT_|^ADMIN_ROLE_|^BULK_NOTIFY$|^PASSWORD_RESET_/.test(action)) return 'ADMIN';
+    if (action === 'APPLY') return 'TA';
+    if (action === 'CREATE_JOB' || action === 'UPDATE_JOB' || action === 'DELETE_JOB') return 'MO';
+    if (action === 'REGISTER') {
+        if (detail.includes(' NEW ADMIN REGISTERED') || detail.includes('NEW ADMIN REGISTERED')) return 'ADMIN';
+        if (detail.includes(' NEW MO REGISTERED') || detail.includes('NEW MO REGISTERED')) return 'MO';
+        if (detail.includes(' NEW TA REGISTERED') || detail.includes('NEW TA REGISTERED')) return 'TA';
+    }
+    if (uname.includes('admin')) return 'ADMIN';
+    return '';
 }
 
 async function filterLogs() {
-    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    const searchInput = document.getElementById('auditSearchInput');
+    const roleVal = document.getElementById('auditRoleSelect')?.value || 'ALL';
+    const statusVal = document.getElementById('auditStatusSelect')?.value || 'ALL';
+    const dateVal = document.getElementById('auditDateInput')?.value || '';
     const query = searchInput ? searchInput.value.trim() : '';
     try {
         let url = '/api/admin/audit-logs';
         const params = [];
         if (query) params.push('search=' + encodeURIComponent(query));
         if (params.length) url += '?' + params.join('&');
-        allLogs = await API.get(url);
+        const logs = await API.get(url);
+        const baseLogs = (logs || []).filter(function(l) {
+            if (dateVal) {
+                const d = l.createdAt ? new Date(l.createdAt) : null;
+                if (!d || isNaN(d.getTime())) return false;
+                if (d.toISOString().slice(0, 10) !== dateVal) return false;
+            }
+            if (roleVal !== 'ALL') {
+                const inferredRole = inferLogActorRole(l);
+                if (inferredRole !== roleVal) return false;
+            }
+            if (statusVal !== 'ALL') {
+                const s = inferAuditStatus(l);
+                if (s !== statusVal) return false;
+            }
+            return true;
+        });
+        updateTabCounts(baseLogs);
+        ensureActiveTabHasData(baseLogs);
+        allLogs = getTabFilteredLogs(baseLogs);
+        currentPage = 1;
         renderLogs(allLogs);
         updateLogStats(allLogs);
     } catch (e) {
         showToast('Filter failed: ' + e.message, 'error');
     }
+}
+
+function inferAuditStatus(log) {
+    const t = (String(log.action || '') + ' ' + String(log.detail || '')).toUpperCase();
+    if (/(FAIL|ERROR|REJECT|DENY|CANCEL)/.test(t)) return 'FAILED';
+    if (/(WARN|WARNING|LOCK|OVERLOAD|PENDING)/.test(t)) return 'WARNING';
+    return 'SUCCESS';
 }
 </script>
 </body>

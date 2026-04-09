@@ -1,38 +1,56 @@
 [
   {
-    "id": "f1bfa676",
-    "userId": "b398e651",
+    "id": "noti001",
+    "userId": "mo001",
     "title": "New Application",
-    "content": "ninglechen applied for Python Lab Teaching Assistant",
+    "content": "Zijie Zhang applied for TA Needed: Programming Fundamentals",
     "type": "APPLICATION",
-    "read": true,
-    "createdAt": 1774368811353
+    "read": false,
+    "createdAt": 1775508962255
   },
   {
-    "id": "b69216df",
-    "userId": "b398e651",
-    "title": "New Application",
-    "content": "ninglechen applied for Python Lab Teaching Assistant",
-    "type": "APPLICATION",
-    "read": true,
-    "createdAt": 1774370216203
-  },
-  {
-    "id": "9d69ac25",
-    "userId": "91671c06",
-    "title": "Application Withdrawn",
-    "content": "You withdrew your application for Python Lab Teaching Assistant.",
-    "type": "APPLICATION",
-    "read": true,
-    "createdAt": 1774370066426
-  },
-  {
-    "id": "2905dc86",
-    "userId": "91671c06",
+    "id": "noti002",
+    "userId": "ta002",
     "title": "Application Approved",
-    "content": "Your application for Python Lab Teaching Assistant has been approved!",
+    "content": "Your application for TA Needed: Programming Fundamentals has been approved!",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775480162255
+  },
+  {
+    "id": "noti003",
+    "userId": "ta003",
+    "title": "Application Rejected",
+    "content": "Your application for TA Needed: Data Structures has been rejected.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775408162255
+  },
+  {
+    "id": "noti004",
+    "userId": "ta004",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for TA Needed: Database Systems.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775516162255
+  },
+  {
+    "id": "eaaec75d",
+    "userId": "mo003",
+    "title": "New Application",
+    "content": "Siying Li applied for TA Needed: Database Systems",
     "type": "APPLICATION",
     "read": true,
-    "createdAt": 1774370250568
+    "createdAt": 1775552318678
+  },
+  {
+    "id": "eba535fd",
+    "userId": "6e6df15f",
+    "title": "Application Approved",
+    "content": "Your application for TA Needed: Database Systems has been approved!",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775553944991
   }
 ]
