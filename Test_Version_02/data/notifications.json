@@ -52,5 +52,14 @@
     "type": "APPLICATION",
     "read": false,
     "createdAt": 1775553944991
+  },
+  {
+    "id": "da92bbff",
+    "userId": "b398e651",
+    "title": "New Application",
+    "content": "Siying Li applied for Python Lab Teaching Assistant",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775755059863
   }
 ]

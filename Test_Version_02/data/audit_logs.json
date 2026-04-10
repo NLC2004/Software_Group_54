@@ -430,5 +430,37 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1774673949799
+  },
+  {
+    "id": "d123d7cb",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775754945628
+  },
+  {
+    "id": "62477f47",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775754975001
+  },
+  {
+    "id": "aa1f34d1",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "APPLY",
+    "detail": "Applied for job: Python Lab Teaching Assistant",
+    "createdAt": 1775755059846
+  },
+  {
+    "id": "7373d787",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775805653049
   }
 ]
