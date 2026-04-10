@@ -1,0 +1,57 @@
+[
+  {
+    "id": "5b1b8a4a",
+    "jobId": "fba6b7a0",
+    "applicantId": "f6c5b117",
+    "cvFileName": "1774075859029_EBU6304_GroupProjectHandout.pdf",
+    "coverLetter": "I is good for communication",
+    "status": "WITHDRAWN",
+    "priority": 1,
+    "createdAt": 1774075859041,
+    "updatedAt": 1775636644575
+  },
+  {
+    "id": "f3a309fd",
+    "jobId": "0c8d46ab",
+    "applicantId": "f6c5b117",
+    "cvFileName": "1775648078566_Tutorial_1.pdf",
+    "coverLetter": "dfsfsfs",
+    "status": "REJECTED",
+    "priority": 1,
+    "createdAt": 1775648078582,
+    "updatedAt": 1775648156106
+  },
+  {
+    "id": "0a5a499d",
+    "jobId": "a9e67d95",
+    "applicantId": "f6c5b117",
+    "cvFileName": "1775648208389_Lecture_3_Wireless_Communication_Principle.pdf",
+    "coverLetter": "sfsffds",
+    "status": "WITHDRAWN",
+    "priority": 3,
+    "createdAt": 1775648208400,
+    "updatedAt": 1775648226996
+  },
+  {
+    "id": "cfc1b701",
+    "jobId": "77868a3e",
+    "applicantId": "f6c5b117",
+    "cvFileName": "1775831469979_YW-00051________.pdf",
+    "coverLetter": "I am good for teaching students.",
+    "status": "PENDING",
+    "priority": 2,
+    "createdAt": 1775831469986,
+    "updatedAt": 1775831469986
+  },
+  {
+    "id": "db1f95bd",
+    "jobId": "68526cab",
+    "applicantId": "f6c5b117",
+    "cvFileName": "1775831429430_YW-00051________.pdf",
+    "coverLetter": "I do nice for teaching and managing the students.",
+    "status": "APPROVED",
+    "priority": 1,
+    "createdAt": 1775831429443,
+    "updatedAt": 1775831573093
+  }
+]
