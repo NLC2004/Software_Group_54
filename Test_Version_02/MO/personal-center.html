@@ -57,6 +57,10 @@
 <span class="iconify text-lg" data-icon="mdi:logout"></span>
 </a>
 </div>
+<a class="mt-3 hidden w-full items-center justify-center px-3 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-all" href="../admin/job-supervision.html" id="backToAdminBtn">
+<span class="iconify mr-2 text-base" data-icon="solar:arrow-left-linear"></span>
+Back to Admin
+</a>
 </div>
 </aside>
 <!-- Main Content -->
@@ -199,15 +203,34 @@
 </main>
 <script src="/js/api.js"></script>
 <script>
+        let currentPortalUser = null;
+        let proxyUserId = '';
+
         (async function init() {
-            const user = requireAuth(['MO']);
+            const user = requireAuth(['MO', 'ADMIN']);
             if (!user) return;
+            currentPortalUser = user;
+            proxyUserId = getUrlParam('userId') || '';
             updateSidebarUser(user);
             document.getElementById('logoutBtn').onclick = () => logout();
+            if (user.role === 'ADMIN') {
+                const backBtn = document.getElementById('backToAdminBtn');
+                if (backBtn) {
+                    backBtn.classList.remove('hidden');
+                    backBtn.classList.add('flex');
+                }
+            }
 
             try {
-                const profile = await API.get('/api/auth/me');
+                const profile = (user.role === 'ADMIN' && proxyUserId)
+                    ? await API.get('/api/admin/users/' + encodeURIComponent(proxyUserId))
+                    : await API.get('/api/auth/me');
                 populateProfile(profile);
+                if (user.role === 'ADMIN' && proxyUserId) {
+                    const pwdBlock = document.getElementById('changePasswordBtn')?.closest('.bg-white');
+                    if (pwdBlock) pwdBlock.classList.add('hidden');
+                    showToast('Editing profile as admin proxy mode', 'info');
+                }
             } catch (err) {
                 showToast(err.message || 'Failed to load profile', 'error');
             }
@@ -242,15 +265,19 @@
             }
 
             try {
-                const updated = await API.put('/api/auth/profile', body);
+                const updated = (currentPortalUser && currentPortalUser.role === 'ADMIN' && proxyUserId)
+                    ? await API.put('/api/admin/users/' + encodeURIComponent(proxyUserId), body).then(() => API.get('/api/admin/users/' + encodeURIComponent(proxyUserId)))
+                    : await API.put('/api/auth/profile', body);
                 const stored = API.getUser();
-                if (stored) {
+                if (stored && !(currentPortalUser && currentPortalUser.role === 'ADMIN' && proxyUserId)) {
                     stored.fullName = updated.fullName || body.fullName;
                     stored.email = updated.email || body.email;
                     API.setAuth(API.getToken(), stored);
                 }
                 populateProfile(updated);
-                updateSidebarUser(updated);
+                if (!(currentPortalUser && currentPortalUser.role === 'ADMIN' && proxyUserId)) {
+                    updateSidebarUser(updated);
+                }
                 showToast('Profile updated successfully', 'success');
             } catch (err) {
                 showToast(err.message || 'Failed to update profile', 'error');

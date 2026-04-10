@@ -430,5 +430,573 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1774673949799
+  },
+  {
+    "id": "b67f77c0",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "REGISTER",
+    "detail": "New TA registered",
+    "createdAt": 1775365242949
+  },
+  {
+    "id": "23305b4d",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775365342105
+  },
+  {
+    "id": "48578140",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775365988428
+  },
+  {
+    "id": "f8d57f67",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775366019121
+  },
+  {
+    "id": "1f7a1bf2",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775366831973
+  },
+  {
+    "id": "c1c4af0a",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775367588472
+  },
+  {
+    "id": "bd076c45",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1775367859152
+  },
+  {
+    "id": "bbaee93e",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775368125987
+  },
+  {
+    "id": "e08cae21",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775368146003
+  },
+  {
+    "id": "8c6b0152",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775368474879
+  },
+  {
+    "id": "a15ce4f5",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775492170713
+  },
+  {
+    "id": "874a9d30",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "APPLY",
+    "detail": "Applied for job: Python Lab Teaching Assistant",
+    "createdAt": 1775492285140
+  },
+  {
+    "id": "19e015bd",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775395026896
+  },
+  {
+    "id": "b0b5aedc",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775395276697
+  },
+  {
+    "id": "e8b50a0e",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775396938924
+  },
+  {
+    "id": "efb49f6e",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775397188632
+  },
+  {
+    "id": "af22e766",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775397267786
+  },
+  {
+    "id": "2e1895ef",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775397313418
+  },
+  {
+    "id": "358daf12",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "APPLY",
+    "detail": "Applied for job: TA Needed: AI Basics",
+    "createdAt": 1775397393165
+  },
+  {
+    "id": "1b936d7b",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775397444372
+  },
+  {
+    "id": "a88d0c44",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775397987826
+  },
+  {
+    "id": "36e52b01",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775398408448
+  },
+  {
+    "id": "82edf5ef",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775399556738
+  },
+  {
+    "id": "e383ba0d",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775399561418
+  },
+  {
+    "id": "f56d4d40",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775399569967
+  },
+  {
+    "id": "4590a484",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "CREATE_JOB",
+    "detail": "Created job: MO zzj",
+    "createdAt": 1775400289023
+  },
+  {
+    "id": "9e9936c4",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400341098
+  },
+  {
+    "id": "17f1f946",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775400347366
+  },
+  {
+    "id": "f08b927a",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400349612
+  },
+  {
+    "id": "801b0c77",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400479023
+  },
+  {
+    "id": "22d94494",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775400614144
+  },
+  {
+    "id": "28f87699",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775469253162
+  },
+  {
+    "id": "24de14a6",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775490875325
+  },
+  {
+    "id": "a6979fd4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "EXPORT_CORE_DATA",
+    "detail": "Exported core data CSV task\u003d38034998",
+    "createdAt": 1775492657247
+  },
+  {
+    "id": "4135d202",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495249700
+  },
+  {
+    "id": "84d8d130",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495672081
+  },
+  {
+    "id": "07d8bb5e",
+    "userId": "ta002",
+    "username": "231225270",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495772457
+  },
+  {
+    "id": "8343d4e0",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775495826805
+  },
+  {
+    "id": "3a4480fa",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775532092443
+  },
+  {
+    "id": "64447342",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775532134221
+  },
+  {
+    "id": "26112ed1",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775532162885
+  },
+  {
+    "id": "856b0c7e",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application c7f25fb6 for TA Needed: Database Systems",
+    "createdAt": 1775532372736
+  },
+  {
+    "id": "8b1a70cc",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775533517399
+  },
+  {
+    "id": "860c629e",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775534641758
+  },
+  {
+    "id": "273c1a95",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775534735679
+  },
+  {
+    "id": "ebff4a44",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552230218
+  },
+  {
+    "id": "752a1ae0",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "APPLY",
+    "detail": "Applied for job: TA Needed: Database Systems",
+    "createdAt": 1775552318671
+  },
+  {
+    "id": "abb3f4bc",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552514151
+  },
+  {
+    "id": "982b2da2",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552530087
+  },
+  {
+    "id": "18af4b8e",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552558896
+  },
+  {
+    "id": "48d7a591",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775552884142
+  },
+  {
+    "id": "f4543054",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775553855980
+  },
+  {
+    "id": "f84711e8",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775553892505
+  },
+  {
+    "id": "b0ee7e68",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application ec9d3db2 for TA Needed: Database Systems",
+    "createdAt": 1775553944978
+  },
+  {
+    "id": "e6031b34",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775554104347
+  },
+  {
+    "id": "1c6da5a6",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775554193135
+  },
+  {
+    "id": "4ea18558",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775554822726
+  },
+  {
+    "id": "305f3f28",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775564886781
+  },
+  {
+    "id": "17eefde4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775662509016
+  },
+  {
+    "id": "8e94dc79",
+    "userId": "admin002",
+    "username": "admin1",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775666259456
+  },
+  {
+    "id": "a80cda60",
+    "userId": "admin002",
+    "username": "admin1",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775666429607
+  },
+  {
+    "id": "db0089fb",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775666441027
+  },
+  {
+    "id": "df54dedd",
+    "userId": "ta002",
+    "username": "231225270",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775667141196
+  },
+  {
+    "id": "f2bace9d",
+    "userId": "ta002",
+    "username": "231225270",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775667164000
+  },
+  {
+    "id": "e5e8a4bd",
+    "userId": "",
+    "username": "231225270",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from Zijun Song",
+    "createdAt": 1775667213241
+  },
+  {
+    "id": "4a36b6c4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775667229775
+  },
+  {
+    "id": "a8f547d1",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: Zijun Song",
+    "createdAt": 1775667257196
+  },
+  {
+    "id": "bc9b6c9d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "BULK_NOTIFY",
+    "detail": "Bulk notification sent roles\u003dMO,TA, recipients\u003d17",
+    "createdAt": 1775667379278
+  },
+  {
+    "id": "ec9f7ef2",
+    "userId": "ta002",
+    "username": "231225270",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775667415656
+  },
+  {
+    "id": "64ab1c7c",
+    "userId": "ta002",
+    "username": "231225270",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775667432960
+  },
+  {
+    "id": "b3c594dc",
+    "userId": "admin002",
+    "username": "admin1",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775667445525
   }
 ]

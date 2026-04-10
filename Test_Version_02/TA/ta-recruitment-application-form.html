@@ -101,12 +101,118 @@
 <div class="col-span-2 p-10">
 <form class="space-y-8" id="applicationForm">
 <section>
+<h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">Personal Information</h3>
+<div class="bg-gray-50 rounded-2xl border border-gray-100 p-5 space-y-5">
+<p class="text-xs text-gray-500 leading-relaxed">These fields are auto-filled from your profile. You can adjust them for this application, and they will be saved in your draft.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Full Name</label>
+<input class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmFullName" type="text" placeholder="Your full name"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Student ID</label>
+<input class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmStudentId" type="text" placeholder="Your student ID"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Phone Number</label>
+<input class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmPhone" type="tel" placeholder="Your phone number"/>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">School</label>
+<select class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="confirmSchool">
+<option value="">Select school</option>
+<option value="School of Future Technology">School of Future Technology</option>
+<option value="International School">International School</option>
+<option value="Queen Mary University of London, Hainan College">Queen Mary University of London, Hainan College</option>
+<option value="School of Information and Communication Engineering">School of Information and Communication Engineering</option>
+<option value="School of Electronic Engineering">School of Electronic Engineering</option>
+<option value="School of Computer Science">School of Computer Science</option>
+<option value="School of Cyber Security">School of Cyber Security</option>
+<option value="School of Artificial Intelligence">School of Artificial Intelligence</option>
+<option value="School of Integrated Circuits">School of Integrated Circuits</option>
+<option value="School of Intelligent Engineering and Automation">School of Intelligent Engineering and Automation</option>
+<option value="Elite Engineer College">Elite Engineer College</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Gender</label>
+<div class="flex items-center gap-6 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm text-gray-700">
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmGender" type="radio" value="Female"/>
+<span>Female</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmGender" type="radio" value="Male"/>
+<span>Male</span>
+</label>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Year of Study</label>
+<div class="flex flex-wrap items-center gap-4 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm text-gray-700">
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 1"/>
+<span>Year 1</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 2"/>
+<span>Year 2</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 3"/>
+<span>Year 3</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 4"/>
+<span>Year 4</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input name="confirmYear" type="radio" value="Year 5"/>
+<span>Year 5</span>
+</label>
+</div>
+</div>
+</div>
+</section>
+<section>
 <h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">Cover Letter / Motivation</h3>
 <div class="space-y-5">
 <div>
 <label class="block text-xs font-bold text-gray-500 mb-2">Why are you a good fit for this position? <span class="text-red-500">*</span></label>
 <textarea class="w-full h-40 p-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-blue-500 outline-none transition-all text-sm" id="coverLetter" placeholder="Describe your motivation, relevant experience, and strengths..."></textarea>
 </div>
+</div>
+</section>
+<section>
+<h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">Preference Selection</h3>
+<div class="bg-blue-50 rounded-2xl border border-blue-100 p-5 space-y-4">
+<p class="text-xs text-blue-700 leading-relaxed">Select your preference rank for this position. Each active application can only use one unique priority, and you can keep at most three active preferences at the same time.</p>
+<div>
+<label class="block text-xs font-bold text-gray-500 mb-2">Priority for this application <span class="text-red-500">*</span></label>
+<select class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" id="prioritySelect">
+<option value="">Select a priority</option>
+<option value="1">Priority 1</option>
+<option value="2">Priority 2</option>
+<option value="3">Priority 3</option>
+</select>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="priorityCards">
+<div class="bg-white border border-gray-200 rounded-2xl p-4">
+<p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority 1</p>
+<p class="text-sm text-gray-600 mt-2" id="priorityStatus1">Available</p>
+</div>
+<div class="bg-white border border-gray-200 rounded-2xl p-4">
+<p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority 2</p>
+<p class="text-sm text-gray-600 mt-2" id="priorityStatus2">Available</p>
+</div>
+<div class="bg-white border border-gray-200 rounded-2xl p-4">
+<p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Priority 3</p>
+<p class="text-sm text-gray-600 mt-2" id="priorityStatus3">Available</p>
+</div>
+</div>
+<p class="text-[11px] text-gray-400" id="priorityHint">Loading your current applications...</p>
 </div>
 </section>
 <section>
@@ -122,11 +228,11 @@
 <div class="flex items-center justify-between gap-4">
 <div>
 <h3 class="text-sm font-bold text-gray-900">Resume attachment</h3>
-<p class="text-xs text-gray-400 mt-1">PDF only &middot; Up to 20MB</p>
+<p class="text-xs text-gray-400 mt-1">PDF only &middot; Up to 20MB &middot; Profile resume will be auto-loaded when available</p>
 </div>
 </div>
-<div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-<div>
+<div class="mt-6 grid grid-cols-1 gap-6 items-start">
+<div class="max-w-xl">
 <label class="block text-xs font-bold text-gray-500 mb-2">Upload PDF</label>
 <div class="flex items-center gap-3">
 <input class="hidden" id="resumeFile" accept="application/pdf" type="file"/>
@@ -140,8 +246,8 @@
 <p class="text-[11px] text-red-500 mt-2 hidden" id="resumeError"></p>
 </div>
 <div>
-<div class="w-full bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden" style="height: 420px;">
-<iframe class="w-full h-full" id="resumePreview" title="Resume preview" src="about:blank"></iframe>
+<div class="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-[11px] text-gray-500 leading-relaxed" id="resumePreviewPanel">
+Preview opens in a popup window, consistent with the MO side. If you uploaded a resume in Profile, it will be reused automatically here.
 </div>
 </div>
 </div>
@@ -149,8 +255,10 @@
 </section>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 <button class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100" type="submit" id="submitBtn">Submit</button>
-<button class="w-full py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all" onclick="history.back()" type="button">Cancel</button>
+<button class="w-full py-4 bg-white border border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition-all" type="button" id="saveDraftBtn">Save progress</button>
+<button class="sm:col-span-2 w-full py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all" onclick="history.back()" type="button">Cancel</button>
 </div>
+<p class="text-xs text-gray-400 -mt-4" id="draftStatusText">Draft not saved yet.</p>
 </form>
 </div>
 </div>
@@ -165,6 +273,13 @@
     let resumeFile = null;
     let resumeObjectUrl = '';
     const jobId = getUrlParam('jobId');
+    const DRAFT_KEY_PREFIX = 'ta_application_draft_v1';
+    const RESUME_DB_NAME = 'ta_application_resume_db_v1';
+    const RESUME_STORE_NAME = 'resume';
+    const RESUME_KEY_PREFIX = 'job_';
+    const PROFILE_RESUME_KEY = 'profile_default';
+    const AUTO_SAVE_DELAY_MS = 5000;
+    let autoSaveTimer = null;
 
     const resumeFileInput = document.getElementById('resumeFile');
     const chooseFileBtn = document.getElementById('chooseFileBtn');
@@ -172,7 +287,446 @@
     const resumeMeta = document.getElementById('resumeMeta');
     const resumeError = document.getElementById('resumeError');
     const previewBtn = document.getElementById('previewBtn');
-    const resumePreview = document.getElementById('resumePreview');
+    const coverLetterInput = document.getElementById('coverLetter');
+    const prioritySelect = document.getElementById('prioritySelect');
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+    const draftStatusText = document.getElementById('draftStatusText');
+    const priorityHint = document.getElementById('priorityHint');
+    const confirmStudentIdInput = document.getElementById('confirmStudentId');
+    const confirmFullNameInput = document.getElementById('confirmFullName');
+    const confirmPhoneInput = document.getElementById('confirmPhone');
+    const confirmSchoolSelect = document.getElementById('confirmSchool');
+    let hasUnsavedChanges = false;
+    let activeApplications = [];
+    let occupiedPriorities = new Map();
+    let serverDraftResumeFileName = '';
+    let profileDefaults = null;
+
+    function getRadioValue(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : '';
+    }
+
+    function setRadioValue(name, value) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+            el.checked = el.value === value;
+        });
+    }
+
+    function getDraftKey() {
+        return `${DRAFT_KEY_PREFIX}_${jobId || 'general'}`;
+    }
+
+    function getResumeKey() {
+        return `${RESUME_KEY_PREFIX}${jobId || 'general'}`;
+    }
+
+    function setDraftStatus(message) {
+        draftStatusText.textContent = message;
+    }
+
+    function getDraftApiPath() {
+        return '/api/drafts/application?jobId=' + encodeURIComponent(jobId || '');
+    }
+
+    function getDraftPayload() {
+        return {
+            jobId: jobId || '',
+            confirmStudentId: confirmStudentIdInput.value || '',
+            confirmFullName: confirmFullNameInput.value || '',
+            confirmPhone: confirmPhoneInput.value || '',
+            confirmGender: getRadioValue('confirmGender'),
+            confirmSchool: confirmSchoolSelect.value || '',
+            confirmYear: getRadioValue('confirmYear'),
+            coverLetter: coverLetterInput.value || '',
+            priority: prioritySelect.value || '',
+            updatedAt: Date.now()
+        };
+    }
+
+    function parseLocalDraft() {
+        const raw = localStorage.getItem(getDraftKey());
+        if (!raw) return null;
+        try {
+            return JSON.parse(raw);
+        } catch (_) {
+            return null;
+        }
+    }
+
+    function applyDraftToForm(draft, options = {}) {
+        if (!draft || typeof draft !== 'object') return false;
+        if (typeof draft.confirmStudentId === 'string') {
+            confirmStudentIdInput.value = draft.confirmStudentId;
+        }
+        if (typeof draft.confirmFullName === 'string') {
+            confirmFullNameInput.value = draft.confirmFullName;
+        }
+        if (typeof draft.confirmPhone === 'string') {
+            confirmPhoneInput.value = draft.confirmPhone;
+        }
+        if (typeof draft.confirmSchool === 'string') {
+            confirmSchoolSelect.value = draft.confirmSchool;
+        }
+        if (typeof draft.confirmGender === 'string' && draft.confirmGender) {
+            const g = document.querySelector(`input[name="confirmGender"][value="${draft.confirmGender}"]`);
+            if (g) g.checked = true;
+        }
+        if (typeof draft.confirmYear === 'string' && draft.confirmYear) {
+            const y = document.querySelector(`input[name="confirmYear"][value="${draft.confirmYear}"]`);
+            if (y) y.checked = true;
+        }
+        if (typeof draft.coverLetter === 'string') {
+            coverLetterInput.value = draft.coverLetter;
+        }
+        if (draft.priority != null && draft.priority !== '' && String(draft.priority) !== '0') {
+            prioritySelect.value = String(draft.priority);
+        }
+        if (typeof draft.resumeDraftFileName === 'string') {
+            serverDraftResumeFileName = draft.resumeDraftFileName;
+            if (serverDraftResumeFileName && !resumeFile) {
+                resumeFileNameEl.innerText = serverDraftResumeFileName;
+                resumeMeta.innerText = 'Server draft resume available';
+                previewBtn.disabled = false;
+            }
+        }
+        if (draft.updatedAt) {
+            setDraftStatus((options.label || 'Recovered draft') + ' saved at ' + formatDateTime(draft.updatedAt));
+        } else {
+            setDraftStatus(options.label || 'Recovered draft.');
+        }
+        hasUnsavedChanges = false;
+        return true;
+    }
+
+    function normalizeProfileDefaults(user) {
+        if (!user || typeof user !== 'object') return null;
+        return {
+            confirmFullName: user.fullName || user.username || '',
+            confirmStudentId: user.studentId || '',
+            confirmPhone: user.phone || '',
+            confirmSchool: user.school || '',
+            confirmGender: user.gender || '',
+            confirmYear: user.yearOfStudy || ''
+        };
+    }
+
+    function applyProfileDefaults(user) {
+        const defaults = normalizeProfileDefaults(user);
+        if (!defaults) return;
+        profileDefaults = defaults;
+        if (!confirmFullNameInput.value.trim()) confirmFullNameInput.value = defaults.confirmFullName;
+        if (!confirmStudentIdInput.value.trim()) confirmStudentIdInput.value = defaults.confirmStudentId;
+        if (!confirmPhoneInput.value.trim()) confirmPhoneInput.value = defaults.confirmPhone;
+        if (!confirmSchoolSelect.value) confirmSchoolSelect.value = defaults.confirmSchool;
+        if (!getRadioValue('confirmGender')) setRadioValue('confirmGender', defaults.confirmGender);
+        if (!getRadioValue('confirmYear')) setRadioValue('confirmYear', defaults.confirmYear);
+    }
+
+    function hasMeaningfulValue(value) {
+        return typeof value === 'string' ? !!value.trim() : value != null && value !== '';
+    }
+
+    function isDraftUsingProfileDefaults(payload) {
+        if (!profileDefaults) return false;
+        return (
+            (!hasMeaningfulValue(payload.confirmStudentId) || payload.confirmStudentId === profileDefaults.confirmStudentId) &&
+            (!hasMeaningfulValue(payload.confirmFullName) || payload.confirmFullName === profileDefaults.confirmFullName) &&
+            (!hasMeaningfulValue(payload.confirmPhone) || payload.confirmPhone === profileDefaults.confirmPhone) &&
+            (!hasMeaningfulValue(payload.confirmSchool) || payload.confirmSchool === profileDefaults.confirmSchool) &&
+            (!hasMeaningfulValue(payload.confirmGender) || payload.confirmGender === profileDefaults.confirmGender) &&
+            (!hasMeaningfulValue(payload.confirmYear) || payload.confirmYear === profileDefaults.confirmYear)
+        );
+    }
+
+    function hasLocalDraftContent(payload) {
+        return !!(
+            (payload.confirmStudentId || '').trim() ||
+            (payload.confirmFullName || '').trim() ||
+            (payload.confirmPhone || '').trim() ||
+            (payload.confirmGender || '').trim() ||
+            (payload.confirmSchool || '').trim() ||
+            (payload.confirmYear || '').trim() ||
+            (payload.coverLetter || '').trim() ||
+            String(payload.priority || '').trim()
+        );
+    }
+
+    function saveDraftToLocal(options = {}) {
+        const payload = getDraftPayload();
+        localStorage.setItem(getDraftKey(), JSON.stringify(payload));
+        const sourceLabel = options.source === 'auto' ? 'Auto-saved' : 'Draft saved';
+        setDraftStatus(sourceLabel + ' locally at ' + new Date(payload.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        hasUnsavedChanges = false;
+    }
+
+    function restoreDraftFromLocal() {
+        const draft = parseLocalDraft();
+        if (!draft) return false;
+        return applyDraftToForm(draft, { label: 'Recovered local draft' });
+    }
+
+    async function saveDraftToServer(options = {}) {
+        const payload = getDraftPayload();
+        let resumeDraftFileName = serverDraftResumeFileName;
+        if (resumeFile) {
+            const uploadRes = await API.uploadFile(resumeFile);
+            resumeDraftFileName = uploadRes.fileName;
+            serverDraftResumeFileName = resumeDraftFileName;
+        }
+        const res = await API.put(getDraftApiPath(), { ...payload, priority: Number(payload.priority || 0), resumeDraftFileName });
+        const savedDraft = res && res.draft ? res.draft : null;
+        if (savedDraft && savedDraft.resumeDraftFileName) {
+            serverDraftResumeFileName = savedDraft.resumeDraftFileName;
+        }
+        const savedAt = savedDraft && savedDraft.updatedAt ? savedDraft.updatedAt : Date.now();
+        const sourceLabel = options.source === 'auto' ? 'Auto-saved' : 'Draft saved';
+        setDraftStatus(sourceLabel + ' to server at ' + new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        hasUnsavedChanges = false;
+        return savedDraft;
+    }
+
+    async function loadServerDraft() {
+        const res = await API.get(getDraftApiPath());
+        return res && res.draft ? res.draft : null;
+    }
+
+    async function clearServerDraft() {
+        await API.del(getDraftApiPath());
+        serverDraftResumeFileName = '';
+    }
+
+    function clearDraftFromLocal() {
+        localStorage.removeItem(getDraftKey());
+        setDraftStatus('Draft cleared after submission.');
+        hasUnsavedChanges = false;
+    }
+
+    function markDirty() {
+        hasUnsavedChanges = true;
+        setDraftStatus('You have unsaved changes.');
+    }
+
+    function cancelAutoSave() {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = null;
+    }
+
+    function getActiveApplications(applications) {
+        return (applications || []).filter(app => !['WITHDRAWN', 'REJECTED'].includes(app.status));
+    }
+
+    function updatePriorityUi() {
+        const selected = prioritySelect.value;
+        const activeCount = activeApplications.length;
+        const blockNewSelection = activeCount >= 3;
+
+        ['1', '2', '3'].forEach((value) => {
+            const option = prioritySelect.querySelector(`option[value="${value}"]`);
+            const statusEl = document.getElementById('priorityStatus' + value);
+            const owner = occupiedPriorities.get(value);
+            const isSelected = selected === value;
+            const isBlocked = blockNewSelection ? !isSelected : !!owner && !isSelected;
+
+            if (option) option.disabled = isBlocked;
+
+            if (!statusEl) return;
+            if (blockNewSelection && !isSelected) {
+                statusEl.textContent = 'Unavailable: you already have 3 active applications';
+                statusEl.className = 'text-sm text-amber-600 mt-2';
+            } else if (owner && !isSelected) {
+                statusEl.textContent = `Used by ${owner}`;
+                statusEl.className = 'text-sm text-red-600 mt-2';
+            } else if (isSelected) {
+                statusEl.textContent = 'Selected for current draft';
+                statusEl.className = 'text-sm text-blue-600 mt-2 font-medium';
+            } else {
+                statusEl.textContent = 'Available';
+                statusEl.className = 'text-sm text-green-600 mt-2';
+            }
+        });
+
+        if (blockNewSelection && !selected) {
+            priorityHint.textContent = 'You already have 3 active applications. Withdraw one before creating a new preference.';
+            priorityHint.className = 'text-[11px] text-amber-600';
+        } else if (occupiedPriorities.size > 0) {
+            priorityHint.textContent = 'Used priorities are disabled automatically. Choose one of the remaining available ranks.';
+            priorityHint.className = 'text-[11px] text-gray-500';
+        } else {
+            priorityHint.textContent = 'All three priorities are currently available.';
+            priorityHint.className = 'text-[11px] text-gray-400';
+        }
+    }
+
+    async function loadExistingApplications() {
+        const applications = await API.get('/api/applications');
+        activeApplications = getActiveApplications(applications);
+        occupiedPriorities = new Map();
+        activeApplications.forEach((app) => {
+            const value = app.priority == null ? '' : String(app.priority);
+            if (!value || value === '0') return;
+            const title = app.jobTitle || `Application #${app.id}`;
+            occupiedPriorities.set(value, title);
+        });
+        updatePriorityUi();
+    }
+
+    function validatePrioritySelection() {
+        const selected = prioritySelect.value;
+        if (!selected) {
+            showToast('Please select a preference priority.', 'warning');
+            return false;
+        }
+        if (activeApplications.length >= 3 && !occupiedPriorities.has(selected)) {
+            showToast('You already have 3 active applications. Withdraw one before submitting a new preference.', 'warning');
+            return false;
+        }
+        if (occupiedPriorities.has(selected)) {
+            showToast('This priority is already used by another active application.', 'warning');
+            return false;
+        }
+        return true;
+    }
+
+    function openResumeDb() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(RESUME_DB_NAME, 1);
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(RESUME_STORE_NAME)) {
+                    db.createObjectStore(RESUME_STORE_NAME, { keyPath: 'id' });
+                }
+            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error || new Error('Failed to open resume storage'));
+        });
+    }
+
+    async function saveResumeToIndexedDb(file) {
+        if (!file) return;
+        const db = await openResumeDb();
+        const record = { id: getResumeKey(), file, updatedAt: Date.now() };
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(RESUME_STORE_NAME).put(record);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to save resume draft'));
+        });
+        db.close();
+    }
+
+    async function getResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        const result = await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readonly');
+            const req = tx.objectStore(RESUME_STORE_NAME).get(getResumeKey());
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error || new Error('Failed to read resume draft'));
+        });
+        db.close();
+        return result;
+    }
+
+    async function getProfileResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        const result = await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readonly');
+            const req = tx.objectStore(RESUME_STORE_NAME).get(PROFILE_RESUME_KEY);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error || new Error('Failed to read cached profile resume'));
+        });
+        db.close();
+        return result;
+    }
+
+    async function clearResumeFromIndexedDb() {
+        const db = await openResumeDb();
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(RESUME_STORE_NAME, 'readwrite');
+            tx.objectStore(RESUME_STORE_NAME).delete(getResumeKey());
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('Failed to clear resume draft'));
+        });
+        db.close();
+    }
+
+    function applyResumeFile(file, options = {}) {
+        if (!file) return;
+        resumeFile = file;
+        serverDraftResumeFileName = options.preserveServerFileName ? serverDraftResumeFileName : '';
+        resumeFileNameEl.innerText = file.name;
+        resumeMeta.innerText = `${file.name} · ${formatBytes(file.size)}`;
+        previewBtn.disabled = false;
+    }
+
+    function openPdfPreviewWindow(title) {
+        const w = window.open('about:blank', '_blank');
+        if (!w) {
+            showToast('Popup was blocked. Please allow popups for preview.', 'warning');
+            return null;
+        }
+        const safeTitle = String(title || 'PDF Preview').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        w.document.open();
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>${safeTitle}</title><style>html,body{height:100%;margin:0;font-family:Arial,sans-serif;} .wrap{height:100%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px;} iframe{width:100%;height:100%;border:0;}</style></head><body><div class="wrap">Loading preview...</div></body></html>`);
+        w.document.close();
+        return w;
+    }
+
+    function renderPdfInWindow(w, blobUrl, title) {
+        if (!w) return;
+        try {
+            w.location.href = blobUrl;
+        } catch (_) {
+            try {
+                w.location.href = blobUrl;
+            } catch (_) {}
+        }
+    }
+
+    async function persistDraft(options = {}) {
+        const payload = getDraftPayload();
+        const hasDraftContent = hasLocalDraftContent(payload);
+        const onlyProfileDefaults = isDraftUsingProfileDefaults(payload)
+            && !(payload.coverLetter || '').trim()
+            && !String(payload.priority || '').trim();
+        if ((!hasDraftContent || onlyProfileDefaults) && !resumeFile && !serverDraftResumeFileName) {
+            if (options.showToastMessage) {
+                showToast('There is no draft content to save yet.', 'warning');
+            }
+            setDraftStatus('Nothing to save yet.');
+            return;
+        }
+
+        saveDraftToLocal({ source: options.source });
+        if (resumeFile) {
+            await saveResumeToIndexedDb(resumeFile);
+        }
+
+        let serverSaveFailed = false;
+        try {
+            await saveDraftToServer({ source: options.source });
+        } catch (err) {
+            serverSaveFailed = true;
+            setDraftStatus('Saved locally, but server sync failed.');
+            if (options.showToastMessage) {
+                showToast(err.message || 'Draft saved locally, but server sync failed.', 'warning');
+            }
+        }
+
+        if (!serverSaveFailed && options.showToastMessage) {
+            showToast(resumeFile ? 'Draft and resume saved to server.' : 'Draft saved to server.', 'success');
+        }
+    }
+
+    function scheduleAutoSave() {
+        cancelAutoSave();
+        setDraftStatus('Autosave scheduled in 5 seconds...');
+        autoSaveTimer = setTimeout(() => {
+            persistDraft({ source: 'auto' }).catch(() => {
+                setDraftStatus('Draft autosave failed.');
+            });
+        }, AUTO_SAVE_DELAY_MS);
+    }
 
     function formatBytes(bytes) {
         const units = ['B', 'KB', 'MB', 'GB'];
@@ -189,7 +743,52 @@
 
     chooseFileBtn.addEventListener('click', () => resumeFileInput.click());
 
-    resumeFileInput.addEventListener('change', () => {
+    [confirmStudentIdInput, confirmFullNameInput, confirmPhoneInput, confirmSchoolSelect].forEach((el) => {
+        el.addEventListener('input', () => {
+            markDirty();
+            scheduleAutoSave();
+        });
+        el.addEventListener('change', () => {
+            markDirty();
+            scheduleAutoSave();
+        });
+    });
+
+    document.querySelectorAll('input[name="confirmGender"], input[name="confirmYear"]').forEach((el) => {
+        el.addEventListener('change', () => {
+            markDirty();
+            scheduleAutoSave();
+        });
+    });
+
+    coverLetterInput.addEventListener('input', () => {
+        markDirty();
+        scheduleAutoSave();
+    });
+
+    prioritySelect.addEventListener('change', () => {
+        markDirty();
+        updatePriorityUi();
+        scheduleAutoSave();
+    });
+
+    saveDraftBtn.addEventListener('click', async () => {
+        cancelAutoSave();
+        saveDraftBtn.disabled = true;
+        const original = saveDraftBtn.innerHTML;
+        saveDraftBtn.innerHTML = '<span class="iconify animate-spin" data-icon="mdi:loading"></span> Saving...';
+        try {
+            await persistDraft({ showToastMessage: true, source: 'manual' });
+        } catch (err) {
+            showToast(err.message || 'Failed to save draft', 'error');
+            setDraftStatus('Manual save failed.');
+        } finally {
+            saveDraftBtn.disabled = false;
+            saveDraftBtn.innerHTML = original;
+        }
+    });
+
+    resumeFileInput.addEventListener('change', async () => {
         showResumeError('');
         const file = resumeFileInput.files && resumeFileInput.files[0];
         if (!file) { resumeFile = null; resumeFileNameEl.innerText = 'No file chosen'; resumeMeta.innerText = 'No file selected'; previewBtn.disabled = true; return; }
@@ -199,18 +798,60 @@
         if (file.size > 20 * 1024 * 1024) {
             showResumeError('File is too large. Maximum size is 20MB.'); resumeFileInput.value = ''; return;
         }
-        resumeFile = file;
-        resumeFileNameEl.innerText = file.name;
-        resumeMeta.innerText = `${file.name} · ${formatBytes(file.size)}`;
-        previewBtn.disabled = false;
+        applyResumeFile(file);
+        markDirty();
+        scheduleAutoSave();
     });
 
     previewBtn.addEventListener('click', () => {
-        if (!resumeFile) { showResumeError('Please upload a PDF file first.'); return; }
-        if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
-        resumeObjectUrl = URL.createObjectURL(resumeFile);
-        resumePreview.src = resumeObjectUrl;
+        if (!resumeFile && !serverDraftResumeFileName) { showResumeError('Please upload a PDF file first.'); return; }
+        if (!resumeFile && serverDraftResumeFileName) {
+            (async () => {
+                const w = openPdfPreviewWindow('Resume Preview');
+                if (!w) return;
+                try {
+                    const token = API.getToken();
+                    const res = await fetch('/api/upload/' + encodeURIComponent(serverDraftResumeFileName), {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (!res.ok) throw new Error('Failed to open saved draft resume');
+                    const blob = await res.blob();
+                    if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
+                    resumeObjectUrl = URL.createObjectURL(blob);
+                    renderPdfInWindow(w, resumeObjectUrl, 'Resume Preview');
+                } catch (err) {
+                    showToast(err.message || 'Failed to preview saved resume', 'error');
+                    try { w.close(); } catch (_) {}
+                }
+            })();
+            return;
+        }
+        const w = openPdfPreviewWindow('Resume Preview');
+        if (!w) return;
+        try {
+            if (resumeObjectUrl) URL.revokeObjectURL(resumeObjectUrl);
+            resumeObjectUrl = URL.createObjectURL(resumeFile);
+            renderPdfInWindow(w, resumeObjectUrl, 'Resume Preview');
+        } catch (err) {
+            showToast(err.message || 'Failed to preview resume', 'error');
+            try { w.close(); } catch (_) {}
+        }
     });
+
+    function buildApplicationCoverLetter() {
+        return [
+            '[Basic Information]',
+            `Full Name: ${confirmFullNameInput.value.trim()}`,
+            `Student ID: ${confirmStudentIdInput.value.trim()}`,
+            `Phone: ${confirmPhoneInput.value.trim()}`,
+            `Gender: ${getRadioValue('confirmGender')}`,
+            `School: ${confirmSchoolSelect.value}`,
+            `Year of Study: ${getRadioValue('confirmYear')}`,
+            '',
+            '[Cover Letter / Motivation]',
+            coverLetterInput.value.trim()
+        ].join('\n');
+    }
 
     (async function init() {
         const user = requireAuth(['TA']);
@@ -232,13 +873,61 @@
             const me = await API.get('/api/auth/me');
             document.getElementById('infoApplicant').textContent = me.fullName || me.username || '--';
             document.getElementById('infoStudentId').textContent = me.studentId || '--';
+            applyProfileDefaults(me);
+        } catch (_) {}
+
+        try {
+            await loadExistingApplications();
+        } catch (err) {
+            priorityHint.textContent = 'Failed to load existing preferences. Priority validation will be limited.';
+            priorityHint.className = 'text-[11px] text-red-500';
+        }
+
+        let restored = false;
+        try {
+            const serverDraft = await loadServerDraft();
+            if (serverDraft) {
+                const localDraft = parseLocalDraft();
+                if (!localDraft || (serverDraft.updatedAt || 0) >= (localDraft.updatedAt || 0)) {
+                    restored = applyDraftToForm(serverDraft, { label: 'Recovered server draft' });
+                }
+            }
+        } catch (_) {}
+
+        if (!restored) {
+            restoreDraftFromLocal();
+        }
+        applyProfileDefaults(profileDefaults);
+        updatePriorityUi();
+        try {
+            const savedResume = await getResumeFromIndexedDb();
+            if (savedResume && savedResume.file) {
+                applyResumeFile(savedResume.file, { preserveServerFileName: true });
+                setDraftStatus('Recovered saved draft and resume at ' + formatDateTime(savedResume.updatedAt || Date.now()));
+            } else {
+                const profileResume = await getProfileResumeFromIndexedDb();
+                if (profileResume && profileResume.file) {
+                    applyResumeFile(profileResume.file, { preserveServerFileName: true });
+                    if (!restored) {
+                        setDraftStatus('Loaded resume from your profile cache.');
+                    }
+                }
+            }
         } catch (_) {}
     })();
+
+    window.addEventListener('beforeunload', (event) => {
+        if (!hasUnsavedChanges) return;
+        event.preventDefault();
+        event.returnValue = '';
+    });
 
     document.getElementById('applicationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const coverLetter = document.getElementById('coverLetter').value.trim();
         if (!coverLetter) { showToast('Please write a cover letter / motivation.', 'warning'); return; }
+        if (!confirmFullNameInput.value.trim() || !confirmStudentIdInput.value.trim()) { showToast('Please confirm your personal information before submitting.', 'warning'); return; }
+        if (!validatePrioritySelection()) return;
 
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
@@ -249,13 +938,21 @@
             if (resumeFile) {
                 const uploadRes = await API.uploadFile(resumeFile);
                 cvFileName = uploadRes.fileName;
+            } else if (serverDraftResumeFileName) {
+                cvFileName = serverDraftResumeFileName;
             }
 
             await API.post('/api/jobs/' + jobId + '/apply', {
-                coverLetter,
+                coverLetter: buildApplicationCoverLetter(),
                 cvFileName,
-                priority: 1
+                priority: Number(prioritySelect.value)
             });
+
+            clearDraftFromLocal();
+            try {
+                await clearServerDraft();
+                await clearResumeFromIndexedDb();
+            } catch (_) {}
 
             showToast('Application submitted successfully!', 'success');
             setTimeout(() => { window.location.href = 'my-ta-applications.html'; }, 800);
