@@ -8,6 +8,8 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
@@ -25,6 +27,7 @@
 <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
 <span class="iconify w-6 h-6" data-icon="material-symbols:school"></span>
 </div>
+<span class="text-xl font-bold tracking-tight text-blue-900">Admin</span>
 <span class="text-xl font-bold tracking-tight text-blue-900">Admin</span>
 </div>
 <nav class="mt-4 flex-1">
@@ -119,9 +122,13 @@
 <div class="flex items-center gap-3">
 <div class="flex items-center bg-white border border-gray-200 rounded-xl px-3 py-2 gap-2 shadow-sm">
 <span class="iconify text-gray-400" data-icon="solar:calendar-date-bold"></span>
-<input id="statsStartDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="date"/>
+<input id="statsStartDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="text" placeholder="YYYY-MM-DD"/>
 <span class="text-gray-300">~</span>
-<input id="statsEndDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="date"/>
+<input id="statsEndDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="text" placeholder="YYYY-MM-DD"/>
+</div>
+<div class="hidden md:flex items-center gap-1">
+<button type="button" id="btnRange7d" class="px-2.5 py-2 rounded-xl border border-gray-200 bg-white text-xs text-gray-700 hover:bg-gray-50">Last 7d</button>
+<button type="button" id="btnRange30d" class="px-2.5 py-2 rounded-xl border border-gray-200 bg-white text-xs text-gray-700 hover:bg-gray-50">Last 30d</button>
 </div>
 <button type="button" id="btnApplyDateRange" class="px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50">Apply</button>
 <button type="button" id="btnExportCoreData" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-200 transition-all font-medium" title="Export users, jobs, and applications">
@@ -332,6 +339,8 @@ const exportTaskPageSize = 8;
 let exportTaskTotal = 0;
 let activeStartDate = '';
 let activeEndDate = '';
+let startDatePicker = null;
+let endDatePicker = null;
 
 (async function() {
     const user = requireAuth(['ADMIN']);
@@ -344,10 +353,13 @@ let activeEndDate = '';
     await refreshBasicStatsBellDot();
     const startEl = document.getElementById('statsStartDate');
     const endEl = document.getElementById('statsEndDate');
+    initDatePickersInEnglish(startEl, endEl);
     const now = new Date();
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     if (startEl) startEl.value = toDateInputValue(monthAgo);
     if (endEl) endEl.value = toDateInputValue(now);
+    if (startDatePicker) startDatePicker.setDate(startEl.value, true, 'Y-m-d');
+    if (endDatePicker) endDatePicker.setDate(endEl.value, true, 'Y-m-d');
     activeStartDate = startEl ? startEl.value : '';
     activeEndDate = endEl ? endEl.value : '';
 
@@ -370,6 +382,18 @@ let activeEndDate = '';
         }
         activeStartDate = s;
         activeEndDate = e;
+        exportTaskPage = 1;
+        await loadStats();
+        await loadExportTasks();
+    });
+    document.getElementById('btnRange7d')?.addEventListener('click', async function() {
+        applyQuickDateRange(7);
+        exportTaskPage = 1;
+        await loadStats();
+        await loadExportTasks();
+    });
+    document.getElementById('btnRange30d')?.addEventListener('click', async function() {
+        applyQuickDateRange(30);
         exportTaskPage = 1;
         await loadStats();
         await loadExportTasks();
@@ -399,6 +423,47 @@ let activeEndDate = '';
     });
     await loadExportTasks();
 })();
+
+function initDatePickersInEnglish(startEl, endEl) {
+    if (typeof flatpickr !== 'function') return;
+    const cfg = {
+        dateFormat: 'Y-m-d',
+        allowInput: true,
+        monthSelectorType: 'dropdown',
+        locale: {
+            firstDayOfWeek: 1,
+            weekdays: {
+                shorthand: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                longhand: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+            },
+            months: {
+                shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                longhand: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            },
+            rangeSeparator: ' to ',
+            weekAbbreviation: 'Wk',
+            scrollTitle: 'Scroll to increment',
+            toggleTitle: 'Click to toggle'
+        }
+    };
+    if (startEl) startDatePicker = flatpickr(startEl, cfg);
+    if (endEl) endDatePicker = flatpickr(endEl, cfg);
+}
+
+function applyQuickDateRange(days) {
+    const end = new Date();
+    const start = new Date(end.getTime() - days * 24 * 60 * 60 * 1000);
+    const s = toDateInputValue(start);
+    const e = toDateInputValue(end);
+    const startEl = document.getElementById('statsStartDate');
+    const endEl = document.getElementById('statsEndDate');
+    if (startEl) startEl.value = s;
+    if (endEl) endEl.value = e;
+    if (startDatePicker) startDatePicker.setDate(s, true, 'Y-m-d');
+    if (endDatePicker) endDatePicker.setDate(e, true, 'Y-m-d');
+    activeStartDate = s;
+    activeEndDate = e;
+}
 
 function updateBasicStatsSyncTime() {
     const syncEl = document.getElementById('basicStatsSyncDate');
