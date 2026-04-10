@@ -1,25 +1,5 @@
 [
   {
-    "id": "68526cab",
-    "postedBy": "f22fb459",
-    "title": "Data Structures",
-    "type": "COURSE",
-    "courseName": "EBU4201 Data Structures",
-    "description": "To help me manage the class",
-    "requirements": [
-      "java",
-      "c",
-      "python"
-    ],
-    "quota": 4,
-    "schedule": "Mon/Wed 14:00-16:00",
-    "deadline": "2026-04-30",
-    "salary": "150",
-    "weeklyHours": 25.0,
-    "status": "OPEN",
-    "createdAt": 1775830931532
-  },
-  {
     "id": "77868a3e",
     "postedBy": "f22fb459",
     "title": "Advanced mathematics",
@@ -54,5 +34,25 @@
     "weeklyHours": 4.0,
     "status": "OPEN",
     "createdAt": 1775831232396
+  },
+  {
+    "id": "68526cab",
+    "postedBy": "f22fb459",
+    "title": "Data Structure",
+    "type": "COURSE",
+    "courseName": "EBU4201 Data Structures",
+    "description": "To help me manage the class",
+    "requirements": [
+      "java",
+      "c",
+      "python"
+    ],
+    "quota": 4,
+    "schedule": "Mon/Wed 14:00-16:00",
+    "deadline": "2026-04-30",
+    "salary": "150",
+    "weeklyHours": 25.0,
+    "status": "OPEN",
+    "createdAt": 1775830931532
   }
 ]

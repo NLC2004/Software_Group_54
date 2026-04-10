@@ -617,7 +617,7 @@ body {
     background: white;
     border-radius: var(--radius);
     width: 100%;
-    max-width: 520px;
+    max-width: 760px;
     max-height: 85vh;
     overflow-y: auto;
     box-shadow: var(--shadow-lg);

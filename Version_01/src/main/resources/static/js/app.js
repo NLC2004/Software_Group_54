@@ -522,9 +522,78 @@ function moJobCard(j) {
         </div>
         <div class="job-card-footer">
             <button class="btn btn-sm btn-primary" onclick="navigate('mo-applicants','${j.id}')">Review Applicants</button>
+            <button class="btn btn-sm" onclick="openEditJobModal('${j.id}')">Edit</button>
             <button class="btn btn-sm btn-outline" onclick="deleteJob('${j.id}')">Delete</button>
         </div>
     </div>`;
+}
+
+async function openEditJobModal(jobId) {
+    try {
+        const j = await API.get('/api/jobs/' + jobId);
+        openModal('Edit Position', `
+            <form id="editJobForm">
+                <div class="form-row">
+                    <div class="form-group"><label>Job Title *</label><input name="title" required value="${esc(j.title || '')}" placeholder="e.g. Teaching Assistant - Data Structures"></div>
+                    <div class="form-group"><label>Type *</label><select name="type"><option value="COURSE" ${j.type === 'COURSE' ? 'selected' : ''}>Course TA</option><option value="ACTIVITY" ${j.type === 'ACTIVITY' ? 'selected' : ''}>Activity (Invigilation etc.)</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Course / Activity Name</label><input name="courseName" value="${esc(j.courseName || '')}" placeholder="e.g. EBU4201 Data Structures"></div>
+                    <div class="form-group"><label>Quota *</label><input name="quota" type="number" min="1" required value="${j.quota ?? 1}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Weekly Hours</label><input name="weeklyHours" type="number" step="0.5" min="0" value="${j.weeklyHours ?? 0}" placeholder="Hours per week"></div>
+                    <div class="form-group"><label>Schedule / Dates</label><input name="schedule" value="${esc(j.schedule || '')}" placeholder="e.g. Mon/Wed 14:00-16:00"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Deadline</label><input name="deadline" type="date" value="${esc(j.deadline || '')}"></div>
+                    <div class="form-group"><label>Salary</label><input name="salary" value="${esc(j.salary || '')}" placeholder="e.g. 150 RMB/hour"></div>
+                </div>
+                <div class="form-group"><label>Description</label><textarea name="description" rows="3" placeholder="Describe the responsibilities...">${esc(j.description || '')}</textarea></div>
+                <div class="form-group"><label>Required Skills (comma-separated)</label><input name="requirements" value="${esc((j.requirements || []).join(', '))}" placeholder="e.g. Java, Python, Data Structures"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Status</label>
+                        <select name="status">
+                            <option value="OPEN" ${j.status === 'OPEN' ? 'selected' : ''}>OPEN</option>
+                            <option value="CLOSED" ${j.status === 'CLOSED' ? 'selected' : ''}>CLOSED</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display:flex; align-items:flex-end; justify-content:flex-end; gap:8px;">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        `);
+
+        document.getElementById('editJobForm').onsubmit = async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const requirements = (fd.get('requirements') || '').split(',').map(s => s.trim()).filter(Boolean);
+            try {
+                await API.put('/api/jobs/' + jobId, {
+                    title: fd.get('title'),
+                    type: fd.get('type'),
+                    courseName: fd.get('courseName'),
+                    quota: parseInt(fd.get('quota')),
+                    weeklyHours: parseFloat(fd.get('weeklyHours')) || 0,
+                    schedule: fd.get('schedule'),
+                    deadline: fd.get('deadline'),
+                    salary: fd.get('salary'),
+                    description: fd.get('description'),
+                    requirements,
+                    status: fd.get('status')
+                });
+                closeModal();
+                toast('Job updated successfully', 'success');
+                navigate('mo-postings');
+            } catch(err) {
+                toast(err.message, 'error');
+            }
+        };
+    } catch (e) {
+        toast(e.message, 'error');
+    }
 }
 
 async function deleteJob(id) {

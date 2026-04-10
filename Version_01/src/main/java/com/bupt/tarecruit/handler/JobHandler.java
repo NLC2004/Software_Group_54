@@ -103,6 +103,7 @@ public class JobHandler extends BaseHandler {
         }
         JsonObject body = parseJson(readBody(ex));
         if (body.has("title")) job.title = body.get("title").getAsString();
+        if (body.has("type")) job.type = body.get("type").getAsString();
         if (body.has("description")) job.description = body.get("description").getAsString();
         if (body.has("status")) job.status = body.get("status").getAsString();
         if (body.has("quota")) job.quota = body.get("quota").getAsInt();
