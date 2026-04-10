@@ -54,18 +54,7 @@ public class JobHandler extends BaseHandler {
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (Job j : jobs) {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("id", j.id); m.put("title", j.title); m.put("type", j.type);
-            m.put("courseName", j.courseName); m.put("description", j.description);
-            m.put("requirements", j.requirements); m.put("quota", j.quota);
-            m.put("schedule", j.schedule); m.put("weeklyHours", j.weeklyHours);
-            m.put("status", j.status); m.put("createdAt", j.createdAt);
-            m.put("postedBy", j.postedBy);
-            User poster = ds.getUserById(j.postedBy);
-            m.put("posterName", poster != null ? poster.fullName : "Unknown");
-            m.put("applicationCount", ds.getApplicationsByJob(j.id).size());
-            long approved = ds.getApplicationsByJob(j.id).stream().filter(a -> "APPROVED".equals(a.status)).count();
-            m.put("approvedCount", approved);
+            Map<String, Object> m = toJobView(j);
             result.add(m);
         }
         sendJson(ex, 200, result);
@@ -74,7 +63,7 @@ public class JobHandler extends BaseHandler {
     private void getJob(HttpExchange ex, String jobId) throws IOException {
         Job job = ds.getJobById(jobId);
         if (job == null) { sendError(ex, 404, "Job not found"); return; }
-        sendJson(ex, 200, job);
+        sendJson(ex, 200, toJobView(job));
     }
 
     private void createJob(HttpExchange ex) throws IOException {
@@ -92,6 +81,8 @@ public class JobHandler extends BaseHandler {
         job.description = body.has("description") ? body.get("description").getAsString() : "";
         job.quota = body.has("quota") ? body.get("quota").getAsInt() : 1;
         job.schedule = body.has("schedule") ? body.get("schedule").getAsString() : "";
+        job.deadline = body.has("deadline") ? body.get("deadline").getAsString() : "";
+        job.salary = body.has("salary") ? body.get("salary").getAsString() : "";
         job.weeklyHours = body.has("weeklyHours") ? body.get("weeklyHours").getAsDouble() : 0;
         if (body.has("requirements")) {
             JsonArray arr = body.getAsJsonArray("requirements");
@@ -99,7 +90,7 @@ public class JobHandler extends BaseHandler {
             for (int i = 0; i < arr.size(); i++) job.requirements.add(arr.get(i).getAsString());
         }
         Job saved = ds.addJob(job);
-        sendJson(ex, 201, saved);
+        sendJson(ex, 201, toJobView(saved));
     }
 
     private void updateJob(HttpExchange ex, String jobId) throws IOException {
@@ -118,13 +109,15 @@ public class JobHandler extends BaseHandler {
         if (body.has("weeklyHours")) job.weeklyHours = body.get("weeklyHours").getAsDouble();
         if (body.has("schedule")) job.schedule = body.get("schedule").getAsString();
         if (body.has("courseName")) job.courseName = body.get("courseName").getAsString();
+        if (body.has("deadline")) job.deadline = body.get("deadline").getAsString();
+        if (body.has("salary")) job.salary = body.get("salary").getAsString();
         if (body.has("requirements")) {
             JsonArray arr = body.getAsJsonArray("requirements");
             job.requirements = new ArrayList<>();
             for (int i = 0; i < arr.size(); i++) job.requirements.add(arr.get(i).getAsString());
         }
         ds.updateJob(job);
-        sendJson(ex, 200, job);
+        sendJson(ex, 200, toJobView(job));
     }
 
     private void deleteJob(HttpExchange ex, String jobId) throws IOException {
@@ -161,6 +154,37 @@ public class JobHandler extends BaseHandler {
         app.cvFileName = body.has("cvFileName") ? body.get("cvFileName").getAsString() : "";
         app.priority = body.has("priority") ? body.get("priority").getAsInt() : 0;
         app = ds.addApplication(app);
-        sendJson(ex, 201, app);
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("id", app.id);
+        result.put("jobId", app.jobId);
+        result.put("status", app.status);
+        result.put("prefillProfile", Map.of(
+                "studentId", user.studentId == null ? "" : user.studentId,
+                "fullName", user.fullName == null ? "" : user.fullName,
+                "email", user.email == null ? "" : user.email,
+                "phone", user.phone == null ? "" : user.phone,
+                "gender", user.gender == null ? "" : user.gender
+        ));
+        sendJson(ex, 201, result);
+    }
+
+    private Map<String, Object> toJobView(Job j) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("id", j.id); m.put("title", j.title); m.put("type", j.type);
+        m.put("courseName", j.courseName); m.put("description", j.description);
+        m.put("requirements", j.requirements); m.put("quota", j.quota);
+        m.put("schedule", j.schedule); m.put("deadline", j.deadline);
+        m.put("salary", j.salary); m.put("weeklyHours", j.weeklyHours);
+        m.put("status", j.status); m.put("createdAt", j.createdAt);
+        m.put("postedBy", j.postedBy);
+        User poster = ds.getUserById(j.postedBy);
+        m.put("posterName", poster != null ? poster.fullName : "Unknown");
+        m.put("applicationCount", ds.getApplicationsByJob(j.id).size());
+        long approved = ds.getApplicationsByJob(j.id).stream().filter(a -> "APPROVED".equals(a.status)).count();
+        m.put("approvedCount", approved);
+        m.put("tasNeeded", j.quota);
+        m.put("currentApplicants", ds.getApplicationsByJob(j.id).stream().filter(a -> !"WITHDRAWN".equals(a.status)).count());
+        return m;
     }
 }

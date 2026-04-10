@@ -16,6 +16,8 @@ javac -encoding UTF-8 -cp "lib\gson-2.10.1.jar" -d out ^
     src\main\java\com\bupt\tarecruit\model\User.java ^
     src\main\java\com\bupt\tarecruit\model\Job.java ^
     src\main\java\com\bupt\tarecruit\model\Application.java ^
+    src\main\java\com\bupt\tarecruit\model\PasswordResetRequest.java ^
+    src\main\java\com\bupt\tarecruit\model\AdminAuditLog.java ^
     src\main\java\com\bupt\tarecruit\service\DataService.java ^
     src\main\java\com\bupt\tarecruit\handler\BaseHandler.java ^
     src\main\java\com\bupt\tarecruit\handler\StaticHandler.java ^
@@ -29,7 +31,6 @@ javac -encoding UTF-8 -cp "lib\gson-2.10.1.jar" -d out ^
 if %ERRORLEVEL% neq 0 (
     echo.
     echo BUILD FAILED
-    pause
     exit /b 1
 )
 

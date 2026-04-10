@@ -11,6 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,6 +145,7 @@ public class AdminHandler extends BaseHandler {
             ds.addAuditLog(admin.id, admin.username, "USER_CREATE", "Created user: " + created.username + " (" + created.role + ")");
             sendJson(ex, 201, Map.of("id", created.id, "message", "User created"));
         } else if (parts.length == 5 && "PUT".equals(method)) {
+            if (!ensureSuperAdminForWrite(ex, admin, "update user permissions")) return;
             String userId = parts[4];
             User target = ds.getUserById(userId);
             if (target == null) { sendError(ex, 404, "User not found"); return; }
