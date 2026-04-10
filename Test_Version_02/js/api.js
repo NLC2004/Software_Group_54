@@ -28,9 +28,13 @@ const API = {
         try {
             const res = await fetch(path, { ...options, headers });
             if (res.status === 401) {
-                this.clearAuth();
-                redirectToLogin();
-                return null;
+                const normalizedPath = typeof path === 'string' ? path.split('?')[0] : '';
+                const isLoginRequest = normalizedPath.endsWith('/api/auth/login');
+                if (!isLoginRequest) {
+                    this.clearAuth();
+                    redirectToLogin();
+                    return null;
+                }
             }
             if (res.headers.get('Content-Type')?.includes('text/csv')) {
                 return { blob: await res.blob(), ok: res.ok };
@@ -69,11 +73,16 @@ const API = {
 
 function redirectToLogin() {
     const path = window.location.pathname;
-    if (path.startsWith('/MO/') || path.startsWith('/admin/')) {
+    if (path.startsWith('/admin/')) {
+        // Admin shares the MO login entry.
         window.location.href = '/MO/index.html';
-    } else {
-        window.location.href = '/TA/index.html';
+        return;
     }
+    if (path.startsWith('/MO/')) {
+        window.location.href = '/MO/index.html';
+        return;
+    }
+    window.location.href = '/TA/index.html';
 }
 
 function requireAuth(allowedRoles) {
