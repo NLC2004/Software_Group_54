@@ -40,6 +40,7 @@
                 <input type="password" id="l_pass" name="password" placeholder="Enter your password" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            <button type="button" id="forgotPwdBtn" class="btn btn-outline btn-block" style="margin-top:10px">Forgot Password</button>
         </form>
 
         <form id="registerForm" style="display:none">
@@ -48,12 +49,29 @@
                 <input type="text" name="username" placeholder="Choose a username" required>
             </div>
             <div class="form-group">
+                <label>Student ID / ID</label>
+                <input type="text" name="studentId" placeholder="Your student ID / identity number">
+            </div>
+            <div class="form-group">
                 <label>Full Name</label>
                 <input type="text" name="fullName" placeholder="Your full name">
             </div>
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" name="email" placeholder="your.email@bupt.edu.cn">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone" placeholder="Phone number">
+            </div>
+            <div class="form-group">
+                <label>Gender</label>
+                <select name="gender" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Password</label>
@@ -71,7 +89,16 @@
     </div>
 
 <script>
-if (localStorage.getItem('token')) { window.location.href = '/dashboard.html'; }
+function roleHomePage(role) {
+    if (role === 'MO') return '/mo.html';
+    if (role === 'ADMIN') return '/admin.html';
+    return '/ta.html';
+}
+
+const savedUser = JSON.parse(localStorage.getItem('user') || 'null');
+if (localStorage.getItem('token') && savedUser && savedUser.role) {
+    window.location.href = roleHomePage(savedUser.role);
+}
 
 const tabs = document.querySelectorAll('.login-tab');
 const loginForm = document.getElementById('loginForm');
@@ -104,7 +131,7 @@ loginForm.addEventListener('submit', async e => {
         if (!r.ok) { showErr(d.error); return; }
         localStorage.setItem('token', d.token);
         localStorage.setItem('user', JSON.stringify(d.user));
-        window.location.href = '/dashboard.html';
+        window.location.href = roleHomePage(d.user.role);
     } catch(e) { showErr('Connection failed. Is the server running?'); }
 });
 
@@ -116,15 +143,38 @@ registerForm.addEventListener('submit', async e => {
             method: 'POST', headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
                 username: fd.get('username'), password: fd.get('password'),
-                fullName: fd.get('fullName'), email: fd.get('email'), role: fd.get('role')
+                studentId: fd.get('studentId'), fullName: fd.get('fullName'), email: fd.get('email'),
+                phone: fd.get('phone'), gender: fd.get('gender'), role: fd.get('role')
             })
         });
         const d = await r.json();
         if (!r.ok) { showErr(d.error); return; }
         localStorage.setItem('token', d.token);
         localStorage.setItem('user', JSON.stringify(d.user));
-        window.location.href = '/dashboard.html';
+        window.location.href = roleHomePage(d.user.role);
     } catch(e) { showErr('Connection failed. Is the server running?'); }
+});
+
+document.getElementById('forgotPwdBtn').addEventListener('click', async () => {
+    const username = prompt('Enter your username for reset request:');
+    if (!username) return;
+    const fullName = prompt('Enter your full name for verification (optional):') || '';
+    const email = prompt('Enter your email for verification (optional):') || '';
+    const phone = prompt('Enter your phone for verification (optional):') || '';
+    const reason = prompt('Reason:') || 'Forgot password';
+
+    try {
+        const r = await fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ username, fullName, email, phone, reason })
+        });
+        const d = await r.json();
+        if (!r.ok) { showErr(d.error || 'Submit failed'); return; }
+        alert('Reset request submitted.\nAdmin Phone: ' + d.adminContact.phone + '\nAdmin Email: ' + d.adminContact.email + '\nAfter approval password will be reset to 123456.');
+    } catch (e) {
+        showErr('Connection failed. Is the server running?');
+    }
 });
 </script>
 </body>

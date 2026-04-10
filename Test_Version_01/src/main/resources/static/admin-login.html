@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - BUPT TA Recruitment</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="login-page">
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Admin Portal Login</h1>
+            <p>System Administrator Sign In</p>
+        </div>
+
+        <div id="loginError" class="alert alert-error" style="display:none"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="l_user">Username</label>
+                <input type="text" id="l_user" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="l_pass">Password</label>
+                <input type="password" id="l_pass" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign In (Admin)</button>
+            <a href="/login.html" class="btn btn-outline btn-block" style="margin-top:10px; text-align:center; text-decoration:none;">Back to Unified Login</a>
+        </form>
+    </div>
+
+<script>
+function showErr(msg) {
+    const errorEl = document.getElementById('loginError');
+    errorEl.textContent = msg;
+    errorEl.style.display = 'block';
+    setTimeout(() => errorEl.style.display = 'none', 4000);
+}
+
+if (localStorage.getItem('token')) {
+    const u = JSON.parse(localStorage.getItem('user') || 'null');
+    if (u && u.role === 'ADMIN') window.location.href = '/admin.html';
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+        const r = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({username: fd.get('username'), password: fd.get('password')})
+        });
+        const d = await r.json();
+        if (!r.ok) { showErr(d.error || 'Login failed'); return; }
+        if (d.user.role !== 'ADMIN') { showErr('This is Admin login. Please use your role login page.'); return; }
+        localStorage.setItem('token', d.token);
+        localStorage.setItem('user', JSON.stringify(d.user));
+        window.location.href = '/admin.html';
+    } catch (err) {
+        showErr('Connection failed. Is the server running?');
+    }
+});
+</script>
+</body>
+</html>

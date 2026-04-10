@@ -1,5 +1,6 @@
 package com.bupt.tarecruit.handler;
 
+import com.bupt.tarecruit.model.PasswordResetRequest;
 import com.bupt.tarecruit.model.User;
 import com.bupt.tarecruit.service.DataService;
 import com.google.gson.JsonObject;
@@ -25,6 +26,7 @@ public class AuthHandler extends BaseHandler {
             else if (path.endsWith("/me") && "GET".equals(method)) me(ex);
             else if (path.endsWith("/profile") && "PUT".equals(method)) updateProfile(ex);
             else if (path.endsWith("/password") && "PUT".equals(method)) changePassword(ex);
+            else if (path.endsWith("/forgot-password") && "POST".equals(method)) submitForgotPassword(ex);
             else sendError(ex, 404, "Not found");
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,8 +66,11 @@ public class AuthHandler extends BaseHandler {
         user.username = username;
         user.password = body.get("password").getAsString();
         user.role = body.has("role") ? body.get("role").getAsString() : "TA";
+        user.studentId = body.has("studentId") ? body.get("studentId").getAsString() : "";
         user.fullName = body.has("fullName") ? body.get("fullName").getAsString() : "";
         user.email = body.has("email") ? body.get("email").getAsString() : "";
+        user.phone = body.has("phone") ? body.get("phone").getAsString() : "";
+        user.gender = body.has("gender") ? body.get("gender").getAsString() : "";
         user = ds.addUser(user);
 
         String token = ds.createSession(user.id);
@@ -91,6 +96,7 @@ public class AuthHandler extends BaseHandler {
         User user = authenticate(ex);
         if (user == null) { sendError(ex, 401, "Unauthorized"); return; }
         JsonObject body = parseJson(readBody(ex));
+        if (body.has("studentId")) user.studentId = body.get("studentId").getAsString();
         if (body.has("fullName")) user.fullName = body.get("fullName").getAsString();
         if (body.has("email")) user.email = body.get("email").getAsString();
         if (body.has("phone")) user.phone = body.get("phone").getAsString();
@@ -111,9 +117,37 @@ public class AuthHandler extends BaseHandler {
         sendJson(ex, 200, Map.of("message", "Password updated"));
     }
 
+    private void submitForgotPassword(HttpExchange ex) throws IOException {
+        JsonObject body = parseJson(readBody(ex));
+        String username = body.has("username") ? body.get("username").getAsString() : "";
+        if (username.isBlank()) {
+            sendError(ex, 400, "Username is required"); return;
+        }
+        User user = ds.getUserByUsername(username);
+        if (user == null) {
+            sendError(ex, 404, "User not found"); return;
+        }
+        PasswordResetRequest req = new PasswordResetRequest();
+        req.userId = user.id;
+        req.username = user.username;
+        req.role = user.role;
+        req.fullName = body.has("fullName") ? body.get("fullName").getAsString() : user.fullName;
+        req.email = body.has("email") ? body.get("email").getAsString() : user.email;
+        req.phone = body.has("phone") ? body.get("phone").getAsString() : user.phone;
+        req.reason = body.has("reason") ? body.get("reason").getAsString() : "Forgot password";
+        req = ds.addPasswordResetRequest(req);
+
+        sendJson(ex, 201, Map.of(
+                "message", "Reset request submitted. Contact admin for verification.",
+                "requestId", req.id,
+                "adminContact", Map.of("phone", "+86-010-00000000", "email", "admin.ta@bupt.edu.cn")
+        ));
+    }
+
     private Map<String, Object> sanitize(User u) {
         Map<String, Object> m = new HashMap<>();
         m.put("id", u.id); m.put("username", u.username); m.put("role", u.role);
+        m.put("studentId", u.studentId);
         m.put("fullName", u.fullName); m.put("email", u.email);
         m.put("phone", u.phone); m.put("gender", u.gender);
         m.put("active", u.active); m.put("createdAt", u.createdAt);

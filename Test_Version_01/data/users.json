@@ -9,28 +9,6 @@
     "createdAt": 1774074781066
   },
   {
-    "id": "f22fb459",
-    "username": "NLC_MO",
-    "password": "Nlc141203!",
-    "role": "MO",
-    "fullName": "ninglechen",
-    "email": "ninglechen666@bupt.edu.cn",
-    "active": true,
-    "createdAt": 1774075610820
-  },
-  {
-    "id": "f6c5b117",
-    "username": "NLC",
-    "password": "Nlc141203",
-    "role": "TA",
-    "fullName": "ninglechen",
-    "email": "ninglechen666@bupt.edu.cn",
-    "phone": "",
-    "gender": "Male",
-    "active": true,
-    "createdAt": 1774074814330
-  },
-  {
     "id": "8737e7ea",
     "username": "NLC123",
     "password": "Nlc141203",
@@ -39,5 +17,31 @@
     "email": "ninglechen666@163.com",
     "active": true,
     "createdAt": 1774118641128
+  },
+  {
+    "id": "f6c5b117",
+    "username": "NLC",
+    "password": "Nlc141203",
+    "role": "TA",
+    "studentId": "2023213346",
+    "fullName": "ninglechen",
+    "email": "ninglechen666@bupt.edu.cn",
+    "phone": "19991219967",
+    "gender": "Male",
+    "active": true,
+    "createdAt": 1774074814330
+  },
+  {
+    "id": "f22fb459",
+    "username": "NLC_MO",
+    "password": "Nlc141203!",
+    "role": "MO",
+    "studentId": "231225339",
+    "fullName": "ninglechen",
+    "email": "ninglechen666@bupt.edu.cn",
+    "phone": "19991219967",
+    "gender": "Male",
+    "active": true,
+    "createdAt": 1774075610820
   }
 ]
