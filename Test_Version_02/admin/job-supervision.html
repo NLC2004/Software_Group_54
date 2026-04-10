@@ -10,6 +10,8 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
@@ -178,7 +180,7 @@
 <option value="computer">School of Computer Science</option>
 <option value="mathematics">Department of Mathematics</option>
 <option value="physics">School of Physics</option>
-<option value="economic">Economic &amp; Management</option>
+<option value="business">Economic &amp; Management</option>
 </select>
 </div>
 <div>
@@ -447,7 +449,7 @@ function renderJobs(jobs) {
       <td class="py-4 px-6 text-sm text-gray-600">${dl}</td>
       <td class="py-4 px-6"><span class="px-3 py-1 text-[10px] font-bold rounded-full ${sc} border uppercase tracking-tighter">${esc(job.status || '')}</span></td>
       <td class="py-4 px-6 text-right"><div class="flex flex-wrap justify-end gap-2 items-center">
-        <button type="button" onclick="editJob('${jid}')" class="text-sm font-semibold text-amber-700 hover:underline">Edit</button>
+        <button type="button" onclick="editJob('${jid}', '${safeJsStr(job.postedBy || '')}')" class="text-sm font-semibold text-amber-700 hover:underline">Edit</button>
         <button type="button" onclick="deleteJobById('${jid}')" class="text-sm font-semibold text-red-600 hover:underline">Remove</button>
         <button type="button" onclick="toggleJobStatus('${jid}', '${job.status === 'OPEN' ? 'CLOSED' : 'OPEN'}')" class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500" title="${job.status === 'OPEN' ? 'Close posting' : 'Reopen'}">
           <span class="iconify text-lg" data-icon="${job.status === 'OPEN' ? 'lucide:lock' : 'lucide:unlock'}"></span>
@@ -459,8 +461,12 @@ function renderJobs(jobs) {
   updatePagination(filteredJobs.length, jobs.length);
 }
 
-function editJob(jobId) {
-  window.location.href = '../MO/job-edit.html?id=' + encodeURIComponent(jobId);
+function editJob(jobId, postedBy) {
+  const p = new URLSearchParams();
+  p.set('id', jobId);
+  if (postedBy) p.set('postedBy', postedBy);
+  p.set('from', 'admin');
+  window.location.href = '../MO/job-edit.html?' + p.toString();
 }
 
 function wireCheckboxes() {
@@ -528,20 +534,15 @@ function goToPage(p) {
 
 function applyClientFiltersAndRender() {
   const q = (currentSearch || '').trim().toLowerCase();
-  const selectedDepartment = (document.getElementById('filterDepartment')?.value || '').trim().toLowerCase();
+  const selectedDepartment = normalizeDepartmentKey((document.getElementById('filterDepartment')?.value || '').trim().toLowerCase());
   const selectedStatus = document.getElementById('filterJobStatus')?.value || '';
   const selectedPublishDate = normalizeDateInput(document.getElementById('filterPublishDate')?.value || '');
   let list = allJobs.slice();
 
-  // Department filter (client side): infer by course title/name keywords.
+  // Department filter: infer from title/course/description with unified mapping.
   if (selectedDepartment) {
     list = list.filter(j => {
-      const t = ((j.courseName || '') + ' ' + (j.title || '')).toLowerCase();
-      if (selectedDepartment === 'computer') return /computer|software|program|python|ai|network|database|data/.test(t);
-      if (selectedDepartment === 'mathematics') return /math|mathematics|algebra|calculus|statistics/.test(t);
-      if (selectedDepartment === 'physics') return /physics|mechanic|electromagnet|quantum/.test(t);
-      if (selectedDepartment === 'economic') return /economic|economics|management|business|finance|accounting/.test(t);
-      return true;
+      return inferDepartmentKey(j) === selectedDepartment;
     });
   }
 
@@ -581,7 +582,6 @@ function applyClientFiltersAndRender() {
 
 async function loadJobsFromServerWithAdvancedFilters() {
   try {
-    const dep = document.getElementById('filterDepartment')?.value || '';
     const st = document.getElementById('filterJobStatus')?.value || '';
     const pdRaw = document.getElementById('filterPublishDate')?.value || '';
     const pd = normalizeDateInput(pdRaw);
@@ -590,7 +590,7 @@ async function loadJobsFromServerWithAdvancedFilters() {
       return;
     }
     const params = new URLSearchParams();
-    if (dep) params.set('department', dep);
+    // Do not send department to backend; use unified client-side inference for stable results.
     if (st === 'HIRING' || st === 'CLOSED') params.set('status', st);
     if (pd) params.set('publishDate', pd);
     allJobs = await API.get('/api/jobs' + (params.toString() ? ('?' + params.toString()) : ''));
@@ -605,6 +605,25 @@ async function loadJobsFromServerWithAdvancedFilters() {
   } catch (e) {
     showToast('Filter failed: ' + e.message, 'error');
   }
+}
+
+function normalizeDepartmentKey(v) {
+  if (!v) return '';
+  const key = String(v).toLowerCase();
+  if (key === 'economic') return 'business';
+  if (key === 'econ' || key === 'economics') return 'business';
+  if (key === 'cs' || key === 'computer-science') return 'computer';
+  if (key === 'math') return 'mathematics';
+  return key;
+}
+
+function inferDepartmentKey(job) {
+  const text = ((job.courseName || '') + ' ' + (job.title || '') + ' ' + (job.description || '')).toLowerCase();
+  if (/(computer|software|programming|program|python|java|c\+\+|algorithm|network|database|machine learning|ai|data structure)/.test(text)) return 'computer';
+  if (/(math|mathematics|algebra|calculus|statistics|probability|linear algebra)/.test(text)) return 'mathematics';
+  if (/(physics|physical|mechanic|electromagnet|quantum|lab)/.test(text)) return 'physics';
+  if (/(economic|economics|management|business|finance|accounting|marketing)/.test(text)) return 'business';
+  return 'computer';
 }
 
 function normalizeDateInput(raw) {

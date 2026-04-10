@@ -183,7 +183,14 @@ Back to Admin
 
         async function loadJobs(user) {
             try {
-                allJobs = await API.get('/api/jobs?postedBy=' + user.id);
+                const targetPoster = getUrlParam('postedBy');
+                if (user.role === 'ADMIN') {
+                    allJobs = targetPoster
+                        ? await API.get('/api/jobs?postedBy=' + encodeURIComponent(targetPoster))
+                        : await API.get('/api/jobs');
+                } else {
+                    allJobs = await API.get('/api/jobs?postedBy=' + user.id);
+                }
                 updateStats();
                 renderJobs();
             } catch (err) {

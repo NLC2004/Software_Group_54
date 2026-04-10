@@ -11,6 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,15 +150,47 @@ public class AdminHandler extends BaseHandler {
             User target = ds.getUserById(userId);
             if (target == null) { sendError(ex, 404, "User not found"); return; }
             JsonObject body = parseJson(readBody(ex));
-            if (body.has("password")) {
-                String targetRole = target.role == null ? "" : target.role.toUpperCase(Locale.ROOT);
-                if (("TA".equals(targetRole) || "MO".equals(targetRole)) && !isSuperAdmin(admin)) {
-                    sendError(ex, 403, "Only super admin (admin) can reset TA/MO passwords");
+            boolean superAdmin = isSuperAdmin(admin);
+            if (!superAdmin) {
+                // Standard admins can only assign TA/MO roles to non-admin accounts.
+                if (body.has("password") || body.has("active") || body.has("adminRoleTemplateId")) {
+                    sendError(ex, 403, "Only super admin (admin) can reset passwords, change status, or edit admin templates");
+                    return;
+                }
+                if (!body.has("role")) {
+                    sendError(ex, 403, "Standard admins can only assign TA/MO roles");
+                    return;
+                }
+                String currentRole = target.role == null ? "" : target.role.toUpperCase(Locale.ROOT);
+                if ("ADMIN".equals(currentRole)) {
+                    sendError(ex, 403, "Only super admin (admin) can modify admin accounts");
+                    return;
+                }
+                String requestedRole = body.get("role").getAsString().trim().toUpperCase(Locale.ROOT);
+                if (!"TA".equals(requestedRole) && !"MO".equals(requestedRole)) {
+                    sendError(ex, 403, "Standard admins cannot assign ADMIN role");
                     return;
                 }
             }
             if (body.has("active")) target.active = body.get("active").getAsBoolean();
-            if (body.has("role")) target.role = body.get("role").getAsString();
+            if (body.has("fullName")) target.fullName = body.get("fullName").getAsString();
+            if (body.has("email")) target.email = body.get("email").getAsString();
+            if (body.has("phone")) target.phone = body.get("phone").getAsString();
+            if (body.has("gender")) target.gender = body.get("gender").getAsString();
+            if (body.has("studentId")) target.studentId = body.get("studentId").getAsString();
+            if (body.has("school")) target.school = body.get("school").getAsString();
+            if (body.has("supervisor")) target.supervisor = body.get("supervisor").getAsString();
+            if (body.has("degree")) target.degree = body.get("degree").getAsString();
+            if (body.has("yearOfStudy")) target.yearOfStudy = body.get("yearOfStudy").getAsString();
+            if (body.has("role")) {
+                String newRole = body.get("role").getAsString().trim().toUpperCase(Locale.ROOT);
+                if (!"TA".equals(newRole) && !"MO".equals(newRole) && !"ADMIN".equals(newRole)) {
+                    sendError(ex, 400, "Invalid role");
+                    return;
+                }
+                target.role = newRole;
+                if (!"ADMIN".equals(newRole)) target.adminRoleTemplateId = "";
+            }
             if (body.has("password")) target.password = body.get("password").getAsString();
             if (body.has("adminRoleTemplateId")) {
                 if (body.get("adminRoleTemplateId").isJsonNull()) {
@@ -295,12 +331,6 @@ public class AdminHandler extends BaseHandler {
         List<Job> allJobs = ds.getAllJobs();
         String faculty = Optional.ofNullable(getQueryParam(ex, "faculty")).orElse("").trim().toLowerCase(Locale.ROOT);
         String status = Optional.ofNullable(getQueryParam(ex, "status")).orElse("").trim().toLowerCase(Locale.ROOT);
-        if (!faculty.isEmpty() && !"all".equals(faculty)) {
-            tas = tas.stream().filter(ta -> {
-                String sch = ta.school == null ? "" : ta.school.toLowerCase(Locale.ROOT);
-                return sch.contains(faculty);
-            }).collect(Collectors.toList());
-        }
 
         Map<String, String> settings = ds.getSettings();
         double maxHours = 20;
@@ -325,12 +355,18 @@ public class AdminHandler extends BaseHandler {
                 }
             }
 
+            String facultyLabel = inferFacultyLabel(ta, jobTitles);
+            String facultyBucket = normalizeFacultyBucket(facultyLabel);
+            if (!faculty.isEmpty() && !"all".equals(faculty) && !faculty.equals(facultyBucket)) {
+                continue;
+            }
+
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("userId", ta.id);
             m.put("username", ta.username);
             m.put("fullName", ta.fullName != null && !ta.fullName.isEmpty() ? ta.fullName : ta.username);
             m.put("email", ta.email);
-            m.put("faculty", ta.school != null && !ta.school.isEmpty() ? ta.school : "N/A");
+            m.put("faculty", facultyLabel);
             m.put("totalWeeklyHours", totalHours);
             m.put("approvedPositions", approvedCount);
             m.put("jobTitles", jobTitles);
@@ -350,6 +386,26 @@ public class AdminHandler extends BaseHandler {
             }).collect(Collectors.toList());
         }
         sendJson(ex, 200, result);
+    }
+
+    private String inferFacultyLabel(User ta, List<String> jobTitles) {
+        String school = ta.school == null ? "" : ta.school.trim();
+        if (!school.isEmpty()) return school;
+        String allTitles = String.join(" ", jobTitles == null ? Collections.emptyList() : jobTitles).toLowerCase(Locale.ROOT);
+        if (allTitles.matches(".*(program|software|code|computer|algorithm|engineering|signal|network).*")) return "Engineering";
+        if (allTitles.matches(".*(science|physics|chem|biology|math|statistics).*")) return "Science";
+        if (allTitles.matches(".*(business|finance|econom|account|management|market).*")) return "Business";
+        if (allTitles.matches(".*(art|design|media|visual|music).*")) return "Art & Design";
+        return "N/A";
+    }
+
+    private String normalizeFacultyBucket(String facultyLabel) {
+        String v = facultyLabel == null ? "" : facultyLabel.toLowerCase(Locale.ROOT);
+        if (v.contains("engineer") || v.contains("computer") || v.contains("software")) return "engineering";
+        if (v.contains("science") || v.contains("math") || v.contains("physics") || v.contains("chem") || v.contains("bio")) return "science";
+        if (v.contains("business") || v.contains("finance") || v.contains("econom") || v.contains("management")) return "business";
+        if (v.contains("art") || v.contains("design") || v.contains("media")) return "art";
+        return "other";
     }
 
     private void getStats(HttpExchange ex) throws IOException {

@@ -47,6 +47,8 @@
   {
     "id": "eba535fd",
     "userId": "6e6df15f",
+    "id": "eba535fd",
+    "userId": "6e6df15f",
     "title": "Application Approved",
     "content": "Your application for TA Needed: Database Systems has been approved!",
     "type": "APPLICATION",
@@ -54,12 +56,174 @@
     "createdAt": 1775553944991
   },
   {
-    "id": "da92bbff",
-    "userId": "b398e651",
-    "title": "New Application",
-    "content": "Siying Li applied for Python Lab Teaching Assistant",
-    "type": "APPLICATION",
+    "id": "79a18755",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User Zijun Song (ID: 231225270) requested a password reset.",
+    "type": "PASSWORD_RESET",
     "read": false,
-    "createdAt": 1775755059863
+    "createdAt": 1775667213238
+  },
+  {
+    "id": "df503d56",
+    "userId": "ta002",
+    "title": "Password Reset Approved",
+    "content": "Your password has been reset to the initial password. Please change it after login.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1775667257192
+  },
+  {
+    "id": "a139217b",
+    "userId": "91671c06",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379102
+  },
+  {
+    "id": "2439a444",
+    "userId": "b398e651",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379104
+  },
+  {
+    "id": "b18877d4",
+    "userId": "1509be6d",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379107
+  },
+  {
+    "id": "9cd8568a",
+    "userId": "7067ef7b",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379110
+  },
+  {
+    "id": "ec43db4c",
+    "userId": "ta001",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379112
+  },
+  {
+    "id": "ce24bd17",
+    "userId": "ta005",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379113
+  },
+  {
+    "id": "6ed4a9c5",
+    "userId": "ta006",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379115
+  },
+  {
+    "id": "3f194728",
+    "userId": "mo001",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379118
+  },
+  {
+    "id": "f2a60a83",
+    "userId": "mo002",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379120
+  },
+  {
+    "id": "f38ac4a3",
+    "userId": "mo003",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379125
+  },
+  {
+    "id": "d7e4bd90",
+    "userId": "mo004",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379128
+  },
+  {
+    "id": "9607d700",
+    "userId": "mo005",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379131
+  },
+  {
+    "id": "18459041",
+    "userId": "mo006",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379134
+  },
+  {
+    "id": "fce29fb5",
+    "userId": "ta004",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379138
+  },
+  {
+    "id": "2bb0eb6c",
+    "userId": "ta003",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379141
+  },
+  {
+    "id": "388af630",
+    "userId": "6e6df15f",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1775667379145
+  },
+  {
+    "id": "7b94610a",
+    "userId": "ta002",
+    "title": "welcome",
+    "content": "welcome to our system",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": true,
+    "createdAt": 1775667379148
   }
 ]

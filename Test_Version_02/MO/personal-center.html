@@ -203,9 +203,14 @@ Back to Admin
 </main>
 <script src="/js/api.js"></script>
 <script>
+        let currentPortalUser = null;
+        let proxyUserId = '';
+
         (async function init() {
             const user = requireAuth(['MO', 'ADMIN']);
             if (!user) return;
+            currentPortalUser = user;
+            proxyUserId = getUrlParam('userId') || '';
             updateSidebarUser(user);
             document.getElementById('logoutBtn').onclick = () => logout();
             if (user.role === 'ADMIN') {
@@ -217,8 +222,15 @@ Back to Admin
             }
 
             try {
-                const profile = await API.get('/api/auth/me');
+                const profile = (user.role === 'ADMIN' && proxyUserId)
+                    ? await API.get('/api/admin/users/' + encodeURIComponent(proxyUserId))
+                    : await API.get('/api/auth/me');
                 populateProfile(profile);
+                if (user.role === 'ADMIN' && proxyUserId) {
+                    const pwdBlock = document.getElementById('changePasswordBtn')?.closest('.bg-white');
+                    if (pwdBlock) pwdBlock.classList.add('hidden');
+                    showToast('Editing profile as admin proxy mode', 'info');
+                }
             } catch (err) {
                 showToast(err.message || 'Failed to load profile', 'error');
             }
@@ -253,15 +265,19 @@ Back to Admin
             }
 
             try {
-                const updated = await API.put('/api/auth/profile', body);
+                const updated = (currentPortalUser && currentPortalUser.role === 'ADMIN' && proxyUserId)
+                    ? await API.put('/api/admin/users/' + encodeURIComponent(proxyUserId), body).then(() => API.get('/api/admin/users/' + encodeURIComponent(proxyUserId)))
+                    : await API.put('/api/auth/profile', body);
                 const stored = API.getUser();
-                if (stored) {
+                if (stored && !(currentPortalUser && currentPortalUser.role === 'ADMIN' && proxyUserId)) {
                     stored.fullName = updated.fullName || body.fullName;
                     stored.email = updated.email || body.email;
                     API.setAuth(API.getToken(), stored);
                 }
                 populateProfile(updated);
-                updateSidebarUser(updated);
+                if (!(currentPortalUser && currentPortalUser.role === 'ADMIN' && proxyUserId)) {
+                    updateSidebarUser(updated);
+                }
                 showToast('Profile updated successfully', 'success');
             } catch (err) {
                 showToast(err.message || 'Failed to update profile', 'error');

@@ -199,8 +199,8 @@
 <h3 class="font-bold text-gray-800 text-base">TA Workload Detailed List</h3>
 </div>
 <div class="flex items-center space-x-2">
-<button class="text-xs font-bold text-gray-500 px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors border border-gray-100">Sort By: Hours Asc</button>
-<button class="bg-indigo-50 text-indigo-600 text-xs font-bold px-4 py-2 rounded-lg hover:bg-indigo-100 transition-all flex items-center">
+<button id="btnWorkloadSort" class="text-xs font-bold text-gray-500 px-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors border border-gray-100">Sort By: Hours Asc</button>
+<button id="btnExportWorkload" class="bg-indigo-50 text-indigo-600 text-xs font-bold px-4 py-2 rounded-lg hover:bg-indigo-100 transition-all flex items-center">
 <span class="iconify mr-1.5" data-icon="solar:cloud-download-linear"></span>
                             Export Report
                         </button>
@@ -493,6 +493,25 @@
 </div>
 </div>
 </main>
+<!-- Workload Detail Modal -->
+<div id="workloadDetailModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-[80] p-4">
+<div class="bg-white w-full max-w-2xl rounded-2xl border border-gray-100 shadow-2xl overflow-hidden">
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<div>
+<h3 class="text-lg font-bold text-gray-900">TA Workload Detail</h3>
+<p class="text-xs text-gray-400" id="workloadDetailSub">-</p>
+</div>
+<button type="button" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg" onclick="closeWorkloadDetailModal()">
+<span class="iconify text-xl" data-icon="solar:close-circle-linear"></span>
+</button>
+</div>
+<div id="workloadDetailBody" class="p-6 space-y-4 text-sm text-gray-700"></div>
+<div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+<button type="button" class="px-4 py-2 text-sm font-semibold border border-gray-200 rounded-lg hover:bg-white" onclick="closeWorkloadDetailModal()">Close</button>
+<button type="button" class="px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="openWorkloadUserDetailFromModal()">Open User Detail</button>
+</div>
+</div>
+</div>
 <script src="/js/api.js"></script>
 <script>
 let allWorkload = [];
@@ -501,6 +520,10 @@ let currentWorkloadPage = 1;
 let workloadPageSize = 5;
 let currentWorkloadQuery = '';
 let distChart, trendChart;
+let selectedWorkloadUserId = '';
+let workloadSortAsc = true;
+let currentFacultyFilter = 'all';
+let currentStatusFilter = 'all';
 
 (async function() {
   const user = requireAuth(['ADMIN']);
@@ -539,6 +562,8 @@ let distChart, trendChart;
   }
   document.getElementById('btnApplyFilters')?.addEventListener('click', function() {
     currentWorkloadQuery = searchInput ? (searchInput.value || '') : '';
+    currentFacultyFilter = (document.getElementById('facultyFilter')?.value || 'all').toLowerCase();
+    currentStatusFilter = (document.getElementById('statusFilter')?.value || 'all').toLowerCase();
     currentWorkloadPage = 1;
     filterWorkload(currentWorkloadQuery);
   });
@@ -547,6 +572,8 @@ let distChart, trendChart;
     document.getElementById('statusFilter').value = 'all';
     if (searchInput) searchInput.value = '';
     currentWorkloadQuery = '';
+    currentFacultyFilter = 'all';
+    currentStatusFilter = 'all';
     currentWorkloadPage = 1;
     filterWorkload('');
   });
@@ -571,6 +598,13 @@ let distChart, trendChart;
       renderWorkloadTable(filteredWorkload);
     }
   });
+  document.getElementById('btnWorkloadSort')?.addEventListener('click', function() {
+    workloadSortAsc = !workloadSortAsc;
+    this.textContent = workloadSortAsc ? 'Sort By: Hours Asc' : 'Sort By: Hours Desc';
+    currentWorkloadPage = 1;
+    applyWorkloadFiltersAndRender();
+  });
+  document.getElementById('btnExportWorkload')?.addEventListener('click', exportWorkloadCsv);
 })();
 
 function updateWorkloadHeaderSyncTime() {
@@ -595,12 +629,8 @@ async function refreshWorkloadBellDot() {
 }
 
 async function loadWorkloadByFilters() {
-  const faculty = document.getElementById('facultyFilter')?.value || 'all';
-  const status = document.getElementById('statusFilter')?.value || 'all';
-  const qs = new URLSearchParams();
-  if (faculty && faculty !== 'all') qs.set('faculty', faculty);
-  if (status && status !== 'all') qs.set('status', status);
-  return API.get('/api/admin/workload' + (qs.toString() ? ('?' + qs.toString()) : ''));
+  // Always fetch full data and apply unified client-side filtering.
+  return API.get('/api/admin/workload');
 }
 
 function updateWorkloadStats(data) {
@@ -656,7 +686,7 @@ function renderWorkloadTable(data) {
         </div>
       </td>
       <td class="px-6 py-4 border-b border-gray-50">
-        <span class="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">${esc((ta.jobTitles || []).join(', ') || 'N/A')}</span>
+        <span class="text-xs font-medium px-2 py-1 bg-gray-100 text-gray-600 rounded">${esc(ta.faculty || 'N/A')}</span>
       </td>
       <td class="px-6 py-4 border-b border-gray-50">
         <div class="w-32"><div class="flex justify-between text-[10px] mb-1">
@@ -676,8 +706,10 @@ function renderWorkloadTable(data) {
       </td>
       <td class="px-6 py-4 border-b border-gray-50 text-right">
         <div class="flex justify-end space-x-1">
-          <button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="View Detail">
+          <button class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="View Detail" onclick="viewDetail('${esc(String(ta.userId || ta.username || ''))}')">
             <span class="iconify" data-icon="solar:eye-linear"></span></button>
+          <button class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Open user management detail" onclick="openManualAdjust('${esc(String(ta.userId || ta.username || ''))}')">
+            <span class="iconify" data-icon="solar:tuning-square-2-linear"></span></button>
         </div>
       </td>
     </tr>`;
@@ -736,7 +768,7 @@ function initDistChart(data) {
   const chart = echarts.init(document.getElementById('distribution-chart'));
   const groups = {};
   data.forEach(ta => {
-    const key = (ta.jobTitles && ta.jobTitles[0]) || 'Other';
+    const key = ta.faculty || 'N/A';
     groups[key] = (groups[key] || 0) + 1;
   });
   const colors = ['#3B82F6', '#6366F1', '#F59E0B', '#10B981', '#EF4444', '#94A3B8'];
@@ -776,11 +808,33 @@ function initTrendChart(data) {
 
 function applyWorkloadFiltersAndRender() {
   const q = (currentWorkloadQuery || '').trim().toLowerCase();
-  filteredWorkload = q ? allWorkload.filter(d =>
-      (d.fullName || '').toLowerCase().includes(q) ||
-      (d.username || '').toLowerCase().includes(q) ||
-      (d.email || '').toLowerCase().includes(q)
-  ) : allWorkload.slice();
+  const faculty = (currentFacultyFilter || 'all').toLowerCase();
+  const status = (currentStatusFilter || 'all').toLowerCase();
+  filteredWorkload = (allWorkload || []).filter(d => {
+    if (faculty !== 'all') {
+      const key = inferFacultyFilterKey(d);
+      if (key !== faculty) return false;
+    }
+    if (status !== 'all') {
+      const max = Number(d.maxHours || 20);
+      const hours = Number(d.totalWeeklyHours || 0);
+      const isOver = hours > max;
+      const isWarn = hours > (max * 0.8) && hours <= max;
+      if (status === 'overload' && !isOver) return false;
+      if (status === 'warning' && !isWarn) return false;
+      if (status === 'normal' && (isOver || isWarn)) return false;
+    }
+    if (q) {
+      const text = ((d.fullName || '') + ' ' + (d.username || '') + ' ' + (d.email || '') + ' ' + (d.faculty || '')).toLowerCase();
+      if (!text.includes(q)) return false;
+    }
+    return true;
+  });
+  filteredWorkload.sort(function(a, b) {
+    const ah = Number(a.totalWeeklyHours || 0);
+    const bh = Number(b.totalWeeklyHours || 0);
+    return workloadSortAsc ? (ah - bh) : (bh - ah);
+  });
   updateWorkloadStats(filteredWorkload);
   renderWorkloadTable(filteredWorkload);
   rebuildWorkloadCharts(filteredWorkload);
@@ -793,6 +847,20 @@ function rebuildWorkloadCharts(data) {
   trendChart = initTrendChart(data);
 }
 
+function inferFacultyFilterKey(row) {
+  const v = String(row && row.faculty ? row.faculty : '').toLowerCase();
+  if (v.includes('engineer') || v.includes('computer') || v.includes('software')) return 'engineering';
+  if (v.includes('science') || v.includes('physics') || v.includes('math') || v.includes('chem') || v.includes('bio')) return 'science';
+  if (v.includes('business') || v.includes('finance') || v.includes('econom') || v.includes('management')) return 'business';
+  if (v.includes('art') || v.includes('design') || v.includes('media')) return 'art';
+  const titles = Array.isArray(row && row.jobTitles) ? row.jobTitles.join(' ').toLowerCase() : '';
+  if (/(program|software|computer|network|database|ai|data)/.test(titles)) return 'engineering';
+  if (/(math|calculus|algebra|statistic|physics|chem|bio)/.test(titles)) return 'science';
+  if (/(business|finance|econom|management|accounting|market)/.test(titles)) return 'business';
+  if (/(art|design|media|music|visual)/.test(titles)) return 'art';
+  return 'engineering';
+}
+
 async function filterWorkload(query) {
   try {
     const data = await loadWorkloadByFilters();
@@ -801,6 +869,115 @@ async function filterWorkload(query) {
     applyWorkloadFiltersAndRender();
   } catch(e) {
     showToast('Filter failed: ' + e.message, 'error');
+  }
+}
+
+function getWorkloadByKey(key) {
+  const k = String(key || '').trim();
+  if (!k) return null;
+  const list = Array.isArray(allWorkload) ? allWorkload : [];
+  return list.find(function(item) {
+    return String(item.userId || '') === k
+      || String(item.username || '') === k
+      || String(item.studentId || '') === k;
+  }) || null;
+}
+
+function viewDetail(key) {
+  const ta = getWorkloadByKey(key);
+  if (!ta) {
+    showToast('Detail data is not available yet. Please refresh and try again.', 'warning');
+    return;
+  }
+  selectedWorkloadUserId = String(ta.userId || '');
+  const sub = document.getElementById('workloadDetailSub');
+  const body = document.getElementById('workloadDetailBody');
+  const modal = document.getElementById('workloadDetailModal');
+  if (!sub || !body || !modal) return;
+  sub.textContent = (ta.fullName || ta.username || '-') + ' · ' + (ta.email || '-');
+  const titles = Array.isArray(ta.jobTitles) && ta.jobTitles.length ? ta.jobTitles.join(', ') : 'N/A';
+  const approved = Number(ta.approvedPositions || 0);
+  const maxH = Number(ta.maxHours || 20);
+  const totalH = Number(ta.totalWeeklyHours || 0);
+  const load = maxH > 0 ? Math.round((totalH / maxH) * 100) : 0;
+  body.innerHTML = ''
+    + '<div class="grid grid-cols-2 gap-3">'
+    + '<div class="p-3 rounded-xl bg-gray-50 border border-gray-100"><p class="text-xs text-gray-400">User ID</p><p class="font-semibold">' + esc(String(ta.userId || '-')) + '</p></div>'
+    + '<div class="p-3 rounded-xl bg-gray-50 border border-gray-100"><p class="text-xs text-gray-400">Username</p><p class="font-semibold">' + esc(String(ta.username || '-')) + '</p></div>'
+    + '<div class="p-3 rounded-xl bg-gray-50 border border-gray-100"><p class="text-xs text-gray-400">Approved Positions</p><p class="font-semibold">' + approved + '</p></div>'
+    + '<div class="p-3 rounded-xl bg-gray-50 border border-gray-100"><p class="text-xs text-gray-400">Weekly Hours</p><p class="font-semibold">' + totalH.toFixed(1) + ' / ' + maxH + 'h</p></div>'
+    + '</div>'
+    + '<div class="p-3 rounded-xl bg-gray-50 border border-gray-100"><p class="text-xs text-gray-400 mb-1">Assigned Positions</p><p class="font-semibold">' + esc(titles) + '</p></div>'
+    + '<div class="p-3 rounded-xl bg-gray-50 border border-gray-100"><p class="text-xs text-gray-400 mb-1">Current Load</p><p class="font-semibold">' + load + '%</p></div>';
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeWorkloadDetailModal() {
+  const modal = document.getElementById('workloadDetailModal');
+  if (!modal) return;
+  modal.classList.remove('flex');
+  modal.classList.add('hidden');
+}
+
+function openWorkloadUserDetailFromModal() {
+  if (!selectedWorkloadUserId) {
+    showToast('No user selected', 'warning');
+    return;
+  }
+  window.location.href = 'user-detail.html?id=' + encodeURIComponent(selectedWorkloadUserId);
+}
+
+function openManualAdjust(key) {
+  const ta = getWorkloadByKey(key);
+  if (!ta || !ta.userId) {
+    showToast('Cannot locate user detail for this row', 'warning');
+    return;
+  }
+  window.location.href = 'user-detail.html?id=' + encodeURIComponent(ta.userId);
+}
+
+function csvCell(v) {
+  const s = String(v == null ? '' : v);
+  return '"' + s.replace(/"/g, '""') + '"';
+}
+
+function exportWorkloadCsv() {
+  try {
+    const rows = Array.isArray(filteredWorkload) ? filteredWorkload : [];
+    const header = ['User ID', 'Name', 'Email', 'Faculty', 'Approved Positions', 'Weekly Hours', 'Max Hours', 'Load Percent', 'Status', 'Assigned Positions'];
+    const lines = [header.map(csvCell).join(',')];
+    rows.forEach(function(r) {
+      const max = Number(r.maxHours || 20);
+      const hours = Number(r.totalWeeklyHours || 0);
+      const pct = max > 0 ? Math.round((hours / max) * 100) : 0;
+      const status = r.overloaded ? 'OVERLOAD' : (pct >= 80 ? 'WARNING' : 'BALANCED');
+      lines.push([
+        r.userId || '',
+        r.fullName || r.username || '',
+        r.email || '',
+        r.faculty || 'N/A',
+        r.approvedPositions || 0,
+        hours.toFixed(1),
+        max,
+        pct + '%',
+        status,
+        Array.isArray(r.jobTitles) ? r.jobTitles.join(' | ') : ''
+      ].map(csvCell).join(','));
+    });
+    const blob = new Blob(["\uFEFF" + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    a.href = url;
+    a.download = 'workload-report-' + stamp + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast('Workload report exported', 'success');
+  } catch (e) {
+    showToast('Export failed: ' + (e.message || e), 'error');
   }
 }
 </script>

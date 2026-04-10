@@ -153,6 +153,7 @@ Back to Admin
 <script>
         const requirements = [];
         let jobId = null;
+        let postedByOwnerId = '';
 
         function parseDeadlineField(raw) {
             const t = String(raw || '').trim();
@@ -181,10 +182,11 @@ Back to Admin
             }
 
             jobId = getUrlParam('id');
+            postedByOwnerId = getUrlParam('postedBy') || '';
             if (!jobId) { showToast('No job ID specified', 'error'); return; }
 
             document.getElementById('cancelLink').href = user.role === 'ADMIN'
-                ? '../admin/job-supervision.html'
+                ? ('my-job-list.html' + (postedByOwnerId ? ('?postedBy=' + encodeURIComponent(postedByOwnerId)) : ''))
                 : ('job-detail.html?id=' + jobId);
 
             try {
@@ -273,7 +275,7 @@ Back to Admin
                 showToast('Job updated successfully!', 'success');
                 setTimeout(() => {
                     window.location.href = user.role === 'ADMIN'
-                        ? '../admin/job-supervision.html'
+                        ? ('my-job-list.html' + (postedByOwnerId ? ('?postedBy=' + encodeURIComponent(postedByOwnerId)) : ''))
                         : ('job-detail.html?id=' + jobId);
                 }, 800);
             } catch (err) {

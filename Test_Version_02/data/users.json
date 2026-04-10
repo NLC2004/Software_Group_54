@@ -122,18 +122,6 @@
     "adminRoleTemplateId": ""
   },
   {
-    "id": "ta002",
-    "username": "231225270",
-    "password": "123456",
-    "role": "TA",
-    "fullName": "Zijun Song",
-    "email": "231225270@bupt.edu.cn",
-    "studentId": "231225270",
-    "active": true,
-    "createdAt": 1775380087804,
-    "adminRoleTemplateId": ""
-  },
-  {
     "id": "ta005",
     "username": "231225339",
     "password": "123456",
@@ -275,6 +263,18 @@
     "yearOfStudy": "Year 3",
     "active": true,
     "createdAt": 1775365242930,
+    "adminRoleTemplateId": ""
+  },
+  {
+    "id": "ta002",
+    "username": "231225270",
+    "password": "123456",
+    "role": "TA",
+    "fullName": "Zijun Song",
+    "email": "231225270@bupt.edu.cn",
+    "studentId": "231225270",
+    "active": true,
+    "createdAt": 1775380087804,
     "adminRoleTemplateId": ""
   }
 ]

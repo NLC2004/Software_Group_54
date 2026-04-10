@@ -212,7 +212,7 @@ function renderDeadlineReminders(jobs) {
 }
 
 (async function init() {
-    const user = requireAuth(['TA']);
+    const user = requireAuth(['TA', 'ADMIN']);
     if (!user) return;
 
     updateSidebarUser(user);
