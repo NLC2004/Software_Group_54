@@ -299,6 +299,50 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     let hasUnsavedChanges = false;
     let activeApplications = [];
     let occupiedPriorities = new Map();
+
+    function parseDeadline(deadline) {
+        if (!deadline) return null;
+        const raw = String(deadline).trim();
+        if (!raw) return null;
+        const normalized = raw.replace(/\//g, '-');
+        const pureDateMatch = normalized.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (pureDateMatch) {
+            const [, year, month, day] = pureDateMatch;
+            return new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999).getTime();
+        }
+        let ts = Date.parse(raw);
+        if (!Number.isNaN(ts)) return ts;
+        ts = Date.parse(normalized);
+        return Number.isNaN(ts) ? null : ts;
+    }
+
+    function isRecruitmentExpired(job) {
+        if (!job) return true;
+        if (job.status && String(job.status).toUpperCase() !== 'OPEN') return true;
+        const ts = parseDeadline(job.deadline);
+        if (ts == null) return false;
+        return Date.now() > ts;
+    }
+
+    function setFormDisabled(disabled) {
+        const form = document.getElementById('applicationForm');
+        if (!form) return;
+        form.querySelectorAll('input, select, textarea, button').forEach(el => {
+            if (el && el.id === 'backLink') return;
+            el.disabled = !!disabled;
+        });
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.disabled = !!disabled;
+            if (disabled) submitBtn.innerHTML = 'Recruitment expired';
+        }
+        const previewBtn = document.getElementById('previewBtn');
+        if (previewBtn && disabled) previewBtn.disabled = true;
+        const chooseFileBtn = document.getElementById('chooseFileBtn');
+        if (chooseFileBtn && disabled) chooseFileBtn.disabled = true;
+        const saveDraftBtn = document.getElementById('saveDraftBtn');
+        if (saveDraftBtn && disabled) saveDraftBtn.disabled = true;
+    }
     let serverDraftResumeFileName = '';
     let profileDefaults = null;
 
@@ -864,6 +908,12 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
                 const job = await API.get('/api/jobs/' + jobId);
                 document.getElementById('infoTitle').textContent = job.title || job.courseName || 'TA Position';
                 document.getElementById('infoInstructor').textContent = job.posterName || 'N/A';
+                if (isRecruitmentExpired(job)) {
+                    setFormDisabled(true);
+                    showToast('Recruitment expired', 'warning');
+                    setDraftStatus('Recruitment expired. You can view details but cannot apply.');
+                    return;
+                }
             } catch (err) {
                 document.getElementById('infoTitle').textContent = 'Position #' + jobId;
             }
