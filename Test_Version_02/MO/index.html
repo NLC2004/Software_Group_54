@@ -218,7 +218,7 @@
             btnText.innerText = 'Verifying...';
             loadingIcon.classList.remove('hidden');
             try {
-                const res = await API.post('/api/auth/login', { identifier, password });
+                const res = await API.post('/api/auth/login', { identifier, password, portalRole: 'MO' });
                 API.setAuth(res.token, res.user);
                 showAlert('success', 'Login successful. Redirecting...');
                 setTimeout(() => {

@@ -3,12 +3,149 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Redirecting...</title>
-  <meta http-equiv="refresh" content="0;url=/MO/index.html"/>
+  <title>Login - TA Recruitment System (Admin)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #EEF2FF 0%, #F8FAFC 100%);
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    .login-card {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between items-center py-12 px-4">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center justify-center p-3 bg-indigo-600 rounded-2xl shadow-lg mb-6">
+        <span class="iconify text-white text-4xl" data-icon="mdi:shield-account"></span>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-800 tracking-tight">
+        TA Recruitment System<br/>
+        <span class="text-indigo-600">Admin Portal</span>
+      </h1>
+      <p class="text-gray-500 mt-2 text-sm uppercase tracking-widest">Administrator Access</p>
+    </div>
+
+    <div class="bg-white p-8 rounded-2xl login-card border border-indigo-50">
+      <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-sm flex items-center gap-2">
+        <span id="alertIcon" class="iconify" data-icon=""></span>
+        <span id="alertMsg"></span>
+      </div>
+
+      <form id="loginForm" class="space-y-6">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Admin Username / Email</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <span class="iconify" data-icon="mdi:account-outline"></span>
+            </span>
+            <input id="username" type="text" placeholder="Enter your admin account" class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600"/>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+              <span class="iconify" data-icon="mdi:lock-outline"></span>
+            </span>
+            <input id="password" type="password" placeholder="Enter your password" class="block w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600"/>
+            <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-indigo-500" onclick="togglePassword()">
+              <span id="passIcon" class="iconify" data-icon="mdi:eye-off-outline"></span>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-indigo-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+          <span id="btnText">Login</span>
+          <span id="loadingIcon" class="hidden animate-spin iconify" data-icon="mdi:loading"></span>
+        </button>
+
+        <p class="text-xs text-gray-400 mt-2">Default admin account: <span class="font-semibold">admin</span> / <span class="font-semibold">admin123</span></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-8 text-center">
+    <p class="text-gray-400 text-xs">&copy; 2026 TA Recruitment System</p>
+  </div>
+
+  <script src="/js/api.js"></script>
   <script>
-    window.location.replace('/MO/index.html');
+    (function() {
+      const token = API.getToken();
+      const user = API.getUser();
+      if (token && user && user.role === 'ADMIN') {
+        window.location.href = '/admin/admin-dashboard.html';
+      }
+    })();
+
+    const alertBox = document.getElementById('alertBox');
+    const alertMsg = document.getElementById('alertMsg');
+    const alertIcon = document.getElementById('alertIcon');
+
+    function showAlert(type, message) {
+      alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
+      if (type === 'error') {
+        alertBox.classList.add('bg-red-50', 'text-red-700');
+        alertIcon.setAttribute('data-icon', 'mdi:alert-circle-outline');
+      } else {
+        alertBox.classList.add('bg-green-50', 'text-green-700');
+        alertIcon.setAttribute('data-icon', 'mdi:check-circle-outline');
+      }
+      alertMsg.innerText = message;
+    }
+
+    function togglePassword() {
+      const passInput = document.getElementById('password');
+      const passIcon = document.getElementById('passIcon');
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        passIcon.setAttribute('data-icon', 'mdi:eye-outline');
+      } else {
+        passInput.type = 'password';
+        passIcon.setAttribute('data-icon', 'mdi:eye-off-outline');
+      }
+    }
+
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const identifier = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!identifier || !password) {
+        showAlert('error', 'Please enter admin account and password');
+        return;
+      }
+
+      const btnText = document.getElementById('btnText');
+      const loadingIcon = document.getElementById('loadingIcon');
+      btnText.innerText = 'Verifying...';
+      loadingIcon.classList.remove('hidden');
+
+      try {
+        const res = await API.post('/api/auth/login', { identifier, password, portalRole: 'ADMIN' });
+        if (!res.user || res.user.role !== 'ADMIN') {
+          API.clearAuth();
+          showAlert('error', 'This portal is for admin accounts only');
+          btnText.innerText = 'Login';
+          loadingIcon.classList.add('hidden');
+          return;
+        }
+
+        API.setAuth(res.token, res.user);
+        showAlert('success', 'Login successful. Redirecting...');
+        setTimeout(() => {
+          window.location.href = '/admin/admin-dashboard.html';
+        }, 600);
+      } catch (err) {
+        showAlert('error', err.message || 'Invalid account or password');
+        btnText.innerText = 'Login';
+        loadingIcon.classList.add('hidden');
+      }
+    };
   </script>
 </body>
 </html>
