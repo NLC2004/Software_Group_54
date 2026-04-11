@@ -135,7 +135,7 @@
 </div>
 <div class="glass-card p-6 rounded-2xl shadow-sm relative overflow-hidden group">
 <div class="relative z-10">
-<p class="text-sm font-medium text-gray-500">Pending Review</p>
+<p class="text-sm font-medium text-gray-500">Pending Applications</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-2 leading-tight">42</h3>
 <p class="text-xs text-orange-500 mt-2 font-semibold">Need urgent attention</p>
 </div>
@@ -143,7 +143,7 @@
 </div>
 <div class="glass-card p-6 rounded-2xl shadow-sm relative overflow-hidden group">
 <div class="relative z-10">
-<p class="text-sm font-medium text-gray-500">Total Applications</p>
+<p class="text-sm font-medium text-gray-500">Valid Applications</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-2 leading-tight">8,642</h3>
 <p class="text-xs text-blue-500 mt-2 font-semibold">Average 6.7 per job</p>
 </div>
@@ -151,7 +151,7 @@
 </div>
 <div class="glass-card p-6 rounded-2xl shadow-sm relative overflow-hidden group">
 <div class="relative z-10">
-<p class="text-sm font-medium text-gray-500">Fill rate</p>
+<p class="text-sm font-medium text-gray-500">Quota Fill Rate</p>
 <h3 class="text-3xl font-bold text-gray-800 mt-2 leading-tight">92.4%</h3>
 <div class="w-full bg-gray-100 h-1.5 rounded-full mt-3">
 <div class="bg-blue-600 h-full rounded-full w-[92%]"></div>
@@ -405,17 +405,40 @@ async function refreshJobBellDot() {
 
 function updateKPIs(jobs) {
   const cards = document.querySelectorAll('#kpi-cards > div');
-  const open = jobs.filter(j => j.status === 'OPEN').length;
-  const closed = jobs.filter(j => j.status === 'CLOSED').length;
-  const totalApps = jobs.reduce((s, j) => s + (j.applicationCount || 0), 0);
-  if (cards[0]) cards[0].querySelector('h3').textContent = jobs.length.toLocaleString();
-  if (cards[1]) { cards[1].querySelector('h3').textContent = open; cards[1].querySelector('p.text-xs').textContent = 'Need attention'; }
-  if (cards[2]) { cards[2].querySelector('h3').textContent = totalApps.toLocaleString(); cards[2].querySelector('p.text-xs').textContent = jobs.length ? 'Average ' + (totalApps / jobs.length).toFixed(1) + ' per job' : ''; }
+  const open = jobs.filter(j => (j.status || '').toUpperCase() === 'OPEN').length;
+  const totalPending = jobs.reduce((s, j) => s + (Number(j.pendingCount) || 0), 0);
+  const totalRejected = jobs.reduce((s, j) => s + (Number(j.rejectedCount) || 0), 0);
+  const totalWithdrawn = jobs.reduce((s, j) => s + (Number(j.withdrawnCount) || 0), 0);
+  const totalApproved = jobs.reduce((s, j) => s + (Number(j.approvedCount) || 0), 0);
+  const totalApps = jobs.reduce((s, j) => s + (Number(j.applicationCount) || 0), 0);
+  const validApps = totalPending + totalApproved + totalRejected;
+  const computedTotal = validApps + totalWithdrawn;
+  if (jobs.length && totalApps !== computedTotal) {
+    console.warn('Application counts mismatch: applicationCount vs status totals', {
+      totalApps,
+      validApps,
+      totalPending,
+      totalApproved,
+      totalRejected,
+      totalWithdrawn
+    });
+  }
+  if (cards[0]) cards[0].querySelector('h3').textContent = open.toLocaleString();
+  if (cards[1]) {
+    cards[1].querySelector('h3').textContent = totalPending.toLocaleString();
+    cards[1].querySelector('p.text-xs').textContent = totalPending > 0 ? 'Need attention' : 'No pending applications';
+  }
+  if (cards[2]) {
+    cards[2].querySelector('h3').textContent = validApps.toLocaleString();
+    cards[2].querySelector('p.text-xs').textContent = totalWithdrawn > 0 ? ('Excluded withdrawn: ' + totalWithdrawn) : 'Withdrawn excluded';
+  }
   if (cards[3]) {
-    const rate = jobs.length ? ((jobs.filter(j => j.applicationCount > 0).length / jobs.length) * 100).toFixed(1) : 0;
+    const totalQuota = jobs.reduce((s, j) => s + Math.max(0, Number(j.quota) || 0), 0);
+    const ratio = totalQuota > 0 ? (totalApproved / totalQuota) : 0;
+    const rate = (ratio * 100).toFixed(1);
     cards[3].querySelector('h3').textContent = rate + '%';
     const bar = cards[3].querySelector('.bg-blue-600, .bg-gray-400');
-    if (bar) bar.style.width = rate + '%';
+    if (bar) bar.style.width = Math.min(100, ratio * 100) + '%';
   }
 }
 
@@ -560,9 +583,9 @@ function applyClientFiltersAndRender() {
   }
 
   if (selectedStatus === 'PENDING_REVIEW') {
-    list = list.filter(j => (j.pendingCount || 0) > 0);
+    list = list.filter(j => (Number(j.pendingCount) || 0) > 0);
   } else if (selectedStatus === 'DRAFT') {
-    list = list.filter(j => (j.applicationCount || 0) === 0 && (j.status || '').toUpperCase() === 'OPEN');
+    list = list.filter(j => (j.status || '').toUpperCase() === 'DRAFT');
   } else if (selectedStatus === 'HIRING') {
     list = list.filter(j => (j.status || '').toUpperCase() === 'OPEN');
   } else if (selectedStatus === 'CLOSED') {
@@ -591,7 +614,8 @@ async function loadJobsFromServerWithAdvancedFilters() {
     }
     const params = new URLSearchParams();
     // Do not send department to backend; use unified client-side inference for stable results.
-    if (st === 'HIRING' || st === 'CLOSED') params.set('status', st);
+    if (st === 'HIRING') params.set('status', 'OPEN');
+    else if (st === 'CLOSED' || st === 'DRAFT') params.set('status', st);
     if (pd) params.set('publishDate', pd);
     allJobs = await API.get('/api/jobs' + (params.toString() ? ('?' + params.toString()) : ''));
     // Fallback client-side date filtering to guarantee "Publish Time" works

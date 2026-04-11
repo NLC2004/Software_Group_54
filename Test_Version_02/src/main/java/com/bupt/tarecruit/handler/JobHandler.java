@@ -75,10 +75,19 @@ public class JobHandler extends BaseHandler {
             m.put("postedBy", j.postedBy);
             User poster = ds.getUserById(j.postedBy);
             m.put("posterName", poster != null ? (poster.fullName != null && !poster.fullName.isEmpty() ? poster.fullName : poster.username) : "Unknown");
-            long appCount = ds.getApplicationsByJob(j.id).size();
-            long approved = ds.getApplicationsByJob(j.id).stream().filter(a -> "APPROVED".equals(a.status)).count();
+
+            List<Application> apps = ds.getApplicationsByJob(j.id);
+            long appCount = apps.size();
+            long approved = apps.stream().filter(a -> "APPROVED".equals(a.status)).count();
+            long pending = apps.stream().filter(a -> "PENDING".equals(a.status)).count();
+            long rejected = apps.stream().filter(a -> "REJECTED".equals(a.status)).count();
+            long withdrawn = apps.stream().filter(a -> "WITHDRAWN".equals(a.status)).count();
+
             m.put("applicationCount", appCount);
             m.put("approvedCount", approved);
+            m.put("pendingCount", pending);
+            m.put("rejectedCount", rejected);
+            m.put("withdrawnCount", withdrawn);
             result.add(m);
         }
         sendJson(ex, 200, result);
@@ -97,9 +106,18 @@ public class JobHandler extends BaseHandler {
         m.put("postedBy", job.postedBy);
         User poster = ds.getUserById(job.postedBy);
         m.put("posterName", poster != null ? (poster.fullName != null && !poster.fullName.isEmpty() ? poster.fullName : poster.username) : "Unknown");
-        m.put("applicationCount", ds.getApplicationsByJob(job.id).size());
-        long approved = ds.getApplicationsByJob(job.id).stream().filter(a -> "APPROVED".equals(a.status)).count();
+
+        List<Application> apps = ds.getApplicationsByJob(job.id);
+        long approved = apps.stream().filter(a -> "APPROVED".equals(a.status)).count();
+        long pending = apps.stream().filter(a -> "PENDING".equals(a.status)).count();
+        long rejected = apps.stream().filter(a -> "REJECTED".equals(a.status)).count();
+        long withdrawn = apps.stream().filter(a -> "WITHDRAWN".equals(a.status)).count();
+
+        m.put("applicationCount", apps.size());
         m.put("approvedCount", approved);
+        m.put("pendingCount", pending);
+        m.put("rejectedCount", rejected);
+        m.put("withdrawnCount", withdrawn);
         sendJson(ex, 200, m);
     }
 
