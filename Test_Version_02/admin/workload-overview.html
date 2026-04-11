@@ -124,6 +124,7 @@
 <option value="science">Science</option>
 <option value="business">Business</option>
 <option value="art">Art &amp; Design</option>
+<option value="international">International School</option>
 </select>
 <div class="w-px h-6 bg-gray-100"></div>
 <select id="statusFilter" class="bg-transparent text-sm font-medium px-4 py-2 border-none focus:ring-0 cursor-pointer text-gray-600 hover:text-blue-600 transition-colors">
@@ -848,17 +849,14 @@ function rebuildWorkloadCharts(data) {
 }
 
 function inferFacultyFilterKey(row) {
-  const v = String(row && row.faculty ? row.faculty : '').toLowerCase();
+  const v = String(row && row.faculty ? row.faculty : '').toLowerCase().trim();
+  if (!v || v === 'n/a' || v === 'na' || v === '-') return 'unknown';
   if (v.includes('engineer') || v.includes('computer') || v.includes('software')) return 'engineering';
   if (v.includes('science') || v.includes('physics') || v.includes('math') || v.includes('chem') || v.includes('bio')) return 'science';
   if (v.includes('business') || v.includes('finance') || v.includes('econom') || v.includes('management')) return 'business';
   if (v.includes('art') || v.includes('design') || v.includes('media')) return 'art';
-  const titles = Array.isArray(row && row.jobTitles) ? row.jobTitles.join(' ').toLowerCase() : '';
-  if (/(program|software|computer|network|database|ai|data)/.test(titles)) return 'engineering';
-  if (/(math|calculus|algebra|statistic|physics|chem|bio)/.test(titles)) return 'science';
-  if (/(business|finance|econom|management|accounting|market)/.test(titles)) return 'business';
-  if (/(art|design|media|music|visual)/.test(titles)) return 'art';
-  return 'engineering';
+  if (v.includes('international')) return 'international';
+  return 'unknown';
 }
 
 async function filterWorkload(query) {
