@@ -39,11 +39,6 @@ public class Main {
         System.out.println("  Admin Login: http://localhost:" + port + "/admin/index.html");
         System.out.println("===========================================");
 
-        try {
-            String os = System.getProperty("os.name").toLowerCase();
-            if (os.contains("win")) Runtime.getRuntime().exec("cmd /c start http://localhost:" + port);
-            else if (os.contains("mac")) Runtime.getRuntime().exec("open http://localhost:" + port);
-            else Runtime.getRuntime().exec("xdg-open http://localhost:" + port);
-        } catch (Exception ignored) {}
+        // Keep server startup non-intrusive: do not auto-open any portal in browser.
     }
 }
