@@ -74,8 +74,7 @@ const API = {
 function redirectToLogin() {
     const path = window.location.pathname;
     if (path.startsWith('/admin/')) {
-        // Admin shares the MO login entry.
-        window.location.href = '/MO/index.html';
+        window.location.href = '/admin/index.html';
         return;
     }
     if (path.startsWith('/MO/')) {
