@@ -179,8 +179,8 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     updateSidebarUser(user);
 
     try {
-        allJobs = await API.get('/api/jobs?status=OPEN');
-        document.getElementById('pageSubtitle').textContent = `${allJobs.length} open position(s) available`;
+        allJobs = await API.get('/api/jobs');
+        document.getElementById('pageSubtitle').textContent = `${allJobs.length} position(s) available`;
         renderJobs(allJobs);
     } catch (err) {
         document.getElementById('list-container').innerHTML = '<div class="col-span-full text-center text-red-500 py-16">Failed to load positions</div>';
