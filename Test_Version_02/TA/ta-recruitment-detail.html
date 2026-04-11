@@ -75,6 +75,35 @@
 </div>
 <script src="/js/api.js"></script>
 <script>
+(function(){
+    function parseDeadline(deadline) {
+        if (!deadline) return null;
+        const raw = String(deadline).trim();
+        if (!raw) return null;
+        const normalized = raw.replace(/\//g, '-');
+        const pureDateMatch = normalized.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (pureDateMatch) {
+            const [, year, month, day] = pureDateMatch;
+            return new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999).getTime();
+        }
+        let ts = Date.parse(raw);
+        if (!Number.isNaN(ts)) return ts;
+        ts = Date.parse(normalized);
+        return Number.isNaN(ts) ? null : ts;
+    }
+
+    function isRecruitmentExpired(job) {
+        if (!job) return true;
+        if (job.status && String(job.status).toUpperCase() !== 'OPEN') return true;
+        const ts = parseDeadline(job.deadline);
+        if (ts == null) return false;
+        return Date.now() > ts;
+    }
+
+    window.__ta_parseDeadline = parseDeadline;
+    window.__ta_isRecruitmentExpired = isRecruitmentExpired;
+})();
+
 (async function init() {
     const user = requireAuth(['TA']);
     if (!user) return;
@@ -89,6 +118,7 @@
     try {
         const job = await API.get('/api/jobs/' + jobId);
         const deadline = job.deadline ? formatDate(job.deadline) : 'N/A';
+        const expired = window.__ta_isRecruitmentExpired(job);
         const reqHtml = (job.requirements && job.requirements.length)
             ? job.requirements.map(r => `<div class="p-4 bg-gray-50 rounded-xl"><p class="font-bold">${esc(r)}</p></div>`).join('')
             : '<p class="text-gray-400 text-sm">No specific requirements listed.</p>';
@@ -170,7 +200,9 @@
                 </div>
 
                 <div class="pt-6 border-t border-gray-100 flex gap-4">
-                    <a class="flex-1 bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 text-center" href="ta-recruitment-application-form.html?jobId=${job.id}">Apply now</a>
+                    ${expired
+                        ? `<button type="button" class="flex-1 bg-gray-200 text-gray-600 font-bold py-4 rounded-xl cursor-not-allowed" onclick="showToast('Recruitment expired', 'warning')">Apply now</button>`
+                        : `<a class="flex-1 bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 text-center" href="ta-recruitment-application-form.html?jobId=${job.id}">Apply now</a>`}
                     <button class="px-8 py-4 border border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-all" onclick="history.back()">
                         Back
                     </button>

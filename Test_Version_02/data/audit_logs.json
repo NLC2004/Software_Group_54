@@ -998,5 +998,45 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775667445525
+  },
+  {
+    "id": "64407f4c",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775897113110
+  },
+  {
+    "id": "b5556ab1",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "APPLY",
+    "detail": "Applied for job: Lab Teaching Assistant",
+    "createdAt": 1775897146401
+  },
+  {
+    "id": "4c9be631",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775900282857
+  },
+  {
+    "id": "92fd5441",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775901111598
+  },
+  {
+    "id": "1a8c4820",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775901325260
   }
 ]

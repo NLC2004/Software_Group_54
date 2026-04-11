@@ -47,8 +47,6 @@
   {
     "id": "eba535fd",
     "userId": "6e6df15f",
-    "id": "eba535fd",
-    "userId": "6e6df15f",
     "title": "Application Approved",
     "content": "Your application for TA Needed: Database Systems has been approved!",
     "type": "APPLICATION",
@@ -225,5 +223,14 @@
     "type": "BULK_ANNOUNCEMENT",
     "read": true,
     "createdAt": 1775667379148
+  },
+  {
+    "id": "64eba875",
+    "userId": "b398e651",
+    "title": "New Application",
+    "content": "Lingxiang Mei applied for Lab Teaching Assistant",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1775897146405
   }
 ]
