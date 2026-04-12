@@ -113,7 +113,7 @@ class AdJobOversightStoriesTest {
         Job job = new Job();
         job.postedBy = mo.id;
         job.title = title;
-        job.type = "COURSE";
+        job.type = "TA";
         job.courseName = title + " Course";
         job.description = "desc";
         job.quota = 1;

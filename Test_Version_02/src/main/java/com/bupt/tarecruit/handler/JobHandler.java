@@ -14,6 +14,15 @@ public class JobHandler extends BaseHandler {
 
     public JobHandler(DataService ds) { super(ds); }
 
+    private String normalizeJobType(String rawType) {
+        if (rawType == null) return "TA";
+        String t = rawType.trim();
+        if (t.isEmpty()) return "TA";
+        String u = t.toUpperCase();
+        if ("COURSE".equals(u) || "ACTIVITY".equals(u)) return "TA";
+        return t;
+    }
+
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;
@@ -48,11 +57,11 @@ public class JobHandler extends BaseHandler {
 
     private void listJobs(HttpExchange ex) throws IOException {
         List<Job> jobs = ds.getAllJobs();
-        String type = getQueryParam(ex, "type");
+        String type = normalizeJobType(getQueryParam(ex, "type"));
         String status = getQueryParam(ex, "status");
         String postedBy = getQueryParam(ex, "postedBy");
         String search = getQueryParam(ex, "search");
-        if (type != null && !type.isEmpty()) jobs = jobs.stream().filter(j -> j.type.equals(type)).collect(Collectors.toList());
+        if (type != null && !type.isEmpty()) jobs = jobs.stream().filter(j -> normalizeJobType(j.type).equals(type)).collect(Collectors.toList());
         if (status != null && !status.isEmpty()) jobs = jobs.stream().filter(j -> j.status.equals(status)).collect(Collectors.toList());
         if (postedBy != null && !postedBy.isEmpty()) jobs = jobs.stream().filter(j -> j.postedBy.equals(postedBy)).collect(Collectors.toList());
         if (search != null && !search.isEmpty()) {
@@ -131,7 +140,7 @@ public class JobHandler extends BaseHandler {
         Job job = new Job();
         job.postedBy = user.id;
         job.title = body.has("title") ? body.get("title").getAsString() : "";
-        job.type = body.has("type") ? body.get("type").getAsString() : "COURSE";
+        job.type = normalizeJobType(body.has("type") ? body.get("type").getAsString() : null);
         job.courseName = body.has("courseName") ? body.get("courseName").getAsString() : "";
         job.description = body.has("description") ? body.get("description").getAsString() : "";
         job.quota = body.has("quota") ? body.get("quota").getAsInt() : 1;
@@ -165,7 +174,7 @@ public class JobHandler extends BaseHandler {
         if (body.has("schedule")) job.schedule = body.get("schedule").getAsString();
         if (body.has("courseName")) job.courseName = body.get("courseName").getAsString();
         if (body.has("deadline")) job.deadline = body.get("deadline").getAsString();
-        if (body.has("type")) job.type = body.get("type").getAsString();
+        if (body.has("type")) job.type = normalizeJobType(body.get("type").getAsString());
         if (body.has("requirements")) {
             JsonArray arr = body.getAsJsonArray("requirements");
             job.requirements = new ArrayList<>();
