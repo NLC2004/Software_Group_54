@@ -94,15 +94,8 @@ Back to Admin
 <input class="form-input" id="courseName" placeholder="e.g. Advanced Machine Learning" type="text"/>
 </div>
 <div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Type</label>
-<select class="form-input" id="jobType">
-<option value="COURSE">Course TA</option>
-<option value="ACTIVITY">Activity Assistant</option>
-</select>
-</div>
-<div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Deadline for Application</label>
-<input class="form-input" id="deadline" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="YYYY-MM-DD" title="Format: YYYY-MM-DD (e.g. 2026-04-05)"/>
+<input class="form-input" id="deadline" type="date" autocomplete="off" placeholder="YYYY-MM-DD"/>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Quota (number of positions)</label>
@@ -163,6 +156,23 @@ Back to Admin
 
         const requirements = [];
 
+        function deadlineMustBeAfterNow(dateStr) {
+            const t = String(dateStr || '').trim();
+            if (!t) return { ok: true };
+            const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
+            if (!m) return { ok: false, message: 'Please select a valid deadline date.' };
+            const y = +m[1], mo = +m[2], d = +m[3];
+            const endOfDay = new Date(y, mo - 1, d, 23, 59, 59, 999);
+            const now = new Date();
+            if (!(endOfDay.getFullYear() === y && endOfDay.getMonth() === mo - 1 && endOfDay.getDate() === d)) {
+                return { ok: false, message: 'Invalid deadline date.' };
+            }
+            if (endOfDay <= now) {
+                return { ok: false, message: 'Deadline must be after the current time.' };
+            }
+            return { ok: true };
+        }
+
         function parseDeadlineField(raw) {
             const t = String(raw || '').trim();
             if (!t) return { ok: true, value: null };
@@ -209,13 +219,16 @@ Back to Admin
             const dl = parseDeadlineField(document.getElementById('deadline').value);
             if (!dl.ok) { showToast(dl.message, 'warning'); return; }
 
+            const dlAfterNow = deadlineMustBeAfterNow(dl.value);
+            if (!dlAfterNow.ok) { showToast(dlAfterNow.message, 'warning'); return; }
+
             const btn = document.getElementById('publishBtn');
             btn.disabled = true;
             btn.textContent = 'Publishing...';
 
             const body = {
                 title,
-                type: document.getElementById('jobType').value,
+                type: 'TA',
                 courseName: document.getElementById('courseName').value.trim(),
                 description: document.getElementById('description').value.trim(),
                 requirements: requirements,

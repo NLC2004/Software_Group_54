@@ -1038,5 +1038,181 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1775901325260
+  },
+  {
+    "id": "d3084f7c",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775969241749
+  },
+  {
+    "id": "f4de159a",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775970342923
+  },
+  {
+    "id": "d9879545",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775970931610
+  },
+  {
+    "id": "a17a8f1b",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775971841976
+  },
+  {
+    "id": "0c67faf1",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775971884373
+  },
+  {
+    "id": "568b12eb",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775971891540
+  },
+  {
+    "id": "69845f7a",
+    "userId": "",
+    "username": "231225557",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from Lingxiang Mei",
+    "createdAt": 1775971902488
+  },
+  {
+    "id": "5d35f196",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775971925639
+  },
+  {
+    "id": "538d21b2",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_REJECT",
+    "detail": "Rejected reset for: Lingxiang Mei",
+    "createdAt": 1775972052729
+  },
+  {
+    "id": "c70d6bab",
+    "userId": "",
+    "username": "231225557",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from Lingxiang Mei",
+    "createdAt": 1775975649288
+  },
+  {
+    "id": "ca1af70a",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775976082004
+  },
+  {
+    "id": "55c341cc",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1775976139416
+  },
+  {
+    "id": "84c467d2",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775976154963
+  },
+  {
+    "id": "209fc8a9",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: Lingxiang Mei",
+    "createdAt": 1775976169834
+  },
+  {
+    "id": "9314a982",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775999194625
+  },
+  {
+    "id": "68e085f6",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775999272018
+  },
+  {
+    "id": "31442c07",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1775999594164
+  },
+  {
+    "id": "131970b1",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776001923440
+  },
+  {
+    "id": "ed6269be",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776011046682
+  },
+  {
+    "id": "e5cde84d",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1776011202182
+  },
+  {
+    "id": "578a8508",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776011227041
+  },
+  {
+    "id": "08712a7d",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776012920293
   }
 ]

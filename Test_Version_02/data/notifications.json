@@ -232,5 +232,32 @@
     "type": "APPLICATION",
     "read": false,
     "createdAt": 1775897146405
+  },
+  {
+    "id": "1e36585e",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User Lingxiang Mei (ID: 231225557) requested a password reset.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1775971902479
+  },
+  {
+    "id": "ef9b42a4",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User Lingxiang Mei (ID: 231225557) requested a password reset.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1775975649285
+  },
+  {
+    "id": "cf5dec28",
+    "userId": "ta004",
+    "title": "Password Reset Approved",
+    "content": "Your password has been reset to the initial password. Please change it after login.",
+    "type": "PASSWORD_RESET",
+    "read": true,
+    "createdAt": 1775976169822
   }
 ]
