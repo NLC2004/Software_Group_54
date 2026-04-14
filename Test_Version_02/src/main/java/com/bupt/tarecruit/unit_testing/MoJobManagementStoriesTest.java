@@ -27,7 +27,7 @@ class MoJobManagementStoriesTest {
                 "POST",
                 "/api/jobs",
                 null,
-                "{\"title\":\"TA Lab Support\",\"type\":\"TA\",\"courseName\":\"Software Engineering\",\"description\":\"Need weekly lab support\",\"quota\":2,\"schedule\":\"Tue 10:00\",\"weeklyHours\":6,\"deadline\":\"2099-12-31\",\"requirements\":[\"Java\",\"Communication\"]}"
+                "{\"title\":\"TA Lab Support\",\"type\":\"COURSE\",\"courseName\":\"Software Engineering\",\"description\":\"Need weekly lab support\",\"quota\":2,\"schedule\":\"Tue 10:00\",\"weeklyHours\":6,\"deadline\":\"2099-12-31\",\"requirements\":[\"Java\",\"Communication\"]}"
         );
         ex.setBearerToken(token);
 
@@ -48,7 +48,7 @@ class MoJobManagementStoriesTest {
     void mo01_updateJobShouldAllowOwnerToEditPostedTask() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User mo = addMo(ds, "teacher_edit");
-        Job job = addJob(ds, mo, "Old Title", "TA");
+        Job job = addJob(ds, mo, "Old Title", "COURSE");
         String token = ds.createSession(mo.id);
 
         JobHandler handler = new JobHandler(ds);
@@ -56,7 +56,7 @@ class MoJobManagementStoriesTest {
                 "PUT",
                 "/api/jobs/" + job.id,
                 null,
-                "{\"title\":\"Updated Title\",\"weeklyHours\":8,\"status\":\"CLOSED\",\"type\":\"TA\"}"
+                "{\"title\":\"Updated Title\",\"weeklyHours\":8,\"status\":\"CLOSED\",\"type\":\"ACTIVITY\"}"
         );
         ex.setBearerToken(token);
 
@@ -67,7 +67,7 @@ class MoJobManagementStoriesTest {
         assertEquals("Updated Title", updated.title);
         assertEquals(8.0, updated.weeklyHours);
         assertEquals("CLOSED", updated.status);
-        assertEquals("TA", updated.type);
+        assertEquals("ACTIVITY", updated.type);
     }
 
     @Test
@@ -75,7 +75,7 @@ class MoJobManagementStoriesTest {
         DataService ds = new DataService(tempDir.toString());
         User owner = addMo(ds, "teacher_owner");
         User intruder = addMo(ds, "teacher_intruder");
-        Job job = addJob(ds, owner, "Protected Job", "TA");
+        Job job = addJob(ds, owner, "Protected Job", "COURSE");
         String token = ds.createSession(intruder.id);
 
         JobHandler handler = new JobHandler(ds);
@@ -94,8 +94,8 @@ class MoJobManagementStoriesTest {
         DataService ds = new DataService(tempDir.toString());
         User mo1 = addMo(ds, "teacher_filter_1");
         User mo2 = addMo(ds, "teacher_filter_2");
-        addJob(ds, mo1, "Database TA", "TA");
-        addJob(ds, mo2, "Networks TA", "TA");
+        addJob(ds, mo1, "Database TA", "COURSE");
+        addJob(ds, mo2, "Networks TA", "COURSE");
 
         JobHandler handler = new JobHandler(ds);
         TestHttpExchange ex = new TestHttpExchange("GET", "/api/jobs", "postedBy=" + mo1.id + "&search=database", null);
@@ -109,7 +109,7 @@ class MoJobManagementStoriesTest {
     }
 
     @Test
-    void mo11_createJobShouldSupportUnifiedJobType() throws Exception {
+    void mo11_createJobShouldSupportDifferentCourseTypes() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User mo = addMo(ds, "teacher_types");
         String token = ds.createSession(mo.id);
@@ -119,7 +119,7 @@ class MoJobManagementStoriesTest {
                 "POST",
                 "/api/jobs",
                 null,
-                "{\"title\":\"Seminar Assistant\",\"type\":\"TA\",\"courseName\":\"Research Seminar\",\"description\":\"Event support\",\"quota\":1,\"schedule\":\"Fri\",\"weeklyHours\":3,\"deadline\":\"2099-12-31\"}"
+                "{\"title\":\"Seminar Assistant\",\"type\":\"ACTIVITY\",\"courseName\":\"Research Seminar\",\"description\":\"Event support\",\"quota\":1,\"schedule\":\"Fri\",\"weeklyHours\":3,\"deadline\":\"2099-12-31\"}"
         );
         ex.setBearerToken(token);
 
@@ -131,7 +131,7 @@ class MoJobManagementStoriesTest {
                 .findFirst()
                 .orElse(null);
         assertNotNull(stored);
-        assertEquals("TA", stored.type);
+        assertEquals("ACTIVITY", stored.type);
         assertEquals("Research Seminar", stored.courseName);
     }
 

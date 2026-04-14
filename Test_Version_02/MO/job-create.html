@@ -72,6 +72,82 @@ Back to Admin
 <span class="text-gray-900 font-medium">Create New Job</span>
 </div>
 </header>
+<div class="fixed inset-0 z-50 hidden" id="taTypeModal">
+<div class="absolute inset-0 bg-black/40" id="taTypeModalOverlay"></div>
+<div class="relative min-h-full flex items-center justify-center p-6">
+<div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+<div class="h-2 bg-blue-600"></div>
+<div class="p-8">
+<div class="flex items-start justify-between gap-6">
+<div>
+<h2 class="text-2xl font-black text-gray-800">Select TA Type</h2>
+<p class="text-gray-400 text-sm mt-1">Choose the recruitment type to customize the form.</p>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-100 text-gray-500" id="closeTaTypeModal" type="button" title="Close">
+<span class="iconify text-xl" data-icon="mdi:close"></span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8" id="taTypeOptions"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 z-50 hidden" id="scheduleModal">
+<div class="absolute inset-0 bg-black/40" id="scheduleModalOverlay"></div>
+<div class="relative min-h-full flex items-center justify-center p-6">
+<div class="bg-white w-full max-w-5xl rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+<div class="h-2 bg-blue-600"></div>
+<div class="p-8">
+<div class="flex items-start justify-between gap-6">
+<div>
+<h2 class="text-2xl font-black text-gray-800">Select Schedule</h2>
+<p class="text-gray-400 text-sm mt-1">Click time blocks to select. Selected blocks will be highlighted.</p>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-100 text-gray-500" id="closeScheduleModal" type="button" title="Close">
+<span class="iconify text-xl" data-icon="mdi:close"></span>
+</button>
+</div>
+
+<div class="mt-6 overflow-auto border border-gray-100 rounded-2xl">
+<table class="min-w-full text-sm" id="schedulePickerGrid"></table>
+</div>
+
+<div class="mt-6 flex items-center justify-end gap-3">
+<button type="button" class="px-6 py-3 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 transition-all" id="cancelScheduleBtn">Cancel</button>
+<button type="button" class="px-7 py-3 rounded-2xl font-bold bg-blue-600 text-white hover:bg-blue-700 transition-all" id="confirmScheduleBtn">Confirm</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 z-50 hidden" id="labTimeModal">
+<div class="absolute inset-0 bg-black/40" id="labTimeModalOverlay"></div>
+<div class="relative min-h-full flex items-center justify-center p-6">
+<div class="bg-white w-full max-w-6xl rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+<div class="h-2 bg-blue-600"></div>
+<div class="p-8">
+<div class="flex items-start justify-between gap-6">
+<div>
+<h2 class="text-2xl font-black text-gray-800">Select Lab Time</h2>
+<p class="text-gray-400 text-sm mt-1">Click time blocks to select. Selected blocks will be highlighted.</p>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-100 text-gray-500" id="closeLabTimeModal" type="button" title="Close">
+<span class="iconify text-xl" data-icon="mdi:close"></span>
+</button>
+</div>
+
+<div class="mt-6 overflow-auto border border-gray-100 rounded-2xl">
+<table class="min-w-full text-sm" id="labTimePickerGrid"></table>
+</div>
+
+<div class="mt-6 flex items-center justify-end gap-3">
+<button type="button" class="px-6 py-3 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 transition-all" id="cancelLabTimeBtn">Cancel</button>
+<button type="button" class="px-7 py-3 rounded-2xl font-bold bg-blue-600 text-white hover:bg-blue-700 transition-all" id="confirmLabTimeBtn">Confirm</button>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="p-8 max-w-4xl mx-auto w-full">
 <div class="mb-10">
 <h1 class="text-3xl font-black text-gray-800 mb-2">Create New TA Position</h1>
@@ -84,54 +160,122 @@ Back to Admin
 <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><span class="iconify text-xl" data-icon="solar:info-square-bold"></span></div>
 <h3 class="text-lg font-bold text-gray-800">Basic Information</h3>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="basicInfoGrid">
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Job Title *</label>
 <input class="form-input" id="jobTitle" placeholder="e.g. Python Lab Teaching Assistant" type="text" required/>
+</div>
+<div class="md:col-span-2 space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Job Description</label>
+<textarea class="form-input" id="description" placeholder="Describe the responsibilities and tasks..." rows="4"></textarea>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Course Name</label>
 <input class="form-input" id="courseName" placeholder="e.g. Advanced Machine Learning" type="text"/>
 </div>
 <div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Type</label>
+<select class="form-input" id="jobType">
+<option value="COURSE_TA">Course TA</option>
+<option value="LAB_TA">Lab TA</option>
+<option value="FINAL_EXAM_TA">Final Exam TA</option>
+<option value="CLASS_TEST_TA">Class Test TA</option>
+</select>
+</div>
+<div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Deadline for Application</label>
-<input class="form-input" id="deadline" type="date" autocomplete="off" placeholder="YYYY-MM-DD"/>
+<input class="form-input" id="deadline" type="text" inputmode="numeric" placeholder="YYYY/MM/DD" autocomplete="off"/>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Quota (number of positions)</label>
 <input class="form-input" id="quota" type="number" min="1" placeholder="e.g. 3"/>
 </div>
-<div class="space-y-2">
+<div class="space-y-2" id="weeklyHoursWrapper">
 <label class="text-sm font-semibold text-gray-600 ml-1">Weekly Hours</label>
-<input class="form-input" id="weeklyHours" type="number" min="1" placeholder="e.g. 10"/>
+<input class="form-input" id="weeklyHours" type="number" min="0" step="0.25" placeholder="Auto" readonly/>
 </div>
-<div class="md:col-span-2 space-y-2">
+<div class="md:col-span-2 space-y-2" id="scheduleFieldWrapper">
 <label class="text-sm font-semibold text-gray-600 ml-1">Schedule</label>
-<input class="form-input" id="schedule" placeholder="e.g. Tue/Thu 14:00-16:00" type="text"/>
+<textarea class="form-input" id="schedule" placeholder="Click to select schedule" rows="4" readonly></textarea>
+</div>
+</div>
+
+<div class="space-y-6 mt-8">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Requirements</label>
+<div class="space-y-2" id="requirementsList"></div>
+<div class="flex justify-center">
+<button type="button" id="addReqRowBtn" class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-all">+</button>
+</div>
+<div id="reqPresetPanel" class="hidden mt-2 p-3 bg-gray-50 rounded-2xl border border-gray-100"></div>
+</div>
+</div>
+</section>
+
+<section class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100" id="typeSpecificSection">
+<div class="flex items-center mb-6 space-x-3">
+<div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><span class="iconify text-xl" data-icon="solar:settings-bold"></span></div>
+<h3 class="text-lg font-bold text-gray-800">Type-Specific Options</h3>
+</div>
+
+<div id="courseTaFields" class="space-y-6 hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Course Week Start (1-17)</label>
+<select class="form-input" id="courseWeekStart"></select>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Course Week End (1-17)</label>
+<select class="form-input" id="courseWeekEnd"></select>
+</div>
+</div>
+</div>
+
+<div id="labTaFields" class="space-y-6 hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Lab Session Count</label>
+<input class="form-input" id="labSessionCount" type="number" min="1" placeholder="e.g. 8"/>
+</div>
+<input id="labTime" type="hidden" />
+</div>
+
+<div id="labScheduleMount" class="space-y-2"></div>
+
+<div class="space-y-4" id="labSessionsContainer"></div>
+</div>
+
+<div id="finalExamTaFields" class="space-y-6 hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Exam Date &amp; Time</label>
+<input class="form-input" id="examDateTime" type="datetime-local"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Exam Location</label>
+<input class="form-input" id="examLocation" type="text" placeholder="e.g. Teaching Building A-101"/>
+</div>
+</div>
+</div>
+
+<div id="classTestTaFields" class="space-y-6 hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Test Schedule Type</label>
+<select class="form-input" id="testScheduleType">
+<option value="IN_CLASS">In class</option>
+<option value="AFTER_CLASS">After class</option>
+<option value="FIXED_WEEKS">Fixed weeks</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-gray-600 ml-1">Schedule Detail</label>
+<input class="form-input" id="testScheduleDetail" type="text" placeholder="e.g. Week 3-6, every Tue"/>
+</div>
 </div>
 </div>
 </section>
 <!-- Section 2: Requirements -->
-<section class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
-<div class="flex items-center mb-6 space-x-3">
-<div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><span class="iconify text-xl" data-icon="solar:diploma-bold"></span></div>
-<h3 class="text-lg font-bold text-gray-800">Requirements &amp; Description</h3>
-</div>
-<div class="space-y-6">
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Job Description</label>
-<textarea class="form-input" id="description" placeholder="Describe the responsibilities and tasks..." rows="4"></textarea>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Requirements (press Enter to add)</label>
-<div class="flex items-center gap-2 mb-2">
-<input class="form-input flex-1" id="reqInput" placeholder="e.g. GPA >= 3.5" type="text"/>
-<button type="button" onclick="addRequirement()" class="px-4 py-3 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700">Add</button>
-</div>
-<div class="flex flex-wrap gap-2" id="reqTags"></div>
-</div>
-</div>
-</section>
 <div class="flex items-center justify-end space-x-4">
 <a href="my-job-list.html" class="px-8 py-3 rounded-2xl font-bold text-gray-400 hover:bg-gray-100 transition-all">Cancel</a>
 <button type="submit" class="px-10 py-3 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:-translate-y-1 transition-all" id="publishBtn">Publish Now</button>
@@ -155,80 +299,746 @@ Back to Admin
         }
 
         const requirements = [];
-
-        function deadlineMustBeAfterNow(dateStr) {
-            const t = String(dateStr || '').trim();
-            if (!t) return { ok: true };
-            const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
-            if (!m) return { ok: false, message: 'Please select a valid deadline date.' };
-            const y = +m[1], mo = +m[2], d = +m[3];
-            const endOfDay = new Date(y, mo - 1, d, 23, 59, 59, 999);
-            const now = new Date();
-            if (!(endOfDay.getFullYear() === y && endOfDay.getMonth() === mo - 1 && endOfDay.getDate() === d)) {
-                return { ok: false, message: 'Invalid deadline date.' };
-            }
-            if (endOfDay <= now) {
-                return { ok: false, message: 'Deadline must be after the current time.' };
-            }
-            return { ok: true };
-        }
+        const TA_TYPES = [
+            { value: 'COURSE_TA', label: 'Course TA', desc: 'Weekly teaching support based on course timetable.' },
+            { value: 'LAB_TA', label: 'Lab TA', desc: 'Assist laboratory sessions and experiments.' },
+            { value: 'FINAL_EXAM_TA', label: 'Final Exam TA', desc: 'Support invigilation and exam logistics.' },
+            { value: 'CLASS_TEST_TA', label: 'Class Test TA', desc: 'Support quizzes and in-class tests.' }
+        ];
+        const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        const LAB_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const DAY_LABEL = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday' };
+        const LAB_DAY_LABEL = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
+        const PERIODS = Array.from({ length: 14 }, (_, i) => i + 1);
+        const PERIOD_TIME = {
+            1: { start: '08:00', end: '08:45' },
+            2: { start: '08:50', end: '09:35' },
+            3: { start: '09:50', end: '10:35' },
+            4: { start: '10:40', end: '11:25' },
+            5: { start: '11:30', end: '12:15' },
+            6: { start: '13:00', end: '13:45' },
+            7: { start: '13:50', end: '14:35' },
+            8: { start: '14:45', end: '15:30' },
+            9: { start: '15:40', end: '16:25' },
+            10: { start: '16:35', end: '17:20' },
+            11: { start: '17:25', end: '18:10' },
+            12: { start: '18:30', end: '19:15' },
+            13: { start: '19:20', end: '20:05' },
+            14: { start: '20:10', end: '20:55' }
+        };
+        let currentType = '';
+        let courseGridSelection = { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] };
+        let labSessions = [];
+        let currentLabSessionIdx = -1;
+        let currentLabPickerSelection = { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] };
 
         function parseDeadlineField(raw) {
-            const t = String(raw || '').trim();
-            if (!t) return { ok: true, value: null };
+            const t0 = String(raw || '').trim();
+            const t = t0.replaceAll('/', '-');
+            if (!t) return { ok: false, message: 'Please select a deadline date.' };
             const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
-            if (!m) return { ok: false, message: 'Please enter deadline as YYYY-MM-DD (e.g. 2026-04-05).' };
+            if (!m) return { ok: false, message: 'Invalid deadline date.' };
             const y = +m[1], mo = +m[2], d = +m[3];
-            const dt = new Date(y, mo - 1, d);
+            const dt = new Date(y, mo - 1, d, 23, 59, 59, 999);
             if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) {
                 return { ok: false, message: 'Invalid deadline date.' };
+            }
+            if (dt.getTime() <= Date.now()) {
+                return { ok: false, message: 'Deadline must be in the future.' };
             }
             return { ok: true, value: t };
         }
 
-        document.getElementById('reqInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); addRequirement(); }
-        });
-
-        function addRequirement() {
-            const input = document.getElementById('reqInput');
-            const val = input.value.trim();
-            if (!val) return;
-            requirements.push(val);
-            input.value = '';
-            renderReqTags();
+        function bindDeadlineDisplay() {
+            const el = document.getElementById('deadline');
+            if (!el) return;
+            el.addEventListener('focus', () => {
+                if (el.type !== 'date') {
+                    const v = String(el.value || '').trim();
+                    el.type = 'date';
+                    el.value = v.replaceAll('/', '-');
+                }
+            });
+            el.addEventListener('blur', () => {
+                if (el.type === 'date') {
+                    const v = String(el.value || '').trim();
+                    el.type = 'text';
+                    el.value = v ? v.replaceAll('-', '/') : '';
+                }
+            });
+            el.addEventListener('change', () => {
+                if (el.type === 'date') {
+                    const v = String(el.value || '').trim();
+                    el.type = 'text';
+                    el.value = v ? v.replaceAll('-', '/') : '';
+                }
+            });
         }
 
-        function removeRequirement(idx) {
-            requirements.splice(idx, 1);
-            renderReqTags();
+        function openTaTypeModal(force) {
+            const modal = document.getElementById('taTypeModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            const container = document.getElementById('taTypeOptions');
+            container.innerHTML = TA_TYPES.map(t => `
+                <button type="button" class="text-left p-5 rounded-2xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all" data-type="${t.value}">
+                    <p class="font-black text-gray-800">${t.label}</p>
+                    <p class="text-sm text-gray-400 mt-1">${t.desc}</p>
+                </button>
+            `).join('');
+
+            container.querySelectorAll('button[data-type]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTaType(btn.getAttribute('data-type'));
+                    closeTaTypeModal();
+                });
+            });
+
+            const closeBtn = document.getElementById('closeTaTypeModal');
+            const overlay = document.getElementById('taTypeModalOverlay');
+            const close = () => {
+                if (force) return;
+                closeTaTypeModal();
+            };
+            if (closeBtn) closeBtn.onclick = close;
+            if (overlay) overlay.onclick = close;
         }
 
-        function renderReqTags() {
-            const container = document.getElementById('reqTags');
-            container.innerHTML = requirements.map((r, i) =>
-                `<span class="bg-gray-100 px-3 py-1 rounded-full text-xs font-medium text-gray-600 flex items-center">${esc(r)} <span class="ml-2 cursor-pointer text-gray-400 hover:text-red-500" onclick="removeRequirement(${i})">&times;</span></span>`
+        function closeTaTypeModal() {
+            const modal = document.getElementById('taTypeModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+        }
+
+        function setTaType(typeValue) {
+            let tv = typeValue;
+            if (tv === 'COURSE') tv = 'COURSE_TA';
+            if (tv === 'ACTIVITY') tv = 'CLASS_TEST_TA';
+            currentType = tv;
+            const select = document.getElementById('jobType');
+            select.value = tv;
+            select.disabled = true;
+            select.classList.add('bg-gray-50');
+
+            document.getElementById('courseTaFields').classList.toggle('hidden', tv !== 'COURSE_TA');
+            document.getElementById('labTaFields').classList.toggle('hidden', tv !== 'LAB_TA');
+            document.getElementById('finalExamTaFields').classList.toggle('hidden', tv !== 'FINAL_EXAM_TA');
+            document.getElementById('classTestTaFields').classList.toggle('hidden', tv !== 'CLASS_TEST_TA');
+
+            const scheduleInput = document.getElementById('schedule');
+            if (scheduleInput) {
+                scheduleInput.readOnly = true;
+                scheduleInput.placeholder = 'Click to select schedule';
+            }
+
+            const scheduleWrapper = document.getElementById('scheduleFieldWrapper');
+            const labMount = document.getElementById('labScheduleMount');
+            if (scheduleWrapper && labMount) {
+                if (tv === 'LAB_TA') {
+                    if (scheduleWrapper.parentElement !== labMount) {
+                        labMount.appendChild(scheduleWrapper);
+                    }
+                    scheduleWrapper.classList.add('hidden');
+                } else {
+                    const basicGrid = document.getElementById('basicInfoGrid');
+                    if (basicGrid && scheduleWrapper.parentElement !== basicGrid) {
+                        basicGrid.appendChild(scheduleWrapper);
+                    }
+                    scheduleWrapper.classList.toggle('hidden', tv !== 'COURSE_TA');
+                }
+            }
+
+            const weeklyWrap = document.getElementById('weeklyHoursWrapper');
+            if (weeklyWrap) weeklyWrap.classList.toggle('hidden', tv !== 'COURSE_TA');
+
+            const weekly = document.getElementById('weeklyHours');
+            if (weekly) {
+                weekly.readOnly = tv === 'COURSE_TA';
+                weekly.placeholder = tv === 'COURSE_TA' ? 'Auto' : 'e.g. 4';
+                weekly.value = tv === 'COURSE_TA' ? String(calcCourseWeeklyHours().toFixed(2)) : (weekly.value || '');
+            }
+
+            if (tv === 'LAB_TA') {
+                ensureLabSessionCountBound();
+                rebuildLabSessions();
+            }
+        }
+
+        function ensureLabSessionCountBound() {
+            const el = document.getElementById('labSessionCount');
+            if (!el || el.__bound) return;
+            el.__bound = true;
+            el.addEventListener('input', () => rebuildLabSessions());
+        }
+
+        function rebuildLabSessions() {
+            const container = document.getElementById('labSessionsContainer');
+            if (!container) return;
+            const count = Math.max(0, Math.min(30, Number(document.getElementById('labSessionCount')?.value || 0)));
+            const next = [];
+            for (let i = 0; i < count; i++) {
+                const prev = labSessions[i];
+                next.push(prev || { week: 1, location: '', selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] } });
+            }
+            labSessions = next;
+            container.innerHTML = labSessions.map((s, idx) => {
+                const weekOpts = Array.from({ length: 17 }, (_, i) => i + 1).map(w => `<option value="${w}" ${String(s.week) === String(w) ? 'selected' : ''}>${w}</option>`).join('');
+                return `
+                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="font-bold text-gray-800">Lab Session ${idx + 1}</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-gray-600 ml-1">Lab Week (1-17)</label>
+                                <select class="form-input" data-lab-week="${idx}">${weekOpts}</select>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-gray-600 ml-1">Lab Location</label>
+                                <input class="form-input" type="text" placeholder="e.g. Room 3-435" data-lab-location="${idx}" value="${esc(s.location || '')}" />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-gray-600 ml-1">Lab Time</label>
+                                <textarea class="form-input" rows="3" readonly placeholder="Click to select lab time" data-lab-time="${idx}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('select[data-lab-week]').forEach(sel => {
+                sel.addEventListener('change', () => {
+                    const idx = Number(sel.getAttribute('data-lab-week'));
+                    if (!Number.isNaN(idx) && labSessions[idx]) labSessions[idx].week = Number(sel.value || 1);
+                    syncLabPayloadFields();
+                });
+            });
+
+            container.querySelectorAll('textarea[data-lab-time]').forEach(ta => {
+                ta.addEventListener('click', () => {
+                    const idx = Number(ta.getAttribute('data-lab-time'));
+                    openLabTimeModal(idx);
+                });
+            });
+
+            container.querySelectorAll('input[data-lab-location]').forEach(inp => {
+                inp.addEventListener('input', () => {
+                    const idx = Number(inp.getAttribute('data-lab-location'));
+                    if (!Number.isNaN(idx) && labSessions[idx]) labSessions[idx].location = inp.value;
+                    syncLabPayloadFields();
+                });
+            });
+
+            syncLabSessionTextareas();
+            syncLabPayloadFields();
+        }
+
+        function mergeConsecutivePeriods(periods) {
+            const ps = Array.from(new Set((periods || []).map(Number))).filter(n => !Number.isNaN(n)).sort((a, b) => a - b);
+            const ranges = [];
+            let start = null;
+            let prev = null;
+            for (const p of ps) {
+                if (start == null) { start = p; prev = p; continue; }
+                if (p === prev + 1) { prev = p; continue; }
+                ranges.push([start, prev]);
+                start = p; prev = p;
+            }
+            if (start != null) ranges.push([start, prev]);
+            return ranges;
+        }
+
+        function buildLabLinesFromSelection(selection) {
+            const lines = [];
+            LAB_DAYS.forEach(d => {
+                const ranges = mergeConsecutivePeriods((selection || {})[d] || []);
+                ranges.forEach(([s, e]) => {
+                    const st = PERIOD_TIME[s];
+                    const et = PERIOD_TIME[e];
+                    if (!st || !et) return;
+                    lines.push(`${LAB_DAY_LABEL[d] || d}：${st.start}-${et.end}`);
+                });
+            });
+            return lines;
+        }
+
+        function syncLabSessionTextareas() {
+            const container = document.getElementById('labSessionsContainer');
+            if (!container) return;
+            container.querySelectorAll('textarea[data-lab-time]').forEach(ta => {
+                const idx = Number(ta.getAttribute('data-lab-time'));
+                const sess = labSessions[idx];
+                if (!sess) return;
+                const lines = buildLabLinesFromSelection(sess.selection);
+                ta.value = lines.join('\n');
+            });
+        }
+
+        function syncLabPayloadFields() {
+            if (currentType !== 'LAB_TA') return;
+            const parts = labSessions.map((s, idx) => {
+                const lines = buildLabLinesFromSelection(s.selection);
+                const loc = String(s.location || '').trim();
+                const locLine = loc ? `Location: ${loc}` : '';
+                return [`Week ${s.week || 1}`, locLine, ...lines].filter(Boolean).join('\n').trim();
+            }).filter(Boolean);
+            const combined = parts.join('\n\n');
+            const labTimeHidden = document.getElementById('labTime');
+            if (labTimeHidden) labTimeHidden.value = combined;
+        }
+
+        function openLabTimeModal(sessionIdx) {
+            if (sessionIdx == null || sessionIdx < 0 || sessionIdx >= labSessions.length) return;
+            currentLabSessionIdx = sessionIdx;
+            const sess = labSessions[sessionIdx];
+            currentLabPickerSelection = JSON.parse(JSON.stringify(sess.selection || { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] }));
+            const modal = document.getElementById('labTimeModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            buildLabTimePickerGrid();
+            syncLabPickerWithSelection();
+        }
+
+        function confirmLabTimeSelection() {
+            if (currentLabSessionIdx < 0 || currentLabSessionIdx >= labSessions.length) return;
+            labSessions[currentLabSessionIdx].selection = JSON.parse(JSON.stringify(currentLabPickerSelection));
+            closeLabTimeModal();
+            syncLabSessionTextareas();
+            syncLabPayloadFields();
+        }
+
+        function closeLabTimeModal() {
+            const modal = document.getElementById('labTimeModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+        }
+
+        function buildLabTimePickerGrid() {
+            const table = document.getElementById('labTimePickerGrid');
+            if (!table) return;
+            const head = `
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase">Time</th>
+                        ${LAB_DAYS.map(d => `<th class="px-4 py-3 text-center text-xs font-bold text-gray-400 uppercase">${d}</th>`).join('')}
+                    </tr>
+                </thead>
+            `;
+            const body = `
+                <tbody>
+                    ${PERIODS.map(p => {
+                        const t = PERIOD_TIME[p];
+                        const timeLabel = t ? `${t.start}-${t.end}` : String(p);
+                        return `
+                            <tr class="border-t border-gray-100">
+                                <td class="px-4 py-3 text-xs text-gray-500 font-semibold whitespace-nowrap">${timeLabel}</td>
+                                ${LAB_DAYS.map(d => {
+                                    const id = `labpick_${d}_${p}`;
+                                    return `<td class="px-2 py-2 text-center"><button type="button" id="${id}" data-day="${d}" data-period="${p}" class="w-full py-2 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all"></button></td>`;
+                                }).join('')}
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+            table.innerHTML = head + body;
+            table.querySelectorAll('button[data-day][data-period]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const day = btn.getAttribute('data-day');
+                    const period = Number(btn.getAttribute('data-period'));
+                    const arr = currentLabPickerSelection[day] || [];
+                    const idx = arr.indexOf(period);
+                    if (idx >= 0) arr.splice(idx, 1);
+                    else arr.push(period);
+                    arr.sort((a, b) => a - b);
+                    currentLabPickerSelection[day] = arr;
+                    renderPickerCell(btn, idx < 0);
+                });
+            });
+        }
+
+        function syncLabPickerWithSelection() {
+            LAB_DAYS.forEach(d => {
+                const arr = currentLabPickerSelection[d] || [];
+                PERIODS.forEach(p => {
+                    const btn = document.getElementById(`labpick_${d}_${p}`);
+                    if (!btn) return;
+                    renderPickerCell(btn, arr.includes(p));
+                });
+            });
+        }
+
+        function initWeekOptions() {
+            const s = document.getElementById('courseWeekStart');
+            const e = document.getElementById('courseWeekEnd');
+            if (!s || !e) return;
+            const opts = Array.from({ length: 17 }, (_, i) => i + 1).map(w => `<option value="${w}">${w}</option>`).join('');
+            s.innerHTML = opts;
+            e.innerHTML = opts;
+            s.value = '1';
+            e.value = '17';
+        }
+
+        function buildCourseGrid() {
+            const table = document.getElementById('courseScheduleGrid');
+            if (!table) return;
+            const head = `
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase">Period</th>
+                        ${DAYS.map(d => `<th class="px-4 py-3 text-center text-xs font-bold text-gray-400 uppercase">${d}</th>`).join('')}
+                    </tr>
+                </thead>
+            `;
+            const body = `
+                <tbody>
+                    ${PERIODS.map(p => `
+                        <tr class="border-t border-gray-100">
+                            <td class="px-4 py-3 text-xs text-gray-500 font-semibold">${p}</td>
+                            ${DAYS.map(d => {
+                                const id = `grid_${d}_${p}`;
+                                return `<td class="px-4 py-3 text-center"><input type="checkbox" class="h-4 w-4" id="${id}" data-day="${d}" data-period="${p}"/></td>`;
+                            }).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            table.innerHTML = head + body;
+            table.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const day = cb.getAttribute('data-day');
+                    const period = Number(cb.getAttribute('data-period'));
+                    const arr = courseGridSelection[day] || [];
+                    if (cb.checked) {
+                        if (!arr.includes(period)) arr.push(period);
+                    } else {
+                        const idx = arr.indexOf(period);
+                        if (idx >= 0) arr.splice(idx, 1);
+                    }
+                    arr.sort((a, b) => a - b);
+                    courseGridSelection[day] = arr;
+                    updateCourseDerivedFields();
+                });
+            });
+        }
+
+        function openScheduleModal() {
+            const modal = document.getElementById('scheduleModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            buildSchedulePickerGrid();
+            syncPickerWithSelection();
+        }
+
+        function closeScheduleModal() {
+            const modal = document.getElementById('scheduleModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+        }
+
+        function buildSchedulePickerGrid() {
+            const table = document.getElementById('schedulePickerGrid');
+            if (!table) return;
+            const head = `
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase">Time</th>
+                        ${DAYS.map(d => `<th class="px-4 py-3 text-center text-xs font-bold text-gray-400 uppercase">${d}</th>`).join('')}
+                    </tr>
+                </thead>
+            `;
+            const body = `
+                <tbody>
+                    ${PERIODS.map(p => {
+                        const t = PERIOD_TIME[p];
+                        const timeLabel = t ? `${t.start}-${t.end}` : String(p);
+                        return `
+                            <tr class="border-t border-gray-100">
+                                <td class="px-4 py-3 text-xs text-gray-500 font-semibold whitespace-nowrap">${timeLabel}</td>
+                                ${DAYS.map(d => {
+                                    const id = `pick_${d}_${p}`;
+                                    return `<td class="px-2 py-2 text-center"><button type="button" id="${id}" data-day="${d}" data-period="${p}" class="w-full py-2 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all"></button></td>`;
+                                }).join('')}
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+            table.innerHTML = head + body;
+            table.querySelectorAll('button[data-day][data-period]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const day = btn.getAttribute('data-day');
+                    const period = Number(btn.getAttribute('data-period'));
+                    const arr = courseGridSelection[day] || [];
+                    const idx = arr.indexOf(period);
+                    if (idx >= 0) arr.splice(idx, 1);
+                    else arr.push(period);
+                    arr.sort((a, b) => a - b);
+                    courseGridSelection[day] = arr;
+                    renderPickerCell(btn, idx < 0);
+                });
+            });
+        }
+
+        function renderPickerCell(btn, isSelected) {
+            if (!btn) return;
+            if (isSelected) {
+                btn.className = 'w-full py-2 rounded-xl border border-blue-600 bg-blue-600/10 transition-all';
+            } else {
+                btn.className = 'w-full py-2 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all';
+            }
+        }
+
+        function syncPickerWithSelection() {
+            DAYS.forEach(d => {
+                const arr = courseGridSelection[d] || [];
+                PERIODS.forEach(p => {
+                    const btn = document.getElementById(`pick_${d}_${p}`);
+                    if (!btn) return;
+                    renderPickerCell(btn, arr.includes(p));
+                });
+            });
+        }
+
+        // mergeConsecutivePeriods is defined above and shared by course + lab pickers
+
+        function buildScheduleLinesFromSelection() {
+            const lines = [];
+            DAYS.forEach(d => {
+                const ranges = mergeConsecutivePeriods(courseGridSelection[d] || []);
+                ranges.forEach(([s, e]) => {
+                    const st = PERIOD_TIME[s];
+                    const et = PERIOD_TIME[e];
+                    if (!st || !et) return;
+                    lines.push(`${DAY_LABEL[d] || d}：${st.start}-${et.end}`);
+                });
+            });
+            return lines;
+        }
+
+        function calcCourseWeeklyHours() {
+            const count = DAYS.reduce((sum, d) => sum + ((courseGridSelection[d] || []).length), 0);
+            return count * 0.75;
+        }
+
+        function updateCourseDerivedFields() {
+            if (currentType !== 'COURSE_TA') return;
+            const weekly = document.getElementById('weeklyHours');
+            if (weekly) weekly.value = calcCourseWeeklyHours().toFixed(2);
+            const scheduleInput = document.getElementById('schedule');
+            if (scheduleInput) {
+                const lines = buildScheduleLinesFromSelection();
+                scheduleInput.value = lines.join('\n');
+            }
+        }
+
+        (function initTypeSelection() {
+            const typeFromUrl = getUrlParam('type');
+            initWeekOptions();
+            bindDeadlineDisplay();
+            const scheduleInput = document.getElementById('schedule');
+            if (scheduleInput) scheduleInput.addEventListener('click', () => { if (currentType === 'COURSE_TA') openScheduleModal(); });
+            const schedOverlay = document.getElementById('scheduleModalOverlay');
+            if (schedOverlay) schedOverlay.onclick = () => closeScheduleModal();
+            const closeSchedBtn = document.getElementById('closeScheduleModal');
+            if (closeSchedBtn) closeSchedBtn.onclick = () => closeScheduleModal();
+            const cancelSchedBtn = document.getElementById('cancelScheduleBtn');
+            if (cancelSchedBtn) cancelSchedBtn.onclick = () => closeScheduleModal();
+            const confirmSchedBtn = document.getElementById('confirmScheduleBtn');
+            if (confirmSchedBtn) {
+                confirmSchedBtn.onclick = () => {
+                    const lines = buildScheduleLinesFromSelection();
+                    document.getElementById('schedule').value = lines.join('\n');
+                    if (currentType === 'COURSE_TA') {
+                        document.getElementById('weeklyHours').value = calcCourseWeeklyHours().toFixed(2);
+                    }
+                    closeScheduleModal();
+                };
+            }
+
+            const labOverlay = document.getElementById('labTimeModalOverlay');
+            if (labOverlay) labOverlay.onclick = () => closeLabTimeModal();
+            const closeLabBtn = document.getElementById('closeLabTimeModal');
+            if (closeLabBtn) closeLabBtn.onclick = () => closeLabTimeModal();
+            const cancelLabBtn = document.getElementById('cancelLabTimeBtn');
+            if (cancelLabBtn) cancelLabBtn.onclick = () => closeLabTimeModal();
+            const confirmLabBtn = document.getElementById('confirmLabTimeBtn');
+            if (confirmLabBtn) confirmLabBtn.onclick = () => confirmLabTimeSelection();
+
+            const deadlineEl = document.getElementById('deadline');
+            if (deadlineEl) {
+                deadlineEl.addEventListener('change', () => {
+                    const dl = parseDeadlineField(deadlineEl.value);
+                    if (!dl.ok) showToast(dl.message, 'warning');
+                });
+            }
+            const jobTypeSelect = document.getElementById('jobType');
+            jobTypeSelect.disabled = true;
+            if (typeFromUrl) {
+                setTaType(typeFromUrl);
+            } else {
+                openTaTypeModal(true);
+            }
+        })();
+
+        const REQUIREMENT_PRESETS = {
+            COURSE_TA: [
+                'I have taken the corresponding courses, achieved excellent grades, and have a solid grasp of the core knowledge points and syllabus of the courses',
+                'Possess excellent communication and expression skills, capable of clearly answering student questions about the course, and assisting in classroom teaching and group discussions',
+                'Work with a serious and responsible attitude, and complete daily tasks on time',
+                'Able to assist the lead teacher in completing auxiliary tasks such as organizing courseware and compiling learning materials',
+                'Have patience, a strong sense of responsibility, and strictly adhere to the teaching norms of the course',
+                'Have experience as a teaching assistant for related courses'
+            ],
+            LAB_TA: [
+                'The corresponding experimental course has been taken',
+                'Proficient in experimental principles, operational procedures, and the use of relevant experimental software/instruments',
+                'Capable of guiding students to complete experimental operations, answering questions about experimental principles and operations, and standardizing the marking of experimental reports',
+                'Have relevant experience as an experimental teaching assistant'
+            ],
+            FINAL_EXAM_TA: [
+                'strictly abide by the school\'s regulations on the administration of final exams, with no records of exam violations or cheating',
+                'With rigorous and meticulous work ethic and a strong sense of responsibility, I am capable of completing tasks such as invigilating and distributing/collecting examination papers in a standardized manner throughout the entire process',
+                'Possess a strict confidentiality awareness',
+                'Have a strong sense of time, be able to arrive at work on time, stay at work throughout the entire process, not leave work without authorization, and not do anything unrelated to the examination administration',
+                'Possess excellent on-site adaptability and be capable of handling unexpected situations during the examination process in accordance with the regulations',
+                'Have experience in final exam administration and be familiar with school examination procedures'
+            ],
+            CLASS_TEST_TA: [
+                'strictly abide by the school\'s examination management regulations, with no records of examination violations or cheating',
+                'Meticulous and rigorous in work, with a strong sense of responsibility, capable of completing the invigilation work in a standardized manner throughout the entire process',
+                'Possess a strict confidentiality awareness',
+                'Have a strong sense of time management, be able to arrive at work on time, stay at work throughout the entire process, not leave work without authorization, and not do anything unrelated to the examination administration',
+                'Possess strong on-site adaptability and be capable of handling unexpected situations during the examination process in accordance with regulations',
+                'Have relevant work experience and be familiar with school examination procedures'
+            ]
+        };
+
+        let activeReqInput = null;
+
+        function getRequirementPresets() {
+            return REQUIREMENT_PRESETS[currentType] || [];
+        }
+
+        function addRequirementRow(value = '') {
+            const list = document.getElementById('requirementsList');
+            if (!list) return;
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-2';
+            row.innerHTML = `
+                <input class="form-input flex-1 req-item" type="text" value="${esc(value)}" placeholder="Enter requirement..."/>
+                <button type="button" class="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-red-50 hover:text-red-600 transition-all req-del">&times;</button>
+            `;
+            const input = row.querySelector('input.req-item');
+            const delBtn = row.querySelector('button.req-del');
+            if (input) {
+                input.addEventListener('focus', () => {
+                    activeReqInput = input;
+                    renderReqPresetPanel();
+                });
+                input.addEventListener('input', () => syncRequirementsFromUI());
+            }
+            if (delBtn) {
+                delBtn.addEventListener('click', () => {
+                    row.remove();
+                    if (activeReqInput === input) activeReqInput = null;
+                    syncRequirementsFromUI();
+                    ensureAtLeastOneRequirementRow();
+                });
+            }
+            list.appendChild(row);
+            syncRequirementsFromUI();
+            return input;
+        }
+
+        function ensureAtLeastOneRequirementRow() {
+            const list = document.getElementById('requirementsList');
+            if (!list) return;
+            if (list.querySelectorAll('input.req-item').length === 0) {
+                addRequirementRow('');
+            }
+        }
+
+        function syncRequirementsFromUI() {
+            requirements.length = 0;
+            document.querySelectorAll('#requirementsList input.req-item').forEach(inp => {
+                const v = String(inp.value || '').trim();
+                if (v) requirements.push(v);
+            });
+        }
+
+        function hideReqPresetPanel() {
+            const panel = document.getElementById('reqPresetPanel');
+            if (panel) panel.classList.add('hidden');
+        }
+
+        function renderReqPresetPanel() {
+            const panel = document.getElementById('reqPresetPanel');
+            if (!panel) return;
+            if (!activeReqInput) { panel.classList.add('hidden'); return; }
+            const presets = getRequirementPresets();
+            if (!presets.length) { panel.classList.add('hidden'); return; }
+            panel.innerHTML = presets.map(p =>
+                `<button type="button" class="w-full text-left px-4 py-2 rounded-xl hover:bg-white transition-all req-preset-btn">${esc(p)}</button>`
             ).join('');
+            panel.classList.remove('hidden');
+            panel.querySelectorAll('button.req-preset-btn').forEach((btn, idx) => {
+                btn.addEventListener('click', () => {
+                    if (!activeReqInput) return;
+                    activeReqInput.value = presets[idx];
+                    syncRequirementsFromUI();
+                    hideReqPresetPanel();
+                    activeReqInput.focus();
+                });
+            });
         }
+
+        const addReqBtn = document.getElementById('addReqRowBtn');
+        if (addReqBtn) {
+            addReqBtn.addEventListener('click', () => {
+                const input = addRequirementRow('');
+                if (input) {
+                    input.focus();
+                    setTimeout(() => {
+                        activeReqInput = input;
+                        renderReqPresetPanel();
+                    }, 0);
+                }
+            });
+        }
+        ensureAtLeastOneRequirementRow();
+
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('reqPresetPanel');
+            const list = document.getElementById('requirementsList');
+            const addBtn = document.getElementById('addReqRowBtn');
+            const t = e.target;
+            if (!panel) return;
+            if (panel.contains(t)) return;
+            if (list && list.contains(t)) return;
+            if (addBtn && addBtn.contains(t)) return;
+            if (t && t.classList && t.classList.contains('req-item')) return;
+            hideReqPresetPanel();
+        });
 
         document.getElementById('createJobForm').onsubmit = async (e) => {
             e.preventDefault();
             const title = document.getElementById('jobTitle').value.trim();
             if (!title) { showToast('Please enter a job title', 'warning'); return; }
 
+            if (!currentType) { showToast('Please select a TA type first.', 'warning'); openTaTypeModal(true); return; }
+
             const dl = parseDeadlineField(document.getElementById('deadline').value);
             if (!dl.ok) { showToast(dl.message, 'warning'); return; }
-
-            const dlAfterNow = deadlineMustBeAfterNow(dl.value);
-            if (!dlAfterNow.ok) { showToast(dlAfterNow.message, 'warning'); return; }
 
             const btn = document.getElementById('publishBtn');
             btn.disabled = true;
             btn.textContent = 'Publishing...';
 
+            syncRequirementsFromUI();
             const body = {
                 title,
-                type: 'TA',
+                type: currentType,
                 courseName: document.getElementById('courseName').value.trim(),
                 description: document.getElementById('description').value.trim(),
                 requirements: requirements,
@@ -237,6 +1047,35 @@ Back to Admin
                 schedule: document.getElementById('schedule').value.trim(),
                 deadline: dl.value
             };
+
+            if (currentType === 'COURSE_TA') {
+                const ws = parseInt(document.getElementById('courseWeekStart').value) || 1;
+                const we = parseInt(document.getElementById('courseWeekEnd').value) || 17;
+                if (ws < 1 || ws > 17 || we < 1 || we > 17 || ws > we) {
+                    showToast('Please select a valid course week range (1-17).', 'warning');
+                    btn.disabled = false;
+                    btn.textContent = 'Publish Now';
+                    return;
+                }
+                const lines = buildScheduleLinesFromSelection();
+                body.schedule = lines.join('\n');
+                body.courseWeekStart = ws;
+                body.courseWeekEnd = we;
+                body.courseScheduleGrid = JSON.stringify(courseGridSelection);
+                body.weeklyHours = calcCourseWeeklyHours();
+            } else if (currentType === 'LAB_TA') {
+                body.labSessionCount = parseInt(document.getElementById('labSessionCount').value) || 0;
+                body.labTime = document.getElementById('labTime').value.trim();
+                body.labLocation = '';
+                body.labSessions = JSON.stringify(labSessions);
+                body.schedule = body.labTime;
+            } else if (currentType === 'FINAL_EXAM_TA') {
+                body.examDateTime = document.getElementById('examDateTime').value;
+                body.examLocation = document.getElementById('examLocation').value.trim();
+            } else if (currentType === 'CLASS_TEST_TA') {
+                body.testScheduleType = document.getElementById('testScheduleType').value;
+                body.testScheduleDetail = document.getElementById('testScheduleDetail').value.trim();
+            }
 
             try {
                 await API.post('/api/jobs', body);

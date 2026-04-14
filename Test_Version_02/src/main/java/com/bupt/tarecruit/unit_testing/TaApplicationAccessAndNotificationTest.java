@@ -198,7 +198,7 @@ class TaApplicationAccessAndNotificationTest {
         Job job = new Job();
         job.postedBy = mo.id;
         job.title = title;
-        job.type = "TA";
+        job.type = "COURSE";
         job.courseName = title + " Course";
         job.description = "desc";
         job.quota = 1;

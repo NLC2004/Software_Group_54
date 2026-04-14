@@ -144,9 +144,9 @@ Back to Admin
 <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
 <h1 class="text-2xl font-bold text-gray-800">Recruitment Dashboard</h1>
 <div class="flex items-center space-x-3">
-<div class="relative flex-1">
-<span class="absolute inset-y-0 left-4 flex items-center text-gray-400"><span class="iconify" data-icon="solar:magnifer-linear"></span></span>
-<input class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm font-medium placeholder-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 outline-none transition-all" id="searchInput" placeholder="Search jobs by title..." type="text"/>
+<div class="relative">
+<input class="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm w-64 transition-all" placeholder="Search job titles..." type="text" id="searchInput"/>
+<span class="iconify absolute left-3 top-3 text-gray-400" data-icon="solar:magnifer-linear"></span>
 </div>
 <a class="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-2xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200" href="job-create.html">
 <span class="iconify mr-2 text-lg" data-icon="solar:add-circle-linear"></span> Post New Job
@@ -162,6 +162,18 @@ Back to Admin
 <script src="/js/api.js"></script>
 <script>
         let allJobs = [];
+
+        function formatJobType(t) {
+            const raw = String(t || '').trim();
+            const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+            const map = {
+                COURSE_TA: 'Course TA',
+                LAB_TA: 'Lab TA',
+                FINAL_EXAM_TA: 'Final Exam TA',
+                CLASS_TEST_TA: 'Class Test TA'
+            };
+            return map[tv] || tv || '';
+        }
 
         (async function init() {
             const user = requireAuth(['MO', 'ADMIN']);
@@ -268,7 +280,7 @@ Back to Admin
                         </div>
                     </div>
                     <div class="flex items-center justify-between border-t border-gray-50 pt-4">
-                        <span class="text-xs text-gray-400">TA Position</span>
+                        <span class="text-xs text-gray-400">${esc(formatJobType(job.type))}</span>
                         <a class="text-blue-600 font-semibold text-sm hover:underline" href="job-detail.html?id=${job.id}">Manage</a>
                     </div>
                 </div>`;

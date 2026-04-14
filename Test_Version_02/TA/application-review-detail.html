@@ -216,6 +216,10 @@
                                 <p class="text-[10px] text-gray-400 uppercase font-bold">Submission Time</p>
                                 <p class="text-sm font-medium text-gray-800">${app.createdAt ? formatDateTime(app.createdAt) : 'N/A'}</p>
                             </div>
+                            ${app.jobType ? `<div>
+                                <p class="text-[10px] text-gray-400 uppercase font-bold">Type</p>
+                                <p class="text-sm font-medium text-gray-800">${esc(app.jobType)}</p>
+                            </div>` : ''}
                             ${app.updatedAt ? `<div>
                                 <p class="text-[10px] text-gray-400 uppercase font-bold">Last Updated</p>
                                 <p class="text-sm font-medium text-gray-800">${formatDateTime(app.updatedAt)}</p>
