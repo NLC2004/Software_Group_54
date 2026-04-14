@@ -70,7 +70,7 @@ Notifications
 </div>
 <div class="flex items-center gap-3">
 <div class="relative">
-<input class="w-64 pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Search position / instructor..." type="text" id="searchInput"/>
+<input class="w-64 pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Search course / instructor..." type="text" id="searchInput"/>
 <span class="iconify absolute left-3 top-2.5 text-gray-400" data-icon="material-symbols:search"></span>
 </div>
 </div>
@@ -83,6 +83,18 @@ Notifications
 <script src="/js/api.js"></script>
 <script>
 let allJobs = [];
+
+function formatJobType(t) {
+    const raw = String(t || '').trim();
+    const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+    const map = {
+        COURSE_TA: 'Course TA',
+        LAB_TA: 'Lab TA',
+        FINAL_EXAM_TA: 'Final Exam TA',
+        CLASS_TEST_TA: 'Class Test TA'
+    };
+    return map[tv] || tv || '';
+}
 
 function parseDeadline(deadline) {
     if (!deadline) return null;
@@ -155,7 +167,7 @@ function renderJobs(jobs) {
                 </div>
             </div>
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
-                <span class="text-xs text-gray-400">TA Position</span>
+                <span class="text-xs text-gray-400">${esc(formatJobType(job.type))}</span>
                 <a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html?id=${job.id}">View details</a>
             </div>
         </div>`;

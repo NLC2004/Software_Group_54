@@ -168,6 +168,18 @@ Back to Admin
             return num > 0 ? num : 99;
         }
 
+        function formatJobType(t) {
+            const raw = String(t || '').trim();
+            const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+            const map = {
+                COURSE_TA: 'Course TA',
+                LAB_TA: 'Lab TA',
+                FINAL_EXAM_TA: 'Final Exam TA',
+                CLASS_TEST_TA: 'Class Test TA'
+            };
+            return map[tv] || tv || '';
+        }
+
         function getFilteredApplicants(applications) {
             let list = Array.isArray(applications) ? [...applications] : [];
             if (moPriority1Only) {
@@ -213,7 +225,7 @@ Back to Admin
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-gray-800">${esc(job.courseName || job.title || '')}</h2>
-                        <p class="text-sm text-gray-400 font-medium">${statusBadge(job.status)}</p>
+                        <p class="text-sm text-gray-400 font-medium">${esc(formatJobType(job.type))} &middot; ${statusBadge(job.status)}</p>
                     </div>
                 </div>
                 <div class="space-y-4">
