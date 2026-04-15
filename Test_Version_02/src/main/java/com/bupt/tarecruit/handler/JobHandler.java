@@ -79,6 +79,7 @@ public class JobHandler extends BaseHandler {
             m.put("labLocation", j.labLocation);
             m.put("labSessions", j.labSessions);
             m.put("examDateTime", j.examDateTime);
+            m.put("examDuration", j.examDuration);
             m.put("examLocation", j.examLocation);
             m.put("testScheduleType", j.testScheduleType);
             m.put("testScheduleDetail", j.testScheduleDetail);
@@ -121,6 +122,7 @@ public class JobHandler extends BaseHandler {
         m.put("labLocation", job.labLocation);
         m.put("labSessions", job.labSessions);
         m.put("examDateTime", job.examDateTime);
+        m.put("examDuration", job.examDuration);
         m.put("examLocation", job.examLocation);
         m.put("testScheduleType", job.testScheduleType);
         m.put("testScheduleDetail", job.testScheduleDetail);
@@ -171,6 +173,7 @@ public class JobHandler extends BaseHandler {
         if (body.has("labSessions")) job.labSessions = body.get("labSessions").getAsString();
 
         if (body.has("examDateTime")) job.examDateTime = body.get("examDateTime").getAsString();
+        if (body.has("examDuration")) job.examDuration = body.get("examDuration").getAsDouble();
         if (body.has("examLocation")) job.examLocation = body.get("examLocation").getAsString();
 
         if (body.has("testScheduleType")) job.testScheduleType = body.get("testScheduleType").getAsString();
@@ -215,6 +218,7 @@ public class JobHandler extends BaseHandler {
         if (body.has("labSessions")) job.labSessions = body.get("labSessions").getAsString();
 
         if (body.has("examDateTime")) job.examDateTime = body.get("examDateTime").getAsString();
+        if (body.has("examDuration")) job.examDuration = body.get("examDuration").getAsDouble();
         if (body.has("examLocation")) job.examLocation = body.get("examLocation").getAsString();
 
         if (body.has("testScheduleType")) job.testScheduleType = body.get("testScheduleType").getAsString();

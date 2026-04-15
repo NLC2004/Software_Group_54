@@ -487,282 +487,338 @@ public class DataService {
 
         if (usersChanged) writeList("users.json", users);
 
-        boolean jobsChanged = false;
-        List<Job> jobs = getAllJobs();
-        java.util.function.Function<String, Job> findJobById = (jid) -> {
-            for (Job j : jobs) {
-                if (j != null && j.id != null && j.id.equals(jid)) return j;
-            }
-            return null;
+        // ==================== Demo Data Reset (Jobs/Applications/Notifications) ====================
+
+        long now = System.currentTimeMillis();
+
+        List<String> courseNamePresets = List.of(
+                "Machine Learning",
+                "Design and Build",
+                "Personal Development Plan and Entrepreneurial Skills",
+                "Operating Systems",
+                "Communications and Networks",
+                "Embedded Systems",
+                "Cryptography and Cyber Security",
+                "Software Engineering",
+                "Sensors and Radio Frequency Identification",
+                "Middleware",
+                "Database Systems",
+                "Data Structures",
+                "Computer Networks",
+                "Artificial Intelligence",
+                "Human-Computer Interaction",
+                "Computer Architecture",
+                "Software Testing",
+                "Web Development"
+        );
+
+        Map<String, List<String>> requirementPresets = new LinkedHashMap<>();
+        requirementPresets.put("COURSE_TA", List.of(
+                "I have taken the corresponding courses and have a solid grasp of the core knowledge points and syllabus.",
+                "Possess good communication skills and can answer students' questions clearly.",
+                "Work with a serious and responsible attitude and complete tasks on time.",
+                "Able to assist in organizing teaching materials and grading assignments.",
+                "Have patience and a strong sense of responsibility."
+        ));
+        requirementPresets.put("LAB_TA", List.of(
+                "The corresponding experimental course has been taken.",
+                "Proficient in experimental principles, operational procedures, and the use of relevant software/instruments.",
+                "Capable of guiding students to complete experimental operations and answering lab questions.",
+                "Able to standardize the marking of experimental reports."
+        ));
+        requirementPresets.put("FINAL_EXAM_TA", List.of(
+                "Strictly abide by the school's regulations on the administration of final exams.",
+                "Possess a strong sense of responsibility and confidentiality awareness.",
+                "Arrive on time and stay throughout the entire process.",
+                "Capable of handling unexpected situations according to regulations."
+        ));
+        requirementPresets.put("CLASS_TEST_TA", List.of(
+                "Strictly abide by the school's examination management regulations.",
+                "Meticulous and rigorous in work, with a strong sense of responsibility.",
+                "Possess confidentiality awareness.",
+                "Have strong on-site adaptability for in-class tests."
+        ));
+
+        String[] moIds = new String[]{"mo001", "mo002", "mo003", "mo004", "mo005", "mo006"};
+        String[][] moTypes = new String[][]{
+                {"COURSE_TA", "LAB_TA", "FINAL_EXAM_TA"},
+                {"COURSE_TA", "LAB_TA", "CLASS_TEST_TA"},
+                {"COURSE_TA", "FINAL_EXAM_TA", "CLASS_TEST_TA"},
+                {"LAB_TA", "FINAL_EXAM_TA", "CLASS_TEST_TA"},
+                {"COURSE_TA", "LAB_TA", "FINAL_EXAM_TA"},
+                {"COURSE_TA", "LAB_TA", "CLASS_TEST_TA"}
         };
 
-        java.util.function.Function<Job, Boolean> upsertJob = (seed) -> {
-            Job existing = findJobById.apply(seed.id);
-            if (existing == null) {
-                jobs.add(seed);
-                return true;
+        List<Job> newJobs = new ArrayList<>();
+        int courseIdx = 0;
+        int jobCounter = 1;
+        for (int i = 0; i < moIds.length; i++) {
+            for (int t = 0; t < 3; t++) {
+                String type = moTypes[i][t];
+                String courseName = courseNamePresets.get(courseIdx % courseNamePresets.size());
+                courseIdx++;
+
+                Job j = new Job();
+                j.id = String.format("job%03d", jobCounter++);
+                j.postedBy = moIds[i];
+                j.type = type;
+                j.courseName = courseName;
+                j.title = buildSeedJobTitle(type, courseName);
+                j.description = buildSeedJobDescription(type);
+                j.requirements = new ArrayList<>(requirementPresets.getOrDefault(type, List.of()));
+                j.quota = 1 + ((i + t) % 3);
+                j.status = "OPEN";
+                j.createdAt = now - 1000L * 60 * 60 * 24 * (20 - (i * 3 + t));
+                j.deadline = buildSeedDeadlineIso(now, 7 + (i * 3 + t));
+
+                if ("FINAL_EXAM_TA".equals(type)) {
+                    j.examDateTime = buildSeedExamDateTimeIso(now, 10 + i + t, 14 + (i % 3), 0);
+                    j.examDuration = 2.0 + (t % 2) * 0.5;
+                    j.examLocation = "Teaching Building A-" + (101 + i);
+                    j.weeklyHours = j.examDuration;
+                    j.schedule = buildSeedFinalExamScheduleText(j.examDateTime, j.examDuration, j.examLocation);
+                } else {
+                    List<Map<String, Object>> entries = buildSeedScheduleEntries(i, t);
+                    j.courseScheduleGrid = gson.toJson(entries);
+                    j.schedule = buildSeedScheduleSummaryText(entries);
+                    j.weeklyHours = calcSeedWeeklyHours(entries);
+                }
+
+                newJobs.add(j);
             }
-            return false;
-        };
-
-        if (findJobById.apply("job001") == null) {
-
-            Job j1 = new Job();
-            j1.id = "job001";
-            j1.postedBy = "mo001";
-            j1.title = "TA Needed: Programming Fundamentals";
-            j1.type = "COURSE";
-            j1.courseName = "Programming Fundamentals";
-            j1.description = "Support tutorials, grading and office hours.";
-            j1.requirements = List.of("Strong Java basics", "Good communication", "Available weekly");
-            j1.quota = 2;
-            j1.schedule = "Mon 18:00-20:00";
-            j1.weeklyHours = 6;
-            j1.deadline = "2026-05-01";
-            j1.status = "OPEN";
-            j1.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 5;
-            jobsChanged |= upsertJob.apply(j1);
-
-            Job j2 = new Job();
-            j2.id = "job002";
-            j2.postedBy = "mo002";
-            j2.title = "TA Needed: Data Structures";
-            j2.type = "COURSE";
-            j2.courseName = "Data Structures";
-            j2.description = "Help with labs and assignments.";
-            j2.requirements = List.of("Solid DS/Algo", "Responsible", "Teamwork");
-            j2.quota = 1;
-            j2.schedule = "Wed 14:00-16:00";
-            j2.weeklyHours = 5;
-            j2.deadline = "2026-05-05";
-            j2.status = "OPEN";
-            j2.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 4;
-            jobsChanged |= upsertJob.apply(j2);
-
-            Job j3 = new Job();
-            j3.id = "job003";
-            j3.postedBy = "mo003";
-            j3.title = "TA Needed: Database Systems";
-            j3.type = "COURSE";
-            j3.courseName = "Database Systems";
-            j3.description = "Assist with SQL labs and project support.";
-            j3.requirements = List.of("SQL proficiency", "Patience", "Clear explanation");
-            j3.quota = 2;
-            j3.schedule = "Thu 10:00-12:00";
-            j3.weeklyHours = 4;
-            j3.deadline = "2026-05-10";
-            j3.status = "OPEN";
-            j3.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 3;
-            jobsChanged |= upsertJob.apply(j3);
-
-            Job j4 = new Job();
-            j4.id = "job004";
-            j4.postedBy = "mo004";
-            j4.title = "TA Needed: Software Engineering Project";
-            j4.type = "ACTIVITY";
-            j4.courseName = "SE Project";
-            j4.description = "Mentor team projects and demos.";
-            j4.requirements = List.of("Project experience", "Mentoring", "Time management");
-            j4.quota = 1;
-            j4.schedule = "Fri 16:00-18:00";
-            j4.weeklyHours = 3;
-            j4.deadline = "2026-04-25";
-            j4.status = "CLOSED";
-            j4.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 10;
-            jobsChanged |= upsertJob.apply(j4);
-
-            Job j5 = new Job();
-            j5.id = "job005";
-            j5.postedBy = "mo005";
-            j5.title = "TA Needed: Computer Networks";
-            j5.type = "COURSE";
-            j5.courseName = "Computer Networks";
-            j5.description = "Assist with network labs and Q&A.";
-            j5.requirements = List.of("Basic networking", "Hands-on", "Reliable");
-            j5.quota = 1;
-            j5.schedule = "Tue 08:00-10:00";
-            j5.weeklyHours = 4;
-            j5.deadline = "2026-05-15";
-            j5.status = "OPEN";
-            j5.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 2;
-            jobsChanged |= upsertJob.apply(j5);
-
-            Job j6 = new Job();
-            j6.id = "job006";
-            j6.postedBy = "mo006";
-            j6.title = "TA Needed: AI Basics";
-            j6.type = "COURSE";
-            j6.courseName = "AI Basics";
-            j6.description = "Help with homework review and tutorials.";
-            j6.requirements = List.of("ML fundamentals", "Python basics", "Communication");
-            j6.quota = 2;
-            j6.schedule = "Sat 09:00-11:00";
-            j6.weeklyHours = 5;
-            j6.deadline = "2026-05-20";
-            j6.status = "OPEN";
-            j6.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 24;
-            jobsChanged |= upsertJob.apply(j6);
         }
+        writeList("jobs.json", newJobs);
 
-        if (jobsChanged) writeList("jobs.json", jobs);
+        List<Application> newApps = new ArrayList<>();
+        String[] taIds = new String[]{"ta001", "ta002", "ta003", "ta004", "ta005", "ta006"};
+        int appCounter = 1;
+        for (int i = 0; i < taIds.length; i++) {
+            String taId = taIds[i];
+            int baseJob = (i * 3) % newJobs.size();
+            Job j1 = newJobs.get((baseJob + 0) % newJobs.size());
+            Job j2 = newJobs.get((baseJob + 5) % newJobs.size());
+            Job j3 = newJobs.get((baseJob + 9) % newJobs.size());
+            Job j4 = newJobs.get((baseJob + 12) % newJobs.size());
+            Job j5 = newJobs.get((baseJob + 15) % newJobs.size());
 
-        boolean appsChanged = false;
-        List<Application> apps = getAllApplications();
-        java.util.function.Function<String, Application> findAppById = (aid) -> {
-            for (Application a : apps) {
-                if (a != null && a.id != null && a.id.equals(aid)) return a;
+            List<Job> picked = List.of(j1, j2, j3, j4, j5);
+            String[] statuses = new String[]{"PENDING", "APPROVED", "REJECTED", "PENDING", "REJECTED"};
+            int[] priorities = new int[]{1, 2, 3, 3, 1};
+            for (int k = 0; k < picked.size(); k++) {
+                Application a = new Application();
+                a.id = String.format("app%03d", appCounter++);
+                a.jobId = picked.get(k).id;
+                a.applicantId = taId;
+                a.priority = priorities[k];
+                a.cvFileName = "cv_" + taId + ".pdf";
+                a.coverLetter = buildSeedCoverLetter(picked.get(k));
+                a.status = statuses[k];
+                a.createdAt = now - 1000L * 60 * 60 * (12L * (k + 1) + i);
+                a.updatedAt = a.createdAt + ("APPROVED".equals(a.status) || "REJECTED".equals(a.status) ? 1000L * 60 * 60 * 6 : 0);
+                newApps.add(a);
             }
-            return null;
-        };
-
-        java.util.function.Function<Application, Boolean> upsertApp = (seed) -> {
-            Application existing = findAppById.apply(seed.id);
-            if (existing == null) {
-                apps.add(seed);
-                return true;
-            }
-            return false;
-        };
-
-        if (findAppById.apply("app001") == null) {
-
-            Application a1 = new Application();
-            a1.id = "app001";
-            a1.jobId = "job001";
-            a1.applicantId = "ta001";
-            a1.priority = 1;
-            a1.cvFileName = "cv_ta001.pdf";
-            a1.coverLetter = "Interested in teaching and helping peers.";
-            a1.status = "PENDING";
-            a1.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 12;
-            a1.updatedAt = a1.createdAt;
-            appsChanged |= upsertApp.apply(a1);
-
-            Application a2 = new Application();
-            a2.id = "app002";
-            a2.jobId = "job001";
-            a2.applicantId = "ta002";
-            a2.priority = 2;
-            a2.cvFileName = "cv_ta002.pdf";
-            a2.coverLetter = "Have experience as course helper.";
-            a2.status = "APPROVED";
-            a2.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 30;
-            a2.updatedAt = System.currentTimeMillis() - 1000L * 60 * 60 * 20;
-            appsChanged |= upsertApp.apply(a2);
-
-            Application a3 = new Application();
-            a3.id = "app003";
-            a3.jobId = "job002";
-            a3.applicantId = "ta003";
-            a3.priority = 1;
-            a3.cvFileName = "cv_ta003.pdf";
-            a3.coverLetter = "Strong DS/Algo, can assist labs.";
-            a3.status = "REJECTED";
-            a3.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 50;
-            a3.updatedAt = System.currentTimeMillis() - 1000L * 60 * 60 * 40;
-            appsChanged |= upsertApp.apply(a3);
-
-            Application a4 = new Application();
-            a4.id = "app004";
-            a4.jobId = "job003";
-            a4.applicantId = "ta004";
-            a4.priority = 3;
-            a4.cvFileName = "cv_ta004.pdf";
-            a4.coverLetter = "I like database and can help with SQL labs.";
-            a4.status = "WITHDRAWN";
-            a4.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 36;
-            a4.updatedAt = System.currentTimeMillis() - 1000L * 60 * 60 * 10;
-            appsChanged |= upsertApp.apply(a4);
-
-            Application a5 = new Application();
-            a5.id = "app005";
-            a5.jobId = "job006";
-            a5.applicantId = "ta005";
-            a5.priority = 1;
-            a5.cvFileName = "cv_ta005.pdf";
-            a5.coverLetter = "Familiar with Python and ML basics.";
-            a5.status = "PENDING";
-            a5.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 6;
-            a5.updatedAt = a5.createdAt;
-            appsChanged |= upsertApp.apply(a5);
-
-            Application a6 = new Application();
-            a6.id = "app006";
-            a6.jobId = "job005";
-            a6.applicantId = "ta006";
-            a6.priority = 2;
-            a6.cvFileName = "cv_ta006.pdf";
-            a6.coverLetter = "Hands-on labs and networking basics.";
-            a6.status = "APPROVED";
-            a6.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 70;
-            a6.updatedAt = System.currentTimeMillis() - 1000L * 60 * 60 * 60;
-            appsChanged |= upsertApp.apply(a6);
         }
+        writeList("applications.json", newApps);
 
-        if (appsChanged) writeList("applications.json", apps);
-
-        boolean notificationsChanged = false;
-        List<Notification> ns = getAllNotifications();
-        java.util.function.Function<String, Notification> findNotificationById = (nid) -> {
-            for (Notification n : ns) {
-                if (n != null && n.id != null && n.id.equals(nid)) return n;
-            }
-            return null;
-        };
-
-        java.util.function.Function<Notification, Boolean> upsertNotification = (seed) -> {
-            Notification existing = findNotificationById.apply(seed.id);
-            if (existing == null) {
-                ns.add(seed);
-                return true;
-            }
-            return false;
-        };
-
-        if (findNotificationById.apply("noti001") == null) {
-
-            Notification n1 = new Notification();
-            n1.id = "noti001";
-            n1.userId = "mo001";
-            n1.title = "New Application";
-            n1.content = "Zijie Zhang applied for TA Needed: Programming Fundamentals";
-            n1.type = "APPLICATION";
-            n1.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 12;
-            notificationsChanged |= upsertNotification.apply(n1);
-
-            Notification n2 = new Notification();
-            n2.id = "noti002";
-            n2.userId = "ta002";
-            n2.title = "Application Approved";
-            n2.content = "Your application for TA Needed: Programming Fundamentals has been approved!";
-            n2.type = "APPLICATION";
-            n2.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 20;
-            notificationsChanged |= upsertNotification.apply(n2);
-
-            Notification n3 = new Notification();
-            n3.id = "noti003";
-            n3.userId = "ta003";
-            n3.title = "Application Rejected";
-            n3.content = "Your application for TA Needed: Data Structures has been rejected.";
-            n3.type = "APPLICATION";
-            n3.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 40;
-            notificationsChanged |= upsertNotification.apply(n3);
-
-            Notification n4 = new Notification();
-            n4.id = "noti004";
-            n4.userId = "ta004";
-            n4.title = "Application Withdrawn";
-            n4.content = "You withdrew your application for TA Needed: Database Systems.";
-            n4.type = "APPLICATION";
-            n4.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 10;
-            notificationsChanged |= upsertNotification.apply(n4);
-        }
-
-        if (notificationsChanged) writeList("notifications.json", ns);
+        writeList("notifications.json", new ArrayList<Notification>());
 
         String[] emptyLists = {"audit_logs.json", "password_resets.json", "export_tasks.json", "admin_role_templates.json", "application_drafts.json"};
         for (String f : emptyLists) {
             if (!Files.exists(dataDir.resolve(f))) writeList(f, new ArrayList<>());
         }
+    }
+
+    private String buildSeedJobTitle(String type, String courseName) {
+        if ("COURSE_TA".equals(type)) return "Course TA: " + courseName;
+        if ("LAB_TA".equals(type)) return "Lab TA: " + courseName;
+        if ("FINAL_EXAM_TA".equals(type)) return "Final Exam TA: " + courseName;
+        if ("CLASS_TEST_TA".equals(type)) return "Class Test TA: " + courseName;
+        return "TA: " + courseName;
+    }
+
+    private String buildSeedJobDescription(String type) {
+        if ("COURSE_TA".equals(type)) return "Weekly teaching support based on course timetable.";
+        if ("LAB_TA".equals(type)) return "Assist laboratory sessions and experiments.";
+        if ("FINAL_EXAM_TA".equals(type)) return "Support invigilation and exam logistics.";
+        if ("CLASS_TEST_TA".equals(type)) return "Support quizzes and in-class tests.";
+        return "Teaching assistant support.";
+    }
+
+    private String buildSeedDeadlineIso(long now, int plusDays) {
+        java.time.LocalDate d = java.time.Instant.ofEpochMilli(now).atZone(java.time.ZoneId.systemDefault()).toLocalDate().plusDays(plusDays);
+        return d.toString();
+    }
+
+    private String buildSeedExamDateTimeIso(long now, int plusDays, int hour, int minute) {
+        java.time.LocalDateTime dt = java.time.Instant.ofEpochMilli(now).atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime().plusDays(plusDays).withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+        return dt.toString().substring(0, 16);
+    }
+
+    private String buildSeedFinalExamScheduleText(String examDateTimeIso, double duration, String location) {
+        String display = examDateTimeIso == null ? "" : examDateTimeIso.replace('T', ' ');
+        return (display.isEmpty() ? "" : (display + " (" + duration + " hours)")) + (location == null || location.isEmpty() ? "" : (" @ " + location));
+    }
+
+    private List<Map<String, Object>> buildSeedScheduleEntries(int moIdx, int typeIdx) {
+        List<Map<String, Object>> entries = new ArrayList<>();
+
+        Map<String, List<Integer>> sel1 = new LinkedHashMap<>();
+        sel1.put("Mon", List.of(1, 2));
+        sel1.put("Tue", List.of());
+        sel1.put("Wed", List.of(7, 8));
+        sel1.put("Thu", List.of());
+        sel1.put("Fri", List.of());
+
+        Map<String, List<Integer>> sel2 = new LinkedHashMap<>();
+        sel2.put("Mon", List.of());
+        sel2.put("Tue", List.of(9, 10));
+        sel2.put("Wed", List.of());
+        sel2.put("Thu", List.of(3, 4));
+        sel2.put("Fri", List.of());
+
+        int w1 = 1 + ((moIdx + typeIdx) % 6);
+        int w2 = 7 + ((moIdx + typeIdx) % 6);
+
+        entries.add(buildSeedScheduleEntry(w1, moIdx, typeIdx, sel1));
+        entries.add(buildSeedScheduleEntry(w2, moIdx, typeIdx, sel2));
+        return entries;
+    }
+
+    private Map<String, Object> buildSeedScheduleEntry(int week, int moIdx, int typeIdx, Map<String, List<Integer>> baseSelection) {
+        Map<String, Object> entry = new LinkedHashMap<>();
+        entry.put("week", week);
+
+        Map<String, List<Integer>> sel = new LinkedHashMap<>();
+        for (Map.Entry<String, List<Integer>> e : baseSelection.entrySet()) {
+            List<Integer> ps = new ArrayList<>(e.getValue());
+            int shift = (moIdx + typeIdx) % 3;
+            if (!ps.isEmpty() && shift > 0) {
+                ps = ps.stream().map(p -> Math.min(14, p + shift)).collect(Collectors.toList());
+            }
+            sel.put(e.getKey(), ps);
+        }
+        entry.put("selection", sel);
+        return entry;
+    }
+
+    private double calcSeedWeeklyHours(List<Map<String, Object>> entries) {
+        if (entries == null) return 0;
+        int total = 0;
+        for (Map<String, Object> e : entries) {
+            Object selObj = e.get("selection");
+            if (!(selObj instanceof Map)) continue;
+            Map<?, ?> sel = (Map<?, ?>) selObj;
+            for (String d : List.of("Mon", "Tue", "Wed", "Thu", "Fri")) {
+                Object v = sel.get(d);
+                if (v instanceof List) total += ((List<?>) v).size();
+            }
+        }
+        return total * 0.75;
+    }
+
+    private String buildSeedScheduleSummaryText(List<Map<String, Object>> entries) {
+        if (entries == null) return "";
+        List<String> lines = new ArrayList<>();
+        Map<String, String> dayLabel = Map.of(
+                "Mon", "Monday",
+                "Tue", "Tuesday",
+                "Wed", "Wednesday",
+                "Thu", "Thursday",
+                "Fri", "Friday"
+        );
+
+        for (Map<String, Object> e : entries) {
+            int week = 1;
+            Object wObj = e.get("week");
+            if (wObj instanceof Number) week = ((Number) wObj).intValue();
+
+            Object selObj = e.get("selection");
+            if (!(selObj instanceof Map)) continue;
+            Map<?, ?> sel = (Map<?, ?>) selObj;
+
+            for (String d : List.of("Mon", "Tue", "Wed", "Thu", "Fri")) {
+                Object v = sel.get(d);
+                if (!(v instanceof List)) continue;
+                List<Integer> periods = ((List<?>) v).stream()
+                        .map(x -> {
+                            try { return Integer.parseInt(String.valueOf(x)); } catch (Exception ex) { return null; }
+                        })
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .sorted()
+                        .collect(Collectors.toList());
+                if (periods.isEmpty()) continue;
+
+                for (int[] r : mergeSeedConsecutivePeriods(periods)) {
+                    String st = seedPeriodStart(r[0]);
+                    String et = seedPeriodEnd(r[1]);
+                    if (st.isEmpty() || et.isEmpty()) continue;
+                    lines.add("Week " + week + " " + dayLabel.getOrDefault(d, d) + "：" + st + "-" + et);
+                }
+            }
+        }
+        return String.join("\n", lines);
+    }
+
+    private List<int[]> mergeSeedConsecutivePeriods(List<Integer> periods) {
+        List<int[]> ranges = new ArrayList<>();
+        Integer start = null;
+        Integer prev = null;
+        for (Integer p : periods) {
+            if (p == null) continue;
+            if (start == null) { start = p; prev = p; continue; }
+            if (p == prev + 1) { prev = p; continue; }
+            ranges.add(new int[]{start, prev});
+            start = p;
+            prev = p;
+        }
+        if (start != null && prev != null) ranges.add(new int[]{start, prev});
+        return ranges;
+    }
+
+    private String seedPeriodStart(int p) {
+        switch (p) {
+            case 1: return "08:00";
+            case 2: return "08:50";
+            case 3: return "09:50";
+            case 4: return "10:40";
+            case 5: return "11:30";
+            case 6: return "13:00";
+            case 7: return "13:50";
+            case 8: return "14:45";
+            case 9: return "15:40";
+            case 10: return "16:35";
+            case 11: return "17:25";
+            case 12: return "18:30";
+            case 13: return "19:20";
+            case 14: return "20:10";
+            default: return "";
+        }
+    }
+
+    private String seedPeriodEnd(int p) {
+        switch (p) {
+            case 1: return "08:45";
+            case 2: return "09:35";
+            case 3: return "10:35";
+            case 4: return "11:25";
+            case 5: return "12:15";
+            case 6: return "13:45";
+            case 7: return "14:35";
+            case 8: return "15:30";
+            case 9: return "16:25";
+            case 10: return "17:20";
+            case 11: return "18:10";
+            case 12: return "19:15";
+            case 13: return "20:05";
+            case 14: return "20:55";
+            default: return "";
+        }
+    }
+
+    private String buildSeedCoverLetter(Job job) {
+        String course = job == null ? "the course" : (job.courseName == null ? "the course" : job.courseName);
+        return "I am interested in this position and can contribute to " + course + ".";
     }
 }
