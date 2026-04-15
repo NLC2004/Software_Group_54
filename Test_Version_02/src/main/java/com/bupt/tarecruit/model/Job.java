@@ -29,6 +29,7 @@ public class Job {
 
     // Final Exam TA specific
     public String examDateTime; // ISO-like string from datetime-local
+    public double examDuration; // hours
     public String examLocation;
 
     // Class Test TA specific

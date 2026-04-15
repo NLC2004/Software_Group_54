@@ -1254,5 +1254,101 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1776185649612
+  },
+  {
+    "id": "58f0cf0d",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776217866039
+  },
+  {
+    "id": "ac83b5b1",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776227382021
+  },
+  {
+    "id": "6e5203bb",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776229359321
+  },
+  {
+    "id": "314d3c94",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application app011 for Course TA: Cryptography and Cyber Security",
+    "createdAt": 1776229385008
+  },
+  {
+    "id": "63ca69c2",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776230090257
+  },
+  {
+    "id": "bcf808d8",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776230133270
+  },
+  {
+    "id": "d8d8e312",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776230498080
+  },
+  {
+    "id": "9cc65449",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776231069751
+  },
+  {
+    "id": "ddb86cb2",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1776244088300
+  },
+  {
+    "id": "7cf49697",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776244100741
+  },
+  {
+    "id": "89cc1465",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1776244132168
+  },
+  {
+    "id": "8415e099",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776244164843
   }
 ]
