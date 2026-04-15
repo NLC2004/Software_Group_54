@@ -121,6 +121,17 @@
 </div>
 <script src="/js/api.js"></script>
 <script>
+        function formatJobType(t) {
+            const raw = String(t || '').trim();
+            const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+            const map = {
+                COURSE_TA: 'Course TA',
+                LAB_TA: 'Lab TA',
+                FINAL_EXAM_TA: 'Final Exam TA',
+                CLASS_TEST_TA: 'Class Test TA'
+            };
+            return map[tv] || tv || '';
+        }
     let allRecords = [];
     let currentFilter = 'all';
 
@@ -147,7 +158,7 @@
                 <td class="py-4 pl-2">
                     <div class="font-bold text-gray-900">${esc(rec.jobTitle || 'N/A')}</div>
                 </td>
-                <td class="py-4 text-sm text-gray-600">${esc(rec.jobType || '')}</td>
+                <td class="py-4 text-sm text-gray-600">${esc(formatJobType(rec.jobType))}</td>
                 <td class="py-4"><span class="${priorityClass}">${esc(priorityText)}</span></td>
                 <td class="py-4 text-sm text-gray-600">${rec.createdAt ? formatDateTime(rec.createdAt) : ''}</td>
                 <td class="py-4">${statusBadge(rec.status)}</td>

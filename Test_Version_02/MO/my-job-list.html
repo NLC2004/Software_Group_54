@@ -163,6 +163,18 @@ Back to Admin
 <script>
         let allJobs = [];
 
+        function formatJobType(t) {
+            const raw = String(t || '').trim();
+            const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+            const map = {
+                COURSE_TA: 'Course TA',
+                LAB_TA: 'Lab TA',
+                FINAL_EXAM_TA: 'Final Exam TA',
+                CLASS_TEST_TA: 'Class Test TA'
+            };
+            return map[tv] || tv || '';
+        }
+
         (async function init() {
             const user = requireAuth(['MO', 'ADMIN']);
             if (!user) return;
@@ -268,7 +280,7 @@ Back to Admin
                         </div>
                     </div>
                     <div class="flex items-center justify-between border-t border-gray-50 pt-4">
-                        <span class="text-xs text-gray-400">${esc(job.type || '')}</span>
+                        <span class="text-xs text-gray-400">${esc(formatJobType(job.type))}</span>
                         <a class="text-blue-600 font-semibold text-sm hover:underline" href="job-detail.html?id=${job.id}">Manage</a>
                     </div>
                 </div>`;

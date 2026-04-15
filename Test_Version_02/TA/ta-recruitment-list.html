@@ -84,6 +84,18 @@ Notifications
 <script>
 let allJobs = [];
 
+function formatJobType(t) {
+    const raw = String(t || '').trim();
+    const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+    const map = {
+        COURSE_TA: 'Course TA',
+        LAB_TA: 'Lab TA',
+        FINAL_EXAM_TA: 'Final Exam TA',
+        CLASS_TEST_TA: 'Class Test TA'
+    };
+    return map[tv] || tv || '';
+}
+
 function parseDeadline(deadline) {
     if (!deadline) return null;
     const raw = String(deadline).trim();
@@ -155,7 +167,7 @@ function renderJobs(jobs) {
                 </div>
             </div>
             <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
-                <span class="text-xs text-gray-400">${job.type || ''}</span>
+                <span class="text-xs text-gray-400">${esc(formatJobType(job.type))}</span>
                 <a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html?id=${job.id}">View details</a>
             </div>
         </div>`;

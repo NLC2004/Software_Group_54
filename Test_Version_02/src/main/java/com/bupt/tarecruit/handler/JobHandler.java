@@ -71,6 +71,17 @@ public class JobHandler extends BaseHandler {
             m.put("requirements", j.requirements); m.put("quota", j.quota);
             m.put("schedule", j.schedule); m.put("weeklyHours", j.weeklyHours);
             m.put("deadline", j.deadline);
+            m.put("courseScheduleGrid", j.courseScheduleGrid);
+            m.put("courseWeekStart", j.courseWeekStart);
+            m.put("courseWeekEnd", j.courseWeekEnd);
+            m.put("labSessionCount", j.labSessionCount);
+            m.put("labTime", j.labTime);
+            m.put("labLocation", j.labLocation);
+            m.put("labSessions", j.labSessions);
+            m.put("examDateTime", j.examDateTime);
+            m.put("examLocation", j.examLocation);
+            m.put("testScheduleType", j.testScheduleType);
+            m.put("testScheduleDetail", j.testScheduleDetail);
             m.put("status", j.status); m.put("createdAt", j.createdAt);
             m.put("postedBy", j.postedBy);
             User poster = ds.getUserById(j.postedBy);
@@ -102,6 +113,17 @@ public class JobHandler extends BaseHandler {
         m.put("requirements", job.requirements); m.put("quota", job.quota);
         m.put("schedule", job.schedule); m.put("weeklyHours", job.weeklyHours);
         m.put("deadline", job.deadline);
+        m.put("courseScheduleGrid", job.courseScheduleGrid);
+        m.put("courseWeekStart", job.courseWeekStart);
+        m.put("courseWeekEnd", job.courseWeekEnd);
+        m.put("labSessionCount", job.labSessionCount);
+        m.put("labTime", job.labTime);
+        m.put("labLocation", job.labLocation);
+        m.put("labSessions", job.labSessions);
+        m.put("examDateTime", job.examDateTime);
+        m.put("examLocation", job.examLocation);
+        m.put("testScheduleType", job.testScheduleType);
+        m.put("testScheduleDetail", job.testScheduleDetail);
         m.put("status", job.status); m.put("createdAt", job.createdAt);
         m.put("postedBy", job.postedBy);
         User poster = ds.getUserById(job.postedBy);
@@ -131,13 +153,29 @@ public class JobHandler extends BaseHandler {
         Job job = new Job();
         job.postedBy = user.id;
         job.title = body.has("title") ? body.get("title").getAsString() : "";
-        job.type = body.has("type") ? body.get("type").getAsString() : "COURSE";
+        job.type = body.has("type") ? body.get("type").getAsString() : "COURSE_TA";
         job.courseName = body.has("courseName") ? body.get("courseName").getAsString() : "";
         job.description = body.has("description") ? body.get("description").getAsString() : "";
         job.quota = body.has("quota") ? body.get("quota").getAsInt() : 1;
         job.schedule = body.has("schedule") ? body.get("schedule").getAsString() : "";
         job.weeklyHours = body.has("weeklyHours") ? body.get("weeklyHours").getAsDouble() : 0;
         job.deadline = body.has("deadline") ? body.get("deadline").getAsString() : "";
+
+        if (body.has("courseScheduleGrid")) job.courseScheduleGrid = body.get("courseScheduleGrid").getAsString();
+        if (body.has("courseWeekStart")) job.courseWeekStart = body.get("courseWeekStart").getAsInt();
+        if (body.has("courseWeekEnd")) job.courseWeekEnd = body.get("courseWeekEnd").getAsInt();
+
+        if (body.has("labSessionCount")) job.labSessionCount = body.get("labSessionCount").getAsInt();
+        if (body.has("labTime")) job.labTime = body.get("labTime").getAsString();
+        if (body.has("labLocation")) job.labLocation = body.get("labLocation").getAsString();
+        if (body.has("labSessions")) job.labSessions = body.get("labSessions").getAsString();
+
+        if (body.has("examDateTime")) job.examDateTime = body.get("examDateTime").getAsString();
+        if (body.has("examLocation")) job.examLocation = body.get("examLocation").getAsString();
+
+        if (body.has("testScheduleType")) job.testScheduleType = body.get("testScheduleType").getAsString();
+        if (body.has("testScheduleDetail")) job.testScheduleDetail = body.get("testScheduleDetail").getAsString();
+
         if (body.has("requirements")) {
             JsonArray arr = body.getAsJsonArray("requirements");
             job.requirements = new ArrayList<>();
@@ -166,6 +204,22 @@ public class JobHandler extends BaseHandler {
         if (body.has("courseName")) job.courseName = body.get("courseName").getAsString();
         if (body.has("deadline")) job.deadline = body.get("deadline").getAsString();
         if (body.has("type")) job.type = body.get("type").getAsString();
+
+        if (body.has("courseScheduleGrid")) job.courseScheduleGrid = body.get("courseScheduleGrid").getAsString();
+        if (body.has("courseWeekStart")) job.courseWeekStart = body.get("courseWeekStart").getAsInt();
+        if (body.has("courseWeekEnd")) job.courseWeekEnd = body.get("courseWeekEnd").getAsInt();
+
+        if (body.has("labSessionCount")) job.labSessionCount = body.get("labSessionCount").getAsInt();
+        if (body.has("labTime")) job.labTime = body.get("labTime").getAsString();
+        if (body.has("labLocation")) job.labLocation = body.get("labLocation").getAsString();
+        if (body.has("labSessions")) job.labSessions = body.get("labSessions").getAsString();
+
+        if (body.has("examDateTime")) job.examDateTime = body.get("examDateTime").getAsString();
+        if (body.has("examLocation")) job.examLocation = body.get("examLocation").getAsString();
+
+        if (body.has("testScheduleType")) job.testScheduleType = body.get("testScheduleType").getAsString();
+        if (body.has("testScheduleDetail")) job.testScheduleDetail = body.get("testScheduleDetail").getAsString();
+
         if (body.has("requirements")) {
             JsonArray arr = body.getAsJsonArray("requirements");
             job.requirements = new ArrayList<>();

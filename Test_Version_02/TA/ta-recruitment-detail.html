@@ -76,6 +76,18 @@
 <script src="/js/api.js"></script>
 <script>
 (function(){
+    function formatJobType(t) {
+        const raw = String(t || '').trim();
+        const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+        const map = {
+            COURSE_TA: 'Course TA',
+            LAB_TA: 'Lab TA',
+            FINAL_EXAM_TA: 'Final Exam TA',
+            CLASS_TEST_TA: 'Class Test TA'
+        };
+        return map[tv] || tv || '';
+    }
+
     function parseDeadline(deadline) {
         if (!deadline) return null;
         const raw = String(deadline).trim();
@@ -102,6 +114,7 @@
 
     window.__ta_parseDeadline = parseDeadline;
     window.__ta_isRecruitmentExpired = isRecruitmentExpired;
+    window.__ta_formatJobType = formatJobType;
 })();
 
 (async function init() {
@@ -123,12 +136,73 @@
             ? job.requirements.map(r => `<div class="p-4 bg-gray-50 rounded-xl"><p class="font-bold">${esc(r)}</p></div>`).join('')
             : '<p class="text-gray-400 text-sm">No specific requirements listed.</p>';
 
+        const typeLabel = window.__ta_formatJobType ? window.__ta_formatJobType(job.type) : (job.type || '');
+        const tv = String(job.type || '').trim() === 'COURSE' ? 'COURSE_TA' : (String(job.type || '').trim() === 'ACTIVITY' ? 'CLASS_TEST_TA' : String(job.type || '').trim());
+        const typeSpecificHtml = (() => {
+            if (tv === 'COURSE_TA') {
+                const ws = job.courseWeekStart || '';
+                const we = job.courseWeekEnd || '';
+                return `
+                    <section>
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                            <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span> Course TA Details
+                        </h3>
+                        <div class="pl-4 space-y-2 text-gray-600">
+                            ${(ws && we) ? `<p><span class="font-bold">Weeks:</span> ${esc(String(ws))} - ${esc(String(we))}</p>` : ''}
+                            ${job.courseScheduleGrid ? `<p class="text-sm text-gray-500">Timetable grid was provided by MO.</p>` : ''}
+                        </div>
+                    </section>
+                `;
+            }
+            if (tv === 'LAB_TA') {
+                return `
+                    <section>
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                            <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span> Lab TA Details
+                        </h3>
+                        <div class="pl-4 space-y-2 text-gray-600">
+                            ${job.labSessionCount ? `<p><span class="font-bold">Sessions:</span> ${esc(String(job.labSessionCount))}</p>` : ''}
+                            ${job.labTime ? `<p><span class="font-bold">Time:</span> ${esc(String(job.labTime))}</p>` : ''}
+                            ${job.labLocation ? `<p><span class="font-bold">Location:</span> ${esc(String(job.labLocation))}</p>` : ''}
+                        </div>
+                    </section>
+                `;
+            }
+            if (tv === 'FINAL_EXAM_TA') {
+                return `
+                    <section>
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                            <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span> Final Exam TA Details
+                        </h3>
+                        <div class="pl-4 space-y-2 text-gray-600">
+                            ${job.examDateTime ? `<p><span class="font-bold">Date &amp; Time:</span> ${esc(String(job.examDateTime))}</p>` : ''}
+                            ${job.examLocation ? `<p><span class="font-bold">Location:</span> ${esc(String(job.examLocation))}</p>` : ''}
+                        </div>
+                    </section>
+                `;
+            }
+            if (tv === 'CLASS_TEST_TA') {
+                return `
+                    <section>
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
+                            <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span> Class Test TA Details
+                        </h3>
+                        <div class="pl-4 space-y-2 text-gray-600">
+                            ${job.testScheduleType ? `<p><span class="font-bold">Schedule Type:</span> ${esc(String(job.testScheduleType))}</p>` : ''}
+                            ${job.testScheduleDetail ? `<p><span class="font-bold">Detail:</span> ${esc(String(job.testScheduleDetail))}</p>` : ''}
+                        </div>
+                    </section>
+                `;
+            }
+            return '';
+        })();
+
         document.getElementById('jobContent').innerHTML = `
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-8 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white">
                 <div class="flex justify-between items-start mb-6">
                     <div class="flex gap-2">
-                        ${job.type ? `<span class="bg-blue-600 text-white text-[10px] px-2 py-1 rounded font-bold uppercase">${esc(job.type)}</span>` : ''}
+                        ${typeLabel ? `<span class="bg-blue-600 text-white text-[10px] px-2 py-1 rounded font-bold uppercase">${esc(typeLabel)}</span>` : ''}
                         <span class="bg-green-100 text-green-600 text-[10px] px-2 py-1 rounded font-bold uppercase">${esc(job.status || 'Open')}</span>
                     </div>
                     <span class="text-blue-600 font-black text-2xl">TA Position</span>
@@ -179,6 +253,8 @@
                     </h3>
                     <p class="text-gray-600 pl-4">${esc(job.schedule)}${job.weeklyHours ? ' (' + job.weeklyHours + ' hours/week)' : ''}</p>
                 </section>` : ''}
+
+                ${typeSpecificHtml}
 
                 <section>
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-3">
