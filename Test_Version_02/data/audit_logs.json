@@ -1350,5 +1350,13 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1776244164843
+  },
+  {
+    "id": "2445105c",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1776269528071
   }
 ]
