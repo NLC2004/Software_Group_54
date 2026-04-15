@@ -120,34 +120,6 @@ Back to Admin
 </div>
 </div>
 </div>
-<div class="fixed inset-0 z-50 hidden" id="labTimeModal">
-<div class="absolute inset-0 bg-black/40" id="labTimeModalOverlay"></div>
-<div class="relative min-h-full flex items-center justify-center p-6">
-<div class="bg-white w-full max-w-6xl rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-<div class="h-2 bg-blue-600"></div>
-<div class="p-8">
-<div class="flex items-start justify-between gap-6">
-<div>
-<h2 class="text-2xl font-black text-gray-800">Select Lab Time</h2>
-<p class="text-gray-400 text-sm mt-1">Click time blocks to select. Selected blocks will be highlighted.</p>
-</div>
-<button class="p-2 rounded-full hover:bg-gray-100 text-gray-500" id="closeLabTimeModal" type="button" title="Close">
-<span class="iconify text-xl" data-icon="mdi:close"></span>
-</button>
-</div>
-
-<div class="mt-6 overflow-auto border border-gray-100 rounded-2xl">
-<table class="min-w-full text-sm" id="labTimePickerGrid"></table>
-</div>
-
-<div class="mt-6 flex items-center justify-end gap-3">
-<button type="button" class="px-6 py-3 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 transition-all" id="cancelLabTimeBtn">Cancel</button>
-<button type="button" class="px-7 py-3 rounded-2xl font-bold bg-blue-600 text-white hover:bg-blue-700 transition-all" id="confirmLabTimeBtn">Confirm</button>
-</div>
-</div>
-</div>
-</div>
-</div>
 <div class="p-8 max-w-4xl mx-auto w-full">
 <div class="mb-10">
 <h1 class="text-3xl font-black text-gray-800 mb-2">Create New TA Position</h1>
@@ -172,6 +144,7 @@ Back to Admin
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Course Name</label>
 <input class="form-input" id="courseName" placeholder="e.g. Advanced Machine Learning" type="text"/>
+<div id="courseNamePresetPanel" class="hidden mt-2 p-3 bg-gray-50 rounded-2xl border border-gray-100"></div>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Type</label>
@@ -182,21 +155,45 @@ Back to Admin
 <option value="CLASS_TEST_TA">Class Test TA</option>
 </select>
 </div>
+<div class="space-y-2 hidden" id="examDateTimeWrapper">
+<label class="text-sm font-semibold text-gray-600 ml-1">Exam Date &amp; Time</label>
+<div class="relative">
+<input class="form-input" id="examDateTimeDisplay" type="text" placeholder="yyyy/MM/dd HH:mm" readonly/>
+<input class="form-input absolute inset-0 w-full h-full opacity-0" id="examDateTime" type="datetime-local"/>
+</div>
+</div>
+<div class="space-y-2 hidden" id="examDurationWrapper">
+<label class="text-sm font-semibold text-gray-600 ml-1">Exam Duration</label>
+<div class="flex items-center gap-2">
+<input class="form-input" id="examDuration" type="number" min="0" step="0.5" placeholder="e.g. 2"/>
+<span class="text-sm font-semibold text-gray-500 whitespace-nowrap">hours</span>
+</div>
+</div>
+<div class="space-y-2 hidden" id="examLocationWrapper">
+<label class="text-sm font-semibold text-gray-600 ml-1">Exam Location</label>
+<input class="form-input" id="examLocation" type="text" placeholder="e.g. Teaching Building A-101"/>
+</div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Deadline for Application</label>
-<input class="form-input" id="deadline" type="text" inputmode="numeric" placeholder="YYYY/MM/DD" autocomplete="off"/>
+<div class="relative">
+<input class="form-input" id="deadlineDisplay" type="text" inputmode="numeric" placeholder="yyyy/MM/dd" autocomplete="off" readonly/>
+<input class="form-input absolute inset-0 w-full h-full opacity-0" id="deadline" type="date" autocomplete="off"/>
+</div>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-semibold text-gray-600 ml-1">Quota (number of positions)</label>
 <input class="form-input" id="quota" type="number" min="1" placeholder="e.g. 3"/>
 </div>
-<div class="space-y-2" id="weeklyHoursWrapper">
-<label class="text-sm font-semibold text-gray-600 ml-1">Weekly Hours</label>
-<input class="form-input" id="weeklyHours" type="number" min="0" step="0.25" placeholder="Auto" readonly/>
-</div>
+<input id="weeklyHours" type="hidden" />
 <div class="md:col-span-2 space-y-2" id="scheduleFieldWrapper">
-<label class="text-sm font-semibold text-gray-600 ml-1">Schedule</label>
-<textarea class="form-input" id="schedule" placeholder="Click to select schedule" rows="4" readonly></textarea>
+<input id="schedule" type="hidden" />
+<div class="mt-3 space-y-3" id="courseScheduleEntriesWrapper">
+<div class="space-y-3" id="courseScheduleEntries"></div>
+<div class="text-sm font-semibold text-gray-600" id="scheduleTotalHours"></div>
+<div class="flex justify-center">
+<button type="button" id="addCourseScheduleEntryBtn" class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-all">+</button>
+</div>
+</div>
 </div>
 </div>
 
@@ -208,70 +205,6 @@ Back to Admin
 <button type="button" id="addReqRowBtn" class="w-10 h-10 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-all">+</button>
 </div>
 <div id="reqPresetPanel" class="hidden mt-2 p-3 bg-gray-50 rounded-2xl border border-gray-100"></div>
-</div>
-</div>
-</section>
-
-<section class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100" id="typeSpecificSection">
-<div class="flex items-center mb-6 space-x-3">
-<div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><span class="iconify text-xl" data-icon="solar:settings-bold"></span></div>
-<h3 class="text-lg font-bold text-gray-800">Type-Specific Options</h3>
-</div>
-
-<div id="courseTaFields" class="space-y-6 hidden">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Course Week Start (1-17)</label>
-<select class="form-input" id="courseWeekStart"></select>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Course Week End (1-17)</label>
-<select class="form-input" id="courseWeekEnd"></select>
-</div>
-</div>
-</div>
-
-<div id="labTaFields" class="space-y-6 hidden">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Lab Session Count</label>
-<input class="form-input" id="labSessionCount" type="number" min="1" placeholder="e.g. 8"/>
-</div>
-<input id="labTime" type="hidden" />
-</div>
-
-<div id="labScheduleMount" class="space-y-2"></div>
-
-<div class="space-y-4" id="labSessionsContainer"></div>
-</div>
-
-<div id="finalExamTaFields" class="space-y-6 hidden">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Exam Date &amp; Time</label>
-<input class="form-input" id="examDateTime" type="datetime-local"/>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Exam Location</label>
-<input class="form-input" id="examLocation" type="text" placeholder="e.g. Teaching Building A-101"/>
-</div>
-</div>
-</div>
-
-<div id="classTestTaFields" class="space-y-6 hidden">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Test Schedule Type</label>
-<select class="form-input" id="testScheduleType">
-<option value="IN_CLASS">In class</option>
-<option value="AFTER_CLASS">After class</option>
-<option value="FIXED_WEEKS">Fixed weeks</option>
-</select>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-semibold text-gray-600 ml-1">Schedule Detail</label>
-<input class="form-input" id="testScheduleDetail" type="text" placeholder="e.g. Week 3-6, every Tue"/>
-</div>
 </div>
 </div>
 </section>
@@ -306,9 +239,7 @@ Back to Admin
             { value: 'CLASS_TEST_TA', label: 'Class Test TA', desc: 'Support quizzes and in-class tests.' }
         ];
         const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-        const LAB_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         const DAY_LABEL = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday' };
-        const LAB_DAY_LABEL = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
         const PERIODS = Array.from({ length: 14 }, (_, i) => i + 1);
         const PERIOD_TIME = {
             1: { start: '08:00', end: '08:45' },
@@ -327,10 +258,57 @@ Back to Admin
             14: { start: '20:10', end: '20:55' }
         };
         let currentType = '';
-        let courseGridSelection = { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] };
-        let labSessions = [];
-        let currentLabSessionIdx = -1;
-        let currentLabPickerSelection = { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] };
+        let courseScheduleEntries = [];
+        let currentCourseEntryIdx = -1;
+        let currentCoursePickerSelection = { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] };
+
+        const COURSE_NAME_PRESETS = [
+            'Machine Learning',
+            'Design and Build',
+            'Personal Development Plan and Entrepreneurial Skills',
+            'Operating Systems',
+            'Communications and Networks',
+            'Embedded Systems',
+            'Cryptography and Cyber Security',
+            'Software Engineering',
+            'Sensors and Radio Frequency Identification',
+            'Middleware'
+        ];
+
+        function bindCourseNameAutocomplete() {
+            const input = document.getElementById('courseName');
+            const panel = document.getElementById('courseNamePresetPanel');
+            if (!input || !panel || input.__boundCourseName) return;
+            input.__boundCourseName = true;
+
+            const hide = () => panel.classList.add('hidden');
+            const showOptions = (query) => {
+                const q = String(query || '').trim().toLowerCase();
+                const opts = COURSE_NAME_PRESETS.filter(n => String(n).toLowerCase().includes(q));
+                if (!opts.length) { hide(); return; }
+                panel.innerHTML = opts.map(n =>
+                    `<button type="button" class="w-full text-left px-4 py-2 rounded-xl hover:bg-white transition-all course-name-opt">${esc(n)}</button>`
+                ).join('');
+                panel.classList.remove('hidden');
+                panel.querySelectorAll('button.course-name-opt').forEach((btn, idx) => {
+                    btn.addEventListener('click', () => {
+                        input.value = opts[idx];
+                        hide();
+                        input.focus();
+                    });
+                });
+            };
+
+            input.addEventListener('focus', () => showOptions(input.value));
+            input.addEventListener('input', () => showOptions(input.value));
+
+            document.addEventListener('click', (e) => {
+                const t = e.target;
+                if (panel.contains(t)) return;
+                if (input.contains(t)) return;
+                hide();
+            });
+        }
 
         function parseDeadlineField(raw) {
             const t0 = String(raw || '').trim();
@@ -350,29 +328,59 @@ Back to Admin
         }
 
         function bindDeadlineDisplay() {
-            const el = document.getElementById('deadline');
-            if (!el) return;
-            el.addEventListener('focus', () => {
-                if (el.type !== 'date') {
-                    const v = String(el.value || '').trim();
-                    el.type = 'date';
-                    el.value = v.replaceAll('/', '-');
+            const picker = document.getElementById('deadline');
+            const display = document.getElementById('deadlineDisplay');
+            if (!picker || !display) return;
+
+            const openPicker = () => {
+                try {
+                    if (typeof picker.showPicker === 'function') picker.showPicker();
+                    else picker.focus();
+                } catch {
+                    picker.focus();
                 }
-            });
-            el.addEventListener('blur', () => {
-                if (el.type === 'date') {
-                    const v = String(el.value || '').trim();
-                    el.type = 'text';
-                    el.value = v ? v.replaceAll('-', '/') : '';
+            };
+
+            display.addEventListener('click', openPicker);
+            display.addEventListener('focus', openPicker);
+
+            const syncToDisplay = () => {
+                const v = String(picker.value || '').trim();
+                display.value = v ? v.replaceAll('-', '/') : '';
+            };
+
+            picker.addEventListener('change', syncToDisplay);
+            syncToDisplay();
+        }
+
+        function bindExamDateTimeDisplay() {
+            const picker = document.getElementById('examDateTime');
+            const display = document.getElementById('examDateTimeDisplay');
+            if (!picker || !display) return;
+
+            const openPicker = () => {
+                try {
+                    if (typeof picker.showPicker === 'function') picker.showPicker();
+                    else picker.focus();
+                } catch {
+                    picker.focus();
                 }
-            });
-            el.addEventListener('change', () => {
-                if (el.type === 'date') {
-                    const v = String(el.value || '').trim();
-                    el.type = 'text';
-                    el.value = v ? v.replaceAll('-', '/') : '';
-                }
-            });
+            };
+
+            display.addEventListener('click', openPicker);
+            display.addEventListener('focus', openPicker);
+
+            const syncToDisplay = () => {
+                const v = String(picker.value || '').trim();
+                if (!v) { display.value = ''; return; }
+                const parts = v.split('T');
+                const d = parts[0] ? parts[0].replaceAll('-', '/') : '';
+                const tm = parts[1] ? parts[1].slice(0, 5) : '';
+                display.value = (d && tm) ? `${d} ${tm}` : d;
+            };
+
+            picker.addEventListener('change', syncToDisplay);
+            syncToDisplay();
         }
 
         function openTaTypeModal(force) {
@@ -420,119 +428,18 @@ Back to Admin
             select.disabled = true;
             select.classList.add('bg-gray-50');
 
-            document.getElementById('courseTaFields').classList.toggle('hidden', tv !== 'COURSE_TA');
-            document.getElementById('labTaFields').classList.toggle('hidden', tv !== 'LAB_TA');
-            document.getElementById('finalExamTaFields').classList.toggle('hidden', tv !== 'FINAL_EXAM_TA');
-            document.getElementById('classTestTaFields').classList.toggle('hidden', tv !== 'CLASS_TEST_TA');
+            const examDateWrap = document.getElementById('examDateTimeWrapper');
+            if (examDateWrap) examDateWrap.classList.toggle('hidden', tv !== 'FINAL_EXAM_TA');
+            const examDurWrap = document.getElementById('examDurationWrapper');
+            if (examDurWrap) examDurWrap.classList.toggle('hidden', tv !== 'FINAL_EXAM_TA');
+            const examLocWrap = document.getElementById('examLocationWrapper');
+            if (examLocWrap) examLocWrap.classList.toggle('hidden', tv !== 'FINAL_EXAM_TA');
 
-            const scheduleInput = document.getElementById('schedule');
-            if (scheduleInput) {
-                scheduleInput.readOnly = true;
-                scheduleInput.placeholder = 'Click to select schedule';
-            }
+            const scheduleFieldWrapper = document.getElementById('scheduleFieldWrapper');
+            if (scheduleFieldWrapper) scheduleFieldWrapper.classList.toggle('hidden', !(tv === 'COURSE_TA' || tv === 'CLASS_TEST_TA' || tv === 'LAB_TA'));
 
-            const scheduleWrapper = document.getElementById('scheduleFieldWrapper');
-            const labMount = document.getElementById('labScheduleMount');
-            if (scheduleWrapper && labMount) {
-                if (tv === 'LAB_TA') {
-                    if (scheduleWrapper.parentElement !== labMount) {
-                        labMount.appendChild(scheduleWrapper);
-                    }
-                    scheduleWrapper.classList.add('hidden');
-                } else {
-                    const basicGrid = document.getElementById('basicInfoGrid');
-                    if (basicGrid && scheduleWrapper.parentElement !== basicGrid) {
-                        basicGrid.appendChild(scheduleWrapper);
-                    }
-                    scheduleWrapper.classList.toggle('hidden', tv !== 'COURSE_TA');
-                }
-            }
-
-            const weeklyWrap = document.getElementById('weeklyHoursWrapper');
-            if (weeklyWrap) weeklyWrap.classList.toggle('hidden', tv !== 'COURSE_TA');
-
-            const weekly = document.getElementById('weeklyHours');
-            if (weekly) {
-                weekly.readOnly = tv === 'COURSE_TA';
-                weekly.placeholder = tv === 'COURSE_TA' ? 'Auto' : 'e.g. 4';
-                weekly.value = tv === 'COURSE_TA' ? String(calcCourseWeeklyHours().toFixed(2)) : (weekly.value || '');
-            }
-
-            if (tv === 'LAB_TA') {
-                ensureLabSessionCountBound();
-                rebuildLabSessions();
-            }
+            syncCourseScheduleEntriesUI();
         }
-
-        function ensureLabSessionCountBound() {
-            const el = document.getElementById('labSessionCount');
-            if (!el || el.__bound) return;
-            el.__bound = true;
-            el.addEventListener('input', () => rebuildLabSessions());
-        }
-
-        function rebuildLabSessions() {
-            const container = document.getElementById('labSessionsContainer');
-            if (!container) return;
-            const count = Math.max(0, Math.min(30, Number(document.getElementById('labSessionCount')?.value || 0)));
-            const next = [];
-            for (let i = 0; i < count; i++) {
-                const prev = labSessions[i];
-                next.push(prev || { week: 1, location: '', selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] } });
-            }
-            labSessions = next;
-            container.innerHTML = labSessions.map((s, idx) => {
-                const weekOpts = Array.from({ length: 17 }, (_, i) => i + 1).map(w => `<option value="${w}" ${String(s.week) === String(w) ? 'selected' : ''}>${w}</option>`).join('');
-                return `
-                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                        <div class="flex items-center justify-between mb-3">
-                            <p class="font-bold text-gray-800">Lab Session ${idx + 1}</p>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <label class="text-sm font-semibold text-gray-600 ml-1">Lab Week (1-17)</label>
-                                <select class="form-input" data-lab-week="${idx}">${weekOpts}</select>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-sm font-semibold text-gray-600 ml-1">Lab Location</label>
-                                <input class="form-input" type="text" placeholder="e.g. Room 3-435" data-lab-location="${idx}" value="${esc(s.location || '')}" />
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-sm font-semibold text-gray-600 ml-1">Lab Time</label>
-                                <textarea class="form-input" rows="3" readonly placeholder="Click to select lab time" data-lab-time="${idx}"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            container.querySelectorAll('select[data-lab-week]').forEach(sel => {
-                sel.addEventListener('change', () => {
-                    const idx = Number(sel.getAttribute('data-lab-week'));
-                    if (!Number.isNaN(idx) && labSessions[idx]) labSessions[idx].week = Number(sel.value || 1);
-                    syncLabPayloadFields();
-                });
-            });
-
-            container.querySelectorAll('textarea[data-lab-time]').forEach(ta => {
-                ta.addEventListener('click', () => {
-                    const idx = Number(ta.getAttribute('data-lab-time'));
-                    openLabTimeModal(idx);
-                });
-            });
-
-            container.querySelectorAll('input[data-lab-location]').forEach(inp => {
-                inp.addEventListener('input', () => {
-                    const idx = Number(inp.getAttribute('data-lab-location'));
-                    if (!Number.isNaN(idx) && labSessions[idx]) labSessions[idx].location = inp.value;
-                    syncLabPayloadFields();
-                });
-            });
-
-            syncLabSessionTextareas();
-            syncLabPayloadFields();
-        }
-
         function mergeConsecutivePeriods(periods) {
             const ps = Array.from(new Set((periods || []).map(Number))).filter(n => !Number.isNaN(n)).sort((a, b) => a - b);
             const ranges = [];
@@ -548,178 +455,131 @@ Back to Admin
             return ranges;
         }
 
-        function buildLabLinesFromSelection(selection) {
+        function buildCourseWeekOptions(selected) {
+            return Array.from({ length: 17 }, (_, i) => i + 1)
+                .map(w => `<option value="${w}" ${String(w) === String(selected) ? 'selected' : ''}>${w}</option>`)
+                .join('');
+        }
+
+        function buildScheduleLinesFromSelection(selection, dayLabelMap) {
             const lines = [];
-            LAB_DAYS.forEach(d => {
-                const ranges = mergeConsecutivePeriods((selection || {})[d] || []);
+            DAYS.forEach(d => {
+                const ranges = mergeConsecutivePeriods((selection && selection[d]) || []);
                 ranges.forEach(([s, e]) => {
                     const st = PERIOD_TIME[s];
                     const et = PERIOD_TIME[e];
                     if (!st || !et) return;
-                    lines.push(`${LAB_DAY_LABEL[d] || d}：${st.start}-${et.end}`);
+                    lines.push(`${(dayLabelMap && dayLabelMap[d]) || d}：${st.start}-${et.end}`);
                 });
             });
             return lines;
         }
 
-        function syncLabSessionTextareas() {
-            const container = document.getElementById('labSessionsContainer');
+        function countSelectedPeriods(selection) {
+            return DAYS.reduce((sum, d) => sum + (((selection && selection[d]) || []).length), 0);
+        }
+
+        function calcCourseWeeklyHoursFromEntries() {
+            const total = (courseScheduleEntries || []).reduce((sum, e) => sum + countSelectedPeriods(e.selection), 0);
+            return total * 0.75;
+        }
+
+        function updateScheduleTotalHours() {
+            const el = document.getElementById('scheduleTotalHours');
+            if (!el) return;
+            if (!(currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA')) { el.textContent = ''; return; }
+            const hours = calcCourseWeeklyHoursFromEntries();
+            el.textContent = `Total Working Hours: ${hours.toFixed(2)} hours`;
+        }
+
+        function syncCourseScheduleEntriesUI() {
+            const wrap = document.getElementById('courseScheduleEntriesWrapper');
+            if (wrap) wrap.classList.toggle('hidden', !(currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA'));
+            const container = document.getElementById('courseScheduleEntries');
             if (!container) return;
-            container.querySelectorAll('textarea[data-lab-time]').forEach(ta => {
-                const idx = Number(ta.getAttribute('data-lab-time'));
-                const sess = labSessions[idx];
-                if (!sess) return;
-                const lines = buildLabLinesFromSelection(sess.selection);
-                ta.value = lines.join('\n');
+            container.innerHTML = (courseScheduleEntries || []).map((e, idx) => {
+                const weekOpts = buildCourseWeekOptions(e.week || 1);
+                return `
+                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="font-bold text-gray-800">Schedule ${idx + 1}</p>
+                            <button type="button" class="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-red-50 hover:text-red-600 transition-all" data-course-entry-del="${idx}">&times;</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-gray-600 ml-1">Course Week (1-17)</label>
+                                <select class="form-input" data-course-entry-week="${idx}">${weekOpts}</select>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-gray-600 ml-1">Course Time</label>
+                                <div class="space-y-2">
+                                    <button type="button" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all text-sm font-semibold text-gray-700" data-course-entry-open="${idx}">Select Course Time</button>
+                                    <textarea class="form-input" rows="3" readonly placeholder="No time selected" data-course-entry-time="${idx}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('select[data-course-entry-week]').forEach(sel => {
+                sel.addEventListener('change', () => {
+                    const idx = Number(sel.getAttribute('data-course-entry-week'));
+                    if (!Number.isNaN(idx) && courseScheduleEntries[idx]) courseScheduleEntries[idx].week = Number(sel.value || 1);
+                    updateCourseScheduleDerivedFields();
+                });
             });
-        }
 
-        function syncLabPayloadFields() {
-            if (currentType !== 'LAB_TA') return;
-            const parts = labSessions.map((s, idx) => {
-                const lines = buildLabLinesFromSelection(s.selection);
-                const loc = String(s.location || '').trim();
-                const locLine = loc ? `Location: ${loc}` : '';
-                return [`Week ${s.week || 1}`, locLine, ...lines].filter(Boolean).join('\n').trim();
-            }).filter(Boolean);
-            const combined = parts.join('\n\n');
-            const labTimeHidden = document.getElementById('labTime');
-            if (labTimeHidden) labTimeHidden.value = combined;
-        }
-
-        function openLabTimeModal(sessionIdx) {
-            if (sessionIdx == null || sessionIdx < 0 || sessionIdx >= labSessions.length) return;
-            currentLabSessionIdx = sessionIdx;
-            const sess = labSessions[sessionIdx];
-            currentLabPickerSelection = JSON.parse(JSON.stringify(sess.selection || { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] }));
-            const modal = document.getElementById('labTimeModal');
-            if (!modal) return;
-            modal.classList.remove('hidden');
-            buildLabTimePickerGrid();
-            syncLabPickerWithSelection();
-        }
-
-        function confirmLabTimeSelection() {
-            if (currentLabSessionIdx < 0 || currentLabSessionIdx >= labSessions.length) return;
-            labSessions[currentLabSessionIdx].selection = JSON.parse(JSON.stringify(currentLabPickerSelection));
-            closeLabTimeModal();
-            syncLabSessionTextareas();
-            syncLabPayloadFields();
-        }
-
-        function closeLabTimeModal() {
-            const modal = document.getElementById('labTimeModal');
-            if (!modal) return;
-            modal.classList.add('hidden');
-        }
-
-        function buildLabTimePickerGrid() {
-            const table = document.getElementById('labTimePickerGrid');
-            if (!table) return;
-            const head = `
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase">Time</th>
-                        ${LAB_DAYS.map(d => `<th class="px-4 py-3 text-center text-xs font-bold text-gray-400 uppercase">${d}</th>`).join('')}
-                    </tr>
-                </thead>
-            `;
-            const body = `
-                <tbody>
-                    ${PERIODS.map(p => {
-                        const t = PERIOD_TIME[p];
-                        const timeLabel = t ? `${t.start}-${t.end}` : String(p);
-                        return `
-                            <tr class="border-t border-gray-100">
-                                <td class="px-4 py-3 text-xs text-gray-500 font-semibold whitespace-nowrap">${timeLabel}</td>
-                                ${LAB_DAYS.map(d => {
-                                    const id = `labpick_${d}_${p}`;
-                                    return `<td class="px-2 py-2 text-center"><button type="button" id="${id}" data-day="${d}" data-period="${p}" class="w-full py-2 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all"></button></td>`;
-                                }).join('')}
-                            </tr>
-                        `;
-                    }).join('')}
-                </tbody>
-            `;
-            table.innerHTML = head + body;
-            table.querySelectorAll('button[data-day][data-period]').forEach(btn => {
+            container.querySelectorAll('button[data-course-entry-open]').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const day = btn.getAttribute('data-day');
-                    const period = Number(btn.getAttribute('data-period'));
-                    const arr = currentLabPickerSelection[day] || [];
-                    const idx = arr.indexOf(period);
-                    if (idx >= 0) arr.splice(idx, 1);
-                    else arr.push(period);
-                    arr.sort((a, b) => a - b);
-                    currentLabPickerSelection[day] = arr;
-                    renderPickerCell(btn, idx < 0);
+                    const idx = Number(btn.getAttribute('data-course-entry-open'));
+                    openScheduleModalForCourseEntry(idx);
                 });
             });
-        }
 
-        function syncLabPickerWithSelection() {
-            LAB_DAYS.forEach(d => {
-                const arr = currentLabPickerSelection[d] || [];
-                PERIODS.forEach(p => {
-                    const btn = document.getElementById(`labpick_${d}_${p}`);
-                    if (!btn) return;
-                    renderPickerCell(btn, arr.includes(p));
-                });
-            });
-        }
-
-        function initWeekOptions() {
-            const s = document.getElementById('courseWeekStart');
-            const e = document.getElementById('courseWeekEnd');
-            if (!s || !e) return;
-            const opts = Array.from({ length: 17 }, (_, i) => i + 1).map(w => `<option value="${w}">${w}</option>`).join('');
-            s.innerHTML = opts;
-            e.innerHTML = opts;
-            s.value = '1';
-            e.value = '17';
-        }
-
-        function buildCourseGrid() {
-            const table = document.getElementById('courseScheduleGrid');
-            if (!table) return;
-            const head = `
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase">Period</th>
-                        ${DAYS.map(d => `<th class="px-4 py-3 text-center text-xs font-bold text-gray-400 uppercase">${d}</th>`).join('')}
-                    </tr>
-                </thead>
-            `;
-            const body = `
-                <tbody>
-                    ${PERIODS.map(p => `
-                        <tr class="border-t border-gray-100">
-                            <td class="px-4 py-3 text-xs text-gray-500 font-semibold">${p}</td>
-                            ${DAYS.map(d => {
-                                const id = `grid_${d}_${p}`;
-                                return `<td class="px-4 py-3 text-center"><input type="checkbox" class="h-4 w-4" id="${id}" data-day="${d}" data-period="${p}"/></td>`;
-                            }).join('')}
-                        </tr>
-                    `).join('')}
-                </tbody>
-            `;
-            table.innerHTML = head + body;
-            table.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                cb.addEventListener('change', () => {
-                    const day = cb.getAttribute('data-day');
-                    const period = Number(cb.getAttribute('data-period'));
-                    const arr = courseGridSelection[day] || [];
-                    if (cb.checked) {
-                        if (!arr.includes(period)) arr.push(period);
-                    } else {
-                        const idx = arr.indexOf(period);
-                        if (idx >= 0) arr.splice(idx, 1);
+            container.querySelectorAll('button[data-course-entry-del]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = Number(btn.getAttribute('data-course-entry-del'));
+                    if (Number.isNaN(idx)) return;
+                    courseScheduleEntries.splice(idx, 1);
+                    if (courseScheduleEntries.length === 0) {
+                        courseScheduleEntries.push({ week: 1, selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] } });
                     }
-                    arr.sort((a, b) => a - b);
-                    courseGridSelection[day] = arr;
-                    updateCourseDerivedFields();
+                    syncCourseScheduleEntriesUI();
+                    updateCourseScheduleDerivedFields();
                 });
             });
+
+            syncCourseEntryTextareas();
+            updateCourseScheduleDerivedFields();
+        }
+
+        function syncCourseEntryTextareas() {
+            const container = document.getElementById('courseScheduleEntries');
+            if (!container) return;
+            container.querySelectorAll('textarea[data-course-entry-time]').forEach(ta => {
+                const idx = Number(ta.getAttribute('data-course-entry-time'));
+                const entry = courseScheduleEntries[idx];
+                if (!entry) return;
+                ta.value = buildScheduleLinesFromSelection(entry.selection, DAY_LABEL).join('\n');
+            });
+        }
+
+        function buildCourseScheduleSummaryText() {
+            const lines = [];
+            (courseScheduleEntries || []).forEach(e => {
+                const sub = buildScheduleLinesFromSelection(e.selection, DAY_LABEL);
+                sub.forEach(l => lines.push(`Week ${e.week || 1} ${l}`));
+            });
+            return lines.join('\n');
+        }
+
+        function updateCourseScheduleDerivedFields() {
+            if (!(currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA')) return;
+            syncCourseEntryTextareas();
+            const weekly = document.getElementById('weeklyHours');
+            if (weekly) weekly.value = calcCourseWeeklyHoursFromEntries().toFixed(2);
+            updateScheduleTotalHours();
         }
 
         function openScheduleModal() {
@@ -769,12 +629,12 @@ Back to Admin
                 btn.addEventListener('click', () => {
                     const day = btn.getAttribute('data-day');
                     const period = Number(btn.getAttribute('data-period'));
-                    const arr = courseGridSelection[day] || [];
+                    const arr = currentCoursePickerSelection[day] || [];
                     const idx = arr.indexOf(period);
                     if (idx >= 0) arr.splice(idx, 1);
                     else arr.push(period);
                     arr.sort((a, b) => a - b);
-                    courseGridSelection[day] = arr;
+                    currentCoursePickerSelection[day] = arr;
                     renderPickerCell(btn, idx < 0);
                 });
             });
@@ -791,7 +651,7 @@ Back to Admin
 
         function syncPickerWithSelection() {
             DAYS.forEach(d => {
-                const arr = courseGridSelection[d] || [];
+                const arr = currentCoursePickerSelection[d] || [];
                 PERIODS.forEach(p => {
                     const btn = document.getElementById(`pick_${d}_${p}`);
                     if (!btn) return;
@@ -800,44 +660,20 @@ Back to Admin
             });
         }
 
-        // mergeConsecutivePeriods is defined above and shared by course + lab pickers
-
-        function buildScheduleLinesFromSelection() {
-            const lines = [];
-            DAYS.forEach(d => {
-                const ranges = mergeConsecutivePeriods(courseGridSelection[d] || []);
-                ranges.forEach(([s, e]) => {
-                    const st = PERIOD_TIME[s];
-                    const et = PERIOD_TIME[e];
-                    if (!st || !et) return;
-                    lines.push(`${DAY_LABEL[d] || d}：${st.start}-${et.end}`);
-                });
-            });
-            return lines;
-        }
-
-        function calcCourseWeeklyHours() {
-            const count = DAYS.reduce((sum, d) => sum + ((courseGridSelection[d] || []).length), 0);
-            return count * 0.75;
-        }
-
-        function updateCourseDerivedFields() {
-            if (currentType !== 'COURSE_TA') return;
-            const weekly = document.getElementById('weeklyHours');
-            if (weekly) weekly.value = calcCourseWeeklyHours().toFixed(2);
-            const scheduleInput = document.getElementById('schedule');
-            if (scheduleInput) {
-                const lines = buildScheduleLinesFromSelection();
-                scheduleInput.value = lines.join('\n');
-            }
+        function openScheduleModalForCourseEntry(idx) {
+            if (!(currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA')) return;
+            const entry = courseScheduleEntries[idx];
+            if (!entry) return;
+            currentCourseEntryIdx = idx;
+            currentCoursePickerSelection = JSON.parse(JSON.stringify(entry.selection || { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] }));
+            openScheduleModal();
         }
 
         (function initTypeSelection() {
             const typeFromUrl = getUrlParam('type');
-            initWeekOptions();
             bindDeadlineDisplay();
-            const scheduleInput = document.getElementById('schedule');
-            if (scheduleInput) scheduleInput.addEventListener('click', () => { if (currentType === 'COURSE_TA') openScheduleModal(); });
+            bindExamDateTimeDisplay();
+            bindCourseNameAutocomplete();
             const schedOverlay = document.getElementById('scheduleModalOverlay');
             if (schedOverlay) schedOverlay.onclick = () => closeScheduleModal();
             const closeSchedBtn = document.getElementById('closeScheduleModal');
@@ -847,23 +683,13 @@ Back to Admin
             const confirmSchedBtn = document.getElementById('confirmScheduleBtn');
             if (confirmSchedBtn) {
                 confirmSchedBtn.onclick = () => {
-                    const lines = buildScheduleLinesFromSelection();
-                    document.getElementById('schedule').value = lines.join('\n');
-                    if (currentType === 'COURSE_TA') {
-                        document.getElementById('weeklyHours').value = calcCourseWeeklyHours().toFixed(2);
+                    if ((currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA') && currentCourseEntryIdx >= 0 && courseScheduleEntries[currentCourseEntryIdx]) {
+                        courseScheduleEntries[currentCourseEntryIdx].selection = JSON.parse(JSON.stringify(currentCoursePickerSelection));
+                        updateCourseScheduleDerivedFields();
                     }
                     closeScheduleModal();
                 };
             }
-
-            const labOverlay = document.getElementById('labTimeModalOverlay');
-            if (labOverlay) labOverlay.onclick = () => closeLabTimeModal();
-            const closeLabBtn = document.getElementById('closeLabTimeModal');
-            if (closeLabBtn) closeLabBtn.onclick = () => closeLabTimeModal();
-            const cancelLabBtn = document.getElementById('cancelLabTimeBtn');
-            if (cancelLabBtn) cancelLabBtn.onclick = () => closeLabTimeModal();
-            const confirmLabBtn = document.getElementById('confirmLabTimeBtn');
-            if (confirmLabBtn) confirmLabBtn.onclick = () => confirmLabTimeSelection();
 
             const deadlineEl = document.getElementById('deadline');
             if (deadlineEl) {
@@ -874,6 +700,19 @@ Back to Admin
             }
             const jobTypeSelect = document.getElementById('jobType');
             jobTypeSelect.disabled = true;
+
+            if (courseScheduleEntries.length === 0) {
+                courseScheduleEntries.push({ week: 1, selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] } });
+            }
+            const addEntryBtn = document.getElementById('addCourseScheduleEntryBtn');
+            if (addEntryBtn && !addEntryBtn.__bound) {
+                addEntryBtn.__bound = true;
+                addEntryBtn.addEventListener('click', () => {
+                    courseScheduleEntries.push({ week: 1, selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] } });
+                    syncCourseScheduleEntriesUI();
+                });
+            }
+
             if (typeFromUrl) {
                 setTaType(typeFromUrl);
             } else {
@@ -1043,38 +882,23 @@ Back to Admin
                 description: document.getElementById('description').value.trim(),
                 requirements: requirements,
                 quota: parseInt(document.getElementById('quota').value) || 1,
-                weeklyHours: parseFloat(document.getElementById('weeklyHours').value) || 0,
                 schedule: document.getElementById('schedule').value.trim(),
                 deadline: dl.value
             };
 
             if (currentType === 'COURSE_TA') {
-                const ws = parseInt(document.getElementById('courseWeekStart').value) || 1;
-                const we = parseInt(document.getElementById('courseWeekEnd').value) || 17;
-                if (ws < 1 || ws > 17 || we < 1 || we > 17 || ws > we) {
-                    showToast('Please select a valid course week range (1-17).', 'warning');
-                    btn.disabled = false;
-                    btn.textContent = 'Publish Now';
-                    return;
-                }
-                const lines = buildScheduleLinesFromSelection();
-                body.schedule = lines.join('\n');
-                body.courseWeekStart = ws;
-                body.courseWeekEnd = we;
-                body.courseScheduleGrid = JSON.stringify(courseGridSelection);
-                body.weeklyHours = calcCourseWeeklyHours();
+                body.courseScheduleGrid = JSON.stringify(courseScheduleEntries);
+                body.schedule = buildCourseScheduleSummaryText();
+            } else if (currentType === 'CLASS_TEST_TA') {
+                body.courseScheduleGrid = JSON.stringify(courseScheduleEntries);
+                body.schedule = buildCourseScheduleSummaryText();
             } else if (currentType === 'LAB_TA') {
-                body.labSessionCount = parseInt(document.getElementById('labSessionCount').value) || 0;
-                body.labTime = document.getElementById('labTime').value.trim();
-                body.labLocation = '';
-                body.labSessions = JSON.stringify(labSessions);
-                body.schedule = body.labTime;
+                body.courseScheduleGrid = JSON.stringify(courseScheduleEntries);
+                body.schedule = buildCourseScheduleSummaryText();
             } else if (currentType === 'FINAL_EXAM_TA') {
                 body.examDateTime = document.getElementById('examDateTime').value;
+                body.examDuration = parseFloat(document.getElementById('examDuration').value) || 0;
                 body.examLocation = document.getElementById('examLocation').value.trim();
-            } else if (currentType === 'CLASS_TEST_TA') {
-                body.testScheduleType = document.getElementById('testScheduleType').value;
-                body.testScheduleDetail = document.getElementById('testScheduleDetail').value.trim();
             }
 
             try {
