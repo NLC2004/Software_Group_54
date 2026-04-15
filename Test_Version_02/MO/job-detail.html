@@ -16,6 +16,9 @@
         .nav-link.inactive:hover { background-color: rgb(248 250 252); color: rgb(37 99 235); }
         .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        .req-item { display: flex; align-items: flex-start; gap: 10px; }
+        .req-check { width: 20px; height: 20px; flex: 0 0 20px; margin-top: 2px; }
+        .req-text { line-height: 1.4; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -125,6 +128,27 @@ Back to Admin
 </div>
 </div>
 
+<div class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4" id="scheduleDetailModal" style="z-index:60;">
+    <div class="bg-white w-full max-w-3xl rounded-[1.5rem] shadow-2xl border border-gray-100 overflow-hidden">
+        <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900" id="scheduleDetailTitle">Schedule Details</h3>
+                <p class="text-xs text-gray-400 mt-1" id="scheduleDetailSub">--</p>
+            </div>
+            <button class="p-2 hover:bg-gray-100 rounded-xl text-gray-500" id="closeScheduleDetailBtn" type="button">
+                <span class="iconify text-xl" data-icon="mdi:close"></span>
+            </button>
+        </div>
+        <div class="p-6" id="scheduleDetailBody">
+            <div class="text-gray-400 text-sm">Loading...</div>
+        </div>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+            <p class="text-sm text-gray-800 font-bold" id="scheduleDetailTotal">Total Working Hours: --</p>
+            <button class="px-4 py-2 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800" type="button" onclick="closeScheduleDetail()">Close</button>
+        </div>
+    </div>
+</div>
+
 <script src="/js/api.js"></script>
 <script>
         let jobId = null;
@@ -208,15 +232,22 @@ Back to Admin
         function renderJobInfo(job) {
             document.getElementById('breadcrumbTitle').textContent = job.title || 'Job Detail';
 
+            currentJobForSchedule = job;
+
             const isOpen = job.status === 'OPEN';
             document.getElementById('headerActions').innerHTML = `
                 <a class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all" href="job-edit.html?id=${job.id}">Edit Job</a>
                 <button onclick="toggleStatus('${isOpen ? 'CLOSED' : 'OPEN'}')" class="px-4 py-2 ${isOpen ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'} rounded-xl text-sm font-semibold hover:opacity-80 transition-all">${isOpen ? 'Close Recruitment' : 'Reopen Recruitment'}</button>
                 <button onclick="deleteJob()" class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-100 transition-all">Delete</button>`;
 
+            const checkSvg = '<svg class="req-check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.00002 16.2L4.80002 12L3.40002 13.4L9.00002 19L21 7.00002L19.6 5.60002L9.00002 16.2Z" fill="#16A34A"/></svg>';
             const reqHtml = Array.isArray(job.requirements) && job.requirements.length > 0
-                ? job.requirements.map(r => `<li class="flex items-start"><span class="iconify mt-1 mr-2 text-green-500" data-icon="solar:check-circle-bold"></span> ${esc(r)}</li>`).join('')
+                ? job.requirements.map(r => `<li class="req-item">${checkSvg}<span class="req-text">${esc(r)}</span></li>`).join('')
                 : '<li class="text-gray-400 italic">No specific requirements listed</li>';
+
+            const sch = computeScheduleBlocks(job);
+            const totalHours = Number(sch.totalHours || 0);
+            const seg = Number(sch.segmentCount || 0);
 
             document.getElementById('jobInfoPanel').innerHTML = `
                 <div class="flex items-center space-x-4 mb-6">
@@ -235,11 +266,14 @@ Back to Admin
                     </div>
                     <div class="p-4 bg-gray-50 rounded-2xl">
                         <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Schedule</p>
-                        <p class="text-gray-800 font-semibold italic">${esc(job.schedule || 'Not specified')}</p>
+                        <div class="flex items-center justify-between gap-4">
+                            <p class="text-gray-700 font-semibold">Total ${totalHours.toFixed(2)} hours &middot; ${seg} segments</p>
+                            <button type="button" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-blue-600 hover:bg-blue-50 transition-all" onclick="openScheduleDetail()">View Schedule Details</button>
+                        </div>
                     </div>
                     <div class="p-4 bg-gray-50 rounded-2xl">
-                        <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Quota / Weekly Hours</p>
-                        <p class="text-gray-800 font-semibold">${job.quota || 'N/A'} positions &middot; ${job.weeklyHours || 'N/A'} hrs/week</p>
+                        <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Quota / Total Working Hours</p>
+                        <p class="text-gray-800 font-semibold">${job.quota || 'N/A'} positions &middot; ${totalHours.toFixed(2)} hours</p>
                     </div>
                     <div class="p-4 bg-gray-50 rounded-2xl">
                         <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Deadline</p>
@@ -251,6 +285,135 @@ Back to Admin
                     <h4 class="font-bold text-gray-800 mb-3">Requirements</h4>
                     <ul class="text-sm text-gray-500 space-y-2">${reqHtml}</ul>
                 </div>`;
+        }
+
+        let currentJobForSchedule = null;
+
+        function parseCourseScheduleGrid(str) {
+            if (!str) return [];
+            try {
+                const parsed = JSON.parse(str);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (_) {
+                return [];
+            }
+        }
+
+        function periodStart(p) {
+            const map = { 1:'08:00',2:'08:50',3:'09:50',4:'10:40',5:'11:30',6:'13:00',7:'13:50',8:'14:45',9:'15:40',10:'16:35',11:'17:25',12:'18:30',13:'19:20',14:'20:10' };
+            return map[Number(p)] || '';
+        }
+
+        function periodEnd(p) {
+            const map = { 1:'08:45',2:'09:35',3:'10:35',4:'11:25',5:'12:15',6:'13:45',7:'14:35',8:'15:30',9:'16:25',10:'17:20',11:'18:10',12:'19:15',13:'20:05',14:'20:55' };
+            return map[Number(p)] || '';
+        }
+
+        function mergeConsecutive(periods) {
+            const ps = (periods || [])
+                .map(x => Number(x))
+                .filter(x => Number.isFinite(x))
+                .sort((a,b) => a-b);
+            const ranges = [];
+            let start = null;
+            let prev = null;
+            ps.forEach(p => {
+                if (start == null) { start = p; prev = p; return; }
+                if (p === prev + 1) { prev = p; return; }
+                ranges.push([start, prev]);
+                start = p;
+                prev = p;
+            });
+            if (start != null) ranges.push([start, prev]);
+            return ranges;
+        }
+
+        function computeScheduleBlocks(job) {
+            if (!job) return { totalHours: 0, segmentCount: 0, blocks: [] };
+            const rawType = String(job.type || '').trim();
+            const tv = rawType === 'COURSE' ? 'COURSE_TA' : (rawType === 'ACTIVITY' ? 'CLASS_TEST_TA' : rawType);
+
+            if (tv === 'FINAL_EXAM_TA') {
+                const dur = Number(job.examDuration) || 0;
+                return {
+                    totalHours: dur,
+                    segmentCount: dur > 0 ? 1 : 0,
+                    blocks: dur > 0 ? [{ week: '', day: '', time: String(job.examDateTime || '').replace('T', ' '), hours: dur, meta: 'Final Exam' }] : []
+                };
+            }
+
+            const entries = parseCourseScheduleGrid(job.courseScheduleGrid);
+            const dayKeys = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+            const dayLabel = { Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday' };
+            const blocks = [];
+            let totalPeriods = 0;
+            entries.forEach(e => {
+                const week = e && e.week != null ? String(e.week) : '';
+                const sel = e && e.selection && typeof e.selection === 'object' ? e.selection : {};
+                dayKeys.forEach(dk => {
+                    const periods = Array.isArray(sel[dk]) ? sel[dk] : [];
+                    totalPeriods += periods.length;
+                    mergeConsecutive(periods).forEach(([s,e]) => {
+                        const st = periodStart(s);
+                        const et = periodEnd(e);
+                        if (!st || !et) return;
+                        const periodCount = (e - s + 1);
+                        blocks.push({ week, day: dayLabel[dk] || dk, time: `${st}-${et}`, hours: periodCount * 0.75, meta: '' });
+                    });
+                });
+            });
+            const totalHours = totalPeriods * 0.75;
+            return { totalHours, segmentCount: blocks.length, blocks };
+        }
+
+        function openScheduleDetail() {
+            if (!currentJobForSchedule) return;
+            const job = currentJobForSchedule;
+            const sch = computeScheduleBlocks(job);
+
+            document.getElementById('scheduleDetailTitle').textContent = 'Schedule Details';
+            document.getElementById('scheduleDetailSub').textContent = (job.title ? String(job.title) : '');
+            document.getElementById('scheduleDetailTotal').textContent = `Total Working Hours: ${Number(sch.totalHours || 0).toFixed(2)} hours`;
+
+            const body = document.getElementById('scheduleDetailBody');
+            if (!sch.blocks.length) {
+                body.innerHTML = '<div class="text-gray-400 text-sm">No schedule was provided.</div>';
+            } else {
+                body.innerHTML = `
+                    <div class="overflow-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="text-left text-[10px] text-gray-400 uppercase tracking-widest">
+                                    <th class="pb-3 pr-3">Week / Type</th>
+                                    <th class="pb-3 pr-3">Day</th>
+                                    <th class="pb-3 pr-3">Time</th>
+                                    <th class="pb-3">Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sch.blocks.map(b => `
+                                    <tr class="border-b border-gray-50">
+                                        <td class="py-3 pr-3 text-sm text-gray-700 font-semibold whitespace-nowrap">${esc(b.week ? ('Week ' + b.week) : (b.meta || ''))}</td>
+                                        <td class="py-3 pr-3 text-sm text-gray-600">${esc(b.day || '')}</td>
+                                        <td class="py-3 pr-3 text-sm text-gray-600">${esc(b.time || '')}</td>
+                                        <td class="py-3 text-sm text-gray-900 font-bold whitespace-nowrap">${Number(b.hours || 0).toFixed(2)} h</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            const modal = document.getElementById('scheduleDetailModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeScheduleDetail() {
+            const modal = document.getElementById('scheduleDetailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         function renderApplicants(applications) {
@@ -494,6 +657,10 @@ Back to Admin
         document.getElementById('closeAppDetailBtn').addEventListener('click', closeApplicationDetail);
         document.getElementById('appDetailModal').addEventListener('click', (e) => {
             if (e.target && e.target.id === 'appDetailModal') closeApplicationDetail();
+        });
+        document.getElementById('closeScheduleDetailBtn').addEventListener('click', closeScheduleDetail);
+        document.getElementById('scheduleDetailModal').addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'scheduleDetailModal') closeScheduleDetail();
         });
         document.getElementById('moApplicantSort').addEventListener('change', (e) => {
             moApplicantSort = e.target.value;

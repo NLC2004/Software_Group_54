@@ -2,6 +2,8 @@ package com.bupt.tarecruit.handler;
 
 import com.bupt.tarecruit.model.*;
 import com.bupt.tarecruit.service.DataService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -19,6 +21,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AdminHandler extends BaseHandler {
+
+    private static final double HOURS_PER_PERIOD = 0.75;
 
     public AdminHandler(DataService ds) { super(ds); }
 
@@ -339,7 +343,7 @@ public class AdminHandler extends BaseHandler {
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (User ta : tas) {
-            double totalHours = 0;
+            TreeMap<Integer, Double> weekly = new TreeMap<>();
             int approvedCount = 0;
             List<String> jobTitles = new ArrayList<>();
 
@@ -349,11 +353,21 @@ public class AdminHandler extends BaseHandler {
             for (Application app : taApps) {
                 Job job = allJobs.stream().filter(j -> j.id.equals(app.jobId)).findFirst().orElse(null);
                 if (job != null) {
-                    totalHours += job.weeklyHours;
+                    Map<Integer, Double> jobWeekly = computeJobWeeklyHours(job);
+                    for (Map.Entry<Integer, Double> e : jobWeekly.entrySet()) {
+                        int w = e.getKey();
+                        double h = e.getValue() == null ? 0 : e.getValue();
+                        if (h <= 0) continue;
+                        weekly.put(w, weekly.getOrDefault(w, 0.0) + h);
+                    }
                     approvedCount++;
                     jobTitles.add(job.title);
                 }
             }
+
+            double totalHours = weekly.values().stream().mapToDouble(x -> x == null ? 0 : x).sum();
+            double peakWeeklyHours = weekly.values().stream().mapToDouble(x -> x == null ? 0 : x).max().orElse(0);
+            double avgWeeklyHours = weekly.isEmpty() ? 0 : (totalHours / weekly.size());
 
             String facultyLabel = inferFacultyLabel(ta, jobTitles);
             String facultyBucket = normalizeFacultyBucket(facultyLabel);
@@ -367,17 +381,25 @@ public class AdminHandler extends BaseHandler {
             m.put("fullName", ta.fullName != null && !ta.fullName.isEmpty() ? ta.fullName : ta.username);
             m.put("email", ta.email);
             m.put("faculty", facultyLabel);
-            m.put("totalWeeklyHours", totalHours);
+            m.put("peakWeeklyHours", peakWeeklyHours);
+            m.put("avgWeeklyHours", avgWeeklyHours);
+            m.put("totalHours", totalHours);
+            m.put("weeklyBreakdown", weekly.entrySet().stream().map(e -> {
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("week", e.getKey());
+                row.put("hours", e.getValue());
+                return row;
+            }).collect(Collectors.toList()));
             m.put("approvedPositions", approvedCount);
             m.put("jobTitles", jobTitles);
-            m.put("overloaded", totalHours > maxHours);
-            m.put("warning", totalHours > (maxHours * 0.8) && totalHours <= maxHours);
+            m.put("overloaded", peakWeeklyHours > maxHours);
+            m.put("warning", peakWeeklyHours > (maxHours * 0.8) && peakWeeklyHours <= maxHours);
             m.put("maxHours", maxHours);
             result.add(m);
         }
         if (!status.isEmpty() && !"all".equals(status)) {
             result = result.stream().filter(row -> {
-                double h = row.get("totalWeeklyHours") instanceof Number ? ((Number) row.get("totalWeeklyHours")).doubleValue() : 0;
+                double h = row.get("peakWeeklyHours") instanceof Number ? ((Number) row.get("peakWeeklyHours")).doubleValue() : 0;
                 double max = row.get("maxHours") instanceof Number ? ((Number) row.get("maxHours")).doubleValue() : 20;
                 if ("overload".equals(status)) return h > max;
                 if ("warning".equals(status)) return h > (max * 0.8) && h <= max;
@@ -386,6 +408,78 @@ public class AdminHandler extends BaseHandler {
             }).collect(Collectors.toList());
         }
         sendJson(ex, 200, result);
+    }
+
+    private String normalizeJobType(String type) {
+        String raw = type == null ? "" : type.trim();
+        if ("COURSE".equalsIgnoreCase(raw)) return "COURSE_TA";
+        if ("ACTIVITY".equalsIgnoreCase(raw)) return "CLASS_TEST_TA";
+        return raw.toUpperCase(Locale.ROOT);
+    }
+
+    private Map<Integer, Double> computeJobWeeklyHours(Job job) {
+        if (job == null) return Collections.emptyMap();
+        String tv = normalizeJobType(job.type);
+
+        if ("FINAL_EXAM_TA".equals(tv)) {
+            double dur = job.examDuration;
+            if (dur <= 0) return Collections.emptyMap();
+            return Map.of(0, dur);
+        }
+
+        Map<Integer, Double> weekly = new TreeMap<>();
+        String grid = job.courseScheduleGrid;
+        if (grid == null || grid.trim().isEmpty()) {
+            if (job.labSessions != null && !job.labSessions.trim().isEmpty()) {
+                mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(job.labSessions));
+            }
+            if (job.testScheduleDetail != null && !job.testScheduleDetail.trim().isEmpty()) {
+                mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(job.testScheduleDetail));
+            }
+            return weekly;
+        }
+        mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(grid));
+        return weekly;
+    }
+
+    private void mergeWeeklyMap(Map<Integer, Double> acc, Map<Integer, Double> add) {
+        if (acc == null || add == null) return;
+        for (Map.Entry<Integer, Double> e : add.entrySet()) {
+            int w = e.getKey();
+            double h = e.getValue() == null ? 0 : e.getValue();
+            if (h <= 0) continue;
+            acc.put(w, acc.getOrDefault(w, 0.0) + h);
+        }
+    }
+
+    private Map<Integer, Double> parseWeeklyHoursFromScheduleEntriesJson(String json) {
+        if (json == null || json.trim().isEmpty()) return Collections.emptyMap();
+        try {
+            JsonElement el = gson.fromJson(json, JsonElement.class);
+            if (el == null || !el.isJsonArray()) return Collections.emptyMap();
+            JsonArray arr = el.getAsJsonArray();
+
+            Map<Integer, Double> out = new TreeMap<>();
+            for (JsonElement one : arr) {
+                if (one == null || !one.isJsonObject()) continue;
+                JsonObject obj = one.getAsJsonObject();
+                int week = obj.has("week") ? obj.get("week").getAsInt() : 0;
+                if (!obj.has("selection") || !obj.get("selection").isJsonObject()) continue;
+                JsonObject sel = obj.getAsJsonObject("selection");
+
+                int periods = 0;
+                for (String day : List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")) {
+                    if (!sel.has(day) || !sel.get(day).isJsonArray()) continue;
+                    periods += sel.getAsJsonArray(day).size();
+                }
+                double hours = periods * HOURS_PER_PERIOD;
+                if (hours <= 0) continue;
+                out.put(week, out.getOrDefault(week, 0.0) + hours);
+            }
+            return out;
+        } catch (Exception ignored) {
+            return Collections.emptyMap();
+        }
     }
 
     private String inferFacultyLabel(User ta, List<String> jobTitles) {
@@ -439,12 +533,13 @@ public class AdminHandler extends BaseHandler {
         try { if (settings.containsKey("maxWeeklyHours")) maxH = Double.parseDouble(settings.get("maxWeeklyHours")); }
         catch (NumberFormatException ignored) {}
         for (User ta : users.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList())) {
-            double h = 0;
+            TreeMap<Integer, Double> weekly = new TreeMap<>();
             for (Application a : apps.stream().filter(a -> a.applicantId.equals(ta.id) && "APPROVED".equals(a.status)).collect(Collectors.toList())) {
                 Job j = jobs.stream().filter(jj -> jj.id.equals(a.jobId)).findFirst().orElse(null);
-                if (j != null) h += j.weeklyHours;
+                if (j != null) mergeWeeklyMap(weekly, computeJobWeeklyHours(j));
             }
-            if (h > maxH) overloaded++;
+            double peak = weekly.values().stream().mapToDouble(x -> x == null ? 0 : x).max().orElse(0);
+            if (peak > maxH) overloaded++;
         }
         stats.put("overloadedTAs", overloaded);
 
