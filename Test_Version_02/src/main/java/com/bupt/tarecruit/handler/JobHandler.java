@@ -277,6 +277,46 @@ public class JobHandler extends BaseHandler {
         if (duplicatePriority) {
             sendError(ex, 409, "This priority is already used by another active application"); return;
         }
+        if (ds.wouldExceedWeeklyWorkload(user.id, job)) {
+            Map<Integer, Double> currentWeekly = ds.getTAWeeklyHours(user.id);
+            Map<Integer, Double> addedWeekly = ds.getJobWeeklyHours(job);
+            double limit = ds.getWeeklyWorkloadLimit();
+
+            List<String> details = new ArrayList<>();
+            List<Integer> blockedWeeks = new ArrayList<>();
+            for (Map.Entry<Integer, Double> e : addedWeekly.entrySet()) {
+                int week = e.getKey();
+                double current = currentWeekly.getOrDefault(week, 0.0);
+                double added = e.getValue() == null ? 0 : e.getValue();
+                double future = current + added;
+                if (future > limit) {
+                    blockedWeeks.add(week);
+                    details.add("Week " + week + ": " + String.format(Locale.ROOT, "%.2f", current)
+                            + " + " + String.format(Locale.ROOT, "%.2f", added)
+                            + " = " + String.format(Locale.ROOT, "%.2f", future)
+                            + " / limit " + String.format(Locale.ROOT, "%.2f", limit)
+                            + " (exceeds by " + String.format(Locale.ROOT, "%.2f", future - limit) + "h)");
+                }
+            }
+            if (blockedWeeks.isEmpty()) {
+                blockedWeeks = ds.getWeeksThatWouldExceedWeeklyWorkload(user.id, job);
+            }
+
+            String weekList = blockedWeeks.stream().map(w -> "Week " + w).collect(Collectors.joining(", "));
+            String detailText = details.isEmpty() ? (weekList.isEmpty() ? "This application would exceed your weekly workload limit." : weekList)
+                    : String.join("; ", details);
+
+            Notification blocked = new Notification();
+            blocked.userId = user.id;
+            blocked.title = "Application blocked by weekly workload limit";
+            blocked.content = detailText;
+            blocked.type = "WORKLOAD";
+            ds.addNotification(blocked);
+            ds.addAuditLog(user.id, user.username, "WORKLOAD_BLOCK",
+                    "Blocked application for job: " + job.title + " due to weekly workload limit; " + detailText);
+            sendError(ex, 409, detailText);
+            return;
+        }
         Application app = new Application();
         app.jobId = jobId;
         app.applicantId = user.id;

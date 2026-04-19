@@ -3,6 +3,9 @@ package com.bupt.tarecruit.service;
 import com.bupt.tarecruit.model.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -156,6 +159,129 @@ public class DataService {
         apps.add(app);
         writeList("applications.json", apps);
     }
+
+    public synchronized double getWeeklyWorkloadLimit() {
+        Map<String, String> settings = getSettings();
+        double maxHours = 20;
+        try {
+            if (settings.containsKey("maxWeeklyHours")) {
+                maxHours = Double.parseDouble(settings.get("maxWeeklyHours"));
+            }
+        } catch (NumberFormatException ignored) {}
+        return maxHours;
+    }
+
+    public synchronized Map<Integer, Double> getJobWeeklyHours(Job job) {
+        if (job == null) return Collections.emptyMap();
+        String type = job.type == null ? "" : job.type.trim().toUpperCase(Locale.ROOT);
+        if ("COURSE".equals(type)) type = "COURSE_TA";
+        if ("ACTIVITY".equals(type)) type = "CLASS_TEST_TA";
+
+        if ("FINAL_EXAM_TA".equals(type)) {
+            if (job.examDuration <= 0) return Collections.emptyMap();
+            return Map.of(0, job.examDuration);
+        }
+
+        String scheduleJson = null;
+        if (job.courseScheduleGrid != null && !job.courseScheduleGrid.trim().isEmpty()) {
+            scheduleJson = job.courseScheduleGrid;
+        } else if (job.labSessions != null && !job.labSessions.trim().isEmpty()) {
+            scheduleJson = job.labSessions;
+        } else if (job.testScheduleDetail != null && !job.testScheduleDetail.trim().isEmpty()) {
+            scheduleJson = job.testScheduleDetail;
+        }
+        return parseWeeklyHoursFromScheduleEntriesJson(scheduleJson);
+    }
+
+    public synchronized Map<Integer, Double> getTAWeeklyHours(String taId) {
+        Map<Integer, Double> weekly = new TreeMap<>();
+        if (taId == null || taId.isBlank()) return weekly;
+
+        for (Application app : getAllApplications()) {
+            if (!taId.equals(app.applicantId) || !"APPROVED".equals(app.status)) continue;
+            Job job = getJobById(app.jobId);
+            mergeWeeklyHours(weekly, getJobWeeklyHours(job));
+        }
+        return weekly;
+    }
+
+    public synchronized Set<Integer> getOverloadedWeeks(String taId) {
+        double maxHours = getWeeklyWorkloadLimit();
+        Set<Integer> overloaded = new TreeSet<>();
+        for (Map.Entry<Integer, Double> e : getTAWeeklyHours(taId).entrySet()) {
+            double hours = e.getValue() == null ? 0 : e.getValue();
+            if (hours > maxHours) overloaded.add(e.getKey());
+        }
+        return overloaded;
+    }
+
+    public synchronized boolean wouldExceedWeeklyWorkload(String taId, Job job) {
+        if (taId == null || job == null) return false;
+        double limit = getWeeklyWorkloadLimit();
+        Map<Integer, Double> current = getTAWeeklyHours(taId);
+        Map<Integer, Double> add = getJobWeeklyHours(job);
+        for (Map.Entry<Integer, Double> e : add.entrySet()) {
+            int week = e.getKey();
+            double future = current.getOrDefault(week, 0.0) + (e.getValue() == null ? 0 : e.getValue());
+            if (future > limit) return true;
+        }
+        return false;
+    }
+
+    public synchronized List<Integer> getWeeksThatWouldExceedWeeklyWorkload(String taId, Job job) {
+        if (taId == null || job == null) return Collections.emptyList();
+        double limit = getWeeklyWorkloadLimit();
+        Map<Integer, Double> current = getTAWeeklyHours(taId);
+        Map<Integer, Double> add = getJobWeeklyHours(job);
+        List<Integer> weeks = new ArrayList<>();
+        for (Map.Entry<Integer, Double> e : add.entrySet()) {
+            int week = e.getKey();
+            double future = current.getOrDefault(week, 0.0) + (e.getValue() == null ? 0 : e.getValue());
+            if (future > limit) weeks.add(week);
+        }
+        return weeks;
+    }
+
+    private void mergeWeeklyHours(Map<Integer, Double> acc, Map<Integer, Double> add) {
+        if (acc == null || add == null) return;
+        for (Map.Entry<Integer, Double> e : add.entrySet()) {
+            int week = e.getKey();
+            double hours = e.getValue() == null ? 0 : e.getValue();
+            if (hours <= 0) continue;
+            acc.put(week, acc.getOrDefault(week, 0.0) + hours);
+        }
+    }
+
+    private Map<Integer, Double> parseWeeklyHoursFromScheduleEntriesJson(String json) {
+        if (json == null || json.trim().isEmpty()) return Collections.emptyMap();
+        try {
+            JsonElement el = gson.fromJson(json, JsonElement.class);
+            if (el == null || !el.isJsonArray()) return Collections.emptyMap();
+            JsonArray arr = el.getAsJsonArray();
+
+            Map<Integer, Double> out = new TreeMap<>();
+            for (JsonElement one : arr) {
+                if (one == null || !one.isJsonObject()) continue;
+                JsonObject obj = one.getAsJsonObject();
+                int week = obj.has("week") ? obj.get("week").getAsInt() : 0;
+                if (!obj.has("selection") || !obj.get("selection").isJsonObject()) continue;
+                JsonObject sel = obj.getAsJsonObject("selection");
+
+                int periods = 0;
+                for (String day : List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")) {
+                    if (!sel.has(day) || !sel.get(day).isJsonArray()) continue;
+                    periods += sel.getAsJsonArray(day).size();
+                }
+                double hours = periods * 0.75;
+                if (hours <= 0) continue;
+                out.put(week, out.getOrDefault(week, 0.0) + hours);
+            }
+            return out;
+        } catch (Exception ignored) {
+            return Collections.emptyMap();
+        }
+    }
+
 
     public synchronized List<ApplicationDraft> getAllApplicationDrafts() {
         return readList("application_drafts.json", new TypeToken<List<ApplicationDraft>>(){}.getType());
