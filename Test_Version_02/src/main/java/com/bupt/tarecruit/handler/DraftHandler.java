@@ -1,14 +1,18 @@
 package com.bupt.tarecruit.handler;
 
 import com.bupt.tarecruit.model.ApplicationDraft;
+import com.bupt.tarecruit.model.Job;
 import com.bupt.tarecruit.model.User;
 import com.bupt.tarecruit.service.DataService;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DraftHandler extends BaseHandler {
 
@@ -24,7 +28,10 @@ public class DraftHandler extends BaseHandler {
         String path = ex.getRequestURI().getPath();
         String method = ex.getRequestMethod();
         try {
-            if (path.endsWith("/application")) {
+            if (path.endsWith("/applications")) {
+                if ("GET".equals(method)) listApplicationDrafts(ex, user);
+                else sendError(ex, 405, "Method not allowed");
+            } else if (path.endsWith("/application")) {
                 if ("GET".equals(method)) getApplicationDraft(ex, user);
                 else if ("PUT".equals(method)) upsertApplicationDraft(ex, user);
                 else if ("DELETE".equals(method)) deleteApplicationDraft(ex, user);
@@ -36,6 +43,15 @@ public class DraftHandler extends BaseHandler {
             e.printStackTrace();
             sendError(ex, 500, "Internal error");
         }
+    }
+
+    private void listApplicationDrafts(HttpExchange ex, User user) throws IOException {
+        List<Map<String, Object>> drafts = ds.getAllApplicationDrafts().stream()
+                .filter(d -> user.id.equals(d.userId))
+                .sorted(Comparator.comparingLong((ApplicationDraft d) -> d.updatedAt).reversed())
+                .map(this::toMapWithJob)
+                .collect(Collectors.toList());
+        sendJson(ex, 200, drafts);
     }
 
     private void getApplicationDraft(HttpExchange ex, User user) throws IOException {
@@ -101,6 +117,19 @@ public class DraftHandler extends BaseHandler {
         m.put("resumeDraftFileName", draft.resumeDraftFileName);
         m.put("createdAt", draft.createdAt);
         m.put("updatedAt", draft.updatedAt);
+        return m;
+    }
+
+    private Map<String, Object> toMapWithJob(ApplicationDraft draft) {
+        Map<String, Object> m = toMap(draft);
+        Job job = ds.getJobById(draft.jobId);
+        if (job != null) {
+            m.put("jobTitle", job.title);
+            m.put("jobType", job.type);
+            m.put("courseName", job.courseName);
+            m.put("deadline", job.deadline);
+            m.put("jobStatus", job.status);
+        }
         return m;
     }
 }
