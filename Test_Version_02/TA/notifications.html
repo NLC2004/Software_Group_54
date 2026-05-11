@@ -116,8 +116,23 @@
 </div>
 <script src="/js/api.js"></script>
 <script>
+    const DEADLINE_READ_KEY = 'ta_deadline_reminders_read_v1';
     let allNotifications = [];
     let currentFilter = 'all';
+
+    function getReadDeadlineIds() {
+        try {
+            const raw = localStorage.getItem(DEADLINE_READ_KEY);
+            const list = raw ? JSON.parse(raw) : [];
+            return new Set(Array.isArray(list) ? list : []);
+        } catch (_) {
+            return new Set();
+        }
+    }
+
+    function saveReadDeadlineIds(ids) {
+        localStorage.setItem(DEADLINE_READ_KEY, JSON.stringify(Array.from(ids)));
+    }
 
     function parseDeadline(deadline) {
         if (!deadline) return null;
@@ -153,17 +168,24 @@
         const now = Date.now();
         const windowMs = 48 * 60 * 60 * 1000;
         const appliedJobIds = new Set((applications || []).map(app => app.jobId));
+        const readDeadlineIds = getReadDeadlineIds();
+        const seenJobIds = new Set();
         return (jobs || [])
             .map(job => ({ ...job, deadlineTs: parseDeadline(job.deadline) }))
             .filter(job => job.deadlineTs && job.deadlineTs > now && job.deadlineTs - now <= windowMs)
             .filter(job => !appliedJobIds.has(job.id))
+            .filter(job => {
+                if (seenJobIds.has(job.id)) return false;
+                seenJobIds.add(job.id);
+                return true;
+            })
             .sort((a, b) => a.deadlineTs - b.deadlineTs)
             .map(job => ({
                 id: 'deadline_' + job.id,
                 title: 'Application Deadline Reminder',
                 content: `${job.title || job.courseName || 'A TA position'} closes soon (${formatTimeRemaining(job.deadlineTs)}). Submit before ${job.deadline || 'the deadline'}.`,
                 type: 'DEADLINE',
-                read: false,
+                read: readDeadlineIds.has(job.id),
                 createdAt: Date.now(),
                 link: 'ta-recruitment-detail.html?id=' + job.id
             }));
@@ -241,6 +263,9 @@
         if (String(id).startsWith('deadline_')) {
             const n = allNotifications.find(x => x.id === id);
             if (n) n.read = true;
+            const readDeadlineIds = getReadDeadlineIds();
+            readDeadlineIds.add(String(id).replace(/^deadline_/, ''));
+            saveReadDeadlineIds(readDeadlineIds);
             filterNotifications(currentFilter);
             showToast('Marked as read', 'success');
             return;
@@ -259,6 +284,9 @@
     document.getElementById('markAllBtn').addEventListener('click', async () => {
         const localDeadlineNotifications = allNotifications.filter(n => String(n.id).startsWith('deadline_'));
         localDeadlineNotifications.forEach(n => n.read = true);
+        const readDeadlineIds = getReadDeadlineIds();
+        localDeadlineNotifications.forEach(n => readDeadlineIds.add(String(n.id).replace(/^deadline_/, '')));
+        saveReadDeadlineIds(readDeadlineIds);
         try {
             await API.put('/api/notifications/read-all');
             allNotifications.forEach(n => n.read = true);

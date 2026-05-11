@@ -188,10 +188,16 @@ function getDeadlineReminderJobs(jobs, applications) {
     const now = Date.now();
     const upcomingWindow = 48 * 60 * 60 * 1000;
     const appliedJobIds = new Set((applications || []).map(app => app.jobId));
+    const seenJobIds = new Set();
     return (jobs || [])
         .map(job => ({ ...job, deadlineTs: parseDeadline(job.deadline) }))
         .filter(job => job.deadlineTs && job.deadlineTs > now && job.deadlineTs - now <= upcomingWindow)
         .filter(job => !appliedJobIds.has(job.id))
+        .filter(job => {
+            if (seenJobIds.has(job.id)) return false;
+            seenJobIds.add(job.id);
+            return true;
+        })
         .sort((a, b) => a.deadlineTs - b.deadlineTs);
 }
 
