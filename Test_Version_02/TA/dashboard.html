@@ -106,12 +106,24 @@
 <span class="iconify text-2xl" data-icon="mdi:human-greeting-variant"></span>
 </div>
 </div>
-<p class="text-gray-400 text-sm">Open Positions</p>
-<h3 class="text-2xl font-bold mt-1" id="kpiPositions">--</h3>
+<p class="text-gray-400 text-sm">Saved Drafts</p>
+<h3 class="text-2xl font-bold mt-1" id="kpiDrafts">--</h3>
 </div>
 </div>
 <div class="grid grid-cols-3 gap-8">
 <div class="col-span-2 space-y-8">
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" id="draftResumeCard">
+<div class="p-6 border-b border-gray-100 flex justify-between items-center">
+<div>
+<h4 class="font-bold">Saved Drafts</h4>
+<p class="text-xs text-gray-400 mt-1">Resume unfinished applications directly from the dashboard.</p>
+</div>
+<a class="text-blue-500 text-xs hover:underline" href="ta-recruitment-list.html">Browse positions</a>
+</div>
+<div class="divide-y divide-gray-50" id="draftResumeList">
+<div class="p-6 text-center text-gray-400 text-sm">Checking saved drafts...</div>
+</div>
+</div>
 <div class="bg-amber-50 rounded-2xl border border-amber-100 shadow-sm overflow-hidden" id="deadlineReminderCard">
 <div class="p-6 border-b border-amber-100 flex justify-between items-center">
 <div>
@@ -140,6 +152,15 @@
 <h4 class="font-bold relative z-10">Browse Open Positions</h4>
 <p class="text-xs opacity-80 mt-2 relative z-10">Find TA opportunities that fit your skills.</p>
 <button class="mt-4 bg-white text-blue-600 px-4 py-2 rounded-lg text-xs font-bold relative z-10" type="button" onclick="window.location.href='ta-recruitment-list.html'">View positions</button>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<h4 class="font-bold">Open Positions</h4>
+<p class="text-xs text-gray-400 mt-1">Currently accepting applications.</p>
+</div>
+<p class="text-2xl font-bold text-blue-600" id="kpiPositions">--</p>
+</div>
 </div>
 </div>
 </div>
@@ -211,6 +232,67 @@ function renderDeadlineReminders(jobs) {
     `).join('');
 }
 
+function formatJobType(t) {
+    const raw = String(t || '').trim();
+    const tv = raw === 'COURSE' ? 'COURSE_TA' : (raw === 'ACTIVITY' ? 'CLASS_TEST_TA' : raw);
+    const map = {
+        COURSE_TA: 'Course TA',
+        LAB_TA: 'Lab TA',
+        FINAL_EXAM_TA: 'Final Exam TA',
+        CLASS_TEST_TA: 'Class Test TA'
+    };
+    return map[tv] || tv || 'TA Position';
+}
+
+function renderDrafts(drafts) {
+    const card = document.getElementById('draftResumeCard');
+    const container = document.getElementById('draftResumeList');
+    if (!drafts.length) {
+        card.classList.add('hidden');
+        return;
+    }
+
+    card.classList.remove('hidden');
+    container.innerHTML = drafts.map(draft => {
+        const jobTitle = draft.jobTitle || draft.courseName || 'Unfinished application';
+        const jobMeta = [formatJobType(draft.jobType), draft.deadline ? 'Deadline: ' + draft.deadline : '']
+            .filter(Boolean)
+            .join(' · ');
+        const resumeText = draft.resumeDraftFileName ? 'Resume saved' : 'No resume saved yet';
+        return `<div class="p-6 flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                    <span class="iconify text-blue-500 text-xl" data-icon="mdi:file-document-edit-outline"></span>
+                    <p class="font-bold text-gray-900 truncate">${esc(jobTitle)}</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">${esc(jobMeta)}</p>
+                <p class="text-xs text-gray-400 mt-1">Priority ${draft.priority || '-'} · ${esc(resumeText)} · Saved ${draft.updatedAt ? timeAgo(draft.updatedAt) : 'recently'}</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <button class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all" type="button" onclick="resumeDraft('${safeJsStr(draft.jobId)}')">Continue</button>
+                <button class="px-3 py-2 bg-gray-50 text-gray-500 rounded-xl text-xs font-bold hover:bg-red-50 hover:text-red-600 transition-all" type="button" onclick="deleteDraft('${safeJsStr(draft.jobId)}')">Delete</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function resumeDraft(jobId) {
+    window.location.href = 'ta-recruitment-application-form.html?jobId=' + encodeURIComponent(jobId || '');
+}
+
+async function deleteDraft(jobId) {
+    if (!confirm('Delete this saved draft?')) return;
+    try {
+        await API.del('/api/drafts/application?jobId=' + encodeURIComponent(jobId || ''));
+        showToast('Draft deleted.', 'success');
+        const drafts = await API.get('/api/drafts/applications');
+        document.getElementById('kpiDrafts').textContent = drafts.length;
+        renderDrafts(drafts);
+    } catch (err) {
+        showToast(err.message || 'Failed to delete draft', 'error');
+    }
+}
+
 (async function init() {
     const user = requireAuth(['TA', 'ADMIN']);
     if (!user) return;
@@ -219,9 +301,10 @@ function renderDeadlineReminders(jobs) {
     document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + esc(user.fullName || user.username);
 
     try {
-        const [applications, jobs] = await Promise.all([
+        const [applications, jobs, drafts] = await Promise.all([
             API.get('/api/applications'),
-            API.get('/api/jobs?status=OPEN')
+            API.get('/api/jobs?status=OPEN'),
+            user.role === 'TA' ? API.get('/api/drafts/applications') : Promise.resolve([])
         ]);
 
         const total = applications.length;
@@ -232,9 +315,11 @@ function renderDeadlineReminders(jobs) {
         document.getElementById('kpiPending').textContent = pending;
         document.getElementById('kpiApproved').textContent = approved;
         document.getElementById('kpiPositions').textContent = jobs.length;
+        document.getElementById('kpiDrafts').textContent = drafts.length;
         document.getElementById('subMsg').textContent =
-            'You have ' + total + ' application(s) and ' + pending + ' pending.';
+            'You have ' + total + ' application(s), ' + pending + ' pending, and ' + drafts.length + ' saved draft(s).';
 
+        renderDrafts(drafts);
         renderDeadlineReminders(getDeadlineReminderJobs(jobs, applications));
 
         const container = document.getElementById('recentActivity');
