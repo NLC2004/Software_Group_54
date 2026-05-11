@@ -13,6 +13,7 @@
         .input-box:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
         .label-text { display: block; font-size: 13px; font-weight: 600; color: #4B5563; margin-bottom: 8px; }
         .input-group { margin-bottom: 20px; }
+        .profile-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: default; }
     </style>
 </head>
 <body class="bg-[#F5F7FA] text-gray-800">
@@ -82,6 +83,16 @@
 </div>
 <h2 class="text-xl font-bold" id="profileName">--</h2>
 <p class="text-gray-400 text-sm mb-6" id="profileSub">--</p>
+<div class="mb-6 text-left bg-blue-50 rounded-2xl border border-blue-100 p-4">
+<div class="flex items-center justify-between mb-2">
+<p class="text-xs font-bold text-blue-700 uppercase tracking-wider">Profile completeness</p>
+<span class="text-sm font-bold text-blue-700" id="completionText">--</span>
+</div>
+<div class="w-full h-2 bg-white rounded-full overflow-hidden">
+<div class="h-full bg-blue-600 rounded-full transition-all" id="completionBar" style="width:0%"></div>
+</div>
+<p class="text-[11px] text-blue-700 mt-2" id="completionHint">Loading profile status...</p>
+</div>
 <div class="bg-gray-50 rounded-xl p-4 text-left space-y-3">
 <div class="flex justify-between items-center text-sm">
 <span class="text-gray-400 font-medium">Student ID</span>
@@ -98,14 +109,23 @@
                      </button>
 </div>
 </div>
+<div class="mt-4 text-left rounded-2xl border border-gray-100 bg-white p-4">
+<p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Auto-fill readiness</p>
+<div class="flex flex-wrap gap-2" id="profileBadges">
+<span class="profile-chip bg-gray-100 text-gray-500">Checking profile fields</span>
+</div>
+</div>
 </div>
 </div>
 <div class="col-span-2">
 <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
 <form id="infoForm">
-<div class="mb-6 rounded-xl border border-gray-100 bg-gray-50 p-4">
+<div class="mb-6 rounded-xl border border-gray-100 bg-gray-50 p-4 flex items-start justify-between gap-4">
+<div>
 <p class="text-sm font-bold text-gray-800">TA application profile</p>
 <p class="text-xs text-gray-500 mt-1">These fields can be used to auto-fill future TA application forms.</p>
+</div>
+<span class="profile-chip bg-blue-50 text-blue-600 shrink-0" id="profileStatusChip">Checking</span>
 </div>
 <div class="grid grid-cols-2 gap-6">
 <div class="input-group">
@@ -142,22 +162,13 @@
 <select class="input-box bg-white appearance-none" id="schoolInput">
 <option value="" disabled selected hidden>Which School are you from at BUPT?</option>
 <option value="School of Future Technology">School of Future Technology</option>
-<option value="" disabled selected hidden>Which School are you from at BUPT?</option>
-<option value="School of Future Technology">School of Future Technology</option>
 <option value="International School">International School</option>
-<option value="Queen Mary University of London, Hainan College">Queen Mary University of London, Hainan College</option>
 <option value="Queen Mary University of London, Hainan College">Queen Mary University of London, Hainan College</option>
 <option value="School of Information and Communication Engineering">School of Information and Communication Engineering</option>
 <option value="School of Electronic Engineering">School of Electronic Engineering</option>
 <option value="School of Computer Science">School of Computer Science</option>
 <option value="School of Cyber Security">School of Cyber Security</option>
-<option value="School of Electronic Engineering">School of Electronic Engineering</option>
-<option value="School of Computer Science">School of Computer Science</option>
-<option value="School of Cyber Security">School of Cyber Security</option>
 <option value="School of Artificial Intelligence">School of Artificial Intelligence</option>
-<option value="School of Integrated Circuits">School of Integrated Circuits</option>
-<option value="School of Intelligent Engineering and Automation">School of Intelligent Engineering and Automation</option>
-<option value="Elite Engineer College">Elite Engineer College</option>
 <option value="School of Integrated Circuits">School of Integrated Circuits</option>
 <option value="School of Intelligent Engineering and Automation">School of Intelligent Engineering and Automation</option>
 <option value="Elite Engineer College">Elite Engineer College</option>
@@ -214,8 +225,9 @@
 </div>
 
 <div class="flex items-center gap-4 pt-4">
-<button class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100" type="submit">
-                                Save changes
+<button class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 inline-flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed" type="submit" id="saveProfileBtn">
+<span id="saveProfileText">Save changes</span>
+<span class="hidden iconify animate-spin" data-icon="mdi:loading" id="saveProfileSpinner"></span>
                             </button>
 <button class="px-8 py-3 bg-white text-gray-500 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition-all" onclick="loadProfile()" type="button">
                                 Reset
@@ -308,6 +320,62 @@ Cancel
         document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
             el.checked = el.value === value;
         });
+    }
+
+    function currentProfilePayload() {
+        return {
+            fullName: document.getElementById('fullNameInput').value.trim(),
+            email: document.getElementById('emailInput').value.trim(),
+            phone: document.getElementById('phoneInput').value.trim(),
+            gender: getRadioValue('gender'),
+            studentId: document.getElementById('studentIdInput').value.trim(),
+            school: document.getElementById('schoolInput').value,
+            supervisor: document.getElementById('supervisorInput').value.trim(),
+            degree: document.getElementById('degreeInput').value,
+            yearOfStudy: document.getElementById('yearInput').value
+        };
+    }
+
+    function updateProfileCompleteness() {
+        const profile = currentProfilePayload();
+        const required = [
+            ['fullName', 'Name'],
+            ['email', 'Email'],
+            ['phone', 'Phone'],
+            ['studentId', 'Student ID'],
+            ['school', 'School'],
+            ['gender', 'Gender'],
+            ['degree', 'Degree'],
+            ['yearOfStudy', 'Year']
+        ];
+        const missing = required.filter(([key]) => !profile[key]).map(([, label]) => label);
+        const complete = required.length - missing.length;
+        const percent = Math.round((complete / required.length) * 100);
+        const completionText = document.getElementById('completionText');
+        const completionBar = document.getElementById('completionBar');
+        const completionHint = document.getElementById('completionHint');
+        const profileStatusChip = document.getElementById('profileStatusChip');
+        const profileBadges = document.getElementById('profileBadges');
+
+        completionText.textContent = percent + '%';
+        completionBar.style.width = percent + '%';
+        if (missing.length === 0) {
+            completionHint.textContent = 'Ready for fast application auto-fill.';
+            profileStatusChip.textContent = 'Complete';
+            profileStatusChip.className = 'profile-chip bg-green-50 text-green-600 shrink-0';
+        } else {
+            completionHint.textContent = 'Missing: ' + missing.slice(0, 4).join(', ') + (missing.length > 4 ? '...' : '');
+            profileStatusChip.textContent = 'Needs attention';
+            profileStatusChip.className = 'profile-chip bg-amber-50 text-amber-600 shrink-0';
+        }
+
+        const badges = [];
+        badges.push(profile.email ? ['Email ready', 'mdi:email-check-outline', 'bg-green-50 text-green-600'] : ['Add email', 'mdi:email-alert-outline', 'bg-amber-50 text-amber-600']);
+        badges.push(profile.phone ? ['Phone ready', 'mdi:phone-check-outline', 'bg-green-50 text-green-600'] : ['Add phone', 'mdi:phone-alert-outline', 'bg-amber-50 text-amber-600']);
+        badges.push(profile.school ? ['School ready', 'mdi:school-outline', 'bg-blue-50 text-blue-600'] : ['Select school', 'mdi:school-outline', 'bg-gray-100 text-gray-500']);
+        profileBadges.innerHTML = badges.map(([text, icon, cls]) =>
+            `<span class="profile-chip ${cls}"><span class="iconify" data-icon="${icon}"></span>${text}</span>`
+        ).join('');
     }
 
     function openResumeDb() {
@@ -446,6 +514,7 @@ Cancel
         document.getElementById('degreeInput').value = u.degree || '';
         document.getElementById('yearInput').value = u.yearOfStudy || '';
         setRadioValue('gender', u.gender || '');
+        updateProfileCompleteness();
     }
 
     let portalUser = null;
@@ -535,18 +604,14 @@ Cancel
 
     document.getElementById('infoForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+        const saveBtn = document.getElementById('saveProfileBtn');
+        const saveText = document.getElementById('saveProfileText');
+        const saveSpinner = document.getElementById('saveProfileSpinner');
+        saveBtn.disabled = true;
+        saveText.textContent = 'Saving...';
+        saveSpinner.classList.remove('hidden');
         try {
-            const body = {
-                fullName: document.getElementById('fullNameInput').value.trim(),
-                email: document.getElementById('emailInput').value.trim(),
-                phone: document.getElementById('phoneInput').value.trim(),
-                gender: getRadioValue('gender'),
-                studentId: document.getElementById('studentIdInput').value.trim(),
-                school: document.getElementById('schoolInput').value,
-                supervisor: document.getElementById('supervisorInput').value.trim(),
-                degree: document.getElementById('degreeInput').value,
-                yearOfStudy: document.getElementById('yearInput').value
-            };
+            const body = currentProfilePayload();
             const updated = (portalUser && portalUser.role === 'ADMIN' && proxyUserId)
                 ? await API.put('/api/admin/users/' + encodeURIComponent(proxyUserId), body).then(() => API.get('/api/admin/users/' + encodeURIComponent(proxyUserId)))
                 : await API.put('/api/auth/profile', body);
@@ -557,7 +622,16 @@ Cancel
             showToast('Profile updated successfully.', 'success');
         } catch (err) {
             showToast(err.message || 'Failed to update profile', 'error');
+        } finally {
+            saveBtn.disabled = false;
+            saveText.textContent = 'Save changes';
+            saveSpinner.classList.add('hidden');
         }
+    });
+
+    document.querySelectorAll('#infoForm input, #infoForm select').forEach(el => {
+        el.addEventListener('input', updateProfileCompleteness);
+        el.addEventListener('change', updateProfileCompleteness);
     });
 
     const passwordModal = document.getElementById('passwordModal');
