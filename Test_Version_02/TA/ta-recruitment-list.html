@@ -79,6 +79,29 @@ Notifications
 </div>
 </div>
 </div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+<div class="flex items-center justify-between mb-3">
+<p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Open positions</p>
+<span class="iconify text-xl text-blue-500" data-icon="mdi:briefcase-outline"></span>
+</div>
+<p class="text-2xl font-bold text-gray-900" id="statOpen">--</p>
+</div>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+<div class="flex items-center justify-between mb-3">
+<p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Closing soon</p>
+<span class="iconify text-xl text-orange-500" data-icon="mdi:clock-alert-outline"></span>
+</div>
+<p class="text-2xl font-bold text-gray-900" id="statClosing">--</p>
+</div>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+<div class="flex items-center justify-between mb-3">
+<p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total quota</p>
+<span class="iconify text-xl text-green-500" data-icon="mdi:account-multiple-plus-outline"></span>
+</div>
+<p class="text-2xl font-bold text-gray-900" id="statQuota">--</p>
+</div>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="list-container">
 <div class="col-span-full text-center text-gray-400 py-16">Loading positions...</div>
 </div>
@@ -280,8 +303,9 @@ function closeScheduleModal() {
 
 function renderJobs(jobs) {
     const container = document.getElementById('list-container');
+    document.getElementById('pageSubtitle').textContent = `${jobs.length} position(s) shown`;
     if (jobs.length === 0) {
-        container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-16"><span class="iconify text-6xl text-gray-200 mx-auto mb-4" data-icon="material-symbols:work-outline"></span><p>No open positions found</p></div>';
+        container.innerHTML = '<div class="col-span-full bg-white rounded-2xl border border-gray-100 text-center text-gray-400 py-16"><span class="iconify text-6xl text-gray-200 mx-auto mb-4" data-icon="material-symbols:work-outline"></span><p class="font-medium">No open positions found</p><p class="text-xs mt-2">Try another course name, instructor, or job type.</p></div>';
         return;
     }
 
@@ -293,10 +317,13 @@ function renderJobs(jobs) {
         const seg = Number(stats.segmentCount || 0);
         const summary = `Total ${totalHours.toFixed(2)}h · ${seg} segments`;
 
-        return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm card-hover flex flex-col">
+        return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm card-hover flex flex-col overflow-hidden">
             <div class="p-6 flex-1">
                 <div class="flex justify-between items-start mb-4">
-                    <span class="${deadlineStatus.className} text-xs px-2.5 py-1 rounded-full font-medium">${deadlineStatus.text}</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="${deadlineStatus.className} text-xs px-2.5 py-1 rounded-full font-medium">${deadlineStatus.text}</span>
+                        <span class="bg-blue-50 text-blue-600 text-xs px-2.5 py-1 rounded-full font-medium">${esc(formatJobType(job.type))}</span>
+                    </div>
                     ${job.applicationCount != null ? `<span class="text-xs text-gray-400">${job.applicationCount} applied</span>` : ''}
                 </div>
                 <h3 class="font-bold text-gray-900 text-lg mb-2 line-clamp-1">${esc(job.title || job.courseName || '')}</h3>
@@ -322,12 +349,18 @@ function renderJobs(jobs) {
                     </div>` : ''}
                 </div>
             </div>
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between rounded-b-xl">
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                 <button class="text-xs text-blue-600 font-bold hover:underline" onclick="openScheduleModal('${safeJsStr(job.id)}')">View Schedule Details</button>
                 <a class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm" href="ta-recruitment-detail.html?id=${job.id}">View details</a>
             </div>
         </div>`;
     }).join('');
+}
+
+function updateStats(jobs) {
+    document.getElementById('statOpen').textContent = jobs.length;
+    document.getElementById('statClosing').textContent = jobs.filter(j => getDeadlineStatus(j.deadline).text === 'Closing soon').length;
+    document.getElementById('statQuota').textContent = jobs.reduce((sum, j) => sum + (Number(j.quota) || 0), 0);
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -336,7 +369,8 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     const filtered = allJobs.filter(j =>
         (j.title || '').toLowerCase().includes(q) ||
         (j.courseName || '').toLowerCase().includes(q) ||
-        (j.posterName || '').toLowerCase().includes(q)
+        (j.posterName || '').toLowerCase().includes(q) ||
+        formatJobType(j.type).toLowerCase().includes(q)
     );
     renderJobs(filtered);
 });
@@ -348,8 +382,20 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
 
     try {
         allJobs = await API.get('/api/jobs');
-        document.getElementById('pageSubtitle').textContent = `${allJobs.length} position(s) available`;
-        renderJobs(allJobs);
+        updateStats(allJobs);
+        const initialQuery = getUrlParam('q') || '';
+        if (initialQuery) {
+            document.getElementById('searchInput').value = initialQuery;
+            const q = initialQuery.toLowerCase().trim();
+            renderJobs(allJobs.filter(j =>
+                (j.title || '').toLowerCase().includes(q) ||
+                (j.courseName || '').toLowerCase().includes(q) ||
+                (j.posterName || '').toLowerCase().includes(q) ||
+                formatJobType(j.type).toLowerCase().includes(q)
+            ));
+        } else {
+            renderJobs(allJobs);
+        }
     } catch (err) {
         document.getElementById('list-container').innerHTML = '<div class="col-span-full text-center text-red-500 py-16">Failed to load positions</div>';
         showToast(err.message || 'Failed to load jobs', 'error');
