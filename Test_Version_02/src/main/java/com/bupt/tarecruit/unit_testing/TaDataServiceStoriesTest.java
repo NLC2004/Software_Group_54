@@ -1,6 +1,7 @@
 package com.bupt.tarecruit.unit_testing;
 
 import com.bupt.tarecruit.handler.DraftHandler;
+import com.bupt.tarecruit.handler.UploadHandler;
 import com.bupt.tarecruit.model.ApplicationDraft;
 import com.bupt.tarecruit.model.Job;
 import com.bupt.tarecruit.model.PasswordResetRequest;
@@ -9,6 +10,7 @@ import com.bupt.tarecruit.service.DataService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.util.Base64;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -167,6 +169,55 @@ class TaDataServiceStoriesTest {
 
         assertTrue(savedName.endsWith("EBU6304_Intro_.pdf") || savedName.endsWith("EBU6304_Intro_.pdf".replace(" ", "_")) || savedName.contains("EBU6304_Intro_.pdf"));
         assertArrayEquals(content, ds.getUpload(savedName));
+    }
+
+    @Test
+    void ta03_uploadApiShouldRejectNonPdfFile() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "upload_non_pdf");
+        String token = ds.createSession(ta.id);
+        String body = "{\"fileName\":\"resume.docx\",\"data\":\"" + Base64.getEncoder().encodeToString("doc".getBytes()) + "\"}";
+
+        UploadHandler handler = new UploadHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("POST", "/api/upload", null, body);
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("only PDF files are allowed"));
+    }
+
+    @Test
+    void ta03_uploadApiShouldRejectInvalidBase64() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "upload_invalid_base64");
+        String token = ds.createSession(ta.id);
+
+        UploadHandler handler = new UploadHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("POST", "/api/upload", null, "{\"fileName\":\"resume.pdf\",\"data\":\"not-base64%%%\"}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("Upload failed"));
+    }
+
+    @Test
+    void ta03_uploadApiShouldRejectEmptyFile() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "upload_empty");
+        String token = ds.createSession(ta.id);
+
+        UploadHandler handler = new UploadHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("POST", "/api/upload", null, "{\"fileName\":\"resume.pdf\",\"data\":\"\"}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("file content is empty"));
     }
 
     private User addTa(DataService ds, String username) {
