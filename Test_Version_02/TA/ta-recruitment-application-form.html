@@ -186,6 +186,39 @@
 </div>
 </section>
 <section>
+<h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">AI Match Assistant</h3>
+<div class="bg-slate-50 rounded-2xl border border-slate-100 p-5" id="aiMatchPanel">
+<div class="flex items-start gap-4">
+<div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+<span class="iconify text-xl" data-icon="mdi:creation"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-4">
+<div>
+<p class="text-sm font-bold text-gray-900" id="aiMatchTitle">Ready to analyse</p>
+<p class="text-xs text-gray-500 mt-1" id="aiMatchSummary">Write your motivation to compare your profile with this position.</p>
+</div>
+<div class="text-right">
+<p class="text-2xl font-black text-blue-600" id="aiMatchScore">--</p>
+<p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Match</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+<div class="bg-white border border-gray-100 rounded-xl p-3">
+<p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Matched skills</p>
+<div class="flex flex-wrap gap-2" id="aiMatchedSkills"><span class="text-xs text-gray-400">Waiting for input</span></div>
+</div>
+<div class="bg-white border border-gray-100 rounded-xl p-3">
+<p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Missing skills</p>
+<div class="flex flex-wrap gap-2" id="aiMissingSkills"><span class="text-xs text-gray-400">Waiting for input</span></div>
+</div>
+</div>
+<p class="text-[11px] text-gray-400 mt-4" id="aiMatchNote">The result is explainable guidance only; the final decision remains with the module organiser.</p>
+</div>
+</div>
+</div>
+</section>
+<section>
 <h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">Preference Selection</h3>
 <div class="bg-blue-50 rounded-2xl border border-blue-100 p-5 space-y-4">
 <p class="text-xs text-blue-700 leading-relaxed">Select your preference rank for this position. Each active application can only use one unique priority, and you can keep at most three active preferences at the same time.</p>
@@ -299,6 +332,8 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     let hasUnsavedChanges = false;
     let activeApplications = [];
     let occupiedPriorities = new Map();
+    let aiMatchTimer = null;
+    let currentJob = null;
 
     function parseDeadline(deadline) {
         if (!deadline) return null;
@@ -808,6 +843,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     coverLetterInput.addEventListener('input', () => {
         markDirty();
         scheduleAutoSave();
+        scheduleAiMatchRefresh();
     });
 
     prioritySelect.addEventListener('change', () => {
@@ -897,6 +933,57 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         ].join('\n');
     }
 
+    function skillTags(skills, color) {
+        if (!skills || !skills.length) return '<span class="text-xs text-gray-400">None detected</span>';
+        const cls = color === 'green'
+            ? 'bg-green-50 text-green-700 border-green-100'
+            : 'bg-amber-50 text-amber-700 border-amber-100';
+        return skills.map(s => `<span class="px-2.5 py-1 rounded-full border text-[11px] font-bold ${cls}">${esc(s)}</span>`).join('');
+    }
+
+    function renderAiMatch(match) {
+        if (!match) return;
+        const score = Number(match.score || 0);
+        const scoreEl = document.getElementById('aiMatchScore');
+        scoreEl.textContent = score + '%';
+        scoreEl.className = 'text-2xl font-black ' + (score >= 80 ? 'text-green-600' : score >= 60 ? 'text-blue-600' : 'text-amber-600');
+        document.getElementById('aiMatchTitle').textContent = match.label || 'AI match result';
+        document.getElementById('aiMatchSummary').textContent = match.recommendation || 'Review the explainable matching result.';
+        document.getElementById('aiMatchedSkills').innerHTML = skillTags(match.matchedSkills || [], 'green');
+        document.getElementById('aiMissingSkills').innerHTML = skillTags(match.missingSkills || [], 'amber');
+        const workload = match.workloadRisk ? `Workload risk: ${match.workloadRisk}. ` : '';
+        document.getElementById('aiMatchNote').textContent = workload + (match.explanation || 'This recommendation is generated from job requirements, your profile, your motivation text, and current workload.');
+    }
+
+    function scheduleAiMatchRefresh() {
+        clearTimeout(aiMatchTimer);
+        aiMatchTimer = setTimeout(refreshAiMatch, 700);
+    }
+
+    async function refreshAiMatch() {
+        if (!jobId || !currentJob) return;
+        const text = coverLetterInput.value.trim();
+        const titleEl = document.getElementById('aiMatchTitle');
+        const summaryEl = document.getElementById('aiMatchSummary');
+        if (!text) {
+            titleEl.textContent = 'Ready to analyse';
+            summaryEl.textContent = 'Write your motivation to compare your profile with this position.';
+            document.getElementById('aiMatchScore').textContent = '--';
+            document.getElementById('aiMatchedSkills').innerHTML = '<span class="text-xs text-gray-400">Waiting for input</span>';
+            document.getElementById('aiMissingSkills').innerHTML = '<span class="text-xs text-gray-400">Waiting for input</span>';
+            document.getElementById('aiMatchNote').textContent = 'The result is explainable guidance only; the final decision remains with the module organiser.';
+            return;
+        }
+        try {
+            titleEl.textContent = 'Analysing...';
+            const match = await API.post('/api/jobs/' + jobId + '/match', { coverLetter: buildApplicationCoverLetter() });
+            renderAiMatch(match);
+        } catch (_) {
+            titleEl.textContent = 'AI match unavailable';
+            summaryEl.textContent = 'You can still submit normally; the matching assistant is optional.';
+        }
+    }
+
     (async function init() {
         const user = requireAuth(['TA']);
         if (!user) return;
@@ -906,6 +993,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
             document.getElementById('backLink').href = 'ta-recruitment-detail.html?id=' + jobId;
             try {
                 const job = await API.get('/api/jobs/' + jobId);
+                currentJob = job;
                 document.getElementById('infoTitle').textContent = job.title || job.courseName || 'TA Position';
                 document.getElementById('infoInstructor').textContent = job.posterName || 'N/A';
                 if (isRecruitmentExpired(job)) {
@@ -949,6 +1037,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         }
         applyProfileDefaults(profileDefaults);
         updatePriorityUi();
+        scheduleAiMatchRefresh();
         try {
             const savedResume = await getResumeFromIndexedDb();
             if (savedResume && savedResume.file) {

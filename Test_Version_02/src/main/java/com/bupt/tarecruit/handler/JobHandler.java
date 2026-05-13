@@ -1,6 +1,7 @@
 package com.bupt.tarecruit.handler;
 
 import com.bupt.tarecruit.model.*;
+import com.bupt.tarecruit.service.AiMatchingService;
 import com.bupt.tarecruit.service.DataService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -36,6 +37,7 @@ public class JobHandler extends BaseHandler {
                 String sub = parts[4];
                 if ("apply".equals(sub) && "POST".equals(method)) applyForJob(ex, jobId);
                 else if ("applications".equals(sub) && "GET".equals(method)) getJobApplications(ex, jobId);
+                else if ("match".equals(sub) && ("GET".equals(method) || "POST".equals(method))) getAiMatch(ex, jobId, method);
                 else sendError(ex, 404, "Not found");
             } else {
                 sendError(ex, 404, "Not found");
@@ -322,11 +324,52 @@ public class JobHandler extends BaseHandler {
                 m.put("applicantStudentId", applicant.studentId);
                 m.put("applicantSchool", applicant.school);
                 m.put("applicantDegree", applicant.degree);
+                m.put("aiMatch", new AiMatchingService(ds).match(job, applicant, a.coverLetter, a));
             } else {
                 m.put("applicantName", "Unknown");
             }
             result.add(m);
         }
         sendJson(ex, 200, result);
+    }
+
+    private void getAiMatch(HttpExchange ex, String jobId, String method) throws IOException {
+        User user = authenticate(ex);
+        if (user == null) { sendError(ex, 401, "Unauthorized"); return; }
+        Job job = ds.getJobById(jobId);
+        if (job == null) { sendError(ex, 404, "Job not found"); return; }
+
+        String coverLetter = "";
+        User applicant = user;
+        Application app = null;
+
+        if ("POST".equals(method)) {
+            JsonObject body = parseJson(readBody(ex));
+            if (body.has("coverLetter") && !body.get("coverLetter").isJsonNull()) {
+                coverLetter = body.get("coverLetter").getAsString();
+            }
+            if (body.has("applicationId") && !body.get("applicationId").isJsonNull()) {
+                app = ds.getApplicationById(body.get("applicationId").getAsString());
+                if (app != null) {
+                    if (!Objects.equals(app.jobId, jobId)) {
+                        sendError(ex, 400, "Application does not belong to this job"); return;
+                    }
+                    boolean owner = Objects.equals(app.applicantId, user.id);
+                    boolean jobOwner = Objects.equals(job.postedBy, user.id);
+                    if (!owner && !jobOwner && !"ADMIN".equals(user.role)) {
+                        sendError(ex, 403, "Not authorized"); return;
+                    }
+                    applicant = ds.getUserById(app.applicantId);
+                    coverLetter = app.coverLetter;
+                }
+            }
+        }
+
+        if (!"TA".equals(user.role) && !Objects.equals(job.postedBy, user.id) && !"ADMIN".equals(user.role)) {
+            sendError(ex, 403, "Not authorized"); return;
+        }
+        if (applicant == null) { sendError(ex, 404, "Applicant not found"); return; }
+
+        sendJson(ex, 200, new AiMatchingService(ds).match(job, applicant, coverLetter, app));
     }
 }
