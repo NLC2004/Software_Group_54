@@ -436,6 +436,13 @@ public class AdminHandler extends BaseHandler {
             if (job.testScheduleDetail != null && !job.testScheduleDetail.trim().isEmpty()) {
                 mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(job.testScheduleDetail));
             }
+            if (weekly.isEmpty() && job.weeklyHours > 0) {
+                int start = job.courseWeekStart > 0 ? job.courseWeekStart : 1;
+                int end = job.courseWeekEnd >= start ? job.courseWeekEnd : start;
+                for (int week = start; week <= end; week++) {
+                    weekly.put(week, job.weeklyHours);
+                }
+            }
             return weekly;
         }
         mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(grid));

@@ -93,6 +93,7 @@ Back to Admin
 <select class="px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-700 bg-white" id="moApplicantSort">
 <option value="priority-asc">Sort: Priority 1 → 3</option>
 <option value="priority-desc">Sort: Priority 3 → 1</option>
+<option value="match-desc">Sort: AI match high → low</option>
 <option value="submitted-desc">Sort: Latest first</option>
 <option value="submitted-asc">Sort: Earliest first</option>
 </select>
@@ -220,6 +221,9 @@ Back to Admin
                     return Number(b.createdAt || 0) - Number(a.createdAt || 0);
                 } else if (moApplicantSort === 'submitted-asc') {
                     return Number(a.createdAt || 0) - Number(b.createdAt || 0);
+                } else if (moApplicantSort === 'match-desc') {
+                    const diff = Number((b.aiMatch && b.aiMatch.score) || 0) - Number((a.aiMatch && a.aiMatch.score) || 0);
+                    if (diff !== 0) return diff;
                 } else {
                     const diff = getPriorityRank(a.priority) - getPriorityRank(b.priority);
                     if (diff !== 0) return diff;
@@ -436,6 +440,13 @@ Back to Admin
                 const priorityBadgeClass = priorityValue > 0
                     ? 'bg-indigo-50 text-indigo-600 border-indigo-100'
                     : 'bg-gray-100 text-gray-500 border-gray-200';
+                const match = app.aiMatch || {};
+                const matchScore = Number(match.score || 0);
+                const matchClass = matchScore >= 80
+                    ? 'bg-green-50 text-green-700 border-green-100'
+                    : matchScore >= 60
+                        ? 'bg-blue-50 text-blue-700 border-blue-100'
+                        : 'bg-amber-50 text-amber-700 border-amber-100';
 
                 const cvButton = app.cvFileName
                     ? `<button onclick="event.stopPropagation(); viewCV('${safeJsStr(app.cvFileName)}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100" title="View CV"><span class="iconify text-xl" data-icon="solar:document-bold"></span></button>`
@@ -455,7 +466,10 @@ Back to Admin
                         <div>
                             <h4 class="font-bold text-gray-800">${esc(app.applicantName || 'Unknown')}</h4>
                             <p class="text-xs text-gray-400">${esc(app.applicantEmail || '')} ${app.applicantStudentId ? '&middot; ID: ' + esc(app.applicantStudentId) : ''}</p>
-                            <div class="mt-2"><span class="inline-flex px-3 py-1 rounded-full border text-[11px] font-bold ${priorityBadgeClass}">${esc(priorityLabel)}</span></div>
+                            <div class="mt-2 flex flex-wrap gap-2">
+                                <span class="inline-flex px-3 py-1 rounded-full border text-[11px] font-bold ${priorityBadgeClass}">${esc(priorityLabel)}</span>
+                                <span class="inline-flex px-3 py-1 rounded-full border text-[11px] font-bold ${matchClass}">AI ${matchScore}% · ${esc(match.label || 'Match')}</span>
+                            </div>
                             <p class="text-[10px] text-gray-300 mt-1">${app.createdAt ? timeAgo(app.createdAt) : ''}</p>
                         </div>
                     </div>
@@ -523,6 +537,51 @@ Back to Admin
             `;
         }
 
+        function renderSkillTags(skills, color) {
+            if (!skills || !skills.length) return '<span class="text-xs text-gray-400">None detected</span>';
+            const cls = color === 'green'
+                ? 'bg-green-50 text-green-700 border-green-100'
+                : 'bg-amber-50 text-amber-700 border-amber-100';
+            return skills.map(s => `<span class="px-2.5 py-1 rounded-full border text-[11px] font-bold ${cls}">${esc(s)}</span>`).join('');
+        }
+
+        function renderAiMatchDetail(match) {
+            if (!match) return '';
+            const score = Number(match.score || 0);
+            const scoreClass = score >= 80 ? 'text-green-600' : score >= 60 ? 'text-blue-600' : 'text-amber-600';
+            return `
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <span class="iconify text-blue-500" data-icon="mdi:creation"></span>
+                        AI Match Assistant
+                    </h4>
+                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">${esc(match.label || 'AI match result')}</p>
+                                <p class="text-xs text-gray-500 mt-1">${esc(match.recommendation || '')}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-black ${scoreClass}">${score}%</p>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Match</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                            <div class="bg-white border border-gray-100 rounded-xl p-3">
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Matched skills</p>
+                                <div class="flex flex-wrap gap-2">${renderSkillTags(match.matchedSkills || [], 'green')}</div>
+                            </div>
+                            <div class="bg-white border border-gray-100 rounded-xl p-3">
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Missing skills</p>
+                                <div class="flex flex-wrap gap-2">${renderSkillTags(match.missingSkills || [], 'amber')}</div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-400 mt-4">Workload risk: ${esc(match.workloadRisk || 'LOW')}. ${esc(match.explanation || '')}</p>
+                    </div>
+                </div>
+            `;
+        }
+
         function openApplicationDetail(appId) {
             const app = (currentApplications || []).find(a => String(a.id) === String(appId));
             if (!app) {
@@ -575,6 +634,7 @@ Back to Admin
                         </div>
                     </div>
                 </div>
+                ${renderAiMatchDetail(app.aiMatch)}
                 ${app.coverLetter ? `
                 <div class="space-y-3">
                     <h4 class="text-sm font-bold text-gray-800 flex items-center gap-2">
