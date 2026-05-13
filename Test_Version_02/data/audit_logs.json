@@ -1406,5 +1406,21 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1778515421891
+  },
+  {
+    "id": "81f11074",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1778659148473
+  },
+  {
+    "id": "f9e1d4d6",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1778659221548
   }
 ]
