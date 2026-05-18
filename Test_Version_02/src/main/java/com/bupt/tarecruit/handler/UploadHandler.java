@@ -34,9 +34,24 @@ public class UploadHandler extends BaseHandler {
         if (user == null) { sendError(ex, 401, "Unauthorized"); return; }
         try {
             JsonObject body = parseJson(readBody(ex));
+            if (body == null || !body.has("fileName") || !body.has("data")) {
+                sendError(ex, 400, "Upload failed: fileName and data are required"); return;
+            }
             String fileName = body.get("fileName").getAsString();
+            if (fileName == null || fileName.trim().isEmpty()) {
+                sendError(ex, 400, "Upload failed: file name is required"); return;
+            }
+            if (!fileName.toLowerCase().endsWith(".pdf")) {
+                sendError(ex, 400, "Upload failed: only PDF files are allowed"); return;
+            }
             String base64Data = body.get("data").getAsString();
+            if (base64Data == null || base64Data.trim().isEmpty()) {
+                sendError(ex, 400, "Upload failed: file content is empty"); return;
+            }
             byte[] data = Base64.getDecoder().decode(base64Data);
+            if (data.length == 0) {
+                sendError(ex, 400, "Upload failed: file content is empty"); return;
+            }
             String savedName = ds.saveUpload(fileName, data);
             sendJson(ex, 200, Map.of("fileName", savedName));
         } catch (Exception e) {

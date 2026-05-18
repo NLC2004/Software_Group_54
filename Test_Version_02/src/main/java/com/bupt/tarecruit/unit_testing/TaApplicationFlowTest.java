@@ -90,6 +90,32 @@ class TaApplicationFlowTest {
     }
 
     @Test
+    void ta12_applyShouldAllowReusingPriorityFromWithdrawnOrRejectedApplications() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ta_reuse_inactive_priority");
+        User mo = addMo(ds, "mo_reuse_inactive_priority");
+        Job withdrawnJob = addOpenJob(ds, mo, "job-withdrawn-priority");
+        Job rejectedJob = addOpenJob(ds, mo, "job-rejected-priority");
+        Job newJob = addOpenJob(ds, mo, "job-new-priority");
+        String token = ds.createSession(ta.id);
+
+        persistApplication(ds, buildApplication(ta.id, withdrawnJob.id, 1, "WITHDRAWN"));
+        persistApplication(ds, buildApplication(ta.id, rejectedJob.id, 2, "REJECTED"));
+
+        JobHandler handler = new JobHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("POST", "/api/jobs/" + newJob.id + "/apply", null, "{\"coverLetter\":\"test\",\"priority\":1}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(201, ex.getResponseCode());
+        assertEquals(3, ds.getApplicationsByApplicant(ta.id).size());
+        assertEquals(1, ds.getApplicationsByApplicant(ta.id).stream()
+                .filter(a -> "PENDING".equals(a.status) && a.priority == 1)
+                .count());
+    }
+
+    @Test
     void ta11_withdrawShouldAllowOwnApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User ta = addTa(ds, "ta_withdraw_self");
@@ -107,6 +133,26 @@ class TaApplicationFlowTest {
         assertEquals(200, ex.getResponseCode());
         assertTrue(ex.getResponseBodyAsString().contains("Status updated"));
         assertEquals("WITHDRAWN", ds.getApplicationById(app.id).status);
+    }
+
+    @Test
+    void ta11_withdrawShouldRejectNonPendingApplication() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ta_withdraw_non_pending");
+        User mo = addMo(ds, "mo_withdraw_non_pending");
+        Job job = addOpenJob(ds, mo, "job-withdraw-non-pending");
+        Application app = persistApplication(ds, buildApplication(ta.id, job.id, 1, "APPROVED"));
+        String token = ds.createSession(ta.id);
+
+        ApplicationHandler handler = new ApplicationHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("PUT", "/api/applications/" + app.id + "/status", null, "{\"status\":\"WITHDRAWN\"}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("Only pending applications can be withdrawn"));
+        assertEquals("APPROVED", ds.getApplicationById(app.id).status);
     }
 
     @Test
@@ -175,5 +221,13 @@ class TaApplicationFlowTest {
         app.cvFileName = "cv.pdf";
         app.status = status;
         return app;
+    }
+
+    private Application persistApplication(DataService ds, Application app) {
+        String desiredStatus = app.status;
+        Application saved = ds.addApplication(app);
+        saved.status = desiredStatus;
+        ds.updateApplication(saved);
+        return saved;
     }
 }
