@@ -102,6 +102,7 @@ public class ApplicationHandler extends BaseHandler {
         if ("TA".equals(user.role)) {
             if (!app.applicantId.equals(user.id)) { sendError(ex, 403, "Not your application"); return; }
             if (!"WITHDRAWN".equals(newStatus)) { sendError(ex, 400, "TAs can only withdraw applications"); return; }
+            if (!"PENDING".equals(app.status)) { sendError(ex, 400, "Only pending applications can be withdrawn"); return; }
         } else if ("MO".equals(user.role)) {
             Job job = ds.getJobById(app.jobId);
             if (job == null || !job.postedBy.equals(user.id)) { sendError(ex, 403, "Not your job posting"); return; }

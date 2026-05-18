@@ -410,7 +410,35 @@ public class AdminHandler extends BaseHandler {
     }
 
     private Map<Integer, Double> computeJobWeeklyHours(Job job) {
-        return ds.getJobWeeklyHours(job);
+        if (job == null) return Collections.emptyMap();
+        String tv = normalizeJobType(job.type);
+
+        if ("FINAL_EXAM_TA".equals(tv)) {
+            double dur = job.examDuration;
+            if (dur <= 0) return Collections.emptyMap();
+            return Map.of(0, dur);
+        }
+
+        Map<Integer, Double> weekly = new TreeMap<>();
+        String grid = job.courseScheduleGrid;
+        if (grid == null || grid.trim().isEmpty()) {
+            if (job.labSessions != null && !job.labSessions.trim().isEmpty()) {
+                mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(job.labSessions));
+            }
+            if (job.testScheduleDetail != null && !job.testScheduleDetail.trim().isEmpty()) {
+                mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(job.testScheduleDetail));
+            }
+            if (weekly.isEmpty() && job.weeklyHours > 0) {
+                int start = job.courseWeekStart > 0 ? job.courseWeekStart : 1;
+                int end = job.courseWeekEnd >= start ? job.courseWeekEnd : start;
+                for (int week = start; week <= end; week++) {
+                    weekly.put(week, job.weeklyHours);
+                }
+            }
+            return weekly;
+        }
+        mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(grid));
+        return weekly;
     }
 
     private void mergeWeeklyMap(Map<Integer, Double> acc, Map<Integer, Double> add) {
