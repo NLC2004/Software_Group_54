@@ -826,6 +826,7 @@ public class AdminHandler extends BaseHandler {
     private void handleBackupTasks(HttpExchange ex, String path, String method, User admin) throws IOException {
         String[] parts = path.split("/");
         if ("POST".equals(method) && parts.length == 4) {
+            if (!ensureSuperAdminForWrite(ex, admin, "generate backups")) return;
             String backupId = createZipBackup(admin);
             sendJson(ex, 201, Map.of("message", "Backup created", "id", backupId));
             return;
