@@ -47,24 +47,22 @@ public class MailService {
 
     public boolean isEnabled() { return enabled; }
 
-    public void sendPasswordResetApproved(String to, String fullName, String newPassword) throws IOException {
-        String subject = "密码重置结果通知";
-        String body = "你好" + (fullName == null || fullName.isBlank() ? "" : "，" + fullName) + "\n\n"
-                + "你的密码重置申请已通过，管理员已为你重置密码。\n"
-                + "新密码：" + newPassword + "\n\n"
-                + "请尽快登录系统并修改密码。\n\n"
-                + "此邮件为系统自动发送，请勿直接回复。";
-        sendMail(to, subject, body);
+    public void sendPasswordResetApproved(String to, String fullName, String newPassword,
+                                          String subject, String bodyTemplate) throws IOException {
+        sendMail(to, subject, render(bodyTemplate, fullName, newPassword, null));
     }
 
-    public void sendPasswordResetRejected(String to, String fullName, String reason) throws IOException {
-        String subject = "密码重置结果通知";
-        String body = "你好" + (fullName == null || fullName.isBlank() ? "" : "，" + fullName) + "\n\n"
-                + "你的密码重置申请未通过。\n"
-                + (reason == null || reason.isBlank() ? "" : "原因：" + reason + "\n\n")
-                + "如有疑问，请联系管理员。\n\n"
-                + "此邮件为系统自动发送，请勿直接回复。";
-        sendMail(to, subject, body);
+    public void sendPasswordResetRejected(String to, String fullName, String reason,
+                                          String subject, String bodyTemplate) throws IOException {
+        sendMail(to, subject, render(bodyTemplate, fullName, null, reason));
+    }
+
+    private String render(String template, String fullName, String newPassword, String reason) {
+        String out = template == null || template.isBlank() ? "" : template;
+        out = out.replace("${fullName}", fullName == null ? "" : fullName);
+        out = out.replace("${newPassword}", newPassword == null ? "" : newPassword);
+        out = out.replace("${reason}", reason == null ? "" : reason);
+        return out;
     }
 
     private void sendMail(String to, String subject, String body) throws IOException {
