@@ -145,8 +145,8 @@
 <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
 <span class="iconify text-2xl" data-icon="solar:users-group-two-rounded-bold"></span>
 </div>
-<span class="flex items-center gap-1 text-green-500 text-xs font-bold font-mono">
-                            +12.5% <span class="iconify" data-icon="solar:trend-up-bold"></span>
+<span class="flex items-center gap-1 text-slate-400 text-xs font-bold font-mono" data-metric-delta="totalUsers" title="Period-over-period comparison is unavailable">
+                            N/A <span class="iconify" data-icon="solar:minus-linear"></span>
 </span>
 </div>
 <div class="mt-4">
@@ -160,8 +160,8 @@
 <div class="p-3 bg-teal-50 rounded-xl text-teal-600">
 <span class="iconify text-2xl" data-icon="solar:briefcase-bold"></span>
 </div>
-<span class="flex items-center gap-1 text-green-500 text-xs font-bold font-mono">
-                            +4 <span class="iconify" data-icon="solar:trend-up-bold"></span>
+<span class="flex items-center gap-1 text-slate-400 text-xs font-bold font-mono" data-metric-delta="openJobs" title="Period-over-period comparison is unavailable">
+                            N/A <span class="iconify" data-icon="solar:minus-linear"></span>
 </span>
 </div>
 <div class="mt-4">
@@ -175,8 +175,8 @@
 <div class="p-3 bg-orange-50 rounded-xl text-orange-600">
 <span class="iconify text-2xl" data-icon="solar:folder-check-bold"></span>
 </div>
-<span class="flex items-center gap-1 text-red-500 text-xs font-bold font-mono">
-                            -8.2% <span class="iconify" data-icon="solar:trend-down-bold"></span>
+<span class="flex items-center gap-1 text-slate-400 text-xs font-bold font-mono" title="Period-over-period comparison is unavailable">
+                            N/A <span class="iconify" data-icon="solar:minus-linear"></span>
 </span>
 </div>
 <div class="mt-4">
@@ -190,8 +190,8 @@
 <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600">
 <span class="iconify text-2xl" data-icon="solar:verified-check-bold"></span>
 </div>
-<span class="flex items-center gap-1 text-green-500 text-xs font-bold font-mono">
-                            +2.1% <span class="iconify" data-icon="solar:trend-up-bold"></span>
+<span class="flex items-center gap-1 text-slate-400 text-xs font-bold font-mono" title="Period-over-period comparison is unavailable">
+                            N/A <span class="iconify" data-icon="solar:minus-linear"></span>
 </span>
 </div>
 <div class="mt-4">
@@ -501,6 +501,21 @@ function buildDateQuery() {
     return s ? ('?' + s) : '';
 }
 
+function buildPreviousDateQuery() {
+    if (!activeStartDate || !activeEndDate) return '';
+    const start = new Date(activeStartDate + 'T00:00:00');
+    const end = new Date(activeEndDate + 'T00:00:00');
+    if (isNaN(start.getTime()) || isNaN(end.getTime()) || end < start) return '';
+    const span = Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1);
+    const prevEnd = new Date(start.getTime() - 86400000);
+    const prevStart = new Date(prevEnd.getTime() - (span - 1) * 86400000);
+    const p = new URLSearchParams();
+    p.set('startDate', toDateInputValue(prevStart));
+    p.set('endDate', toDateInputValue(prevEnd));
+    const s = p.toString();
+    return s ? ('?' + s) : '';
+}
+
 function currentDateRangeText() {
     if (activeStartDate && activeEndDate) return activeStartDate + ' to ' + activeEndDate;
     if (activeStartDate) return activeStartDate + ' to now';
@@ -510,16 +525,18 @@ function currentDateRangeText() {
 
 async function loadStats() {
     try {
-        const stats = await API.get('/api/admin/stats' + buildDateQuery());
-        updateStatsCards(stats);
-        trendChart = initTrendChart(stats);
-        distChart = initDistChart(stats);
-        activePreferenceChart = initActivePreferenceChart(stats);
-        priorityDistributionChart = initPriorityDistributionChart(stats);
+        const currentStats = await API.get('/api/admin/stats' + buildDateQuery());
+        const previousQuery = buildPreviousDateQuery();
+        const previousStats = previousQuery ? await API.get('/api/admin/stats' + previousQuery) : null;
+        updateStatsCards(currentStats, previousStats || {});
+        trendChart = initTrendChart(currentStats);
+        distChart = initDistChart(currentStats);
+        activePreferenceChart = initActivePreferenceChart(currentStats);
+        priorityDistributionChart = initPriorityDistributionChart(currentStats);
     } catch (e) {
         showToast('Failed to load statistics: ' + e.message, 'error');
         if (window.BASIC_STATS_DATA) {
-            updateStatsCards(window.BASIC_STATS_DATA);
+            updateStatsCards(window.BASIC_STATS_DATA, {});
             trendChart = initTrendChart(window.BASIC_STATS_DATA);
             distChart = initDistChart(window.BASIC_STATS_DATA);
             activePreferenceChart = initActivePreferenceChart(window.BASIC_STATS_DATA);
@@ -528,16 +545,21 @@ async function loadStats() {
     }
 }
 
-function updateStatsCards(stats) {
+function updateStatsCards(stats, previousStats) {
     const cards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 > div');
-    if (cards[0]) cards[0].querySelector('h3').textContent = (stats.totalApplications || 0).toLocaleString();
-    if (cards[1]) cards[1].querySelector('h3').textContent = (stats.openJobs || 0).toLocaleString();
-    if (cards[2]) cards[2].querySelector('h3').textContent = (stats.closedJobs || 0).toLocaleString();
+    updateMetricCard(cards[0], stats.totalApplications, previousStats.totalApplications, true, 'Total Applications');
+    updateMetricCard(cards[1], stats.openJobs, previousStats.openJobs, true, 'Ongoing Positions');
+    updateMetricCard(cards[2], stats.closedJobs, previousStats.closedJobs, true, 'Closed Positions');
     if (cards[3]) {
-        const rate = stats.totalApplications
-            ? (((stats.approvedApplications || 0) / stats.totalApplications) * 100).toFixed(1)
-            : '0.0';
-        cards[3].querySelector('h3').textContent = rate + '%';
+        const currentRate = stats.totalApplications
+            ? ((Number(stats.approvedApplications || 0) / Number(stats.totalApplications || 1)) * 100)
+            : 0;
+        const previousRate = previousStats.totalApplications
+            ? ((Number(previousStats.approvedApplications || 0) / Number(previousStats.totalApplications || 1)) * 100)
+            : null;
+        cards[3].querySelector('h3').textContent = currentRate.toFixed(1) + '%';
+        cards[3].querySelector('p').textContent = 'Success Rate';
+        setMetricDelta(cards[3], currentRate, previousRate, true);
     }
 
     const priorityCards = document.querySelectorAll('#priority-summary-cards > div');
@@ -551,6 +573,39 @@ function updateStatsCards(stats) {
         priorityCards[3].querySelector('h3').textContent = Math.max(0, withActive).toLocaleString();
     }
     if (priorityCards[4]) priorityCards[4].querySelector('h3').textContent = Number(distribution.tasWithoutActivePreference || 0).toLocaleString();
+}
+
+function updateMetricCard(card, currentValue, previousValue, isCount, label) {
+    if (!card) return;
+    const heading = card.querySelector('h3');
+    if (heading) heading.textContent = Number(currentValue || 0).toLocaleString();
+    const title = card.querySelector('p');
+    if (title && label) title.textContent = label;
+    setMetricDelta(card, currentValue, previousValue, isCount);
+}
+
+function setMetricDelta(card, currentValue, previousValue, isCount) {
+    if (!card) return;
+    const deltaEl = card.querySelector('[data-metric-delta]') || card.querySelector('span:last-child');
+    if (!deltaEl) return;
+    const current = Number(currentValue || 0);
+    const previous = previousValue === null || previousValue === undefined ? null : Number(previousValue);
+    let text = 'N/A';
+    let icon = 'solar:minus-linear';
+    let cls = 'flex items-center gap-1 text-slate-400 text-xs font-bold font-mono';
+    if (previous !== null && !Number.isNaN(previous)) {
+        const diff = current - previous;
+        const pct = previous === 0 ? (current === 0 ? 0 : 100) : ((diff / Math.abs(previous)) * 100);
+        const sign = diff > 0 ? '+' : '';
+        const value = isCount ? `${sign}${diff.toLocaleString()}` : `${sign}${pct.toFixed(1)}%`;
+        text = value;
+        if (diff > 0) { icon = 'solar:trend-up-bold'; cls = 'flex items-center gap-1 text-green-500 text-xs font-bold font-mono'; }
+        else if (diff < 0) { icon = 'solar:trend-down-bold'; cls = 'flex items-center gap-1 text-red-500 text-xs font-bold font-mono'; }
+        else { cls = 'flex items-center gap-1 text-slate-400 text-xs font-bold font-mono'; }
+    }
+    deltaEl.className = cls;
+    deltaEl.innerHTML = `${text} <span class="iconify" data-icon="${icon}"></span>`;
+    deltaEl.title = previous === null ? 'No previous period available' : 'Compared with previous period';
 }
 
 function initTrendChart(stats) {
