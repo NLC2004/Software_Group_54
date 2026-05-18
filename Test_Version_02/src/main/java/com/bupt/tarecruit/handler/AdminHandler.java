@@ -331,8 +331,6 @@ public class AdminHandler extends BaseHandler {
 
     private void getWorkload(HttpExchange ex) throws IOException {
         List<User> tas = ds.getAllUsers().stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList());
-        List<Application> allApps = ds.getAllApplications();
-        List<Job> allJobs = ds.getAllJobs();
         String faculty = Optional.ofNullable(getQueryParam(ex, "faculty")).orElse("").trim().toLowerCase(Locale.ROOT);
         String status = Optional.ofNullable(getQueryParam(ex, "status")).orElse("").trim().toLowerCase(Locale.ROOT);
 
@@ -343,23 +341,15 @@ public class AdminHandler extends BaseHandler {
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (User ta : tas) {
-            TreeMap<Integer, Double> weekly = new TreeMap<>();
+            TreeMap<Integer, Double> weekly = new TreeMap<>(ds.getTAWeeklyHours(ta.id));
             int approvedCount = 0;
             List<String> jobTitles = new ArrayList<>();
 
-            List<Application> taApps = allApps.stream()
+            for (Application app : ds.getAllApplications().stream()
                     .filter(a -> a.applicantId.equals(ta.id) && "APPROVED".equals(a.status))
-                    .collect(Collectors.toList());
-            for (Application app : taApps) {
-                Job job = allJobs.stream().filter(j -> j.id.equals(app.jobId)).findFirst().orElse(null);
+                    .collect(Collectors.toList())) {
+                Job job = ds.getJobById(app.jobId);
                 if (job != null) {
-                    Map<Integer, Double> jobWeekly = computeJobWeeklyHours(job);
-                    for (Map.Entry<Integer, Double> e : jobWeekly.entrySet()) {
-                        int w = e.getKey();
-                        double h = e.getValue() == null ? 0 : e.getValue();
-                        if (h <= 0) continue;
-                        weekly.put(w, weekly.getOrDefault(w, 0.0) + h);
-                    }
                     approvedCount++;
                     jobTitles.add(job.title);
                 }
@@ -368,6 +358,7 @@ public class AdminHandler extends BaseHandler {
             double totalHours = weekly.values().stream().mapToDouble(x -> x == null ? 0 : x).sum();
             double peakWeeklyHours = weekly.values().stream().mapToDouble(x -> x == null ? 0 : x).max().orElse(0);
             double avgWeeklyHours = weekly.isEmpty() ? 0 : (totalHours / weekly.size());
+            Set<Integer> overloadedWeeks = ds.getOverloadedWeeks(ta.id);
 
             String facultyLabel = inferFacultyLabel(ta, jobTitles);
             String facultyBucket = normalizeFacultyBucket(facultyLabel);
@@ -392,6 +383,7 @@ public class AdminHandler extends BaseHandler {
             }).collect(Collectors.toList()));
             m.put("approvedPositions", approvedCount);
             m.put("jobTitles", jobTitles);
+            m.put("overloadedWeeks", overloadedWeeks);
             m.put("overloaded", peakWeeklyHours > maxHours);
             m.put("warning", peakWeeklyHours > (maxHours * 0.8) && peakWeeklyHours <= maxHours);
             m.put("maxHours", maxHours);
@@ -460,33 +452,7 @@ public class AdminHandler extends BaseHandler {
     }
 
     private Map<Integer, Double> parseWeeklyHoursFromScheduleEntriesJson(String json) {
-        if (json == null || json.trim().isEmpty()) return Collections.emptyMap();
-        try {
-            JsonElement el = gson.fromJson(json, JsonElement.class);
-            if (el == null || !el.isJsonArray()) return Collections.emptyMap();
-            JsonArray arr = el.getAsJsonArray();
-
-            Map<Integer, Double> out = new TreeMap<>();
-            for (JsonElement one : arr) {
-                if (one == null || !one.isJsonObject()) continue;
-                JsonObject obj = one.getAsJsonObject();
-                int week = obj.has("week") ? obj.get("week").getAsInt() : 0;
-                if (!obj.has("selection") || !obj.get("selection").isJsonObject()) continue;
-                JsonObject sel = obj.getAsJsonObject("selection");
-
-                int periods = 0;
-                for (String day : List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")) {
-                    if (!sel.has(day) || !sel.get(day).isJsonArray()) continue;
-                    periods += sel.getAsJsonArray(day).size();
-                }
-                double hours = periods * HOURS_PER_PERIOD;
-                if (hours <= 0) continue;
-                out.put(week, out.getOrDefault(week, 0.0) + hours);
-            }
-            return out;
-        } catch (Exception ignored) {
-            return Collections.emptyMap();
-        }
+        return Collections.emptyMap();
     }
 
     private String inferFacultyLabel(User ta, List<String> jobTitles) {
