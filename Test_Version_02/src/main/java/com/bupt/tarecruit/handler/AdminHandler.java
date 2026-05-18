@@ -277,12 +277,21 @@ public class AdminHandler extends BaseHandler {
                 }
             }
 
+            Map<String, Object> resetTemplate = resolvePasswordResetTemplate(ds.getSettings());
+            String resetPassword = String.valueOf(resetTemplate.getOrDefault("defaultPassword", "123456"));
+            String approvedSubject = String.valueOf(resetTemplate.getOrDefault("approvedSubject", "密码重置结果通知"));
+            String approvedBody = String.valueOf(resetTemplate.getOrDefault("approvedBody",
+                    "你好${fullName}\n\n你的密码重置申请已通过，管理员已为你重置密码。\n新密码：${newPassword}\n\n请尽快登录系统并修改密码。\n\n此邮件为系统自动发送，请勿直接回复。"));
+            String rejectedSubject = String.valueOf(resetTemplate.getOrDefault("rejectedSubject", "密码重置结果通知"));
+            String rejectedBody = String.valueOf(resetTemplate.getOrDefault("rejectedBody",
+                    "你好${fullName}\n\n你的密码重置申请未通过。\n原因：${reason}\n\n如有疑问，请联系管理员。\n\n此邮件为系统自动发送，请勿直接回复。"));
+
             if ("APPROVE".equals(action)) {
                 req.status = "APPROVED";
                 req.processedAt = System.currentTimeMillis();
                 ds.updatePasswordReset(req);
                 if (target != null) {
-                    target.password = "123456";
+                    target.password = resetPassword;
                     ds.updateUser(target);
 
                     Notification n = new Notification();
@@ -295,7 +304,7 @@ public class AdminHandler extends BaseHandler {
                 String recipientEmail = resolveResetRecipientEmail(req, target);
                 if (recipientEmail != null && !recipientEmail.isBlank()) {
                     try {
-                        ds.getMailService().sendPasswordResetApproved(recipientEmail, req.fullName, "123456");
+                        ds.getMailService().sendPasswordResetApproved(recipientEmail, req.fullName, resetPassword, approvedSubject, approvedBody);
                     } catch (Exception mailEx) {
                         ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_EMAIL_FAILED",
                                 "Approved reset for: " + req.fullName + ", but email failed: " + mailEx.getMessage());
@@ -311,7 +320,7 @@ public class AdminHandler extends BaseHandler {
                 String recipientEmail = resolveResetRecipientEmail(req, target);
                 if (recipientEmail != null && !recipientEmail.isBlank()) {
                     try {
-                        ds.getMailService().sendPasswordResetRejected(recipientEmail, req.fullName, req.reason);
+                        ds.getMailService().sendPasswordResetRejected(recipientEmail, req.fullName, req.reason, rejectedSubject, rejectedBody);
                     } catch (Exception mailEx) {
                         ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_EMAIL_FAILED",
                                 "Rejected reset for: " + req.fullName + ", but email failed: " + mailEx.getMessage());
@@ -359,7 +368,7 @@ public class AdminHandler extends BaseHandler {
             if (target.fullName != null && !target.fullName.isBlank()) {
                 String name = target.fullName.trim().toLowerCase(Locale.ROOT);
                 User matched = ds.getAllUsers().stream()
-                        .filter(u -> (u.fullName != null && u.fullName.trim().toLowerCase(Locale.ROOT).equals(name)))
+                        .filter(u -> u.fullName != null && u.fullName.trim().toLowerCase(Locale.ROOT).equals(name))
                         .findFirst().orElse(null);
                 if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
             }
@@ -379,9 +388,60 @@ public class AdminHandler extends BaseHandler {
                         .findFirst().orElse(null);
                 if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
             }
+            if (req.phone != null && !req.phone.isBlank()) {
+                User matched = ds.getAllUsers().stream()
+                        .filter(u -> req.phone.equals(u.phone))
+                        .findFirst().orElse(null);
+                if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
+            }
             if (req.email != null && !req.email.isBlank()) return req.email.trim();
         }
         return null;
+    }
+
+    private Map<String, Object> resolvePasswordResetTemplate(Map<String, String> settings) {
+        Map<String, Object> out = new HashMap<>();
+        String json = settings.getOrDefault("emailTemplatesJson", "[]");
+        String defaultPassword = settings.getOrDefault("defaultResetPassword", "123456");
+        out.put("defaultPassword", defaultPassword == null || defaultPassword.isBlank() ? "123456" : defaultPassword);
+        out.put("approvedSubject", "密码重置结果通知");
+        out.put("approvedBody", "你好${fullName}\n\n你的密码重置申请已通过，管理员已为你重置密码。\n新密码：${newPassword}\n\n请尽快登录系统并修改密码。\n\n此邮件为系统自动发送，请勿直接回复。");
+        out.put("rejectedSubject", "密码重置结果通知");
+        out.put("rejectedBody", "你好${fullName}\n\n你的密码重置申请未通过。\n原因：${reason}\n\n如有疑问，请联系管理员。\n\n此邮件为系统自动发送，请勿直接回复。");
+        try {
+            JsonElement root = gson.fromJson(json, JsonElement.class);
+            if (root != null && root.isJsonArray()) {
+                for (JsonElement el : root.getAsJsonArray()) {
+                    if (el == null || !el.isJsonObject()) continue;
+                    JsonObject obj = el.getAsJsonObject();
+                    boolean active = obj.has("active") && obj.get("active").getAsBoolean();
+                    boolean enabled = obj.has("enabled") && obj.get("enabled").getAsBoolean();
+                    if (!(active || enabled)) continue;
+                    if (obj.has("defaultPassword") && !obj.get("defaultPassword").isJsonNull()) {
+                        String v = obj.get("defaultPassword").getAsString();
+                        if (v != null && !v.isBlank()) out.put("defaultPassword", v);
+                    }
+                    if (obj.has("approvedSubject") && !obj.get("approvedSubject").isJsonNull()) {
+                        String v = obj.get("approvedSubject").getAsString();
+                        if (v != null && !v.isBlank()) out.put("approvedSubject", v);
+                    }
+                    if (obj.has("approvedBody") && !obj.get("approvedBody").isJsonNull()) {
+                        String v = obj.get("approvedBody").getAsString();
+                        if (v != null && !v.isBlank()) out.put("approvedBody", v);
+                    }
+                    if (obj.has("rejectedSubject") && !obj.get("rejectedSubject").isJsonNull()) {
+                        String v = obj.get("rejectedSubject").getAsString();
+                        if (v != null && !v.isBlank()) out.put("rejectedSubject", v);
+                    }
+                    if (obj.has("rejectedBody") && !obj.get("rejectedBody").isJsonNull()) {
+                        String v = obj.get("rejectedBody").getAsString();
+                        if (v != null && !v.isBlank()) out.put("rejectedBody", v);
+                    }
+                    break;
+                }
+            }
+        } catch (Exception ignored) {}
+        return out;
     }
 
     private void getWorkload(HttpExchange ex) throws IOException {
