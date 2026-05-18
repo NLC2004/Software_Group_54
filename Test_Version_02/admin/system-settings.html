@@ -230,6 +230,7 @@
 <tr>
 <th class="px-6 py-3 font-semibold">Template Name</th>
 <th class="px-6 py-3 font-semibold">Last Modified</th>
+<th class="px-6 py-3 font-semibold">Default Password</th>
 <th class="px-6 py-3 font-semibold text-right">Actions</th>
 </tr>
 </thead>
@@ -397,6 +398,7 @@ function populateSettings(settings) {
             }
         } catch(e) {}
     }
+    renderEmailTemplates(getEmailTemplatesFromSettings(settings));
 }
 
 function formatDateTimeInput(dt) {
@@ -535,36 +537,70 @@ function getEmailTemplatesFromSettings(settings) {
     try {
         const raw = settings && settings.emailTemplatesJson ? settings.emailTemplatesJson : '[]';
         const arr = JSON.parse(raw);
-        return Array.isArray(arr) ? arr : [];
+        if (!Array.isArray(arr)) return [];
+        return arr.map(normalizeEmailTemplate).filter(Boolean);
     } catch (e) {
         return [];
     }
 }
 
+function normalizeEmailTemplate(t) {
+    if (!t || typeof t !== 'object') return null;
+    return {
+        name: t.name || 'Untitled Template',
+        description: t.description || '',
+        active: !!(t.active || t.enabled),
+        defaultPassword: t.defaultPassword || '123456',
+        approvedSubject: t.approvedSubject || '密码重置结果通知',
+        approvedBody: t.approvedBody || '你好${fullName}\n\n你的密码重置申请已通过，管理员已为你重置密码。\n新密码：${newPassword}\n\n请尽快登录系统并修改密码。\n\n此邮件为系统自动发送，请勿直接回复。',
+        rejectedSubject: t.rejectedSubject || '密码重置结果通知',
+        rejectedBody: t.rejectedBody || '你好${fullName}\n\n你的密码重置申请未通过。\n原因：${reason}\n\n如有疑问，请联系管理员。\n\n此邮件为系统自动发送，请勿直接回复。',
+        updatedAt: t.updatedAt || new Date().toISOString().slice(0, 10)
+    };
+}
+
 function setEmailTemplatesToSettings(settings, templates) {
-    settings.emailTemplatesJson = JSON.stringify(templates || []);
+    settings.emailTemplatesJson = JSON.stringify((templates || []).map(normalizeEmailTemplate).filter(Boolean));
+}
+
+function getActiveEmailTemplate(settings) {
+    const templates = getEmailTemplatesFromSettings(settings);
+    return templates.find(t => t && t.active) || null;
 }
 
 function renderEmailTemplates(templates) {
     const body = document.getElementById('emailTemplatesBody');
     if (!body) return;
-    const list = Array.isArray(templates) ? templates : [];
+    const list = Array.isArray(templates) ? templates.map(normalizeEmailTemplate).filter(Boolean) : [];
     if (!list.length) {
-        body.innerHTML = '<tr><td colspan="3" class="px-6 py-6 text-center text-gray-400">No templates configured yet.</td></tr>';
+        body.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-gray-400">No templates configured yet.</td></tr>';
         return;
     }
-    body.innerHTML = list.map((t, idx) => `
+    body.innerHTML = list.map((t, idx) => {
+        const active = !!t.active;
+        const badge = active ? '<span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Active</span>' : '<span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Inactive</span>';
+        const toggleLabel = active ? 'Disable' : 'Enable';
+        const toggleClass = active ? 'px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50' : 'px-3 py-1.5 text-xs font-semibold rounded-lg border border-emerald-200 text-emerald-700 hover:bg-emerald-50';
+        return `
       <tr>
         <td class="px-6 py-4">
-          <p class="font-medium">${esc(t.name || 'Untitled Template')}</p>
-          <p class="text-[11px] text-gray-400">${esc(t.description || '')}</p>
+          <div class="flex items-center gap-2 mb-1">
+            <p class="font-medium">${esc(t.name)}</p>
+            ${badge}
+          </div>
+          <p class="text-[11px] text-gray-400">${esc(t.description)}</p>
+          <p class="text-[11px] text-gray-400 mt-1">Approved: ${esc(t.approvedSubject)}</p>
+          <p class="text-[11px] text-gray-400">Rejected: ${esc(t.rejectedSubject)}</p>
         </td>
-        <td class="px-6 py-4 text-gray-500">${esc(t.updatedAt || '-')}</td>
-        <td class="px-6 py-4 text-right">
-          <button type="button" data-edit-template="${idx}" class="p-2 text-gray-400 hover:text-blue-600"><span class="iconify w-5 h-5" data-icon="material-symbols:edit"></span></button>
+        <td class="px-6 py-4 text-gray-500">${esc(t.updatedAt)}</td>
+        <td class="px-6 py-4 text-gray-500">${esc(t.defaultPassword)}</td>
+        <td class="px-6 py-4 text-right space-x-2">
+          <button type="button" data-toggle-template="${idx}" class="${toggleClass}">${toggleLabel}</button>
+          <button type="button" data-edit-template="${idx}" class="p-2 text-gray-400 hover:text-blue-600" title="Edit"><span class="iconify w-5 h-5" data-icon="material-symbols:edit"></span></button>
+          <button type="button" data-delete-template="${idx}" class="p-2 text-gray-400 hover:text-rose-600" title="Delete"><span class="iconify w-5 h-5" data-icon="material-symbols:delete-outline"></span></button>
         </td>
       </tr>
-    `).join('');
+    `; }).join('');
 }
 
 function formatRelativeTime(ts) {
@@ -616,9 +652,9 @@ async function loadSettingsPanels() {
     const hostInput = document.getElementById('smtpHostInput');
     const portInput = document.getElementById('smtpPortInput');
     const encSelect = document.getElementById('smtpEncryptionSelect');
-    if (hostInput) hostInput.value = currentSettings.smtpHost || hostInput.value || 'smtp.campus-edu.org';
-    if (portInput) portInput.value = currentSettings.smtpPort || portInput.value || '587';
-    if (encSelect) encSelect.value = (currentSettings.smtpEncryption || encSelect.value || 'TLS').toUpperCase();
+    if (hostInput) hostInput.value = currentSettings.smtpHost || hostInput.value || 'smtp.163.com';
+    if (portInput) portInput.value = currentSettings.smtpPort || hostInput.value || '465';
+    if (encSelect) encSelect.value = (currentSettings.smtpEncryption || 'SSL').toUpperCase();
 
     renderEmailTemplates(getEmailTemplatesFromSettings(currentSettings));
 
@@ -737,16 +773,20 @@ document.getElementById('btnCreateTemplate')?.addEventListener('click', async fu
     const name = (prompt('Template name:') || '').trim();
     if (!name) return;
     const description = (prompt('Template description:') || '').trim();
+    const defaultPassword = (prompt('Default password (blank = 123456):') || '').trim() || '123456';
     const templates = getEmailTemplatesFromSettings(currentSettings);
-    templates.unshift({
+    templates.unshift(normalizeEmailTemplate({
         name: name,
         description: description,
+        defaultPassword: defaultPassword,
+        active: false,
         updatedAt: new Date().toISOString().slice(0, 10)
-    });
+    }));
     setEmailTemplatesToSettings(currentSettings, templates);
     try {
         await API.put('/api/admin/settings', { emailTemplatesJson: currentSettings.emailTemplatesJson });
-        renderEmailTemplates(templates);
+        currentSettings = await API.get('/api/admin/settings');
+        populateSettings(currentSettings);
         showToast('Template created', 'success');
     } catch (e) {
         showToast('Failed to save template: ' + e.message, 'error');
@@ -754,6 +794,45 @@ document.getElementById('btnCreateTemplate')?.addEventListener('click', async fu
 });
 
 document.getElementById('emailTemplatesBody')?.addEventListener('click', async function(e) {
+    const toggleBtn = e.target.closest('[data-toggle-template]');
+    if (toggleBtn) {
+        const idx = Number(toggleBtn.getAttribute('data-toggle-template'));
+        const templates = getEmailTemplatesFromSettings(currentSettings);
+        if (!templates[idx]) return;
+        const wantEnable = !(templates[idx].active || templates[idx].enabled);
+        templates.forEach(t => { t.active = false; t.enabled = false; });
+        templates[idx].active = wantEnable;
+        templates[idx].enabled = wantEnable;
+        templates[idx].updatedAt = new Date().toISOString().slice(0, 10);
+        setEmailTemplatesToSettings(currentSettings, templates);
+        try {
+            await API.put('/api/admin/settings', { emailTemplatesJson: currentSettings.emailTemplatesJson });
+            currentSettings = await API.get('/api/admin/settings');
+            populateSettings(currentSettings);
+            showToast(wantEnable ? 'Template enabled' : 'Template disabled', 'success');
+        } catch (e0) {
+            showToast('Failed to update template: ' + e0.message, 'error');
+        }
+        return;
+    }
+    const deleteBtn = e.target.closest('[data-delete-template]');
+    if (deleteBtn) {
+        const idx = Number(deleteBtn.getAttribute('data-delete-template'));
+        const templates = getEmailTemplatesFromSettings(currentSettings);
+        if (!templates[idx]) return;
+        if (!confirm('Delete this template?')) return;
+        templates.splice(idx, 1);
+        setEmailTemplatesToSettings(currentSettings, templates);
+        try {
+            await API.put('/api/admin/settings', { emailTemplatesJson: currentSettings.emailTemplatesJson });
+            currentSettings = await API.get('/api/admin/settings');
+            populateSettings(currentSettings);
+            showToast('Template deleted', 'success');
+        } catch (e3) {
+            showToast('Failed to delete template: ' + e3.message, 'error');
+        }
+        return;
+    }
     const btn = e.target.closest('[data-edit-template]');
     if (!btn) return;
     const idx = Number(btn.getAttribute('data-edit-template'));
@@ -762,13 +841,16 @@ document.getElementById('emailTemplatesBody')?.addEventListener('click', async f
     const name = (prompt('Template name:', templates[idx].name || '') || '').trim();
     if (!name) return;
     const description = (prompt('Template description:', templates[idx].description || '') || '').trim();
+    const defaultPassword = (prompt('Default password:', templates[idx].defaultPassword || '123456') || '').trim() || '123456';
     templates[idx].name = name;
     templates[idx].description = description;
+    templates[idx].defaultPassword = defaultPassword;
     templates[idx].updatedAt = new Date().toISOString().slice(0, 10);
     setEmailTemplatesToSettings(currentSettings, templates);
     try {
         await API.put('/api/admin/settings', { emailTemplatesJson: currentSettings.emailTemplatesJson });
-        renderEmailTemplates(templates);
+        currentSettings = await API.get('/api/admin/settings');
+        populateSettings(currentSettings);
         showToast('Template updated', 'success');
     } catch (e2) {
         showToast('Failed to update template: ' + e2.message, 'error');
