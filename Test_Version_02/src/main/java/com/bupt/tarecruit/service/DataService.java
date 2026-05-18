@@ -20,12 +20,14 @@ public class DataService {
     private final Path dataDir;
     private final Path uploadsDir;
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
+    private final MailService mailService;
 
     public DataService(String baseDir) throws IOException {
         this.dataDir = Paths.get(baseDir, "data");
         this.uploadsDir = Paths.get(baseDir, "uploads");
         Files.createDirectories(dataDir);
         Files.createDirectories(uploadsDir);
+        this.mailService = new MailService(getSettings());
         initDefaultData();
     }
 
@@ -478,8 +480,16 @@ public class DataService {
     }
 
     public synchronized void updateSettings(Map<String, String> settings) {
-        try { Files.writeString(dataDir.resolve("settings.json"), gson.toJson(settings)); }
+        try {
+            Files.writeString(dataDir.resolve("settings.json"), gson.toJson(settings));
+            this.mailService.refresh(settings);
+        }
         catch (IOException e) { e.printStackTrace(); }
+    }
+
+
+    public MailService getMailService() {
+        return mailService;
     }
 
     // ==================== File Uploads ====================
