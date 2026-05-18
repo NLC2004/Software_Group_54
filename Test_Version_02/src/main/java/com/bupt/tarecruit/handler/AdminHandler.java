@@ -292,10 +292,8 @@ public class AdminHandler extends BaseHandler {
                     n.type = "PASSWORD_RESET";
                     ds.addNotification(n);
                 }
-                String recipientEmail = null;
-                if (target != null && target.email != null && !target.email.isBlank()) recipientEmail = target.email;
-                else if (req.email != null && !req.email.isBlank()) recipientEmail = req.email;
-                if (recipientEmail != null) {
+                String recipientEmail = resolveResetRecipientEmail(req, target);
+                if (recipientEmail != null && !recipientEmail.isBlank()) {
                     try {
                         ds.getMailService().sendPasswordResetApproved(recipientEmail, req.fullName, "123456");
                     } catch (Exception mailEx) {
@@ -310,6 +308,15 @@ public class AdminHandler extends BaseHandler {
                 req.reason = body.has("reason") ? body.get("reason").getAsString() : "";
                 req.processedAt = System.currentTimeMillis();
                 ds.updatePasswordReset(req);
+                String recipientEmail = resolveResetRecipientEmail(req, target);
+                if (recipientEmail != null && !recipientEmail.isBlank()) {
+                    try {
+                        ds.getMailService().sendPasswordResetRejected(recipientEmail, req.fullName, req.reason);
+                    } catch (Exception mailEx) {
+                        ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_EMAIL_FAILED",
+                                "Rejected reset for: " + req.fullName + ", but email failed: " + mailEx.getMessage());
+                    }
+                }
                 ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_REJECT", "Rejected reset for: " + req.fullName);
                 sendJson(ex, 200, Map.of("message", "Password reset rejected"));
             } else {
@@ -338,6 +345,43 @@ public class AdminHandler extends BaseHandler {
         } else {
             sendError(ex, 404, "Not found");
         }
+    }
+
+    private String resolveResetRecipientEmail(PasswordResetRequest req, User target) {
+        if (target != null) {
+            if (target.email != null && !target.email.isBlank()) return target.email.trim();
+            if (target.studentId != null && !target.studentId.isBlank()) {
+                User matched = ds.getAllUsers().stream()
+                        .filter(u -> target.studentId.equals(u.studentId) || target.studentId.equals(u.username))
+                        .findFirst().orElse(null);
+                if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
+            }
+            if (target.fullName != null && !target.fullName.isBlank()) {
+                String name = target.fullName.trim().toLowerCase(Locale.ROOT);
+                User matched = ds.getAllUsers().stream()
+                        .filter(u -> (u.fullName != null && u.fullName.trim().toLowerCase(Locale.ROOT).equals(name)))
+                        .findFirst().orElse(null);
+                if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
+            }
+        }
+        if (req != null) {
+            String sid = req.studentId == null ? "" : req.studentId.trim();
+            if (!sid.isEmpty()) {
+                User matched = ds.getAllUsers().stream()
+                        .filter(u -> sid.equals(u.studentId) || sid.equals(u.username))
+                        .findFirst().orElse(null);
+                if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
+            }
+            String name = req.fullName == null ? "" : req.fullName.trim().toLowerCase(Locale.ROOT);
+            if (!name.isEmpty()) {
+                User matched = ds.getAllUsers().stream()
+                        .filter(u -> u.fullName != null && u.fullName.trim().toLowerCase(Locale.ROOT).equals(name))
+                        .findFirst().orElse(null);
+                if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
+            }
+            if (req.email != null && !req.email.isBlank()) return req.email.trim();
+        }
+        return null;
     }
 
     private void getWorkload(HttpExchange ex) throws IOException {

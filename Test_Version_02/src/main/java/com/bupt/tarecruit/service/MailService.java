@@ -57,6 +57,16 @@ public class MailService {
         sendMail(to, subject, body);
     }
 
+    public void sendPasswordResetRejected(String to, String fullName, String reason) throws IOException {
+        String subject = "密码重置结果通知";
+        String body = "你好" + (fullName == null || fullName.isBlank() ? "" : "，" + fullName) + "\n\n"
+                + "你的密码重置申请未通过。\n"
+                + (reason == null || reason.isBlank() ? "" : "原因：" + reason + "\n\n")
+                + "如有疑问，请联系管理员。\n\n"
+                + "此邮件为系统自动发送，请勿直接回复。";
+        sendMail(to, subject, body);
+    }
+
     private void sendMail(String to, String subject, String body) throws IOException {
         if (!enabled) {
             throw new IOException("Mail service is not configured");
