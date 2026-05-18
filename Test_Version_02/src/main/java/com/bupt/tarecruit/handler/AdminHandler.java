@@ -292,6 +292,17 @@ public class AdminHandler extends BaseHandler {
                     n.type = "PASSWORD_RESET";
                     ds.addNotification(n);
                 }
+                String recipientEmail = null;
+                if (target != null && target.email != null && !target.email.isBlank()) recipientEmail = target.email;
+                else if (req.email != null && !req.email.isBlank()) recipientEmail = req.email;
+                if (recipientEmail != null) {
+                    try {
+                        ds.getMailService().sendPasswordResetApproved(recipientEmail, req.fullName, "123456");
+                    } catch (Exception mailEx) {
+                        ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_EMAIL_FAILED",
+                                "Approved reset for: " + req.fullName + ", but email failed: " + mailEx.getMessage());
+                    }
+                }
                 ds.addAuditLog(admin.id, admin.username, "PASSWORD_RESET_APPROVE", "Approved reset for: " + req.fullName);
                 sendJson(ex, 200, Map.of("message", "Password reset approved"));
             } else if ("REJECT".equals(action)) {
