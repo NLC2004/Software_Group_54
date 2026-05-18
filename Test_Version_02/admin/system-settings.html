@@ -268,7 +268,7 @@
 <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
 <div class="flex items-center gap-2">
 <span class="iconify w-5 h-5 text-blue-600" data-icon="material-symbols:backup-outline"></span>
-<h2 class="font-semibold">Data Backup &amp; Recovery Strategy</h2>
+<h2 class="font-semibold">Manual Export &amp; Recovery Downloads</h2>
 </div>
 </div>
 <div class="p-6">
@@ -294,18 +294,18 @@
 </div>
 <div class="p-3 bg-blue-50 text-blue-700 rounded-lg flex items-start gap-3">
 <span class="iconify w-5 h-5 mt-0.5 flex-shrink-0" data-icon="material-symbols:info-outline"></span>
-<p class="text-xs">Off-site cloud backup (AWS S3) is currently active. Next backup scheduled in 10 hours.</p>
+<p class="text-xs">Create a zip backup snapshot that includes users, jobs, applications, password reset requests, and audit logs.</p>
 </div>
 </div>
 </div>
 <div class="md:col-span-3">
-<h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Recent Backups</h3>
+<h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Recent Backup Snapshots</h3>
 <div id="recentBackupsList" class="space-y-3">
-<div class="p-4 text-sm text-gray-400 border border-gray-100 rounded-xl">Loading backup history...</div>
+<div class="p-4 text-sm text-gray-400 border border-gray-100 rounded-xl">Loading backup snapshots...</div>
 </div>
 <div class="mt-4 flex justify-end">
-<button id="btnViewBackupHistory" type="button" class="text-xs text-blue-600 font-semibold flex items-center gap-1 hover:underline">
-                                        View All Backup History <span class="iconify" data-icon="material-symbols:arrow-forward"></span>
+<button id="btnCreateBackupSnapshot" type="button" class="text-xs text-blue-600 font-semibold flex items-center gap-1 hover:underline">
+                                        Create New Zip Backup <span class="iconify" data-icon="material-symbols:backup"></span>
 </button>
 </div>
 </div>
@@ -329,11 +329,11 @@
 <!-- Modal Placeholder (Hidden by default) -->
 <div class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4" id="modal-overlay">
 <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl">
-<h3 class="text-xl font-bold mb-4">Restore System Data?</h3>
-<p class="text-gray-600 mb-6">You are about to restore the system database to <strong>2026-03-20 02:00</strong>. This action will overwrite all changes made after this point. This action cannot be undone.</p>
+<h3 class="text-xl font-bold mb-4">Create New Backup Snapshot?</h3>
+<p class="text-gray-600 mb-6">This will package the current system data into a zip backup snapshot for download. You can later restore it manually from the stored file.</p>
 <div class="flex gap-4">
 <button class="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200" onclick="document.getElementById('modal-overlay').classList.add('hidden')">Cancel</button>
-<button class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700">Confirm Restore</button>
+<button class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700">Create Snapshot</button>
 </div>
 </div>
 </div>
@@ -627,9 +627,9 @@ function renderRecentBackups(tasks) {
         const ok = String(t.status || '').toUpperCase() === 'COMPLETED';
         const iconWrap = ok ? 'w-10 h-10 bg-green-50 flex items-center justify-center text-green-600 rounded-lg'
                             : 'w-10 h-10 bg-gray-100 flex items-center justify-center text-gray-400 rounded-lg';
-        const meta = (ok ? 'Success' : (t.status || 'Unknown')) + ' • ' + formatRelativeTime(t.createdAt);
+        const meta = (ok ? 'Ready' : (t.status || 'Unknown')) + ' • ' + formatRelativeTime(t.createdAt);
         const dl = ok
-            ? `<button type="button" data-download-task="${esc(t.id)}" class="px-3 py-1.5 text-blue-600 text-xs font-bold bg-blue-50 rounded hover:bg-blue-100">Restore</button>`
+            ? `<button type="button" data-download-task="${esc(t.id)}" class="px-3 py-1.5 text-blue-600 text-xs font-bold bg-blue-50 rounded hover:bg-blue-100">Download ZIP</button>`
             : `<button type="button" class="px-3 py-1.5 text-gray-400 text-xs font-bold bg-gray-100 rounded cursor-not-allowed" disabled>Unavailable</button>`;
         return `
           <div class="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors ${ok ? '' : 'opacity-70'}">
@@ -638,7 +638,7 @@ function renderRecentBackups(tasks) {
                 <span class="iconify w-6 h-6" data-icon="material-symbols:check-circle-outline text-2xl"></span>
               </div>
               <div>
-                <p class="text-sm font-bold">${esc(t.fileName || ('export_' + esc(t.id) + '.csv'))}</p>
+                <p class="text-sm font-bold">${esc(t.fileName || ('backup_' + esc(t.id) + '.zip'))}</p>
                 <p class="text-xs text-gray-500">${esc(meta)}</p>
               </div>
             </div>
@@ -659,7 +659,7 @@ async function loadSettingsPanels() {
     renderEmailTemplates(getEmailTemplatesFromSettings(currentSettings));
 
     try {
-        const taskRes = await API.get('/api/admin/export-tasks?page=1&pageSize=10');
+        const taskRes = await API.get('/api/admin/backup-tasks?page=1&pageSize=10');
         renderRecentBackups(taskRes && taskRes.items ? taskRes.items : []);
     } catch (e) {
         renderRecentBackups([]);
@@ -719,6 +719,18 @@ document.querySelectorAll('button').forEach(btn => {
     if (btn.innerText.includes('Restore') && !btn.closest('#modal-overlay') && !btn.hasAttribute('data-download-task')) {
         btn.onclick = () => {
             document.getElementById('modal-overlay').classList.remove('hidden');
+        };
+    }
+    if (btn.innerText.includes('Download Again') && !btn.closest('#modal-overlay')) {
+        btn.onclick = async () => {
+            const first = document.querySelector('[data-download-task]');
+            const taskId = first ? first.getAttribute('data-download-task') : '';
+            if (!taskId) {
+                showToast('No completed export file is available for download', 'warning');
+                return;
+            }
+            document.getElementById('modal-overlay').classList.add('hidden');
+            await downloadExportTask(taskId);
         };
     }
 });
@@ -857,16 +869,41 @@ document.getElementById('emailTemplatesBody')?.addEventListener('click', async f
     }
 });
 
+async function downloadBackupTask(taskId) {
+    try {
+        const res = await API.request('/api/admin/backup-tasks/' + encodeURIComponent(taskId) + '/download', {
+            method: 'GET'
+        });
+        if (!res || !res.blob) throw new Error('Download failed');
+        const blob = res.blob;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'backup_' + taskId + '.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        showToast('Failed to download backup snapshot: ' + e.message, 'error');
+    }
+}
+
 document.getElementById('recentBackupsList')?.addEventListener('click', function(e) {
     const btn = e.target.closest('[data-download-task]');
     if (!btn) return;
     const id = btn.getAttribute('data-download-task');
     if (!id) return;
-    window.open('/api/admin/export-tasks/' + encodeURIComponent(id) + '/download', '_blank');
+    downloadBackupTask(id);
 });
 
-document.getElementById('btnViewBackupHistory')?.addEventListener('click', function() {
-    window.location.href = 'basic-statistics.html';
+document.getElementById('btnCreateBackupSnapshot')?.addEventListener('click', async function() {
+    try {
+        const res = await API.post('/api/admin/backup-tasks', {});
+        showToast('Backup snapshot created', 'success');
+        await loadSettingsPanels();
+        if (res && res.id) await downloadBackupTask(res.id);
+    } catch (e) {
+        showToast('Failed to create backup snapshot: ' + e.message, 'error');
+    }
 });
 
 document.getElementById('adminAccountsGrid')?.addEventListener('click', async function(e) {

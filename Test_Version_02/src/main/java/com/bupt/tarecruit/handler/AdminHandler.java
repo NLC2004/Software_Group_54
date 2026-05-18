@@ -2,22 +2,22 @@ package com.bupt.tarecruit.handler;
 
 import com.bupt.tarecruit.model.*;
 import com.bupt.tarecruit.service.DataService;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.util.stream.Collectors;
 
 public class AdminHandler extends BaseHandler {
@@ -51,6 +51,7 @@ public class AdminHandler extends BaseHandler {
         try {
             if (path.contains("/password-resets")) handlePasswordResets(ex, path, method, user);
             else if (path.contains("/bulk-notifications")) handleBulkNotifications(ex, method, user);
+            else if (path.contains("/backup-tasks")) handleBackupTasks(ex, path, method, user);
             else if (path.contains("/export-tasks")) handleExportTasks(ex, path, method, user);
             else if (path.contains("/role-templates")) handleRoleTemplates(ex, path, method, user);
             else if (path.contains("/users")) handleUsers(ex, path, method, user);
@@ -807,6 +808,7 @@ public class AdminHandler extends BaseHandler {
         task.dataSubject = "Core Data Export";
         task.dateRange = Optional.ofNullable(getQueryParam(ex, "dateRange")).orElse("All time");
         task.format = "CSV";
+        task.taskType = "EXPORT";
         task.status = "COMPLETED";
         task.generatorId = admin.id;
         task.generatorName = (admin.fullName != null && !admin.fullName.isEmpty()) ? admin.fullName : admin.username;
@@ -819,6 +821,157 @@ public class AdminHandler extends BaseHandler {
         addCorsHeaders(ex);
         ex.sendResponseHeaders(200, data.length);
         try (var os = ex.getResponseBody()) { os.write(data); }
+    }
+
+    private void handleBackupTasks(HttpExchange ex, String path, String method, User admin) throws IOException {
+        String[] parts = path.split("/");
+        if ("POST".equals(method) && parts.length == 4) {
+            String backupId = createZipBackup(admin);
+            sendJson(ex, 201, Map.of("message", "Backup created", "id", backupId));
+            return;
+        }
+        if ("GET".equals(method) && parts.length == 4) {
+            String status = getQueryParam(ex, "status");
+            String search = getQueryParam(ex, "search");
+            Long startMs = parseDateStart(getQueryParam(ex, "startDate"));
+            Long endMs = parseDateEnd(getQueryParam(ex, "endDate"));
+            int page = parseIntOrDefault(getQueryParam(ex, "page"), 1);
+            int pageSize = parseIntOrDefault(getQueryParam(ex, "pageSize"), 10);
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100;
+
+            List<ExportTask> all = ds.getAllExportTasks().stream()
+                    .filter(t -> "BACKUP".equalsIgnoreCase(t.taskType))
+                    .collect(Collectors.toList());
+            if (status != null && !status.isEmpty()) {
+                String s = status.toUpperCase(Locale.ROOT);
+                all = all.stream().filter(t -> s.equals(String.valueOf(t.status).toUpperCase(Locale.ROOT))).collect(Collectors.toList());
+            }
+            if (search != null && !search.isEmpty()) {
+                String q = search.toLowerCase(Locale.ROOT);
+                all = all.stream().filter(t ->
+                        (t.id != null && t.id.toLowerCase(Locale.ROOT).contains(q)) ||
+                        (t.dataSubject != null && t.dataSubject.toLowerCase(Locale.ROOT).contains(q)) ||
+                        (t.generatorName != null && t.generatorName.toLowerCase(Locale.ROOT).contains(q)) ||
+                        (t.format != null && t.format.toLowerCase(Locale.ROOT).contains(q))
+                ).collect(Collectors.toList());
+            }
+            if (startMs != null || endMs != null) {
+                all = all.stream().filter(t -> inRange(t.createdAt, startMs, endMs)).collect(Collectors.toList());
+            }
+            all.sort((a, b) -> Long.compare(b.createdAt, a.createdAt));
+            int total = all.size();
+            int from = Math.min((page - 1) * pageSize, total);
+            int to = Math.min(from + pageSize, total);
+            List<ExportTask> items = all.subList(from, to);
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("items", items);
+            result.put("total", total);
+            result.put("page", page);
+            result.put("pageSize", pageSize);
+            sendJson(ex, 200, result);
+            return;
+        }
+        if ("GET".equals(method) && parts.length == 6 && "download".equals(parts[5])) {
+            ExportTask task = ds.getExportTaskById(parts[4]);
+            if (task == null || !"BACKUP".equalsIgnoreCase(task.taskType)) { sendError(ex, 404, "Backup not found"); return; }
+            if (!"COMPLETED".equals(task.status) || task.fileName == null || task.fileName.isEmpty()) {
+                sendError(ex, 400, "Backup file is not ready"); return;
+            }
+            Path p = ds.getUploadsDir().resolve(task.fileName);
+            if (!Files.exists(p)) { sendError(ex, 404, "Backup file not found"); return; }
+            byte[] data = Files.readAllBytes(p);
+            ex.getResponseHeaders().set("Content-Type", "application/zip");
+            ex.getResponseHeaders().set("Content-Disposition", "attachment; filename=\"backup_" + task.id + ".zip\"");
+            addCorsHeaders(ex);
+            ex.sendResponseHeaders(200, data.length);
+            try (var os = ex.getResponseBody()) { os.write(data); }
+            return;
+        }
+        if ("POST".equals(method) && parts.length == 6 && "retry".equals(parts[5])) {
+            ExportTask task = ds.getExportTaskById(parts[4]);
+            if (task == null || !"BACKUP".equalsIgnoreCase(task.taskType)) { sendError(ex, 404, "Backup not found"); return; }
+            task.status = "PROCESSING";
+            ds.updateExportTask(task);
+            try {
+                String backupId = createZipBackup(admin, task);
+                sendJson(ex, 200, Map.of("message", "Retry completed", "id", backupId));
+            } catch (Exception e) {
+                task.status = "FAILED";
+                task.errorMessage = e.getMessage();
+                ds.updateExportTask(task);
+                sendError(ex, 500, "Backup retry failed");
+            }
+            return;
+        }
+        sendError(ex, 404, "Not found");
+    }
+
+    private String createZipBackup(User admin) throws IOException {
+        return createZipBackup(admin, null);
+    }
+
+    private String createZipBackup(User admin, ExportTask existing) throws IOException {
+        String backupName = "backup_" + System.currentTimeMillis() + ".zip";
+        JsonObject metadata = new JsonObject();
+        metadata.addProperty("generatedAt", System.currentTimeMillis());
+        metadata.addProperty("generatedBy", admin.username);
+        metadata.addProperty("generatedByName", admin.fullName != null && !admin.fullName.isEmpty() ? admin.fullName : admin.username);
+        metadata.addProperty("taskType", "BACKUP");
+        metadata.addProperty("source", "manual_backup");
+
+        JsonObject summary = new JsonObject();
+        summary.addProperty("users", ds.getAllUsers().size());
+        summary.addProperty("jobs", ds.getAllJobs().size());
+        summary.addProperty("applications", ds.getAllApplications().size());
+        summary.addProperty("passwordResets", ds.getAllPasswordResets().size());
+        summary.addProperty("auditLogs", ds.getAllAuditLogs().size());
+
+        Map<String, Object> backupPayload = new LinkedHashMap<>();
+        backupPayload.put("metadata", metadata);
+        backupPayload.put("summary", summary);
+        backupPayload.put("users", ds.getAllUsers());
+        backupPayload.put("jobs", ds.getAllJobs());
+        backupPayload.put("applications", ds.getAllApplications());
+        backupPayload.put("passwordResets", ds.getAllPasswordResets());
+        backupPayload.put("auditLogs", ds.getAllAuditLogs());
+
+        byte[] zipBytes;
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ZipOutputStream zos = new ZipOutputStream(baos, StandardCharsets.UTF_8)) {
+            addZipJsonEntry(zos, "backup-metadata.json", metadata);
+            addZipJsonEntry(zos, "backup-summary.json", summary);
+            addZipJsonEntry(zos, "users.json", ds.getAllUsers());
+            addZipJsonEntry(zos, "jobs.json", ds.getAllJobs());
+            addZipJsonEntry(zos, "applications.json", ds.getAllApplications());
+            addZipJsonEntry(zos, "password-resets.json", ds.getAllPasswordResets());
+            addZipJsonEntry(zos, "audit-logs.json", ds.getAllAuditLogs());
+            zos.finish();
+            zipBytes = baos.toByteArray();
+        }
+
+        String storedName = ds.saveBackupFile(backupName, zipBytes);
+        ExportTask task = existing != null ? existing : new ExportTask();
+        task.dataSubject = "System Backup";
+        task.dateRange = "All time";
+        task.format = "ZIP";
+        task.taskType = "BACKUP";
+        task.status = "COMPLETED";
+        task.generatorId = admin.id;
+        task.generatorName = (admin.fullName != null && !admin.fullName.isEmpty()) ? admin.fullName : admin.username;
+        task.fileName = storedName;
+        task.errorMessage = "";
+        if (existing == null) ds.addExportTask(task); else ds.updateExportTask(task);
+        ds.addAuditLog(admin.id, admin.username, existing == null ? "BACKUP_CREATE" : "BACKUP_RETRY", "Generated zip backup task=" + task.id);
+        return task.id;
+    }
+
+    private void addZipJsonEntry(ZipOutputStream zos, String name, Object data) throws IOException {
+        zos.putNextEntry(new ZipEntry(name));
+        byte[] bytes = new GsonBuilder().setPrettyPrinting().create().toJson(data).getBytes(StandardCharsets.UTF_8);
+        zos.write(bytes);
+        zos.closeEntry();
     }
 
     private void handleExportTasks(HttpExchange ex, String path, String method, User admin) throws IOException {
@@ -844,7 +997,9 @@ public class AdminHandler extends BaseHandler {
                 all = all.stream().filter(t ->
                         (t.id != null && t.id.toLowerCase(Locale.ROOT).contains(q)) ||
                         (t.dataSubject != null && t.dataSubject.toLowerCase(Locale.ROOT).contains(q)) ||
-                        (t.generatorName != null && t.generatorName.toLowerCase(Locale.ROOT).contains(q))
+                        (t.generatorName != null && t.generatorName.toLowerCase(Locale.ROOT).contains(q)) ||
+                        (t.format != null && t.format.toLowerCase(Locale.ROOT).contains(q)) ||
+                        (t.taskType != null && t.taskType.toLowerCase(Locale.ROOT).contains(q))
                 ).collect(Collectors.toList());
             }
             if (startMs != null || endMs != null) {
@@ -873,8 +1028,9 @@ public class AdminHandler extends BaseHandler {
             Path p = ds.getUploadsDir().resolve(task.fileName);
             if (!Files.exists(p)) { sendError(ex, 404, "Export file not found"); return; }
             byte[] data = Files.readAllBytes(p);
-            ex.getResponseHeaders().set("Content-Type", "text/csv; charset=UTF-8");
-            ex.getResponseHeaders().set("Content-Disposition", "attachment; filename=\"export_" + task.id + ".csv\"");
+            boolean zip = "ZIP".equalsIgnoreCase(task.format);
+            ex.getResponseHeaders().set("Content-Type", zip ? "application/zip" : "text/csv; charset=UTF-8");
+            ex.getResponseHeaders().set("Content-Disposition", "attachment; filename=\"" + (zip ? "backup_" : "export_") + task.id + (zip ? ".zip" : ".csv") + "\"");
             addCorsHeaders(ex);
             ex.sendResponseHeaders(200, data.length);
             try (var os = ex.getResponseBody()) { os.write(data); }
