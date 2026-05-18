@@ -1,0 +1,8 @@
+{
+  "mail.smtp.host": "smtp.163.com",
+  "mail.smtp.port": "465",
+  "mail.smtp.username": "ninglechen666@163.com",
+  "mail.smtp.password": "HMsQrwHsVQKkE73S",
+  "mail.smtp.from": "ninglechen666@163.com",
+  "mail.smtp.fromName": "TA Recruit Support"
+}
