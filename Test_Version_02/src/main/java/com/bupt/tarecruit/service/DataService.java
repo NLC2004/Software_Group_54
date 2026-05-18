@@ -466,6 +466,12 @@ public class DataService {
         writeList("export_tasks.json", list);
     }
 
+    public synchronized String saveBackupFile(String fileName, byte[] data) throws IOException {
+        String safeName = System.currentTimeMillis() + "_" + fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+        Files.write(uploadsDir.resolve(safeName), data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        return safeName;
+    }
+
     // ==================== Settings ====================
 
     public synchronized Map<String, String> getSettings() {

@@ -36,8 +36,9 @@ const API = {
                     return null;
                 }
             }
-            if (res.headers.get('Content-Type')?.includes('text/csv')) {
-                return { blob: await res.blob(), ok: res.ok };
+            const contentType = res.headers.get('Content-Type') || '';
+            if (contentType.includes('text/csv') || contentType.includes('application/zip') || contentType.includes('application/octet-stream')) {
+                return { blob: await res.blob(), ok: res.ok, contentType };
             }
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Request failed');
