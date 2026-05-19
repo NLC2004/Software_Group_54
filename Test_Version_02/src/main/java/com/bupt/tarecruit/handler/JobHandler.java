@@ -380,11 +380,15 @@ public class JobHandler extends BaseHandler {
         if (job == null) { sendError(ex, 404, "Job not found"); return; }
 
         String coverLetter = "";
+        String model = Optional.ofNullable(getQueryParam(ex, "model")).orElse("");
         User applicant = user;
         Application app = null;
 
         if ("POST".equals(method)) {
             JsonObject body = parseJson(readBody(ex));
+            if (body.has("model") && !body.get("model").isJsonNull()) {
+                model = body.get("model").getAsString();
+            }
             if (body.has("coverLetter") && !body.get("coverLetter").isJsonNull()) {
                 coverLetter = body.get("coverLetter").getAsString();
             }
@@ -410,6 +414,6 @@ public class JobHandler extends BaseHandler {
         }
         if (applicant == null) { sendError(ex, 404, "Applicant not found"); return; }
 
-        sendJson(ex, 200, new AiMatchingService(ds).match(job, applicant, coverLetter, app));
+        sendJson(ex, 200, new AiMatchingService(ds).match(job, applicant, coverLetter, app, model));
     }
 }
