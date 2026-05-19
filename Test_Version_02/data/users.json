@@ -50,13 +50,13 @@
     "role": "TA",
     "fullName": "Mei",
     "email": "2023213367@bupt.edu.cn",
-    "phone": "",
-    "gender": "",
+    "phone": "13800008008",
+    "gender": "Female",
     "studentId": "2023213367",
-    "school": "",
-    "supervisor": "",
-    "degree": "",
-    "yearOfStudy": "",
+    "school": "International School",
+    "supervisor": "Dr. Sun Hao",
+    "degree": "Bachelors (BSc)",
+    "yearOfStudy": "Year 3",
     "active": true,
     "createdAt": 1775371488174,
     "adminRoleTemplateId": ""
@@ -119,7 +119,13 @@
     "studentId": "231225731",
     "active": true,
     "createdAt": 1775380087804,
-    "adminRoleTemplateId": ""
+    "adminRoleTemplateId": "",
+    "school": "International School",
+    "supervisor": "Dr. Zhang Wei",
+    "degree": "Bachelors (BSc)",
+    "yearOfStudy": "Year 3",
+    "phone": "13800001001",
+    "gender": "Male"
   },
   {
     "id": "ta005",
@@ -131,7 +137,13 @@
     "studentId": "231225339",
     "active": true,
     "createdAt": 1775380087804,
-    "adminRoleTemplateId": ""
+    "adminRoleTemplateId": "",
+    "school": "International School",
+    "supervisor": "Dr. Huang Fei",
+    "degree": "Bachelors (BSc)",
+    "yearOfStudy": "Year 3",
+    "phone": "13800005005",
+    "gender": "Male"
   },
   {
     "id": "ta006",
@@ -143,7 +155,13 @@
     "studentId": "231225649",
     "active": true,
     "createdAt": 1775380087804,
-    "adminRoleTemplateId": ""
+    "adminRoleTemplateId": "",
+    "school": "International School",
+    "supervisor": "Dr. Wu Tian",
+    "degree": "Bachelors (BSc)",
+    "yearOfStudy": "Year 3",
+    "phone": "13800006006",
+    "gender": "Male"
   },
   {
     "id": "mo001",
@@ -227,7 +245,13 @@
     "studentId": "231225672",
     "active": true,
     "createdAt": 1775552162173,
-    "adminRoleTemplateId": ""
+    "adminRoleTemplateId": "",
+    "school": "International School",
+    "supervisor": "Prof. Wang Liang",
+    "degree": "Masters (MSc)",
+    "yearOfStudy": "Year 3",
+    "phone": "13931092945",
+    "gender": "Female"
   },
   {
     "id": "ta002",
@@ -239,25 +263,13 @@
     "studentId": "231225270",
     "active": true,
     "createdAt": 1775380087804,
-    "adminRoleTemplateId": ""
-  },
-  {
-    "id": "ta004",
-    "username": "231225557",
-    "password": "123456",
-    "role": "TA",
-    "fullName": "Lingxiang Mei",
-    "email": "231225557@bupt.edu.cn",
-    "phone": "15656360213",
-    "gender": "Male",
-    "studentId": "231225557",
+    "adminRoleTemplateId": "",
     "school": "International School",
-    "supervisor": "",
-    "degree": "",
+    "supervisor": "Dr. Li Ming",
+    "degree": "Bachelors (BSc)",
     "yearOfStudy": "Year 3",
-    "active": true,
-    "createdAt": 1775380087804,
-    "adminRoleTemplateId": ""
+    "phone": "13800002002",
+    "gender": "Male"
   },
   {
     "id": "6e6df15f",
@@ -275,6 +287,24 @@
     "yearOfStudy": "Year 3",
     "active": true,
     "createdAt": 1775365242930,
+    "adminRoleTemplateId": ""
+  },
+  {
+    "id": "ta004",
+    "username": "231225557",
+    "password": "123456",
+    "role": "TA",
+    "fullName": "Lingxiang Mei",
+    "email": "meilx@bupt.edu.cn",
+    "phone": "15656360213",
+    "gender": "Male",
+    "studentId": "231225557",
+    "school": "International School",
+    "supervisor": "Prof. Chen Yu",
+    "degree": "Masters (MSc)",
+    "yearOfStudy": "Year 3",
+    "active": true,
+    "createdAt": 1775380087804,
     "adminRoleTemplateId": ""
   }
 ]

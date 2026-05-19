@@ -629,6 +629,12 @@ public class DataService {
 
         if (usersChanged) writeList("users.json", users);
 
+        // Skip demo data reset if applications already exist (preserve user-generated data)
+        if (Files.exists(dataDir.resolve("applications.json"))) {
+            List<Application> existingApps = readList("applications.json", new TypeToken<List<Application>>(){}.getType());
+            if (existingApps != null && !existingApps.isEmpty()) return;
+        }
+
         // ==================== Demo Data Reset (Jobs/Applications/Notifications) ====================
 
         long now = System.currentTimeMillis();
