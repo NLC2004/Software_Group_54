@@ -19,15 +19,15 @@ import java.util.*;
 public class AiMatchingService {
     private static final String API_BASE_URL = "https://jeniya.cn";
     private static final String API_KEY = "sk-RyysKIhqi4L2XiqvCPfMxAg3Ae0ygYYLfTGb5drCghmfsUy8";
-    private static final String DEFAULT_MODEL = "deepseek-r1";
-    private static final Duration TIMEOUT = Duration.ofSeconds(25);
+    private static final String DEFAULT_MODEL = "gpt-5-mini";
+    private static final Duration TIMEOUT = Duration.ofSeconds(120);
     private static final double HOURS_PER_PERIOD = 0.75;
     private static final Map<String, List<String>> SKILL_ALIASES = createSkillAliases();
 
     private final DataService ds;
     private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
+            .connectTimeout(Duration.ofSeconds(15))
             .build();
 
     public AiMatchingService(DataService ds) {
@@ -61,7 +61,9 @@ public class AiMatchingService {
         JsonObject payload = new JsonObject();
         payload.addProperty("model", resolvedModel);
         payload.addProperty("temperature", 0.2);
-        payload.addProperty("response_format", "json");
+        JsonObject responseFormat = new JsonObject();
+        responseFormat.addProperty("type", "json_object");
+        payload.add("response_format", responseFormat);
 
         JsonArray messages = new JsonArray();
         JsonObject system = new JsonObject();
@@ -149,12 +151,26 @@ public class AiMatchingService {
 
     private String buildPrompt(Job job, User applicant, String coverLetter, Application currentApplication, Map<String, Object> fallback) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Evaluate the TA match using the following data and return JSON only.\n\n");
-        sb.append("Job: ").append(gson.toJson(job)).append("\n\n");
-        sb.append("Applicant: ").append(gson.toJson(applicant)).append("\n\n");
+        sb.append("Evaluate the TA match and return JSON only.\n\n");
+
+        // Only send essential job fields (skip schedule grids, timestamps, etc.)
+        sb.append("Job: {");
+        sb.append("\"title\":\"").append(job.title != null ? job.title : "").append("\",");
+        sb.append("\"type\":\"").append(job.type != null ? job.type : "").append("\",");
+        sb.append("\"courseName\":\"").append(job.courseName != null ? job.courseName : "").append("\",");
+        sb.append("\"description\":\"").append(job.description != null ? job.description : "").append("\",");
+        sb.append("\"requirements\":").append(gson.toJson(job.requirements));
+        sb.append("}\n\n");
+
+        // Only send essential applicant fields
+        sb.append("Applicant: {");
+        sb.append("\"fullName\":\"").append(applicant.fullName != null ? applicant.fullName : "").append("\",");
+        sb.append("\"school\":\"").append(applicant.school != null ? applicant.school : "").append("\",");
+        sb.append("\"degree\":\"").append(applicant.degree != null ? applicant.degree : "").append("\",");
+        sb.append("\"yearOfStudy\":\"").append(applicant.yearOfStudy != null ? applicant.yearOfStudy : "").append("\"");
+        sb.append("}\n\n");
+
         sb.append("CoverLetter: ").append(coverLetter == null ? "" : coverLetter).append("\n\n");
-        sb.append("CurrentApplication: ").append(gson.toJson(currentApplication)).append("\n\n");
-        sb.append("Fallback reference: ").append(gson.toJson(fallback)).append("\n\n");
         sb.append("Rules: score should reflect skill fit, profile completeness, and workload risk. If workloadRisk is HIGH, recommendation should warn about workload before approval.");
         return sb.toString();
     }
