@@ -189,14 +189,23 @@
 <h3 class="text-sm font-bold text-gray-900 border-l-4 border-blue-600 pl-3 mb-6">AI Match Assistant</h3>
 <div class="bg-slate-50 rounded-2xl border border-slate-100 p-5" id="aiMatchPanel">
 <div class="flex items-start gap-4">
-<div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+<div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 cursor-pointer hover:bg-blue-700 transition-all" id="aiMatchRunBtn" title="Run AI match">
 <span class="iconify text-xl" data-icon="mdi:creation"></span>
 </div>
 <div class="flex-1 min-w-0">
-<div class="flex items-center justify-between gap-4">
+<div class="flex flex-wrap items-center justify-between gap-4">
 <div>
 <p class="text-sm font-bold text-gray-900" id="aiMatchTitle">Ready to analyse</p>
-<p class="text-xs text-gray-500 mt-1" id="aiMatchSummary">Write your motivation to compare your profile with this position.</p>
+<p class="text-xs text-gray-500 mt-1" id="aiMatchSummary">Choose a model and write your motivation to compare your profile with this position.</p>
+</div>
+<div class="flex items-center gap-2">
+<select class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500" id="aiModelSelect">
+<option value="deepseek-r1">deepseek-r1</option>
+<option value="gemini-2.5-pro">gemini-2.5-pro</option>
+<option value="qwen-plus">qwen-plus</option>
+<option value="gpt-5-mini">gpt-5-mini</option>
+</select>
+<button class="px-3 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all" id="aiMatchRunTextBtn" type="button">Run API</button>
 </div>
 <div class="text-right">
 <p class="text-2xl font-black text-blue-600" id="aiMatchScore">--</p>
@@ -212,6 +221,10 @@
 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Missing skills</p>
 <div class="flex flex-wrap gap-2" id="aiMissingSkills"><span class="text-xs text-gray-400">Waiting for input</span></div>
 </div>
+</div>
+<div class="mt-4 bg-white border border-gray-100 rounded-2xl p-3 hidden" id="aiCotPanel">
+<p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Model reasoning</p>
+<div class="max-h-40 overflow-y-auto pr-2 text-xs text-gray-600 leading-relaxed whitespace-pre-wrap" id="aiCotText"></div>
 </div>
 <p class="text-[11px] text-gray-400 mt-4" id="aiMatchNote">The result is explainable guidance only; the final decision remains with the module organiser.</p>
 </div>
@@ -333,6 +346,9 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     let activeApplications = [];
     let occupiedPriorities = new Map();
     let aiMatchTimer = null;
+    document.getElementById('aiMatchRunBtn').addEventListener('click', refreshAiMatch);
+    document.getElementById('aiMatchRunTextBtn').addEventListener('click', refreshAiMatch);
+    document.getElementById('aiModelSelect').addEventListener('change', scheduleAiMatchRefresh);
     let currentJob = null;
 
     function parseDeadline(deadline) {
@@ -953,6 +969,16 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         document.getElementById('aiMissingSkills').innerHTML = skillTags(match.missingSkills || [], 'amber');
         const workload = match.workloadRisk ? `Workload risk: ${match.workloadRisk}. ` : '';
         document.getElementById('aiMatchNote').textContent = workload + (match.explanation || 'This recommendation is generated from job requirements, your profile, your motivation text, and current workload.');
+        const cot = Array.isArray(match.cot) ? match.cot : [];
+        const cotPanel = document.getElementById('aiCotPanel');
+        const cotText = document.getElementById('aiCotText');
+        if (cot.length) {
+            cotPanel.classList.remove('hidden');
+            cotText.textContent = cot.map((line, idx) => `${idx + 1}. ${line}`).join('\n');
+        } else {
+            cotPanel.classList.add('hidden');
+            cotText.textContent = '';
+        }
     }
 
     function scheduleAiMatchRefresh() {
@@ -972,11 +998,14 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
             document.getElementById('aiMatchedSkills').innerHTML = '<span class="text-xs text-gray-400">Waiting for input</span>';
             document.getElementById('aiMissingSkills').innerHTML = '<span class="text-xs text-gray-400">Waiting for input</span>';
             document.getElementById('aiMatchNote').textContent = 'The result is explainable guidance only; the final decision remains with the module organiser.';
+            document.getElementById('aiCotPanel').classList.add('hidden');
+            document.getElementById('aiCotText').textContent = '';
             return;
         }
         try {
             titleEl.textContent = 'Analysing...';
-            const match = await API.post('/api/jobs/' + jobId + '/match', { coverLetter: buildApplicationCoverLetter() });
+            const model = document.getElementById('aiModelSelect').value;
+            const match = await API.post('/api/jobs/' + jobId + '/match', { coverLetter: buildApplicationCoverLetter(), model });
             renderAiMatch(match);
         } catch (_) {
             titleEl.textContent = 'AI match unavailable';

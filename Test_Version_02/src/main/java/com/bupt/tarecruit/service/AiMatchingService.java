@@ -4,26 +4,119 @@ import com.bupt.tarecruit.model.Application;
 import com.bupt.tarecruit.model.Job;
 import com.bupt.tarecruit.model.User;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AiMatchingService {
+    private static final String API_BASE_URL = "https://jeniya.cn";
+    private static final String API_KEY = "sk-RyysKIhqi4L2XiqvCPfMxAg3Ae0ygYYLfTGb5drCghmfsUy8";
+    private static final String DEFAULT_MODEL = "deepseek-r1";
+    private static final Duration TIMEOUT = Duration.ofSeconds(25);
     private static final double HOURS_PER_PERIOD = 0.75;
+    private static final Map<String, List<String>> SKILL_ALIASES = createSkillAliases();
 
     private final DataService ds;
-    private final Gson gson = new Gson();
-
-    private static final Map<String, List<String>> SKILL_ALIASES = createSkillAliases();
+    private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
 
     public AiMatchingService(DataService ds) {
         this.ds = ds;
     }
 
     public Map<String, Object> match(Job job, User applicant, String coverLetter, Application currentApplication) {
+        return match(job, applicant, coverLetter, currentApplication, DEFAULT_MODEL);
+    }
+
+    public Map<String, Object> match(Job job, User applicant, String coverLetter, Application currentApplication, String model) {
+        Map<String, Object> fallback = buildLocalFallback(job, applicant, coverLetter, currentApplication);
+        System.out.println("[AiMatchingService] match() invoked, model=" + normalizeModel(model)
+                + ", jobId=" + (job != null ? job.id : "null")
+                + ", applicantId=" + (applicant != null ? applicant.id : "null")
+                + ", applicationId=" + (currentApplication != null ? currentApplication.id : "null"));
+        try {
+            Map<String, Object> apiResult = callApi(job, applicant, coverLetter, currentApplication, fallback, model);
+            if (apiResult != null && !apiResult.isEmpty()) return apiResult;
+        } catch (Exception ex) {
+            System.out.println("[AiMatchingService] API call failed: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+            ex.printStackTrace();
+        }
+        System.out.println("[AiMatchingService] Falling back to local matcher.");
+        return fallback;
+    }
+
+    private Map<String, Object> callApi(Job job, User applicant, String coverLetter, Application currentApplication,
+                                        Map<String, Object> fallback, String model) throws Exception {
+        String resolvedModel = normalizeModel(model);
+        JsonObject payload = new JsonObject();
+        payload.addProperty("model", resolvedModel);
+        payload.addProperty("temperature", 0.2);
+        payload.addProperty("response_format", "json");
+
+        JsonArray messages = new JsonArray();
+        JsonObject system = new JsonObject();
+        system.addProperty("role", "system");
+        system.addProperty("content", "You are a TA recruitment matching assistant. Return ONLY valid JSON with the keys: score (0-100 integer), label, recommendation, explanation, requiredSkills (array of strings), matchedSkills (array of strings), missingSkills (array of strings), applicantSkills (array of strings), profileCompleteness (0-100 integer), workloadRisk (LOW/MEDIUM/HIGH), currentPeakWeeklyHours (number), projectedPeakWeeklyHours (number), maxWeeklyHours (number), cot (array of strings). Keep the result concise, grounded in the provided data, and provide a short reasoning trace in cot without exposing private data.");
+        messages.add(system);
+
+        JsonObject user = new JsonObject();
+        user.addProperty("role", "user");
+        user.addProperty("content", buildPrompt(job, applicant, coverLetter, currentApplication, fallback));
+        messages.add(user);
+        payload.add("messages", messages);
+
+        String requestBody = gson.toJson(payload);
+        System.out.println("[AiMatchingService] POST " + API_BASE_URL + "/v1/chat/completions");
+        System.out.println("[AiMatchingService] Request model=" + resolvedModel);
+        System.out.println("[AiMatchingService] Request body size=" + requestBody.length());
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE_URL + "/v1/chat/completions"))
+                .timeout(TIMEOUT)
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + API_KEY)
+                .header("X-Requested-Model", resolvedModel)
+                .header("X-Requested-From", "ta-recruit-match")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("[AiMatchingService] Response status=" + response.statusCode());
+        System.out.println("[AiMatchingService] Response body length=" + (response.body() == null ? 0 : response.body().length()));
+        if (response.statusCode() < 200 || response.statusCode() >= 300) return fallback;
+
+        JsonObject root = gson.fromJson(response.body(), JsonObject.class);
+        if (root == null || !root.has("choices") || !root.get("choices").isJsonArray()) return fallback;
+        JsonArray choices = root.getAsJsonArray("choices");
+        if (choices.isEmpty()) return fallback;
+
+        JsonObject first = choices.get(0).getAsJsonObject();
+        if (!first.has("message") || !first.get("message").isJsonObject()) return fallback;
+        JsonObject message = first.getAsJsonObject("message");
+        String content = message.has("content") && !message.get("content").isJsonNull() ? message.get("content").getAsString() : "";
+        if (content.isBlank()) return fallback;
+
+        JsonObject parsed = extractJsonObject(content);
+        if (parsed == null) return fallback;
+
+        Map<String, Object> out = normalizeApiResult(parsed, fallback);
+        out.put("requestedModel", resolvedModel);
+        out.put("apiBaseUrl", API_BASE_URL);
+        out.put("apiCalled", true);
+        return out != null && !out.isEmpty() ? out : fallback;
+    }
+
+    private Map<String, Object> buildLocalFallback(Job job, User applicant, String coverLetter, Application currentApplication) {
         Set<String> required = inferRequiredSkills(job);
         Set<String> applicantSkills = inferApplicantSkills(applicant, coverLetter);
         Set<String> matched = new TreeSet<>(required);
@@ -31,13 +124,7 @@ public class AiMatchingService {
         Set<String> missing = new TreeSet<>(required);
         missing.removeAll(applicantSkills);
 
-        double skillScore;
-        if (required.isEmpty()) {
-            skillScore = applicantSkills.isEmpty() ? 45 : 65;
-        } else {
-            skillScore = (matched.size() * 100.0) / required.size();
-        }
-
+        double skillScore = required.isEmpty() ? (applicantSkills.isEmpty() ? 45 : 65) : (matched.size() * 100.0) / required.size();
         double profileScore = profileCompleteness(applicant);
         WorkloadSignal workload = workloadSignal(applicant, job, currentApplication);
         int finalScore = (int) Math.round(skillScore * 0.70 + profileScore * 0.15 + workload.score * 0.15);
@@ -58,6 +145,81 @@ public class AiMatchingService {
         result.put("recommendation", recommendation(finalScore, missing, workload));
         result.put("explanation", explanation(required, matched, missing, workload));
         return result;
+    }
+
+    private String buildPrompt(Job job, User applicant, String coverLetter, Application currentApplication, Map<String, Object> fallback) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Evaluate the TA match using the following data and return JSON only.\n\n");
+        sb.append("Job: ").append(gson.toJson(job)).append("\n\n");
+        sb.append("Applicant: ").append(gson.toJson(applicant)).append("\n\n");
+        sb.append("CoverLetter: ").append(coverLetter == null ? "" : coverLetter).append("\n\n");
+        sb.append("CurrentApplication: ").append(gson.toJson(currentApplication)).append("\n\n");
+        sb.append("Fallback reference: ").append(gson.toJson(fallback)).append("\n\n");
+        sb.append("Rules: score should reflect skill fit, profile completeness, and workload risk. If workloadRisk is HIGH, recommendation should warn about workload before approval.");
+        return sb.toString();
+    }
+
+    private JsonObject extractJsonObject(String content) {
+        try {
+            String trimmed = content.trim();
+            int start = trimmed.indexOf('{');
+            int end = trimmed.lastIndexOf('}');
+            if (start < 0 || end <= start) return null;
+            return gson.fromJson(trimmed.substring(start, end + 1), JsonObject.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Map<String, Object> normalizeApiResult(JsonObject parsed, Map<String, Object> fallback) {
+        Map<String, Object> out = new LinkedHashMap<>(fallback);
+        putInt(parsed, out, "score", 0, 100);
+        putString(parsed, out, "label");
+        putString(parsed, out, "recommendation");
+        putString(parsed, out, "explanation");
+        putString(parsed, out, "workloadRisk");
+        putNumber(parsed, out, "currentPeakWeeklyHours");
+        putNumber(parsed, out, "projectedPeakWeeklyHours");
+        putNumber(parsed, out, "maxWeeklyHours");
+        putInt(parsed, out, "profileCompleteness", 0, 100);
+        putStringArray(parsed, out, "requiredSkills");
+        putStringArray(parsed, out, "matchedSkills");
+        putStringArray(parsed, out, "missingSkills");
+        putStringArray(parsed, out, "applicantSkills");
+        putStringArray(parsed, out, "cot");
+        return out;
+    }
+
+    private void putString(JsonObject parsed, Map<String, Object> out, String key) {
+        if (parsed.has(key) && !parsed.get(key).isJsonNull()) out.put(key, parsed.get(key).getAsString());
+    }
+
+    private void putNumber(JsonObject parsed, Map<String, Object> out, String key) {
+        if (parsed.has(key) && !parsed.get(key).isJsonNull()) {
+            try {
+                out.put(key, parsed.get(key).getAsDouble());
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private void putInt(JsonObject parsed, Map<String, Object> out, String key, int min, int max) {
+        if (parsed.has(key) && !parsed.get(key).isJsonNull()) {
+            try {
+                int v = parsed.get(key).getAsInt();
+                out.put(key, Math.max(min, Math.min(max, v)));
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private void putStringArray(JsonObject parsed, Map<String, Object> out, String key) {
+        if (!parsed.has(key) || !parsed.get(key).isJsonArray()) return;
+        List<String> values = new ArrayList<>();
+        for (JsonElement el : parsed.getAsJsonArray(key)) {
+            if (el != null && !el.isJsonNull()) values.add(el.getAsString());
+        }
+        out.put(key, values);
     }
 
     private Set<String> inferRequiredSkills(Job job) {
@@ -259,6 +421,18 @@ public class AiMatchingService {
         if ("COURSE".equalsIgnoreCase(raw)) return "COURSE_TA";
         if ("ACTIVITY".equalsIgnoreCase(raw)) return "CLASS_TEST_TA";
         return raw.toUpperCase(Locale.ROOT);
+    }
+
+    private String normalizeModel(String model) {
+        String m = model == null ? "" : model.trim();
+        if (m.isEmpty()) return DEFAULT_MODEL;
+        return switch (m.toLowerCase(Locale.ROOT)) {
+            case "deepseek", "deepseek-r1", "deepseekr1" -> "deepseek-r1";
+            case "gemini", "gemini-2.5-pro", "gemini2.5pro" -> "gemini-2.5-pro";
+            case "qwen", "qwen-plus" -> "qwen-plus";
+            case "gpt-5", "gpt-5-mini", "gpt5mini" -> "gpt-5-mini";
+            default -> m;
+        };
     }
 
     private static Map<String, List<String>> createSkillAliases() {

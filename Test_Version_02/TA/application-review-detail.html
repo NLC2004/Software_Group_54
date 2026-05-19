@@ -94,6 +94,87 @@
 <script src="/js/api.js"></script>
 <script>
     let appId = null;
+    const MATCH_MODELS = ['deepseek-r1', 'gemini-2.5-pro', 'qwen-plus', 'gpt-5-mini'];
+    let selectedModel = MATCH_MODELS[0];
+    let currentMatch = null;
+
+    function renderThinkingTrace(items) {
+        const arr = Array.isArray(items) ? items.filter(Boolean) : [];
+        if (!arr.length) return '<p class="text-sm text-gray-400">No reasoning summary provided.</p>';
+        return `<div class="space-y-2">${arr.map((x, i) => `<div class="bg-white border border-gray-100 rounded-lg px-3 py-2 text-sm text-gray-700">${i + 1}. ${esc(x)}</div>`).join('')}</div>`;
+    }
+
+    function renderMatchCard(match) {
+        const score = Number(match?.score || 0);
+        const label = match?.label || 'Needs review';
+        const recommendation = match?.recommendation || 'Needs manual review';
+        const requiredSkills = Array.isArray(match?.requiredSkills) ? match.requiredSkills : [];
+        const matchedSkills = Array.isArray(match?.matchedSkills) ? match.matchedSkills : [];
+        const missingSkills = Array.isArray(match?.missingSkills) ? match.missingSkills : [];
+        const cot = Array.isArray(match?.cot) ? match.cot : [];
+        return `
+            <div class="bg-[#F8FAFF] rounded-2xl border border-blue-100 shadow-sm p-6 space-y-5">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-100">
+                            <span class="iconify text-white text-2xl" data-icon="mdi:sparkles"></span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">${esc(label)}</h3>
+                            <p class="text-sm text-gray-500 mt-1">${esc(recommendation)}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-4xl font-black text-orange-500 leading-none">${score}%</div>
+                        <div class="text-xs text-gray-400 font-bold tracking-widest mt-1">MATCH</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-2xl border border-gray-100 p-4 min-h-[140px]">
+                        <p class="text-xs font-black tracking-widest text-gray-400 uppercase">Matched Skills</p>
+                        <div class="mt-3 flex flex-wrap gap-2">${matchedSkills.length ? matchedSkills.map(s => `<span class="px-3 py-1 rounded-full bg-green-50 text-green-700 border border-green-100 text-sm font-semibold">${esc(s)}</span>`).join('') : '<span class="text-gray-400 text-sm">None detected</span>'}</div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 p-4 min-h-[140px]">
+                        <p class="text-xs font-black tracking-widest text-gray-400 uppercase">Missing Skills</p>
+                        <div class="mt-3 flex flex-wrap gap-2">${missingSkills.length ? missingSkills.map(s => `<span class="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-sm font-semibold">${esc(s)}</span>`).join('') : '<span class="text-gray-400 text-sm">None</span>'}</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-xs font-black tracking-widest text-gray-400 uppercase">Reasoning Summary</p>
+                        <span class="text-[10px] px-2 py-1 rounded-full bg-blue-50 text-blue-600 font-bold">Scroll</span>
+                    </div>
+                    <div class="max-h-40 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                        ${renderThinkingTrace(cot)}
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600 leading-relaxed bg-gray-50 rounded-xl p-4">
+                    ${esc(match?.explanation || '')}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-500">
+                    <div class="bg-white border border-gray-100 rounded-xl p-3">Current peak hours: <span class="font-bold text-gray-800">${Number(match?.currentPeakWeeklyHours || 0).toFixed(1)}h</span></div>
+                    <div class="bg-white border border-gray-100 rounded-xl p-3">Projected peak hours: <span class="font-bold text-gray-800">${Number(match?.projectedPeakWeeklyHours || 0).toFixed(1)}h</span></div>
+                    <div class="bg-white border border-gray-100 rounded-xl p-3">Workload risk: <span class="font-bold text-gray-800">${esc(match?.workloadRisk || 'LOW')}</span></div>
+                </div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest font-bold">Required skills: ${requiredSkills.length ? requiredSkills.map(esc).join(', ') : 'None detected'}</div>
+            </div>
+        `;
+    }
+
+    async function loadMatch() {
+        if (!appId) return;
+        const mount = document.getElementById('matchMount');
+        if (!mount) return;
+        mount.innerHTML = '<div class="text-gray-400 text-sm">Calling API...</div>';
+        try {
+            const result = await API.post('/api/jobs/' + currentJobId + '/match', { applicationId: appId, model: selectedModel });
+            currentMatch = result;
+            mount.innerHTML = renderMatchCard(result);
+        } catch (err) {
+            mount.innerHTML = '<div class="text-red-500 text-sm">API call failed, please try again.</div>';
+            showToast(err.message || 'Match API failed', 'error');
+        }
+    }
 
     function coverLetterToHtml(text) {
         const raw = String(text || '');
