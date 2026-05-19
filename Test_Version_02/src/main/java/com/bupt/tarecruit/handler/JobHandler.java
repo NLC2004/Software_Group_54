@@ -364,7 +364,7 @@ public class JobHandler extends BaseHandler {
                 m.put("applicantStudentId", applicant.studentId);
                 m.put("applicantSchool", applicant.school);
                 m.put("applicantDegree", applicant.degree);
-                m.put("aiMatch", new AiMatchingService(ds).match(job, applicant, a.coverLetter, a));
+                m.put("aiMatch", null);
             } else {
                 m.put("applicantName", "Unknown");
             }

@@ -1422,5 +1422,189 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1778659221548
+  },
+  {
+    "id": "8c860f2f",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779161817046
+  },
+  {
+    "id": "7291db4b",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: 231225557",
+    "createdAt": 1779161870950
+  },
+  {
+    "id": "ee271c12",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: 231225557",
+    "createdAt": 1779161878088
+  },
+  {
+    "id": "1ddc69c5",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: 231225557",
+    "createdAt": 1779161882542
+  },
+  {
+    "id": "9bc1313d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: 231225557",
+    "createdAt": 1779161894953
+  },
+  {
+    "id": "5091b8b6",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: 231225557",
+    "createdAt": 1779161898948
+  },
+  {
+    "id": "799f899d",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779161936698
+  },
+  {
+    "id": "7caca6bf",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779162100930
+  },
+  {
+    "id": "97a734c8",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779165039473
+  },
+  {
+    "id": "4e7504c3",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779168511021
+  },
+  {
+    "id": "bff777cf",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779168672988
+  },
+  {
+    "id": "c370a0a4",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779168749028
+  },
+  {
+    "id": "fc84ae38",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779168817039
+  },
+  {
+    "id": "b973e539",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779168853846
+  },
+  {
+    "id": "a3ee11c5",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779168969316
+  },
+  {
+    "id": "964860d9",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779169181508
+  },
+  {
+    "id": "e23dfb9b",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779169436478
+  },
+  {
+    "id": "db86c44c",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779170091611
+  },
+  {
+    "id": "f42f0511",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779170941816
+  },
+  {
+    "id": "acbef452",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779171269973
+  },
+  {
+    "id": "9a9fa760",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779171723249
+  },
+  {
+    "id": "7552780b",
+    "userId": "mo001",
+    "username": "teacher01",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779172029380
+  },
+  {
+    "id": "45ec5ae0",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779172241370
   }
 ]

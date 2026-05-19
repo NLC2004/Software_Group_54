@@ -150,6 +150,35 @@ Back to Admin
     </div>
 </div>
 
+<div class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4" id="aiMatchModal" style="z-index:60;">
+<div class="bg-white w-full max-w-lg rounded-[1.5rem] shadow-2xl border border-gray-100 overflow-hidden">
+<div class="p-5 border-b border-gray-100 flex items-center justify-between">
+<div>
+<h3 class="text-lg font-bold text-gray-900">AI Match Assistant</h3>
+<p class="text-xs text-gray-400 mt-1" id="aiMatchSub">Select a model and run analysis</p>
+</div>
+<button class="p-2 hover:bg-gray-100 rounded-xl text-gray-500" id="closeAiMatchBtn" type="button">
+<span class="iconify text-xl" data-icon="mdi:close"></span>
+</button>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<label class="text-xs text-gray-400 uppercase font-bold tracking-wider">Model</label>
+<select class="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-700 bg-white" id="aiMatchModel">
+<option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+<option value="qwen-plus">Qwen Plus</option>
+<option value="gpt-5-mini">GPT-5 Mini</option>
+</select>
+</div>
+<button class="w-full px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" id="runAiMatchBtn" type="button">
+<span class="iconify" data-icon="mdi:creation"></span>
+                        Run AI Match
+                    </button>
+<div class="hidden" id="aiMatchResult"></div>
+</div>
+</div>
+</div>
+
 <script src="/js/api.js"></script>
 <script>
         let jobId = null;
@@ -157,6 +186,7 @@ Back to Admin
         let currentPortalUser = null;
         let moApplicantSort = 'priority-asc';
         let moPriority1Only = false;
+        let aiMatchTargetAppId = null;
         let moPendingOnly = false;
 
         (async function init() {
@@ -440,17 +470,25 @@ Back to Admin
                 const priorityBadgeClass = priorityValue > 0
                     ? 'bg-indigo-50 text-indigo-600 border-indigo-100'
                     : 'bg-gray-100 text-gray-500 border-gray-200';
-                const match = app.aiMatch || {};
-                const matchScore = Number(match.score || 0);
-                const matchClass = matchScore >= 80
-                    ? 'bg-green-50 text-green-700 border-green-100'
-                    : matchScore >= 60
-                        ? 'bg-blue-50 text-blue-700 border-blue-100'
-                        : 'bg-amber-50 text-amber-700 border-amber-100';
+                const match = app.aiMatch;
+                const hasMatch = match && typeof match.score === 'number';
+                const matchScore = hasMatch ? Number(match.score) : 0;
+                const matchClass = hasMatch
+                    ? (matchScore >= 80
+                        ? 'bg-green-50 text-green-700 border-green-100'
+                        : matchScore >= 60
+                            ? 'bg-blue-50 text-blue-700 border-blue-100'
+                            : 'bg-amber-50 text-amber-700 border-amber-100')
+                    : 'bg-gray-100 text-gray-400 border-gray-200';
+                const matchBadge = hasMatch
+                    ? `AI ${matchScore}% &middot; ${esc(match.label || 'Match')}`
+                    : 'AI Match: Not run';
 
                 const cvButton = app.cvFileName
                     ? `<button onclick="event.stopPropagation(); viewCV('${safeJsStr(app.cvFileName)}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100" title="View CV"><span class="iconify text-xl" data-icon="solar:document-bold"></span></button>`
                     : '';
+
+                const aiMatchButton = `<button onclick="event.stopPropagation(); openAiMatchModal('${safeJsStr(app.id)}')" class="p-2 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100" title="AI Match"><span class="iconify text-xl" data-icon="mdi:creation"></span></button>`;
 
                 const actionButtons = app.status === 'PENDING' ? `
                     <button onclick="updateAppStatus('${safeJsStr(app.id)}', 'APPROVED')" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100" title="Approve"><span class="iconify text-xl" data-icon="solar:check-read-bold"></span></button>
@@ -468,7 +506,7 @@ Back to Admin
                             <p class="text-xs text-gray-400">${esc(app.applicantEmail || '')} ${app.applicantStudentId ? '&middot; ID: ' + esc(app.applicantStudentId) : ''}</p>
                             <div class="mt-2 flex flex-wrap gap-2">
                                 <span class="inline-flex px-3 py-1 rounded-full border text-[11px] font-bold ${priorityBadgeClass}">${esc(priorityLabel)}</span>
-                                <span class="inline-flex px-3 py-1 rounded-full border text-[11px] font-bold ${matchClass}">AI ${matchScore}% · ${esc(match.label || 'Match')}</span>
+                                <span class="inline-flex px-3 py-1 rounded-full border text-[11px] font-bold ${matchClass}">${matchBadge}</span>
                             </div>
                             <p class="text-[10px] text-gray-300 mt-1">${app.createdAt ? timeAgo(app.createdAt) : ''}</p>
                         </div>
@@ -479,6 +517,7 @@ Back to Admin
                             <div class="text-lg font-black ${statusColor}">${esc(app.status || 'PENDING')}</div>
                         </div>
                         <div class="flex space-x-2">
+                            ${aiMatchButton}
                             ${cvButton}
                             ${actionButtons}
                         </div>
@@ -713,6 +752,60 @@ Back to Admin
                 showToast(err.message || 'Failed to open CV', 'error');
             }
         }
+
+        function openAiMatchModal(appId) {
+            aiMatchTargetAppId = appId;
+            document.getElementById('aiMatchResult').classList.add('hidden');
+            document.getElementById('aiMatchSub').textContent = 'Select a model and run analysis';
+            const modal = document.getElementById('aiMatchModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAiMatchModal() {
+            const modal = document.getElementById('aiMatchModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            aiMatchTargetAppId = null;
+        }
+
+        async function runAiMatch() {
+            const model = document.getElementById('aiMatchModel').value;
+            const btn = document.getElementById('runAiMatchBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="iconify animate-spin" data-icon="mdi:loading"></span> Analyzing...';
+
+            try {
+                const result = await API.post('/api/jobs/' + jobId + '/match', {
+                    applicationId: aiMatchTargetAppId,
+                    model: model
+                });
+
+                const app = (currentApplications || []).find(a => String(a.id) === String(aiMatchTargetAppId));
+                if (app) {
+                    app.aiMatch = result;
+                }
+
+                const resultDiv = document.getElementById('aiMatchResult');
+                resultDiv.innerHTML = renderAiMatchDetail(result);
+                resultDiv.classList.remove('hidden');
+
+                renderApplicants(currentApplications);
+
+                document.getElementById('aiMatchSub').textContent = 'Model: ' + model + ' · Result ready';
+            } catch (err) {
+                showToast(err.message || 'AI match failed', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="iconify" data-icon="mdi:creation"></span> Run AI Match';
+            }
+        }
+
+        document.getElementById('closeAiMatchBtn').addEventListener('click', closeAiMatchModal);
+        document.getElementById('aiMatchModal').addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'aiMatchModal') closeAiMatchModal();
+        });
+        document.getElementById('runAiMatchBtn').addEventListener('click', runAiMatch);
 
         document.getElementById('closeAppDetailBtn').addEventListener('click', closeApplicationDetail);
         document.getElementById('appDetailModal').addEventListener('click', (e) => {
