@@ -437,9 +437,6 @@ let endDatePicker = null;
         await refreshBasicStatsBellDot();
         showToast('Statistics refreshed', 'success');
     });
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') loadStats();
-    });
     document.getElementById('btnExportTaskSearch')?.addEventListener('click', function() {
         exportTaskPage = 1;
         loadExportTasks();

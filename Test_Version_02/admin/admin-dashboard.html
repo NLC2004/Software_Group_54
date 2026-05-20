@@ -730,12 +730,6 @@
         icon.classList.remove('animate-spin');
       });
     }
-    document.addEventListener('visibilitychange', function() {
-      if (document.visibilityState === 'visible') {
-        Promise.all([renderDashboardLive(), loadDashboardPanels()]).catch(function() {});
-        refreshHeaderBellDot().catch(function() {});
-      }
-    });
   })();
 
   async function refreshHeaderBellDot() {
@@ -803,7 +797,6 @@
     if (btnAll) btnAll.onclick = () => setReminderMode('all');
     setReminderMode('critical');
   }
-  setupDashboardInteractions();
 
   function appendReminderItem(reminderList, html) {
     reminderList.insertAdjacentHTML('beforeend', html);
