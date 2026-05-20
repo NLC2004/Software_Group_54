@@ -100,7 +100,40 @@ class AdWorkloadAndStatsStoriesTest {
         String body = ex.getResponseBodyAsString();
         assertTrue(body.contains("activePreferenceUsage"));
         assertTrue(body.contains("taPriorityDistribution"));
+        assertTrue(body.contains("applicationsBySchool"));
         assertTrue(body.contains("totalQuota"));
+        assertTrue(body.contains("dailyTrend"));
+        assertTrue(body.contains("dailyApplicationTrend"));
+        assertTrue(body.contains("openJobs"));
+    }
+
+    @Test
+    void ad04_statsOpenJobsShouldReflectAllLiveJobsNotOnlyCreatedInPeriod() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User admin = ds.getUserByUsername("admin");
+        User mo = addMo(ds, "live_stats_mo");
+        Job oldJob = addJob(ds, mo, "Old Job", 4);
+        oldJob.createdAt = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 120;
+        ds.updateJob(oldJob);
+        Job newJob = addJob(ds, mo, "New Job", 3);
+
+        String token = ds.createSession(admin.id);
+        AdminHandler handler = new AdminHandler(ds);
+        long thirtyDaysAgo = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30;
+        String start = java.time.Instant.ofEpochMilli(thirtyDaysAgo).atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate().toString();
+        String end = java.time.LocalDate.now().toString();
+        TestHttpExchange ex = new TestHttpExchange("GET", "/api/admin/stats?startDate=" + start + "&endDate=" + end,
+                null, null);
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(200, ex.getResponseCode());
+        String body = ex.getResponseBodyAsString();
+        assertTrue(body.contains("\"openJobs\":2"), body);
+        assertTrue(body.contains("\"totalJobs\":1"), body);
+        assertTrue(body.contains("\"newJobsInPeriod\":1"), body);
     }
 
     private User addTa(DataService ds, String username, String school) {

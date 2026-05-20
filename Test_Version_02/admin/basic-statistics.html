@@ -114,27 +114,29 @@
 <!-- Scrollable Content -->
 <div class="flex-1 overflow-y-auto p-8 space-y-8 bg-[#F0F2F5]">
 <!-- Page Title & Controls -->
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-<div>
-<h1 class="text-2xl font-bold text-gray-900">Basic Statistics Overview</h1>
-<p class="text-gray-500 mt-1">Monitor recruitment performance and export customized data reports.</p>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+<div class="min-w-0 shrink">
+<h1 class="text-xl font-bold text-gray-900 leading-tight">Basic Statistics Overview</h1>
+<p class="text-sm text-gray-500 mt-0.5 leading-snug">Monitor recruitment performance and export customized data reports.</p>
 </div>
-<div class="flex items-center gap-3">
-<div class="flex items-center bg-white border border-gray-200 rounded-xl px-3 py-2 gap-2 shadow-sm">
-<span class="iconify text-gray-400" data-icon="solar:calendar-date-bold"></span>
-<input id="statsStartDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="text" placeholder="YYYY-MM-DD"/>
-<span class="text-gray-300">~</span>
-<input id="statsEndDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-32" type="text" placeholder="YYYY-MM-DD"/>
+<div class="flex flex-wrap items-center gap-2">
+<div class="flex items-center h-9 bg-white border border-gray-200 rounded-lg px-2.5 gap-1.5 shadow-sm">
+<span class="iconify text-gray-400 text-base shrink-0" data-icon="solar:calendar-date-bold"></span>
+<input id="statsStartDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-[7.25rem] p-0" type="text" placeholder="YYYY-MM-DD"/>
+<span class="text-gray-300 text-xs">~</span>
+<input id="statsEndDate" class="bg-transparent border-none focus:ring-0 text-sm font-medium w-[7.25rem] p-0" type="text" placeholder="YYYY-MM-DD"/>
 </div>
-<div class="hidden md:flex items-center gap-1">
-<button type="button" id="btnRange7d" class="px-2.5 py-2 rounded-xl border border-gray-200 bg-white text-xs text-gray-700 hover:bg-gray-50">Last 7d</button>
-<button type="button" id="btnRange30d" class="px-2.5 py-2 rounded-xl border border-gray-200 bg-white text-xs text-gray-700 hover:bg-gray-50">Last 30d</button>
+<div class="hidden sm:flex items-center gap-1">
+<button type="button" id="btnRange7d" class="h-9 px-2.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">7d</button>
+<button type="button" id="btnRange30d" class="h-9 px-2.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">30d</button>
+<button type="button" id="btnRangeAll" class="h-9 px-2.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">All</button>
 </div>
-<button type="button" id="btnApplyDateRange" class="px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 hover:bg-gray-50">Apply</button>
-<button type="button" id="btnExportCoreData" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-200 transition-all font-medium" title="Export users, jobs, and applications">
-<span class="iconify text-lg" data-icon="solar:download-square-bold"></span>
-                        Export Core Data
-                    </button>
+<button type="button" id="btnRefreshStats" class="h-9 px-3 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap" title="Reload latest data from server">Refresh</button>
+<button type="button" id="btnApplyDateRange" class="h-9 px-3 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">Apply</button>
+<button type="button" id="btnExportCoreData" class="h-9 bg-blue-600 hover:bg-blue-700 text-white px-3.5 rounded-lg inline-flex items-center gap-1.5 shadow-md shadow-blue-200/60 transition-all text-sm font-medium whitespace-nowrap" title="Export users, jobs, and applications">
+<span class="iconify text-base shrink-0" data-icon="solar:download-square-bold"></span>
+Export
+</button>
 </div>
 </div>
 <!-- KPI Cards -->
@@ -151,7 +153,7 @@
 </div>
 <div class="mt-4">
 <p class="text-gray-500 text-sm font-medium">Total Applications</p>
-<h3 class="text-3xl font-bold mt-1 tracking-tight">3,842</h3>
+<h3 class="text-3xl font-bold mt-1 tracking-tight">-</h3>
 </div>
 </div>
 <!-- Card 2 -->
@@ -166,7 +168,7 @@
 </div>
 <div class="mt-4">
 <p class="text-gray-500 text-sm font-medium">Ongoing Positions</p>
-<h3 class="text-3xl font-bold mt-1 tracking-tight">126</h3>
+<h3 class="text-3xl font-bold mt-1 tracking-tight">-</h3>
 </div>
 </div>
 <!-- Card 3 -->
@@ -181,7 +183,7 @@
 </div>
 <div class="mt-4">
 <p class="text-gray-500 text-sm font-medium">Closed Positions</p>
-<h3 class="text-3xl font-bold mt-1 tracking-tight">458</h3>
+<h3 class="text-3xl font-bold mt-1 tracking-tight">-</h3>
 </div>
 </div>
 <!-- Card 4 -->
@@ -196,69 +198,94 @@
 </div>
 <div class="mt-4">
 <p class="text-gray-500 text-sm font-medium">Success Rate</p>
-<h3 class="text-3xl font-bold mt-1 tracking-tight">68.4%</h3>
+<h3 class="text-3xl font-bold mt-1 tracking-tight">-</h3>
 </div>
 </div>
 </div>
-<!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<!-- Trend Chart -->
-<div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-<div class="flex items-center justify-between mb-6">
-<h4 class="font-bold text-gray-800">Daily Application Trend</h4>
-<div class="flex gap-2">
-<span class="w-3 h-3 rounded-full bg-blue-500"></span>
-<span class="text-xs text-gray-500">Daily Volume</span>
+<!-- Charts Section (unified panel) -->
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" id="stats-charts-panel">
+<div class="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-slate-50/80 to-white">
+<h4 class="font-bold text-gray-800 text-base">Data Distribution</h4>
+<p class="text-sm text-gray-500 mt-1">Application trends, status breakdown, and TA preference analytics.</p>
 </div>
-</div>
-<div class="w-full h-[300px]" id="trendChart"></div>
-</div>
-<!-- Distribution Chart -->
-<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-<h4 class="font-bold text-gray-800 mb-6">Distribution by School</h4>
-<div class="w-full h-[300px]" id="distChart"></div>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-<div class="flex items-center justify-between mb-6">
+<div class="grid grid-cols-1 lg:grid-cols-2">
+<div class="p-5 sm:p-6 border-b border-gray-100 lg:border-r">
+<div class="flex items-start justify-between gap-4 mb-4">
 <div>
-<h4 class="font-bold text-gray-800">Active Preference Usage</h4>
-<p class="text-xs text-gray-500 mt-1">Current active application preferences by priority.</p>
+<h5 class="font-bold text-gray-800 text-sm sm:text-base">Application Overview</h5>
+<p class="text-sm text-gray-500 mt-1 hidden sm:block">Counts for users, jobs, and application statuses in the selected period.</p>
+</div>
+<div class="flex items-center gap-2 shrink-0 rounded-lg bg-blue-50 px-2.5 py-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+<span class="text-sm font-medium text-blue-700">Daily Volume</span>
 </div>
 </div>
-<div class="w-full h-[300px]" id="activePreferenceChart"></div>
+<div class="w-full h-[280px] sm:h-[300px] min-h-[240px]" id="trendChart"></div>
 </div>
-<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-<div class="flex items-center justify-between mb-6">
-<div>
-<h4 class="font-bold text-gray-800">TA Priority Distribution</h4>
-<p class="text-xs text-gray-500 mt-1">How many TAs currently occupy each preference rank.</p>
+<div class="p-5 sm:p-6 border-b border-gray-100">
+<div class="mb-4">
+<h5 class="font-bold text-gray-800 text-sm sm:text-base">Distribution by School</h5>
+<p class="text-sm text-gray-500 mt-1 hidden sm:block">Applications grouped by applicant school in the selected period.</p>
+</div>
+<div class="w-full h-[280px] sm:h-[300px] min-h-[240px]" id="distChart"></div>
+</div>
+<div class="p-5 sm:p-6 border-b lg:border-b-0 border-gray-100 lg:border-r">
+<div class="mb-4">
+<h5 class="font-bold text-gray-800 text-sm sm:text-base">Active Preference Usage</h5>
+<p class="text-sm text-gray-500 mt-1">Current active application preferences by priority.</p>
+</div>
+<div class="w-full h-[280px] sm:h-[300px] min-h-[240px]" id="activePreferenceChart"></div>
+</div>
+<div class="p-5 sm:p-6">
+<div class="mb-4">
+<h5 class="font-bold text-gray-800 text-sm sm:text-base">TA Priority Distribution</h5>
+<p class="text-sm text-gray-500 mt-1">How many TAs currently occupy each preference rank.</p>
+</div>
+<div class="w-full h-[280px] sm:h-[300px] min-h-[240px]" id="priorityDistributionChart"></div>
 </div>
 </div>
-<div class="w-full h-[300px]" id="priorityDistributionChart"></div>
 </div>
+<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" id="priority-summary-cards">
+<div class="px-6 py-4 border-b border-gray-50">
+<h4 class="font-bold text-gray-800 text-base">Preference Overview</h4>
+<p class="text-sm text-gray-500 mt-1">Active preference usage and TA coverage at a glance.</p>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6" id="priority-summary-cards">
-<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-<p class="text-xs font-bold text-gray-400 uppercase mb-2">Priority 1 in use</p>
-<h3 class="text-2xl font-bold text-gray-900">0</h3>
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+<div class="px-5 py-5 sm:py-6" data-priority-metric="priority1">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
+<p class="text-sm font-bold text-gray-400 uppercase leading-snug">Priority 1 in use</p>
 </div>
-<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-<p class="text-xs font-bold text-gray-400 uppercase mb-2">Priority 2 in use</p>
-<h3 class="text-2xl font-bold text-gray-900">0</h3>
+<h3 class="text-3xl font-bold text-gray-900 tabular-nums tracking-tight">0</h3>
 </div>
-<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-<p class="text-xs font-bold text-gray-400 uppercase mb-2">Priority 3 in use</p>
-<h3 class="text-2xl font-bold text-gray-900">0</h3>
+<div class="px-5 py-5 sm:py-6" data-priority-metric="priority2">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-teal-500 shrink-0"></span>
+<p class="text-sm font-bold text-gray-400 uppercase leading-snug">Priority 2 in use</p>
 </div>
-<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-<p class="text-xs font-bold text-gray-400 uppercase mb-2">TAs with active preferences</p>
-<h3 class="text-2xl font-bold text-gray-900">0</h3>
+<h3 class="text-3xl font-bold text-gray-900 tabular-nums tracking-tight">0</h3>
 </div>
-<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-<p class="text-xs font-bold text-gray-400 uppercase mb-2">TAs without active preferences</p>
-<h3 class="text-2xl font-bold text-gray-900">0</h3>
+<div class="px-5 py-5 sm:py-6" data-priority-metric="priority3">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+<p class="text-sm font-bold text-gray-400 uppercase leading-snug">Priority 3 in use</p>
+</div>
+<h3 class="text-3xl font-bold text-gray-900 tabular-nums tracking-tight">0</h3>
+</div>
+<div class="px-5 py-5 sm:py-6" data-priority-metric="tasWithActive">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+<p class="text-sm font-bold text-gray-400 uppercase leading-snug">TAs with active preferences</p>
+</div>
+<h3 class="text-3xl font-bold text-gray-900 tabular-nums tracking-tight">0</h3>
+</div>
+<div class="px-5 py-5 sm:py-6 col-span-2 sm:col-span-1" data-priority-metric="tasWithoutActive">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-slate-300 shrink-0"></span>
+<p class="text-sm font-bold text-gray-400 uppercase leading-snug">TAs without active preferences</p>
+</div>
+<h3 class="text-3xl font-bold text-gray-900 tabular-nums tracking-tight">0</h3>
+</div>
 </div>
 </div>
 <!-- Table Section: Export History -->
@@ -364,13 +391,9 @@ let endDatePicker = null;
     activeEndDate = endEl ? endEl.value : '';
 
     await loadStats();
+    scheduleChartsResize();
 
-    window.addEventListener('resize', () => {
-        if (trendChart) trendChart.resize();
-        if (distChart) distChart.resize();
-        if (activePreferenceChart) activePreferenceChart.resize();
-        if (priorityDistributionChart) priorityDistributionChart.resize();
-    });
+    window.addEventListener('resize', resizeAllCharts);
 
     document.getElementById('btnExportCoreData')?.addEventListener('click', exportCSV);
     document.getElementById('btnApplyDateRange')?.addEventListener('click', async function() {
@@ -397,6 +420,25 @@ let endDatePicker = null;
         exportTaskPage = 1;
         await loadStats();
         await loadExportTasks();
+    });
+    document.getElementById('btnRangeAll')?.addEventListener('click', async function() {
+        activeStartDate = '';
+        activeEndDate = '';
+        if (startEl) startEl.value = '';
+        if (endEl) endEl.value = '';
+        if (startDatePicker) startDatePicker.clear();
+        if (endDatePicker) endDatePicker.clear();
+        exportTaskPage = 1;
+        await loadStats();
+        await loadExportTasks();
+    });
+    document.getElementById('btnRefreshStats')?.addEventListener('click', async function() {
+        await loadStats();
+        await refreshBasicStatsBellDot();
+        showToast('Statistics refreshed', 'success');
+    });
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') loadStats();
     });
     document.getElementById('btnExportTaskSearch')?.addEventListener('click', function() {
         exportTaskPage = 1;
@@ -533,6 +575,8 @@ async function loadStats() {
         distChart = initDistChart(currentStats);
         activePreferenceChart = initActivePreferenceChart(currentStats);
         priorityDistributionChart = initPriorityDistributionChart(currentStats);
+        updateBasicStatsSyncTime();
+        scheduleChartsResize();
     } catch (e) {
         showToast('Failed to load statistics: ' + e.message, 'error');
         if (window.BASIC_STATS_DATA) {
@@ -541,15 +585,28 @@ async function loadStats() {
             distChart = initDistChart(window.BASIC_STATS_DATA);
             activePreferenceChart = initActivePreferenceChart(window.BASIC_STATS_DATA);
             priorityDistributionChart = initPriorityDistributionChart(window.BASIC_STATS_DATA);
+            scheduleChartsResize();
         }
     }
 }
 
+function resizeAllCharts() {
+    [trendChart, distChart, activePreferenceChart, priorityDistributionChart].forEach(function(chart) {
+        if (chart) chart.resize();
+    });
+}
+
+function scheduleChartsResize() {
+    requestAnimationFrame(function() {
+        requestAnimationFrame(resizeAllCharts);
+    });
+}
+
 function updateStatsCards(stats, previousStats) {
     const cards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 > div');
-    updateMetricCard(cards[0], stats.totalApplications, previousStats.totalApplications, true, 'Total Applications');
-    updateMetricCard(cards[1], stats.openJobs, previousStats.openJobs, true, 'Ongoing Positions');
-    updateMetricCard(cards[2], stats.closedJobs, previousStats.closedJobs, true, 'Closed Positions');
+    updateMetricCard(cards[0], stats.totalApplications, previousStats.totalApplications, true, 'Applications (period)');
+    updateMetricCard(cards[1], stats.openJobs, previousStats.openJobs, false, 'Ongoing Positions (live)');
+    updateMetricCard(cards[2], stats.closedJobs, previousStats.closedJobs, false, 'Closed Positions (live)');
     if (cards[3]) {
         const currentRate = stats.totalApplications
             ? ((Number(stats.approvedApplications || 0) / Number(stats.totalApplications || 1)) * 100)
@@ -562,17 +619,19 @@ function updateStatsCards(stats, previousStats) {
         setMetricDelta(cards[3], currentRate, previousRate, true);
     }
 
-    const priorityCards = document.querySelectorAll('#priority-summary-cards > div');
     const usage = stats.activePreferenceUsage || {};
     const distribution = stats.taPriorityDistribution || {};
-    if (priorityCards[0]) priorityCards[0].querySelector('h3').textContent = Number(usage.priority1 || 0).toLocaleString();
-    if (priorityCards[1]) priorityCards[1].querySelector('h3').textContent = Number(usage.priority2 || 0).toLocaleString();
-    if (priorityCards[2]) priorityCards[2].querySelector('h3').textContent = Number(usage.priority3 || 0).toLocaleString();
-    if (priorityCards[3]) {
-        const withActive = Number(distribution.totalTAsInRange || 0) - Number(distribution.tasWithoutActivePreference || 0);
-        priorityCards[3].querySelector('h3').textContent = Math.max(0, withActive).toLocaleString();
-    }
-    if (priorityCards[4]) priorityCards[4].querySelector('h3').textContent = Number(distribution.tasWithoutActivePreference || 0).toLocaleString();
+    const withActive = Math.max(0, Number(distribution.totalTAsInRange || 0) - Number(distribution.tasWithoutActivePreference || 0));
+    setPrioritySummaryMetric('priority1', usage.priority1);
+    setPrioritySummaryMetric('priority2', usage.priority2);
+    setPrioritySummaryMetric('priority3', usage.priority3);
+    setPrioritySummaryMetric('tasWithActive', withActive);
+    setPrioritySummaryMetric('tasWithoutActive', distribution.tasWithoutActivePreference);
+}
+
+function setPrioritySummaryMetric(key, value) {
+    const el = document.querySelector(`#priority-summary-cards [data-priority-metric="${key}"] h3`);
+    if (el) el.textContent = Number(value || 0).toLocaleString();
 }
 
 function updateMetricCard(card, currentValue, previousValue, isCount, label) {
@@ -608,93 +667,215 @@ function setMetricDelta(card, currentValue, previousValue, isCount) {
     deltaEl.title = previous === null ? 'No previous period available' : 'Compared with previous period';
 }
 
-function initTrendChart(stats) {
-    const chart = echarts.init(document.getElementById('trendChart'));
-    const labels = ['Users', 'Jobs', 'Applications', 'Approved', 'Pending', 'Rejected'];
-    const values = [
-        stats.totalUsers || 0, stats.totalJobs || 0, stats.totalApplications || 0,
-        stats.approvedApplications || 0, stats.pendingApplications || 0, stats.rejectedApplications || 0
-    ];
-    chart.setOption({
-        grid: { top: 20, right: 20, bottom: 40, left: 40, containLabel: true },
-        tooltip: { trigger: 'axis', backgroundColor: '#fff', textStyle: { color: '#000' } },
-        xAxis: {
-            type: 'category', data: labels,
-            axisLine: { lineStyle: { color: '#E5E7EB' } }, axisLabel: { color: '#9CA3AF' }
-        },
-        yAxis: {
-            type: 'value',
-            splitLine: { lineStyle: { type: 'dashed' } }, axisLabel: { color: '#9CA3AF' }
-        },
-        series: [{
-            data: values, type: 'bar',
-            itemStyle: { color: '#3B82F6', borderRadius: [6, 6, 0, 0] }, barWidth: '50%'
-        }]
-    });
+function getOrInitChart(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return null;
+    let chart = echarts.getInstanceByDom(el);
+    if (!chart) chart = echarts.init(el);
     return chart;
 }
 
-function initDistChart(stats) {
-    const chart = echarts.init(document.getElementById('distChart'));
+function initTrendChart(stats) {
+    const chart = getOrInitChart('trendChart');
+    if (!chart) return null;
+    const trend = Array.isArray(stats.dailyTrend) ? stats.dailyTrend : [];
+    chart.clear();
+    if (trend.length) {
+        const labels = trend.map(function(row) { return String(row.date || '').slice(5); });
+        chart.setOption({
+            grid: { top: 32, right: '8%', bottom: 52, left: '8%', containLabel: true },
+            legend: { top: 0, textStyle: { color: '#6B7280', fontSize: 11 } },
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: '#fff',
+                textStyle: { color: '#111827' }
+            },
+            xAxis: {
+                type: 'category',
+                data: labels,
+                boundaryGap: true,
+                axisLine: { lineStyle: { color: '#E5E7EB' } },
+                axisLabel: { color: '#6B7280', fontSize: 11, interval: Math.max(0, Math.floor(labels.length / 8) - 1) }
+            },
+            yAxis: {
+                type: 'value',
+                minInterval: 1,
+                splitLine: { lineStyle: { type: 'dashed', color: '#F3F4F6' } },
+                axisLabel: { color: '#9CA3AF' }
+            },
+            series: [
+                { name: 'Applications', type: 'bar', data: trend.map(function(r) { return Number(r.applications || 0); }), itemStyle: { color: '#3B82F6', borderRadius: [4, 4, 0, 0] }, barMaxWidth: 28 },
+                { name: 'Jobs', type: 'line', smooth: true, data: trend.map(function(r) { return Number(r.jobs || 0); }), itemStyle: { color: '#14B8A6' }, lineStyle: { width: 2 } },
+                { name: 'Users', type: 'line', smooth: true, data: trend.map(function(r) { return Number(r.users || 0); }), itemStyle: { color: '#F59E0B' }, lineStyle: { width: 2 } }
+            ]
+        }, true);
+        chart.resize();
+        return chart;
+    }
+    const items = [
+        { name: 'Users', value: Number(stats.totalUsers || 0) },
+        { name: 'Jobs', value: Number(stats.totalJobs || 0) },
+        { name: 'Applications', value: Number(stats.totalApplications || 0) },
+        { name: 'Approved', value: Number(stats.approvedApplications || 0) },
+        { name: 'Pending', value: Number(stats.pendingApplications || 0) },
+        { name: 'Rejected', value: Number(stats.rejectedApplications || 0) }
+    ];
+    const visible = items.filter(function(item) { return item.value > 0; });
+    const chartItems = visible.length ? visible : items;
+    const labels = chartItems.map(function(item) { return item.name; });
+    const values = chartItems.map(function(item) { return item.value; });
     chart.setOption({
-        tooltip: { trigger: 'item' },
-        legend: { bottom: '0%', left: 'center', itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 10 } },
+        grid: { top: 24, right: '8%', bottom: 52, left: '8%', containLabel: true },
+        tooltip: {
+            trigger: 'axis',
+            backgroundColor: '#fff',
+            textStyle: { color: '#111827' },
+            axisPointer: { type: 'shadow' }
+        },
+        xAxis: {
+            type: 'category',
+            data: labels,
+            boundaryGap: true,
+            axisLine: { lineStyle: { color: '#E5E7EB' } },
+            axisTick: { alignWithLabel: true, lineStyle: { color: '#E5E7EB' } },
+            axisLabel: { color: '#6B7280', fontSize: 12, interval: 0, hideOverlap: false }
+        },
+        yAxis: {
+            type: 'value',
+            minInterval: 1,
+            splitLine: { lineStyle: { type: 'dashed', color: '#F3F4F6' } },
+            axisLabel: { color: '#9CA3AF' }
+        },
         series: [{
-            name: 'Applications', type: 'pie', radius: ['40%', '70%'],
+            name: 'Period totals',
+            data: values,
+            type: 'bar',
+            barMaxWidth: 56,
+            barCategoryGap: '35%',
+            itemStyle: { color: '#3B82F6', borderRadius: [6, 6, 0, 0] }
+        }]
+    }, true);
+    chart.resize();
+    return chart;
+}
+
+function normalizeApplicationsBySchool(stats) {
+    const raw = stats && stats.applicationsBySchool;
+    if (Array.isArray(raw)) return raw;
+    if (raw && typeof raw === 'object') {
+        return Object.keys(raw).map(function(name) {
+            return { name: name, value: raw[name] };
+        });
+    }
+    return null;
+}
+
+function initDistChart(stats) {
+    const chart = getOrInitChart('distChart');
+    if (!chart) return null;
+    const palette = ['#4F46E5', '#14B8A6', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6', '#EC4899', '#3B82F6', '#94A3B8'];
+    const totalApps = Number(stats.totalApplications || 0);
+    const schoolRows = normalizeApplicationsBySchool(stats);
+    const raw = schoolRows || [];
+    const data = raw
+        .filter(function(item) { return Number(item.value || 0) > 0; })
+        .map(function(item, index) {
+            return {
+                value: Number(item.value || 0),
+                name: String(item.name || 'Unknown'),
+                itemStyle: { color: palette[index % palette.length] }
+            };
+        });
+    if (!data.length) {
+        chart.clear();
+        var emptyText = 'No applications in selected period';
+        if (totalApps > 0 && schoolRows === null) {
+            emptyText = 'School data is not available from the server.\nPlease restart the backend and refresh.';
+        } else if (totalApps > 0) {
+            emptyText = 'No school field on applicants.\nData will appear as Unknown once applications exist.';
+        }
+        chart.setOption({
+            tooltip: { show: false },
+            legend: { show: false },
+            title: {
+                text: emptyText,
+                left: 'center',
+                top: 'middle',
+                textStyle: { color: '#9CA3AF', fontSize: 13, fontWeight: 'normal', lineHeight: 20 }
+            }
+        }, true);
+        return chart;
+    }
+    chart.setOption({
+        title: { show: false },
+        tooltip: { trigger: 'item' },
+        legend: { bottom: '0%', left: 'center', itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 12, color: '#6B7280' } },
+        series: [{
+            name: 'Applications by School', type: 'pie', radius: ['40%', '70%'],
             avoidLabelOverlap: false,
             itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
             label: { show: false },
             emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
             labelLine: { show: false },
-            data: [
-                { value: stats.pendingApplications || 0, name: 'Pending', itemStyle: { color: '#F59E0B' } },
-                { value: stats.approvedApplications || 0, name: 'Approved', itemStyle: { color: '#10B981' } },
-                { value: stats.rejectedApplications || 0, name: 'Rejected', itemStyle: { color: '#EF4444' } },
-                { value: stats.withdrawnApplications || 0, name: 'Withdrawn', itemStyle: { color: '#94A3B8' } }
-            ]
+            data: data
         }]
-    });
+    }, true);
     return chart;
 }
 
 function initActivePreferenceChart(stats) {
-    const chart = echarts.init(document.getElementById('activePreferenceChart'));
+    const chart = getOrInitChart('activePreferenceChart');
+    if (!chart) return null;
     const usage = stats.activePreferenceUsage || {};
+    const items = [
+        { name: 'Priority 1', value: Number(usage.priority1 || 0), color: '#4F46E5' },
+        { name: 'Priority 2', value: Number(usage.priority2 || 0), color: '#14B8A6' },
+        { name: 'Priority 3', value: Number(usage.priority3 || 0), color: '#F59E0B' },
+        { name: 'No Priority', value: Number(usage.withoutPriority || 0), color: '#94A3B8' }
+    ];
+    const visible = items.filter(function(item) { return item.value > 0; });
+    const chartItems = visible.length ? visible : items;
+    chart.clear();
     chart.setOption({
-        tooltip: { trigger: 'axis' },
-        grid: { top: 20, right: 20, bottom: 40, left: 40, containLabel: true },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { top: 24, right: '8%', bottom: 52, left: '8%', containLabel: true },
         xAxis: {
             type: 'category',
-            data: ['Priority 1', 'Priority 2', 'Priority 3', 'No Priority'],
+            data: chartItems.map(function(item) { return item.name; }),
+            boundaryGap: true,
             axisLine: { lineStyle: { color: '#E5E7EB' } },
-            axisLabel: { color: '#9CA3AF' }
+            axisTick: { alignWithLabel: true, lineStyle: { color: '#E5E7EB' } },
+            axisLabel: { color: '#6B7280', fontSize: 12, interval: 0 }
         },
         yAxis: {
             type: 'value',
-            splitLine: { lineStyle: { type: 'dashed' } },
+            minInterval: 1,
+            splitLine: { lineStyle: { type: 'dashed', color: '#F3F4F6' } },
             axisLabel: { color: '#9CA3AF' }
         },
         series: [{
-            data: [usage.priority1 || 0, usage.priority2 || 0, usage.priority3 || 0, usage.withoutPriority || 0],
+            data: chartItems.map(function(item) {
+                return {
+                    value: item.value,
+                    itemStyle: { color: item.color, borderRadius: [8, 8, 0, 0] }
+                };
+            }),
             type: 'bar',
-            barWidth: '45%',
-            itemStyle: {
-                color: function(params) {
-                    return ['#4F46E5', '#14B8A6', '#F59E0B', '#94A3B8'][params.dataIndex] || '#3B82F6';
-                },
-                borderRadius: [8, 8, 0, 0]
-            }
+            barMaxWidth: 56,
+            barCategoryGap: '35%'
         }]
-    });
+    }, true);
+    chart.resize();
     return chart;
 }
 
 function initPriorityDistributionChart(stats) {
-    const chart = echarts.init(document.getElementById('priorityDistributionChart'));
+    const chart = getOrInitChart('priorityDistributionChart');
+    if (!chart) return null;
     const dist = stats.taPriorityDistribution || {};
     chart.setOption({
         tooltip: { trigger: 'item' },
-        legend: { bottom: '0%', left: 'center', itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 10 } },
+        legend: { bottom: '0%', left: 'center', itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 12, color: '#6B7280' } },
         series: [{
             name: 'TAs',
             type: 'pie',

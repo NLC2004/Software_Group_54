@@ -174,14 +174,14 @@
             <span class="iconify w-6 h-6" data-icon="heroicons:briefcase"></span>
           </div>
           <h3 class="font-bold text-slate-800">Job Post Review</h3>
-          <p class="text-xs text-slate-500 mt-1">Pending: 12 positions</p>
+          <p class="text-xs text-slate-500 mt-1" data-qa="open-jobs">Open: —</p>
         </a>
         <a class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition-all group" href="workload-overview.html">
           <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
             <span class="iconify w-6 h-6" data-icon="heroicons:chart-bar"></span>
           </div>
           <h3 class="font-bold text-slate-800">Workload Verification</h3>
-          <p class="text-xs text-slate-500 mt-1">3 departments pending</p>
+          <p class="text-xs text-slate-500 mt-1" data-qa="overload">Overloaded: —</p>
         </a>
         <a class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-amber-500 hover:shadow-lg transition-all group" href="basic-statistics.html">
           <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 mb-4 group-hover:bg-amber-600 group-hover:text-white transition-colors">
@@ -195,7 +195,7 @@
             <span class="iconify w-6 h-6" data-icon="heroicons:user-group"></span>
           </div>
           <h3 class="font-bold text-slate-800">TA Directory</h3>
-          <p class="text-xs text-slate-500 mt-1">Total: 1,280+ TAs</p>
+          <p class="text-xs text-slate-500 mt-1" data-qa="tas">Total TAs: —</p>
         </a>
       </div>
 
@@ -207,14 +207,14 @@
             <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <span class="iconify w-6 h-6" data-icon="heroicons:user-group"></span>
             </div>
-            <span class="px-2 py-1 text-[10px] font-bold rounded bg-emerald-50 text-emerald-600 flex items-center gap-1">
-              <span class="iconify w-3 h-3" data-icon="heroicons:arrow-trending-up"></span> +8.2%
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-slate-100 text-slate-500 flex items-center gap-1" data-stat-badge="users" title="Live from server">
+              <span class="iconify w-3 h-3" data-icon="heroicons:signal"></span> Live
             </span>
           </div>
           <div class="mt-4">
             <p class="text-sm font-medium text-slate-500">Total Users</p>
             <h3 class="text-2xl font-bold text-slate-900 mt-1" id="adm-stat-users">—</h3>
-            <p class="text-xs text-slate-400 mt-2">Active: 4,291 this week</p>
+            <p class="text-xs text-slate-400 mt-2" data-stat-sub="users">Active: —</p>
           </div>
         </div>
 
@@ -224,14 +224,14 @@
             <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <span class="iconify w-6 h-6" data-icon="heroicons:briefcase"></span>
             </div>
-            <span class="px-2 py-1 text-[10px] font-bold rounded bg-blue-50 text-blue-600 flex items-center gap-1">
-              <span class="iconify w-3 h-3" data-icon="heroicons:minus"></span> 0.0%
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-slate-100 text-slate-500 flex items-center gap-1" data-stat-badge="jobs">
+              <span class="iconify w-3 h-3" data-icon="heroicons:signal"></span> Live
             </span>
           </div>
           <div class="mt-4">
             <p class="text-sm font-medium text-slate-500">Open Jobs</p>
             <h3 class="text-2xl font-bold text-slate-900 mt-1" id="adm-stat-openjobs">—</h3>
-            <p class="text-xs text-slate-400 mt-2">12 positions closing today</p>
+            <p class="text-xs text-slate-400 mt-2" data-stat-sub="jobs">Closed: —</p>
           </div>
         </div>
 
@@ -241,14 +241,14 @@
             <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <span class="iconify w-6 h-6" data-icon="heroicons:document-text"></span>
             </div>
-            <span class="px-2 py-1 text-[10px] font-bold rounded bg-green-50 text-green-600 flex items-center gap-1">
-              <span class="iconify w-3 h-3" data-icon="heroicons:arrow-trending-up"></span> +12.5%
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-slate-100 text-slate-500 flex items-center gap-1" data-stat-badge="apps">
+              <span class="iconify w-3 h-3" data-icon="heroicons:signal"></span> 30d
             </span>
           </div>
           <div class="mt-4">
             <p class="text-sm font-medium text-slate-500">Total Applications</p>
             <h3 class="text-2xl font-bold text-slate-900 mt-1" id="adm-stat-apps">—</h3>
-            <p class="text-xs text-slate-400 mt-2">Avg. 5.26 per position</p>
+            <p class="text-xs text-slate-400 mt-2" data-stat-sub="apps">Pending (30d): —</p>
           </div>
         </div>
 
@@ -258,14 +258,14 @@
             <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <span class="iconify w-6 h-6" data-icon="heroicons:exclamation-triangle"></span>
             </div>
-            <span class="px-2 py-1 text-[10px] font-bold rounded bg-red-50 text-red-600 flex items-center gap-1">
-              <span class="iconify w-3 h-3" data-icon="heroicons:arrow-trending-up"></span> +8
+            <span class="px-2 py-1 text-[10px] font-bold rounded bg-slate-100 text-slate-500 flex items-center gap-1" data-stat-badge="overload">
+              <span class="iconify w-3 h-3" data-icon="heroicons:signal"></span> Live
             </span>
           </div>
           <div class="mt-4">
             <p class="text-sm font-medium text-slate-500">Overloaded TAs</p>
             <h3 class="text-2xl font-bold text-slate-900 mt-1" id="adm-stat-overload">—</h3>
-            <p class="text-xs text-slate-400 mt-2">Contract hours limit exceeded</p>
+            <p class="text-xs text-slate-400 mt-2" data-stat-sub="overload">Pwd resets pending: —</p>
           </div>
         </div>
       </div>
@@ -278,7 +278,7 @@
             <h4 class="font-bold text-slate-800">Live Application Analytics</h4>
             <div class="flex items-center gap-2">
               <span class="flex items-center gap-1 text-xs text-slate-500"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Last 30 Days</span>
-              <span class="flex items-center gap-1 text-xs text-slate-500 ml-4"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Live Status Split</span>
+              <span class="flex items-center gap-1 text-xs text-slate-500 ml-4"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Status (30d)</span>
             </div>
           </div>
           <div class="grid grid-cols-1 xl:grid-cols-5 gap-4">
@@ -488,7 +488,7 @@
           <span class="flex items-center gap-1"><span class="iconify" data-icon="heroicons:map-pin"></span> Main Campus Node #14</span>
           <span class="flex items-center gap-1 font-medium text-slate-500">
             <span class="iconify" data-icon="heroicons:arrow-path" id="syncIcon"></span>
-            Last updated: 2026-03-21 09:30:11
+            Last updated: <span id="dashboardLastSync">—</span>
           </span>
         </div>
       </div>
@@ -499,94 +499,128 @@
   <script>
   let trendChart;
   let statusPieChart;
+  const DASHBOARD_RANGE_DAYS = 30;
 
-  function buildStatusCounts(apps) {
-    const counts = { pending: 0, approved: 0, rejected: 0, withdrawn: 0 };
-    (apps || []).forEach(a => {
-      const s = String(a.status || '').toUpperCase();
-      if (s === 'PENDING') counts.pending++;
-      else if (s === 'APPROVED') counts.approved++;
-      else if (s === 'REJECTED') counts.rejected++;
-      else if (s === 'WITHDRAWN') counts.withdrawn++;
-    });
-    return counts;
+  function toDateInputValue(d) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return yyyy + '-' + mm + '-' + dd;
   }
 
-  function buildDailySeries(apps, days) {
-    const dayMs = 24 * 60 * 60 * 1000;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const start = new Date(today.getTime() - (days - 1) * dayMs);
+  function buildLastNDaysStatsQuery(days) {
+    const end = new Date();
+    const start = new Date(end.getTime() - (days - 1) * 24 * 60 * 60 * 1000);
+    const p = new URLSearchParams();
+    p.set('startDate', toDateInputValue(start));
+    p.set('endDate', toDateInputValue(end));
+    return '?' + p.toString();
+  }
 
-    const labels = [];
-    const totalSeries = [];
-    const approvedSeries = [];
-    for (let i = 0; i < days; i++) {
-      const d = new Date(start.getTime() + i * dayMs);
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const dd = String(d.getDate()).padStart(2, '0');
-      labels.push(`${m}-${dd}`);
-      totalSeries.push(0);
-      approvedSeries.push(0);
-    }
-
-    (apps || []).forEach(a => {
-      const ts = Number(a.createdAt || 0);
-      if (!ts) return;
-      const d = new Date(ts);
-      d.setHours(0, 0, 0, 0);
-      const idx = Math.floor((d.getTime() - start.getTime()) / dayMs);
-      if (idx < 0 || idx >= days) return;
-      totalSeries[idx] += 1;
-      if (String(a.status || '').toUpperCase() === 'APPROVED') approvedSeries[idx] += 1;
+  function formatDashboardTrendLabels(trend) {
+    return (trend || []).map(function(row) {
+      const date = String(row.date || '');
+      return date.length >= 10 ? date.slice(5) : date;
     });
+  }
 
-    return { labels, totalSeries, approvedSeries };
+  function buildFallbackDailyTrend(days) {
+    const rows = [];
+    const end = new Date();
+    end.setHours(0, 0, 0, 0);
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(end.getTime() - i * 24 * 60 * 60 * 1000);
+      rows.push({
+        date: toDateInputValue(d),
+        submitted: 0,
+        approved: 0
+      });
+    }
+    return rows;
+  }
+
+  function scheduleChartResize() {
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        if (trendChart) trendChart.resize();
+        if (statusPieChart) statusPieChart.resize();
+      });
+    });
+  }
+
+  function updateDashboardSyncTime() {
+    const el = document.getElementById('dashboardLastSync');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 8);
   }
 
   async function renderDashboardLive() {
-    const [stats, apps] = await Promise.all([
-      API.get('/api/admin/stats'),
-      API.get('/api/applications')
-    ]);
-    const liveApps = Array.isArray(apps) ? apps : [];
-    const statusCounts = buildStatusCounts(liveApps);
+    const stats = await API.get('/api/admin/stats' + buildLastNDaysStatsQuery(DASHBOARD_RANGE_DAYS));
+    if (!stats) return;
 
-    const statsCards = document.querySelectorAll('#stats-grid > div');
-    if (statsCards[0]) {
-      statsCards[0].querySelector('h3').textContent = (stats.totalUsers || 0).toLocaleString();
-      statsCards[0].querySelector('.mt-4 p:last-child').textContent = 'Active: ' + (stats.activeUsers || 0).toLocaleString() + ' this week';
+    const statusCounts = {
+      pending: Number(stats.pendingApplications || 0),
+      approved: Number(stats.approvedApplications || 0),
+      rejected: Number(stats.rejectedApplications || 0),
+      withdrawn: Number(stats.withdrawnApplications || 0)
+    };
+
+    const usersEl = document.getElementById('adm-stat-users');
+    const openJobsEl = document.getElementById('adm-stat-openjobs');
+    const appsEl = document.getElementById('adm-stat-apps');
+    const overloadEl = document.getElementById('adm-stat-overload');
+    if (usersEl) usersEl.textContent = (stats.totalUsersAll ?? stats.totalUsers ?? 0).toLocaleString();
+    if (openJobsEl) openJobsEl.textContent = (stats.openJobs || 0).toLocaleString();
+    if (appsEl) appsEl.textContent = (stats.totalApplications ?? 0).toLocaleString();
+    if (overloadEl) overloadEl.textContent = (stats.overloadedTAs || 0).toLocaleString();
+
+    const subUsers = document.querySelector('[data-stat-sub="users"]');
+    const subJobs = document.querySelector('[data-stat-sub="jobs"]');
+    const subApps = document.querySelector('[data-stat-sub="apps"]');
+    if (subUsers) subUsers.textContent = 'Active: ' + (stats.activeUsersAll ?? stats.activeUsers ?? 0).toLocaleString();
+    if (subJobs) subJobs.textContent = 'Closed: ' + (stats.closedJobs || 0).toLocaleString() + ' · All jobs: ' + (stats.totalJobsAll ?? stats.totalJobs ?? 0);
+    if (subApps) subApps.textContent = 'Pending (30d): ' + statusCounts.pending.toLocaleString() + ' · All: ' + (stats.totalApplicationsAll ?? 0);
+
+    const qaOpen = document.querySelector('[data-qa="open-jobs"]');
+    const qaOverload = document.querySelector('[data-qa="overload"]');
+    const qaTas = document.querySelector('[data-qa="tas"]');
+    if (qaOpen) qaOpen.textContent = 'Open: ' + (stats.openJobs || 0) + ' positions';
+    if (qaOverload) qaOverload.textContent = 'Overloaded: ' + (stats.overloadedTAs || 0) + ' TAs';
+    if (qaTas) qaTas.textContent = 'Total TAs: ' + (stats.totalTAsAll ?? stats.totalTAs ?? 0);
+    const subOverload = document.querySelector('[data-stat-sub="overload"]');
+    if (subOverload) subOverload.textContent = 'Pwd resets pending: ' + (stats.pendingPasswordResets || 0);
+
+    const lineEl = document.getElementById('lineTrendChart');
+    const pieEl = document.getElementById('statusPieChart');
+    if (typeof echarts === 'undefined') {
+      throw new Error('ECharts library failed to load');
     }
-    if (statsCards[1]) {
-      statsCards[1].querySelector('h3').textContent = (stats.openJobs || 0).toLocaleString();
-      statsCards[1].querySelector('.mt-4 p:last-child').textContent = 'Closed: ' + (stats.closedJobs || 0).toLocaleString();
+    if (lineEl) {
+      trendChart = echarts.getInstanceByDom(lineEl) || echarts.init(lineEl);
     }
-    if (statsCards[2]) {
-      statsCards[2].querySelector('h3').textContent = liveApps.length.toLocaleString();
-      statsCards[2].querySelector('.mt-4 p:last-child').textContent = 'Pending: ' + statusCounts.pending.toLocaleString();
-    }
-    if (statsCards[3]) {
-      statsCards[3].querySelector('h3').textContent = (stats.overloadedTAs || 0).toLocaleString();
-      statsCards[3].querySelector('.mt-4 p:last-child').textContent = 'Pwd resets pending: ' + (stats.pendingPasswordResets || 0);
+    if (pieEl) {
+      statusPieChart = echarts.getInstanceByDom(pieEl) || echarts.init(pieEl);
     }
 
-    const qaCards = document.querySelectorAll('#quick-actions > a, #quick-actions > div');
-    if (qaCards[0]) qaCards[0].querySelector('p:last-child').textContent = 'Open: ' + (stats.openJobs || 0) + ' positions';
-    if (qaCards[1]) qaCards[1].querySelector('p:last-child').textContent = 'Overloaded: ' + (stats.overloadedTAs || 0) + ' TAs';
-    if (qaCards[3]) qaCards[3].querySelector('p:last-child').textContent = 'Total: ' + (stats.totalTAs || 0) + ' TAs';
+    let trend = Array.isArray(stats.dailyApplicationTrend) ? stats.dailyApplicationTrend : [];
+    if (!trend.length) {
+      trend = buildFallbackDailyTrend(DASHBOARD_RANGE_DAYS);
+    }
+    const labels = formatDashboardTrendLabels(trend);
+    const submittedSeries = trend.map(function(r) { return Number(r.submitted || 0); });
+    const approvedSeries = trend.map(function(r) { return Number(r.approved || 0); });
 
-    if (!trendChart) trendChart = echarts.init(document.getElementById('lineTrendChart'));
-    if (!statusPieChart) statusPieChart = echarts.init(document.getElementById('statusPieChart'));
-
-    const daily = buildDailySeries(liveApps, 30);
+    if (!trendChart) {
+      console.warn('lineTrendChart container not found');
+    } else {
     trendChart.setOption({
-      grid: { top: 30, left: 40, right: 20, bottom: 35 },
+      grid: { top: 36, left: 44, right: 16, bottom: 40, containLabel: true },
       tooltip: { trigger: 'axis' },
-      legend: { top: 0, data: ['Applications', 'Approved'] },
+      legend: { top: 0, data: ['Submitted (TA)', 'Approved (MO)'] },
       xAxis: {
         type: 'category',
-        data: daily.labels,
+        data: labels,
         axisLabel: { color: '#64748b', fontSize: 10 }
       },
       yAxis: {
@@ -597,43 +631,68 @@
       },
       series: [
         {
-          name: 'Applications',
+          name: 'Submitted (TA)',
           type: 'line',
           smooth: true,
-          data: daily.totalSeries,
+          data: submittedSeries,
           lineStyle: { color: '#3b82f6', width: 3 },
           itemStyle: { color: '#3b82f6' },
           areaStyle: { color: 'rgba(59,130,246,0.12)' }
         },
         {
-          name: 'Approved',
+          name: 'Approved (MO)',
           type: 'line',
           smooth: true,
-          data: daily.approvedSeries,
+          data: approvedSeries,
           lineStyle: { color: '#10b981', width: 2 },
           itemStyle: { color: '#10b981' }
         }
       ]
-    });
+    }, true);
+    }
 
-    statusPieChart.setOption({
-      tooltip: { trigger: 'item', backgroundColor: '#fff', textStyle: { color: '#000' } },
-      legend: { bottom: 0, left: 'center', textStyle: { fontSize: 11 } },
-      series: [{
-        name: 'Status',
-        type: 'pie',
-        radius: ['38%', '66%'],
-        center: ['50%', '44%'],
-        itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
-        label: { show: true, formatter: '{b}: {c}' },
-        data: [
-          { value: statusCounts.pending, name: 'Pending', itemStyle: { color: '#F59E0B' } },
-          { value: statusCounts.approved, name: 'Approved', itemStyle: { color: '#10B981' } },
-          { value: statusCounts.rejected, name: 'Rejected', itemStyle: { color: '#EF4444' } },
-          { value: statusCounts.withdrawn, name: 'Withdrawn', itemStyle: { color: '#94A3B8' } }
-        ]
-      }]
-    });
+    const pieData = [
+      { value: statusCounts.pending, name: 'Pending', itemStyle: { color: '#F59E0B' } },
+      { value: statusCounts.approved, name: 'Approved', itemStyle: { color: '#10B981' } },
+      { value: statusCounts.rejected, name: 'Rejected', itemStyle: { color: '#EF4444' } },
+      { value: statusCounts.withdrawn, name: 'Withdrawn', itemStyle: { color: '#94A3B8' } }
+    ].filter(function(item) { return Number(item.value || 0) > 0; });
+
+    if (statusPieChart) {
+      if (!pieData.length) {
+        statusPieChart.clear();
+        statusPieChart.setOption({
+          title: {
+            text: 'No applications in last 30 days',
+            left: 'center',
+            top: 'middle',
+            textStyle: { color: '#94a3b8', fontSize: 13, fontWeight: 'normal' }
+          }
+        }, true);
+      } else {
+        statusPieChart.setOption({
+          title: { show: false },
+          tooltip: { trigger: 'item', backgroundColor: '#fff', textStyle: { color: '#000' } },
+          legend: { bottom: 0, left: 'center', textStyle: { fontSize: 11 } },
+          series: [{
+            name: 'Status',
+            type: 'pie',
+            radius: ['38%', '66%'],
+            center: ['50%', '44%'],
+            itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+            label: { show: true, formatter: '{b}: {c}' },
+            labelLine: { show: true, length: 8, length2: 6 },
+            data: pieData
+          }]
+        }, true);
+      }
+      statusPieChart.resize();
+    }
+    if (trendChart) {
+      trendChart.resize();
+    }
+    updateDashboardSyncTime();
+    scheduleChartResize();
   }
 
   (async function() {
@@ -647,28 +706,35 @@
     });
     await refreshHeaderBellDot();
     try {
-      await renderDashboardLive();
+      await Promise.all([renderDashboardLive(), loadDashboardPanels()]);
     } catch (e) {
       showToast('Failed to load dashboard data: ' + e.message, 'error');
     }
 
-    window.addEventListener('resize', () => {
-      if (trendChart) trendChart.resize();
-      if (statusPieChart) statusPieChart.resize();
-    });
+    window.addEventListener('resize', scheduleChartResize);
 
-    document.querySelector('button.bg-blue-600').addEventListener('click', async function() {
-      this.classList.add('opacity-75');
-      const icon = this.querySelector('.iconify');
-      icon.classList.add('animate-spin');
-      try {
-        await renderDashboardLive();
-        showToast('Dashboard data refreshed', 'success');
-      } catch(e) {
-        showToast('Refresh failed: ' + e.message, 'error');
+    const refreshBtn = document.querySelector('button.bg-blue-600');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', async function() {
+        this.classList.add('opacity-75');
+        const icon = this.querySelector('.iconify');
+        icon.classList.add('animate-spin');
+        try {
+          await Promise.all([renderDashboardLive(), loadDashboardPanels()]);
+          await refreshHeaderBellDot();
+          showToast('Dashboard data refreshed', 'success');
+        } catch(e) {
+          showToast('Refresh failed: ' + e.message, 'error');
+        }
+        this.classList.remove('opacity-75');
+        icon.classList.remove('animate-spin');
+      });
+    }
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+        Promise.all([renderDashboardLive(), loadDashboardPanels()]).catch(function() {});
+        refreshHeaderBellDot().catch(function() {});
       }
-      this.classList.remove('opacity-75');
-      icon.classList.remove('animate-spin');
     });
   })();
 
@@ -739,58 +805,90 @@
   }
   setupDashboardInteractions();
 
-  (async function loadLinkedAccountPanels() {
+  function appendReminderItem(reminderList, html) {
+    reminderList.insertAdjacentHTML('beforeend', html);
+  }
+
+  async function loadDashboardPanels() {
     const reminderList = document.getElementById('reminderList');
     const pendingBody = document.getElementById('pendingRequestsBody');
     const actionBadge = document.getElementById('reminderActionBadge');
     if (!reminderList || !pendingBody) return;
 
     try {
-      const [users, resets, workload, notifications] = await Promise.all([
+      const [users, resets, workload, stats, applications, jobs] = await Promise.all([
         API.get('/api/admin/users'),
         API.get('/api/admin/password-resets?status=PENDING'),
         API.get('/api/admin/workload'),
-        API.get('/api/notifications').catch(() => [])
+        API.get('/api/admin/stats' + buildLastNDaysStatsQuery(DASHBOARD_RANGE_DAYS)),
+        API.get('/api/applications'),
+        API.get('/api/jobs')
       ]);
 
       const pendingResets = Array.isArray(resets) ? resets : [];
       const overloadedTas = (Array.isArray(workload) ? workload : []).filter(x => !!x.overloaded);
-      const escalationNotifs = (Array.isArray(notifications) ? notifications : []).filter(n => {
-        const text = String((n && n.title) || '') + ' ' + String((n && n.content) || '');
-        return !n.read && /escalat/i.test(text);
+      const pendingApps = (Array.isArray(applications) ? applications : []).filter(a => String(a.status || '').toUpperCase() === 'PENDING');
+      const longPendingApps = pendingApps.filter(a => {
+        const ts = Number(a.createdAt || 0);
+        return ts > 0 && (Date.now() - ts) >= 7 * 24 * 60 * 60 * 1000;
       });
+      const openJobs = (Array.isArray(jobs) ? jobs : []).filter(j => String(j.status || '').toUpperCase() === 'OPEN');
+      const pendingAppCount = Number(stats && stats.pendingApplications != null ? stats.pendingApplications : pendingApps.length);
+
       const latestUsers = (Array.isArray(users) ? users : [])
         .slice()
         .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
         .slice(0, 4);
 
-      const actionCount = pendingResets.length + overloadedTas.length + escalationNotifs.length;
-      if (actionBadge) actionBadge.textContent = actionCount + ' Action Required';
+      const criticalCount = pendingResets.length + overloadedTas.length
+        + (pendingAppCount > 0 ? 1 : 0) + (longPendingApps.length > 0 ? 1 : 0);
+      if (actionBadge) actionBadge.textContent = criticalCount + ' Action Required';
 
       reminderList.innerHTML = '';
-      if (escalationNotifs.length > 0) {
-        const e0 = escalationNotifs[0];
-        reminderList.insertAdjacentHTML('beforeend', `
-          <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer" data-reminder-item data-severity="critical" data-href="password-reset-requests.html">
-            <div class="p-2 rounded-full bg-indigo-100 text-indigo-600 mt-1">
-              <span class="iconify w-5 h-5" data-icon="heroicons:megaphone"></span>
+      if (pendingAppCount > 0) {
+        appendReminderItem(reminderList, `
+          <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer" data-reminder-item data-severity="critical" data-href="job-supervision.html">
+            <div class="p-2 rounded-full bg-blue-100 text-blue-600 mt-1">
+              <span class="iconify w-5 h-5" data-icon="heroicons:document-text"></span>
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Admin Escalations</h5>
-                <span class="text-[10px] text-indigo-500 font-bold">${escalationNotifs.length} pending</span>
+                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Pending TA Applications</h5>
+                <span class="text-[10px] text-blue-600 font-bold">${pendingAppCount} pending</span>
               </div>
-              <p class="text-xs text-slate-500 mt-1">${esc((e0.title || 'Escalation') + ': ' + (e0.content || '')).slice(0, 120)}</p>
+              <p class="text-xs text-slate-500 mt-1">Applications submitted by TA are waiting for MO review or admin oversight.</p>
               <div class="mt-3 flex gap-2">
-                <button class="text-[10px] font-bold text-indigo-600 border border-indigo-600 px-3 py-1 rounded hover:bg-indigo-600 hover:text-white" onclick="window.location.href='password-reset-requests.html'">Open Escalations</button>
+                <button type="button" class="text-[10px] font-bold text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white" onclick="window.location.href='job-supervision.html'">Review Jobs</button>
               </div>
             </div>
           </div>
         `);
       }
+
+      if (longPendingApps.length > 0) {
+        const sample = longPendingApps[0];
+        appendReminderItem(reminderList, `
+          <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer" data-reminder-item data-severity="all" data-href="job-supervision.html">
+            <div class="p-2 rounded-full bg-amber-100 text-amber-600 mt-1">
+              <span class="iconify w-5 h-5" data-icon="heroicons:clock"></span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Long Pending Application</h5>
+                <span class="text-[10px] text-slate-400 font-medium">${longPendingApps.length} over 7 days</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Application ${esc(sample.id || '')} on job ${esc(sample.jobId || '')} needs follow-up.</p>
+              <div class="mt-3 flex gap-2">
+                <button type="button" class="text-[10px] font-bold text-blue-600 border border-blue-600 px-3 py-1 rounded hover:bg-blue-600 hover:text-white" onclick="window.location.href='job-supervision.html'">Send Reminder</button>
+              </div>
+            </div>
+          </div>
+        `);
+      }
+
       if (pendingResets.length > 0) {
         const r = pendingResets[0];
-        reminderList.insertAdjacentHTML('beforeend', `
+        appendReminderItem(reminderList, `
           <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer" data-reminder-item data-severity="critical" data-href="password-reset-requests.html">
             <div class="p-2 rounded-full bg-orange-100 text-orange-600 mt-1">
               <span class="iconify w-5 h-5" data-icon="heroicons:key"></span>
@@ -811,17 +909,18 @@
 
       if (overloadedTas.length > 0) {
         const w = overloadedTas[0];
-        reminderList.insertAdjacentHTML('beforeend', `
+        const hrs = Number(w.peakWeeklyHours != null ? w.peakWeeklyHours : (w.totalHours || 0));
+        appendReminderItem(reminderList, `
           <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer" data-reminder-item data-severity="critical" data-href="workload-overview.html">
             <div class="p-2 rounded-full bg-red-100 text-red-600 mt-1">
               <span class="iconify w-5 h-5" data-icon="heroicons:user-minus"></span>
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Overloaded TA (20+ Hours)</h5>
+                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Overloaded TA</h5>
                 <span class="text-[10px] text-red-500 font-bold uppercase">Severe</span>
               </div>
-              <p class="text-xs text-slate-500 mt-1 uppercase">User: ${esc(w.fullName || w.username || 'N/A')} - Current: ${Number(w.totalWeeklyHours || 0).toFixed(1)} hrs/week</p>
+              <p class="text-xs text-slate-500 mt-1 uppercase">User: ${esc(w.fullName || w.username || 'N/A')} - Peak: ${hrs.toFixed(1)} hrs/week</p>
               <div class="mt-3 flex gap-2">
                 <button class="text-[10px] font-bold text-red-600 border border-red-600 px-3 py-1 rounded hover:bg-red-600 hover:text-white" onclick="window.location.href='workload-overview.html'">Review Contract</button>
               </div>
@@ -830,20 +929,60 @@
         `);
       }
 
-      if (!pendingResets.length && !overloadedTas.length) {
+      if (openJobs.length > 0) {
+        appendReminderItem(reminderList, `
+          <div class="p-4 flex items-start gap-4 hover:bg-slate-50 transition-all cursor-pointer" data-reminder-item data-severity="all" data-href="job-supervision.html">
+            <div class="p-2 rounded-full bg-emerald-100 text-emerald-600 mt-1">
+              <span class="iconify w-5 h-5" data-icon="heroicons:briefcase"></span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-tighter">Open Positions (MO)</h5>
+                <span class="text-[10px] text-emerald-600 font-bold">${openJobs.length} live</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Latest: ${esc(openJobs[0].title || openJobs[0].courseName || 'Untitled')}</p>
+              <div class="mt-3 flex gap-2">
+                <button type="button" class="text-[10px] font-bold text-emerald-600 border border-emerald-600 px-3 py-1 rounded hover:bg-emerald-600 hover:text-white" onclick="window.location.href='job-supervision.html'">Monitor Posts</button>
+              </div>
+            </div>
+          </div>
+        `);
+      }
+
+      if (!reminderList.querySelector('[data-reminder-item]')) {
         reminderList.innerHTML = `
-          <div class="p-6 text-sm text-slate-500">No critical reminders for now.</div>
+          <div class="p-6 text-sm text-slate-500">No reminders right now. Data is loaded from the server — try MO post / TA apply, then click Refresh Data.</div>
         `;
       }
 
-      pendingBody.innerHTML = latestUsers.map(u => {
+      const pendingRows = [];
+      pendingResets.slice(0, 3).forEach(r => {
+        pendingRows.push(`
+          <tr class="cursor-pointer hover:bg-slate-50 transition-colors" data-request-row data-href="password-reset-requests.html">
+            <td class="px-6 py-4">
+              <p class="text-xs font-bold">Password Reset</p>
+              <p class="text-[10px] text-slate-400">${esc(r.fullName || r.studentId || 'Unknown')}</p>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-[10px] font-bold">Pending</span>
+            </td>
+            <td class="px-6 py-4 text-xs">${r.createdAt ? formatDate(r.createdAt).replace(/ /g, '/') : 'N/A'}</td>
+            <td class="px-6 py-4">
+              <a class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors" href="password-reset-requests.html">
+                <span class="iconify w-4 h-4" data-icon="heroicons:arrow-right"></span>
+              </a>
+            </td>
+          </tr>
+        `);
+      });
+      latestUsers.forEach(u => {
         const roleText = u.role === 'MO' ? 'New Teacher Account' : (u.role === 'TA' ? 'New Student Account' : 'New Admin Account');
         const roleHint = u.fullName || u.username || 'Unknown user';
         const statusLabel = u.active ? 'Active' : 'Disabled';
         const statusClass = u.active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600';
         const date = u.createdAt ? formatDate(u.createdAt).replace(/ /g, '/') : 'N/A';
         const detailUrl = 'user-detail.html?id=' + encodeURIComponent(u.id);
-        return `
+        pendingRows.push(`
           <tr class="cursor-pointer hover:bg-slate-50 transition-colors" data-request-row data-href="${detailUrl}">
             <td class="px-6 py-4">
               <p class="text-xs font-bold">${roleText}</p>
@@ -859,38 +998,28 @@
               </a>
             </td>
           </tr>
-        `;
-      }).join('');
+        `);
+      });
 
-      // Re-bind click handlers for newly rendered rows/items.
+      if (!pendingRows.length) {
+        pendingBody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400">No recent account or reset requests.</td></tr>';
+      } else {
+        pendingBody.innerHTML = pendingRows.join('');
+      }
+
       setupDashboardInteractions();
     } catch (e) {
-      console.warn(e);
+      console.warn('loadDashboardPanels failed', e);
+      if (reminderList) {
+        reminderList.innerHTML = '<div class="p-6 text-sm text-red-500">Failed to load reminders: ' + esc(e.message || 'Unknown error') + '. Check login and server.</div>';
+      }
       if (pendingBody) {
-        pendingBody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400">Failed to load linked account requests.</td></tr>';
+        pendingBody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-500">Failed to load requests: ' + esc(e.message || 'Unknown error') + '</td></tr>';
       }
+      if (actionBadge) actionBadge.textContent = '!';
     }
-  })();
-  </script>
-  <script src="/js/tarecruit-api.js"></script>
-  <script src="/js/admin-portal.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-      if (!AdminPortal.safeGuard()) return;
-      try {
-        var s = await TR.adminStats();
-        var set = function (id, v) {
-          var el = document.getElementById(id);
-          if (el) el.textContent = v != null ? v : '—';
-        };
-        set('adm-stat-users', s.totalUsers);
-        set('adm-stat-openjobs', s.openJobs);
-        set('adm-stat-apps', s.totalApplications);
-        set('adm-stat-overload', s.overloadedTAs);
-      } catch (e) {
-        console.warn(e);
-      }
-    });
+  }
+
   </script>
 
 </body>
