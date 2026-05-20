@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -594,37 +595,56 @@ public class AdminHandler extends BaseHandler {
     private void getStats(HttpExchange ex) throws IOException {
         Long startMs = parseDateStart(getQueryParam(ex, "startDate"));
         Long endMs = parseDateEnd(getQueryParam(ex, "endDate"));
-        List<User> users = ds.getAllUsers().stream().filter(u -> inRange(u.createdAt, startMs, endMs)).collect(Collectors.toList());
-        List<Job> jobs = ds.getAllJobs().stream().filter(j -> inRange(j.createdAt, startMs, endMs)).collect(Collectors.toList());
-        List<Application> apps = ds.getAllApplications().stream().filter(a -> inRange(a.createdAt, startMs, endMs)).collect(Collectors.toList());
-        List<Application> activeApps = apps.stream()
+
+        List<User> allUsers = ds.getAllUsers();
+        List<Job> allJobs = ds.getAllJobs();
+        List<Application> allApps = ds.getAllApplications();
+        Map<String, Job> jobsById = allJobs.stream()
+                .filter(j -> j.id != null)
+                .collect(Collectors.toMap(j -> j.id, j -> j, (a, b) -> a));
+
+        List<User> usersInRange = allUsers.stream().filter(u -> inRange(u.createdAt, startMs, endMs)).collect(Collectors.toList());
+        List<Job> jobsInRange = allJobs.stream().filter(j -> inRange(j.createdAt, startMs, endMs)).collect(Collectors.toList());
+        List<Application> appsInRange = allApps.stream().filter(a -> inRange(a.createdAt, startMs, endMs)).collect(Collectors.toList());
+        List<Application> activeApps = appsInRange.stream()
                 .filter(a -> !"WITHDRAWN".equals(a.status) && !"REJECTED".equals(a.status))
                 .collect(Collectors.toList());
 
         Map<String, Object> stats = new LinkedHashMap<>();
-        stats.put("totalUsers", users.size());
-        stats.put("totalTAs", users.stream().filter(u -> "TA".equals(u.role)).count());
-        stats.put("totalMOs", users.stream().filter(u -> "MO".equals(u.role)).count());
-        stats.put("totalAdmins", users.stream().filter(u -> "ADMIN".equals(u.role)).count());
-        stats.put("activeUsers", users.stream().filter(u -> u.active).count());
-        stats.put("totalJobs", jobs.size());
-        stats.put("openJobs", jobs.stream().filter(j -> "OPEN".equals(j.status)).count());
-        stats.put("closedJobs", jobs.stream().filter(j -> "CLOSED".equals(j.status)).count());
-        stats.put("totalApplications", apps.size());
-        stats.put("pendingApplications", apps.stream().filter(a -> "PENDING".equals(a.status)).count());
-        stats.put("approvedApplications", apps.stream().filter(a -> "APPROVED".equals(a.status)).count());
-        stats.put("rejectedApplications", apps.stream().filter(a -> "REJECTED".equals(a.status)).count());
-        stats.put("withdrawnApplications", apps.stream().filter(a -> "WITHDRAWN".equals(a.status)).count());
+        // Live snapshot (always reflects current system state, including MO changes)
+        stats.put("totalJobsAll", allJobs.size());
+        stats.put("openJobs", allJobs.stream().filter(j -> "OPEN".equals(j.status)).count());
+        stats.put("closedJobs", allJobs.stream().filter(j -> "CLOSED".equals(j.status)).count());
+        stats.put("totalApplicationsAll", allApps.size());
+        stats.put("totalUsersAll", allUsers.size());
+        stats.put("totalTAsAll", allUsers.stream().filter(u -> "TA".equals(u.role)).count());
+        stats.put("activeUsersAll", allUsers.stream().filter(u -> u.active).count());
+
+        // Period-scoped metrics (filtered by createdAt in selected date range)
+        stats.put("totalUsers", usersInRange.size());
+        stats.put("totalTAs", usersInRange.stream().filter(u -> "TA".equals(u.role)).count());
+        stats.put("totalMOs", usersInRange.stream().filter(u -> "MO".equals(u.role)).count());
+        stats.put("totalAdmins", usersInRange.stream().filter(u -> "ADMIN".equals(u.role)).count());
+        stats.put("activeUsers", usersInRange.stream().filter(u -> u.active).count());
+        stats.put("totalJobs", jobsInRange.size());
+        stats.put("newJobsInPeriod", jobsInRange.size());
+        stats.put("totalApplications", appsInRange.size());
+        stats.put("pendingApplications", appsInRange.stream().filter(a -> "PENDING".equals(a.status)).count());
+        stats.put("approvedApplications", appsInRange.stream().filter(a -> "APPROVED".equals(a.status)).count());
+        stats.put("rejectedApplications", appsInRange.stream().filter(a -> "REJECTED".equals(a.status)).count());
+        stats.put("withdrawnApplications", appsInRange.stream().filter(a -> "WITHDRAWN".equals(a.status)).count());
 
         long overloaded = 0;
         Map<String, String> settings = ds.getSettings();
         double maxH = 20;
         try { if (settings.containsKey("maxWeeklyHours")) maxH = Double.parseDouble(settings.get("maxWeeklyHours")); }
         catch (NumberFormatException ignored) {}
-        for (User ta : users.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList())) {
+        for (User ta : allUsers.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList())) {
             TreeMap<Integer, Double> weekly = new TreeMap<>();
-            for (Application a : apps.stream().filter(a -> a.applicantId.equals(ta.id) && "APPROVED".equals(a.status)).collect(Collectors.toList())) {
-                Job j = jobs.stream().filter(jj -> jj.id.equals(a.jobId)).findFirst().orElse(null);
+            for (Application a : allApps.stream()
+                    .filter(a -> ta.id.equals(a.applicantId) && "APPROVED".equals(a.status))
+                    .collect(Collectors.toList())) {
+                Job j = jobsById.get(a.jobId);
                 if (j != null) mergeWeeklyMap(weekly, computeJobWeeklyHours(j));
             }
             double peak = weekly.values().stream().mapToDouble(x -> x == null ? 0 : x).max().orElse(0);
@@ -632,7 +652,7 @@ public class AdminHandler extends BaseHandler {
         }
         stats.put("overloadedTAs", overloaded);
 
-        long totalQuota = jobs.stream().mapToLong(j -> j.quota).sum();
+        long totalQuota = allJobs.stream().mapToLong(j -> j.quota).sum();
         stats.put("totalQuota", totalQuota);
 
         long pendingResets = ds.getAllPasswordResets().stream().filter(r -> "PENDING".equals(r.status)).count();
@@ -647,7 +667,7 @@ public class AdminHandler extends BaseHandler {
         stats.put("activePreferenceUsage", activePreferenceUsage);
 
         Map<String, Object> taPriorityDistribution = new LinkedHashMap<>();
-        List<User> taUsers = users.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList());
+        List<User> taUsers = usersInRange.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList());
         taPriorityDistribution.put("tasWithPriority1", countDistinctApplicantsByPriority(activeApps, 1));
         taPriorityDistribution.put("tasWithPriority2", countDistinctApplicantsByPriority(activeApps, 2));
         taPriorityDistribution.put("tasWithPriority3", countDistinctApplicantsByPriority(activeApps, 3));
@@ -655,7 +675,148 @@ public class AdminHandler extends BaseHandler {
         taPriorityDistribution.put("totalTAsInRange", taUsers.size());
         stats.put("taPriorityDistribution", taPriorityDistribution);
 
+        stats.put("applicationsBySchool", buildApplicationsBySchool(appsInRange));
+        stats.put("dailyTrend", buildDailyTrend(usersInRange, jobsInRange, appsInRange, startMs, endMs));
+
+        Long trendStartMs = startMs;
+        Long trendEndMs = endMs;
+        if (trendStartMs == null && trendEndMs == null) {
+            ZoneId zone = ZoneId.systemDefault();
+            LocalDate end = LocalDate.now(zone);
+            LocalDate start = end.minusDays(29);
+            trendStartMs = parseDateStart(start.toString());
+            trendEndMs = parseDateEnd(end.toString());
+        }
+        stats.put("dailyApplicationTrend", buildDailyApplicationTrend(allApps, trendStartMs, trendEndMs));
+
         sendJson(ex, 200, stats);
+    }
+
+    private List<Map<String, Object>> buildDailyApplicationTrend(List<Application> allApps, Long startMs, Long endMs) {
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDate startDate = startMs != null
+                ? Instant.ofEpochMilli(startMs).atZone(zone).toLocalDate()
+                : LocalDate.now(zone).minusDays(29);
+        LocalDate endDate = endMs != null
+                ? Instant.ofEpochMilli(endMs).atZone(zone).toLocalDate()
+                : LocalDate.now(zone);
+
+        if (endDate.isBefore(startDate)) {
+            LocalDate tmp = startDate;
+            startDate = endDate;
+            endDate = tmp;
+        }
+
+        Map<LocalDate, long[]> buckets = new LinkedHashMap<>();
+        for (LocalDate d = startDate; !d.isAfter(endDate); d = d.plusDays(1)) {
+            buckets.put(d, new long[2]);
+        }
+
+        for (Application a : allApps) {
+            if (inRange(a.createdAt, startMs, endMs)) {
+                incrementDailyBucket(buckets, a.createdAt, 0, zone);
+            }
+            if ("APPROVED".equals(a.status)) {
+                long approvedTs = a.updatedAt > 0 ? a.updatedAt : a.createdAt;
+                if (inRange(approvedTs, startMs, endMs)) {
+                    incrementDailyBucket(buckets, approvedTs, 1, zone);
+                }
+            }
+        }
+
+        List<Map<String, Object>> trend = new ArrayList<>();
+        for (Map.Entry<LocalDate, long[]> entry : buckets.entrySet()) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("date", entry.getKey().toString());
+            row.put("submitted", entry.getValue()[0]);
+            row.put("approved", entry.getValue()[1]);
+            trend.add(row);
+        }
+        return trend;
+    }
+
+    private List<Map<String, Object>> buildDailyTrend(List<User> users, List<Job> jobs, List<Application> apps,
+                                                    Long startMs, Long endMs) {
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDate startDate = startMs != null
+                ? Instant.ofEpochMilli(startMs).atZone(zone).toLocalDate()
+                : resolveTrendStartDate(users, jobs, apps, zone);
+        LocalDate endDate = endMs != null
+                ? Instant.ofEpochMilli(endMs).atZone(zone).toLocalDate()
+                : LocalDate.now(zone);
+
+        if (endDate.isBefore(startDate)) {
+            LocalDate tmp = startDate;
+            startDate = endDate;
+            endDate = tmp;
+        }
+
+        Map<LocalDate, long[]> buckets = new LinkedHashMap<>();
+        for (LocalDate d = startDate; !d.isAfter(endDate); d = d.plusDays(1)) {
+            buckets.put(d, new long[3]);
+        }
+
+        for (User u : users) incrementDailyBucket(buckets, u.createdAt, 0, zone);
+        for (Job j : jobs) incrementDailyBucket(buckets, j.createdAt, 1, zone);
+        for (Application a : apps) incrementDailyBucket(buckets, a.createdAt, 2, zone);
+
+        List<Map<String, Object>> trend = new ArrayList<>();
+        for (Map.Entry<LocalDate, long[]> entry : buckets.entrySet()) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("date", entry.getKey().toString());
+            row.put("users", entry.getValue()[0]);
+            row.put("jobs", entry.getValue()[1]);
+            row.put("applications", entry.getValue()[2]);
+            trend.add(row);
+        }
+        return trend;
+    }
+
+    private LocalDate resolveTrendStartDate(List<User> users, List<Job> jobs, List<Application> apps, ZoneId zone) {
+        long minTs = Long.MAX_VALUE;
+        for (User u : users) minTs = Math.min(minTs, u.createdAt > 0 ? u.createdAt : Long.MAX_VALUE);
+        for (Job j : jobs) minTs = Math.min(minTs, j.createdAt > 0 ? j.createdAt : Long.MAX_VALUE);
+        for (Application a : apps) minTs = Math.min(minTs, a.createdAt > 0 ? a.createdAt : Long.MAX_VALUE);
+        LocalDate end = LocalDate.now(zone);
+        if (minTs == Long.MAX_VALUE) return end.minusDays(29);
+        LocalDate earliest = Instant.ofEpochMilli(minTs).atZone(zone).toLocalDate();
+        LocalDate cap = end.minusDays(89);
+        return earliest.isBefore(cap) ? cap : earliest;
+    }
+
+    private void incrementDailyBucket(Map<LocalDate, long[]> buckets, long ts, int index, ZoneId zone) {
+        if (ts <= 0) return;
+        LocalDate day = Instant.ofEpochMilli(ts).atZone(zone).toLocalDate();
+        long[] counts = buckets.get(day);
+        if (counts != null) counts[index]++;
+    }
+
+    private List<Map<String, Object>> buildApplicationsBySchool(List<Application> apps) {
+        Map<String, User> usersById = ds.getAllUsers().stream()
+                .filter(u -> u.id != null)
+                .collect(Collectors.toMap(u -> u.id, u -> u, (a, b) -> a));
+        Map<String, Long> counts = new LinkedHashMap<>();
+        for (Application app : apps) {
+            User applicant = app.applicantId == null ? null : usersById.get(app.applicantId);
+            String school = resolveSchoolLabel(applicant);
+            counts.merge(school, 1L, Long::sum);
+        }
+        return counts.entrySet().stream()
+                .sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
+                .map(entry -> {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    row.put("name", entry.getKey());
+                    row.put("value", entry.getValue());
+                    return row;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private String resolveSchoolLabel(User user) {
+        if (user == null || user.school == null || user.school.trim().isEmpty()) {
+            return "Unknown";
+        }
+        return user.school.trim();
     }
 
     private long countDistinctApplicantsByPriority(List<Application> apps, int priority) {
@@ -1150,6 +1311,8 @@ public class AdminHandler extends BaseHandler {
     }
 
     private boolean inRange(long ts, Long startMs, Long endMs) {
+        if (startMs == null && endMs == null) return true;
+        if (ts <= 0) return true;
         if (startMs != null && ts < startMs) return false;
         if (endMs != null && ts > endMs) return false;
         return true;
