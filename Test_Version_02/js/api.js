@@ -96,12 +96,20 @@ const API = {
         const scope = getPortalScope();
         localStorage.setItem(scopedTokenKey(scope), token);
         localStorage.setItem(scopedUserKey(scope), JSON.stringify(user));
+        localStorage.removeItem(LEGACY_TOKEN_KEY);
+        localStorage.removeItem(LEGACY_USER_KEY);
+    },
+
+    clearLegacyAuth() {
+        localStorage.removeItem(LEGACY_TOKEN_KEY);
+        localStorage.removeItem(LEGACY_USER_KEY);
     },
 
     clearAuth() {
         const scope = getPortalScope();
         localStorage.removeItem(scopedTokenKey(scope));
         localStorage.removeItem(scopedUserKey(scope));
+        this.clearLegacyAuth();
     },
 
     /** Clear all portal sessions (e.g. full sign-out). */
@@ -131,8 +139,10 @@ const API = {
                     const ctx = resolveAuthContext();
                     if (!ctx.proxy) {
                         this.clearAuth();
+                    } else {
+                        this.clearLegacyAuth();
                     }
-                    redirectToLogin();
+                    redirectToLoginOnce();
                     return null;
                 }
             }
@@ -172,17 +182,23 @@ const API = {
     }
 };
 
-function redirectToLogin() {
+function redirectToLoginOnce() {
+    if (window.__taRecruitAuthRedirecting) return;
+    window.__taRecruitAuthRedirecting = true;
     const path = window.location.pathname;
     if (path.startsWith('/admin/')) {
-        window.location.href = '/admin/index.html';
+        window.location.replace('/admin/index.html');
         return;
     }
     if (path.startsWith('/MO/')) {
-        window.location.href = '/MO/index.html';
+        window.location.replace('/MO/index.html');
         return;
     }
-    window.location.href = '/TA/index.html';
+    window.location.replace('/TA/index.html');
+}
+
+function redirectToLogin() {
+    redirectToLoginOnce();
 }
 
 function requireAuth(allowedRoles) {
@@ -276,3 +292,10 @@ function updateSidebarUser(user) {
     document.querySelectorAll('[data-user-role]').forEach(el => el.textContent = user.role);
     document.querySelectorAll('[data-user-email]').forEach(el => el.textContent = user.email || '');
 }
+
+(function resetAuthRedirectGuard() {
+    const path = window.location.pathname || '';
+    if (/\/(admin|MO|TA)\/index\.html$/i.test(path)) {
+        window.__taRecruitAuthRedirecting = false;
+    }
+})();
