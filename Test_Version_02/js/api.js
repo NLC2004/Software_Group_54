@@ -2,19 +2,116 @@
  * Shared API utilities for TA Recruitment System v2.
  * Include this script in every HTML page before page-specific scripts.
  */
-const TOKEN_KEY = 'ta_recruit_token';
-const USER_KEY = 'ta_recruit_user';
+const LEGACY_TOKEN_KEY = 'ta_recruit_token';
+const LEGACY_USER_KEY = 'ta_recruit_user';
+
+function getPortalScope() {
+    const path = window.location.pathname || '';
+    if (path.startsWith('/admin/')) return 'admin';
+    if (path.startsWith('/MO/')) return 'mo';
+    if (path.startsWith('/TA/')) return 'ta';
+    return 'default';
+}
+
+function scopedTokenKey(scope) {
+    return 'ta_recruit_token_' + scope;
+}
+
+function scopedUserKey(scope) {
+    return 'ta_recruit_user_' + scope;
+}
+
+function roleForScope(scope) {
+    if (scope === 'admin') return 'ADMIN';
+    if (scope === 'mo') return 'MO';
+    if (scope === 'ta') return 'TA';
+    return null;
+}
+
+function migrateLegacyAuth(scope) {
+    if (localStorage.getItem(scopedTokenKey(scope))) return;
+    const legacyToken = localStorage.getItem(LEGACY_TOKEN_KEY);
+    const legacyUserRaw = localStorage.getItem(LEGACY_USER_KEY);
+    if (!legacyToken || !legacyUserRaw) return;
+    try {
+        const user = JSON.parse(legacyUserRaw);
+        const expectedRole = roleForScope(scope);
+        if (expectedRole && user && user.role === expectedRole) {
+            localStorage.setItem(scopedTokenKey(scope), legacyToken);
+            localStorage.setItem(scopedUserKey(scope), legacyUserRaw);
+        }
+    } catch (e) { /* ignore */ }
+}
+
+/** Admin opened MO/TA page with ?userId= to view another account (from User Management). */
+function isAdminProxyView() {
+    const path = window.location.pathname || '';
+    if (!path.startsWith('/MO/') && !path.startsWith('/TA/')) return false;
+    const params = new URLSearchParams(window.location.search);
+    return !!(params.get('userId') || params.get('id'));
+}
+
+function readScopedAuth(scope) {
+    migrateLegacyAuth(scope);
+    let user = null;
+    try {
+        const raw = localStorage.getItem(scopedUserKey(scope));
+        user = raw ? JSON.parse(raw) : null;
+    } catch (e) { /* ignore */ }
+    return {
+        token: localStorage.getItem(scopedTokenKey(scope)),
+        user: user
+    };
+}
+
+function resolveAuthContext() {
+    const scope = getPortalScope();
+    const local = readScopedAuth(scope);
+    if (local.token && local.user) {
+        return { scope: scope, token: local.token, user: local.user, proxy: false };
+    }
+    if (isAdminProxyView()) {
+        const admin = readScopedAuth('admin');
+        if (admin.token && admin.user && admin.user.role === 'ADMIN') {
+            return { scope: 'admin', token: admin.token, user: admin.user, proxy: true };
+        }
+    }
+    return { scope: scope, token: local.token, user: local.user, proxy: false };
+}
 
 const API = {
-    getToken() { return localStorage.getItem(TOKEN_KEY); },
-    getUser() { try { return JSON.parse(localStorage.getItem(USER_KEY)); } catch(e) { return null; } },
-    setAuth(token, user) {
-        localStorage.setItem(TOKEN_KEY, token);
-        localStorage.setItem(USER_KEY, JSON.stringify(user));
+    getPortalScope() { return getPortalScope(); },
+
+    isAdminProxyView() { return isAdminProxyView(); },
+
+    getToken() {
+        return resolveAuthContext().token;
     },
+
+    getUser() {
+        return resolveAuthContext().user;
+    },
+
+    setAuth(token, user) {
+        const scope = getPortalScope();
+        localStorage.setItem(scopedTokenKey(scope), token);
+        localStorage.setItem(scopedUserKey(scope), JSON.stringify(user));
+    },
+
     clearAuth() {
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
+        const scope = getPortalScope();
+        localStorage.removeItem(scopedTokenKey(scope));
+        localStorage.removeItem(scopedUserKey(scope));
+    },
+
+    /** Clear all portal sessions (e.g. full sign-out). */
+    clearAllAuth() {
+        ['admin', 'mo', 'ta', 'default'].forEach(function(scope) {
+            localStorage.removeItem(scopedTokenKey(scope));
+            localStorage.removeItem(scopedUserKey(scope));
+        });
+        localStorage.removeItem(LEGACY_TOKEN_KEY);
+        localStorage.removeItem(LEGACY_USER_KEY);
     },
 
     async request(path, options = {}) {
@@ -31,7 +128,10 @@ const API = {
                 const normalizedPath = typeof path === 'string' ? path.split('?')[0] : '';
                 const isLoginRequest = normalizedPath.endsWith('/api/auth/login');
                 if (!isLoginRequest) {
-                    this.clearAuth();
+                    const ctx = resolveAuthContext();
+                    if (!ctx.proxy) {
+                        this.clearAuth();
+                    }
                     redirectToLogin();
                     return null;
                 }
