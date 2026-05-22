@@ -85,6 +85,30 @@ class MoApplicantReviewStoriesTest {
     }
 
     @Test
+    void mo07_approveApplicantShouldRejectWhenQuotaIsFull() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User mo = addMo(ds, "teacher_quota_full");
+        User approvedTa = addTa(ds, "ta_already_approved");
+        User pendingTa = addTa(ds, "ta_pending_quota");
+        Job job = addOpenJob(ds, mo, "Quota Full Job");
+        Application approved = ds.addApplication(buildApplication(approvedTa.id, job.id, 1, "cv_approved.pdf"));
+        approved.status = "APPROVED";
+        ds.updateApplication(approved);
+        Application pending = ds.addApplication(buildApplication(pendingTa.id, job.id, 2, "cv_pending.pdf"));
+        String token = ds.createSession(mo.id);
+
+        ApplicationHandler handler = new ApplicationHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("PUT", "/api/applications/" + pending.id + "/status", null, "{\"status\":\"APPROVED\"}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(409, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("reached its quota"));
+        assertEquals("PENDING", ds.getApplicationById(pending.id).status);
+    }
+
+    @Test
     void mo07_rejectApplicantShouldUpdateStatusAndNotifyTa() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User mo = addMo(ds, "teacher_reject");

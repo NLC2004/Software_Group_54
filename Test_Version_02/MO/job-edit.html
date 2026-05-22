@@ -37,9 +37,10 @@
 <span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
 <span>Statistics</span>
 </a>
-<a class="nav-link inactive" id="navNotifications" href="notifications-messages.html">
+<a class="nav-link inactive relative" id="navNotifications" href="notifications-messages.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
 <span>Notifications</span>
+<span class="hidden ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-black leading-5 text-center" data-notification-badge></span>
 </a>
 <a class="nav-link inactive" id="navProfile" href="personal-center.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
@@ -658,6 +659,7 @@ Back to Admin
                     backBtn.classList.add('flex');
                 }
             }
+            updateNotificationBadges().catch(() => {});
 
             jobId = getUrlParam('id');
             postedByOwnerId = getUrlParam('postedBy') || '';
@@ -669,6 +671,8 @@ Back to Admin
 
             try {
                 const job = await API.get('/api/jobs/' + jobId);
+                postedByOwnerId = postedByOwnerId || job.postedBy || '';
+                applyAdminScopeLinks(user);
                 bindDeadlineDisplay();
                 bindExamDateTimeDisplay();
                 const jobTypeSelect = document.getElementById('jobType');
@@ -779,6 +783,16 @@ Back to Admin
                 job.requirements.forEach(r => requirements.push(r));
             }
             setRequirementsUI(requirements);
+        }
+
+        function applyAdminScopeLinks(user) {
+            if (!user || user.role !== 'ADMIN' || !postedByOwnerId) return;
+            const query = encodeURIComponent(postedByOwnerId);
+            const jobsHref = 'my-job-list.html?postedBy=' + query;
+            const statsHref = 'statistics-analysis.html?postedBy=' + query;
+            document.getElementById('breadcrumbJobsLink').href = jobsHref;
+            document.getElementById('navDashboard').href = jobsHref;
+            document.getElementById('navStatistics').href = statsHref;
         }
 
         const REQUIREMENT_PRESETS = {

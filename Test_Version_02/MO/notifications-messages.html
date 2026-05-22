@@ -37,9 +37,10 @@
 <span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
 <span>Statistics</span>
 </a>
-<a class="nav-link active" href="notifications-messages.html">
+<a class="nav-link active relative" href="notifications-messages.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
 <span>Notifications</span>
+<span class="hidden ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-black leading-5 text-center" data-notification-badge></span>
 </a>
 <a class="nav-link inactive" href="personal-center.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
@@ -50,7 +51,7 @@
 <div class="bg-slate-900 p-6 rounded-3xl text-white transform hover:rotate-2 transition-transform">
 <p class="text-[10px] font-black uppercase text-slate-400 mb-2">Support</p>
 <p class="text-xs leading-relaxed mb-4">Having issues? Our helpdesk is open 24/7.</p>
-<button class="bg-blue-600 w-full py-2 rounded-xl text-[11px] font-bold">Contact Admin</button>
+<button class="bg-blue-600 w-full py-2 rounded-xl text-[11px] font-bold" id="contactAdminBtn" type="button">Contact Admin</button>
 </div>
 <div class="bg-gray-50 p-4 rounded-xl flex items-center gap-3 border border-slate-100">
 <img alt="Avatar" class="w-10 h-10 rounded-full border border-gray-200 object-cover" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/bc2fcb312e504b8ca61689559e7c92b5.jpg"/>
@@ -113,6 +114,9 @@ Back to Admin
                 }
             }
             document.getElementById('markAllReadBtn').onclick = markAllRead;
+            document.getElementById('contactAdminBtn').onclick = () => {
+                window.location.href = 'mailto:mo-admin@bupt.edu.cn?subject=MO%20Portal%20Support%20Request';
+            };
 
             await loadNotifications();
         })();
@@ -130,6 +134,7 @@ Back to Admin
         function renderNotifications() {
             const unread = notifications.filter(n => !n.read).length;
             document.getElementById('unreadCount').textContent = unread + ' unread';
+            renderNotificationBadges(unread);
 
             const list = document.getElementById('messageList');
             if (notifications.length === 0) {

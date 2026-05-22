@@ -38,9 +38,10 @@
 <span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
 <span>Statistics</span>
 </a>
-<a class="nav-link inactive" href="notifications-messages.html">
+<a class="nav-link inactive relative" href="notifications-messages.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
 <span>Notifications</span>
+<span class="hidden ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-black leading-5 text-center" data-notification-badge></span>
 </a>
 <a class="nav-link inactive" href="personal-center.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
@@ -175,6 +176,8 @@ Back to Admin
                     backBtn.classList.add('flex');
                 }
             }
+            applyAdminScopeLinks(user);
+            updateNotificationBadges().catch(() => {});
 
             trendChart = echarts.init(document.getElementById('trendChart'));
             pieChart = echarts.init(document.getElementById('pieChart'));
@@ -187,11 +190,17 @@ Back to Admin
             });
 
             try {
+                const targetPoster = getUrlParam('postedBy') || getUrlParam('userId') || getUrlParam('id');
+                const jobsPath = user.role === 'ADMIN' && targetPoster
+                    ? '/api/jobs?postedBy=' + encodeURIComponent(targetPoster)
+                    : '/api/jobs?postedBy=' + encodeURIComponent(user.id);
                 const [jobs, applications] = await Promise.all([
-                    API.get('/api/jobs?postedBy=' + user.id),
+                    API.get(jobsPath),
                     API.get('/api/applications')
                 ]);
-                renderStats(jobs, applications);
+                const jobIds = new Set(jobs.map(j => j.id));
+                const scopedApplications = applications.filter(a => jobIds.has(a.jobId));
+                renderStats(jobs, scopedApplications);
             } catch (err) {
                 showToast(err.message || 'Failed to load statistics', 'error');
             }
@@ -288,6 +297,18 @@ Back to Admin
                         fontWeight: 700
                     }
                 }]
+            });
+        }
+
+        function applyAdminScopeLinks(user) {
+            if (!user || user.role !== 'ADMIN') return;
+            const targetPoster = getUrlParam('postedBy') || getUrlParam('userId') || getUrlParam('id');
+            if (!targetPoster) return;
+            document.querySelectorAll('a[href="my-job-list.html"]').forEach(a => {
+                a.href = 'my-job-list.html?postedBy=' + encodeURIComponent(targetPoster);
+            });
+            document.querySelectorAll('a[href="personal-center.html"]').forEach(a => {
+                a.href = 'personal-center.html?userId=' + encodeURIComponent(targetPoster);
             });
         }
     </script>

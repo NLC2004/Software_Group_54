@@ -293,6 +293,29 @@ function updateSidebarUser(user) {
     document.querySelectorAll('[data-user-email]').forEach(el => el.textContent = user.email || '');
 }
 
+function renderNotificationBadges(unreadCount) {
+    const count = Math.max(0, Number(unreadCount) || 0);
+    document.querySelectorAll('[data-notification-badge]').forEach(el => {
+        if (count === 0) {
+            el.classList.add('hidden');
+            el.textContent = '';
+            el.setAttribute('aria-label', 'No unread notifications');
+            return;
+        }
+        el.classList.remove('hidden');
+        el.textContent = count > 99 ? '99+' : String(count);
+        el.setAttribute('aria-label', count + ' unread notifications');
+    });
+}
+
+async function updateNotificationBadges(existingNotifications) {
+    const notifications = Array.isArray(existingNotifications)
+        ? existingNotifications
+        : await API.get('/api/notifications');
+    renderNotificationBadges(notifications.filter(n => !n.read).length);
+    return notifications;
+}
+
 (function resetAuthRedirectGuard() {
     const path = window.location.pathname || '';
     if (/\/(admin|MO|TA)\/index\.html$/i.test(path)) {

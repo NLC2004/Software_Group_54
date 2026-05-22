@@ -1,8 +1,7 @@
 package com.bupt.tarecruit.unit_testing;
 
 import com.bupt.tarecruit.handler.JobHandler;
-import com.bupt.tarecruit.model.Job;
-import com.bupt.tarecruit.model.User;
+import com.bupt.tarecruit.model.*;
 import com.bupt.tarecruit.service.DataService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -90,6 +89,44 @@ class MoJobManagementStoriesTest {
     }
 
     @Test
+    void mo01_deleteJobShouldCascadeApplicationsDraftsAndApplicationNotifications() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User mo = addMo(ds, "teacher_delete_cascade");
+        User ta = addTa(ds, "ta_delete_cascade");
+        Job job = addJob(ds, mo, "Cascade Delete Job", "COURSE");
+        Application app = new Application();
+        app.jobId = job.id;
+        app.applicantId = ta.id;
+        app.priority = 1;
+        ds.addApplication(app);
+        ApplicationDraft draft = new ApplicationDraft();
+        draft.userId = ta.id;
+        draft.jobId = job.id;
+        ds.saveApplicationDraft(draft);
+        Notification n = new Notification();
+        n.userId = ta.id;
+        n.type = "APPLICATION";
+        n.title = "Application Approved";
+        n.content = "Your application for Cascade Delete Job has been approved!";
+        ds.addNotification(n);
+        String token = ds.createSession(mo.id);
+
+        JobHandler handler = new JobHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("DELETE", "/api/jobs/" + job.id, null, null);
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(200, ex.getResponseCode());
+        assertNull(ds.getJobById(job.id));
+        assertEquals(0, ds.getApplicationsByJob(job.id).size());
+        assertNull(ds.getApplicationDraft(ta.id, job.id));
+        assertEquals(0, ds.getNotificationsByUser(ta.id).stream()
+                .filter(item -> item.content != null && item.content.contains("Cascade Delete Job"))
+                .count());
+    }
+
+    @Test
     void mo01_listJobsShouldSupportPostedByAndSearchFiltering() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User mo1 = addMo(ds, "teacher_filter_1");
@@ -143,6 +180,17 @@ class MoJobManagementStoriesTest {
         user.fullName = username + " Full";
         user.email = username + "@example.com";
         user.studentId = username;
+        return ds.addUser(user);
+    }
+
+    private User addTa(DataService ds, String username) {
+        User user = new User();
+        user.username = username;
+        user.password = "pass123";
+        user.role = "TA";
+        user.fullName = username + " Full";
+        user.email = username + "@example.com";
+        user.studentId = "SID_" + username;
         return ds.addUser(user);
     }
 
