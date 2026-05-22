@@ -58,7 +58,9 @@ public class DraftHandler extends BaseHandler {
         String jobId = normalizeJobId(getQueryParam(ex, "jobId"));
         ApplicationDraft draft = ds.getApplicationDraft(user.id, jobId);
         if (draft == null) {
-            sendJson(ex, 200, Map.of("draft", null));
+            com.google.gson.JsonObject result = new com.google.gson.JsonObject();
+            result.add("draft", com.google.gson.JsonNull.INSTANCE);
+            sendJson(ex, 200, result);
             return;
         }
         sendJson(ex, 200, Map.of("draft", toMap(draft)));

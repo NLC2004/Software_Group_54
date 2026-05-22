@@ -192,7 +192,17 @@ public class DataService {
         } else if (job.testScheduleDetail != null && !job.testScheduleDetail.trim().isEmpty()) {
             scheduleJson = job.testScheduleDetail;
         }
-        return parseWeeklyHoursFromScheduleEntriesJson(scheduleJson);
+        Map<Integer, Double> weekly = parseWeeklyHoursFromScheduleEntriesJson(scheduleJson);
+        if (weekly.isEmpty() && job.weeklyHours > 0) {
+            Map<Integer, Double> fallback = new TreeMap<>();
+            int start = job.courseWeekStart > 0 ? job.courseWeekStart : 1;
+            int end = job.courseWeekEnd >= start ? job.courseWeekEnd : start;
+            for (int week = start; week <= end; week++) {
+                fallback.put(week, job.weeklyHours);
+            }
+            return fallback;
+        }
+        return weekly;
     }
 
     public synchronized Map<Integer, Double> getTAWeeklyHours(String taId) {

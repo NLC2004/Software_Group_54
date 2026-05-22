@@ -3,6 +3,7 @@ package com.bupt.tarecruit.handler;
 import com.bupt.tarecruit.model.User;
 import com.bupt.tarecruit.service.DataService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public abstract class BaseHandler implements HttpHandler {
     protected final DataService ds;
-    protected final Gson gson = new Gson();
+    protected final Gson gson = new GsonBuilder().serializeNulls().create();
 
     public BaseHandler(DataService ds) { this.ds = ds; }
 
