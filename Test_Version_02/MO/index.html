@@ -54,7 +54,7 @@
 <div>
 <div class="flex justify-between items-center mb-2">
 <label class="block text-sm font-semibold text-gray-700">Password</label>
-<a class="text-xs text-gray-400 hover:text-blue-600 transition-colors" href="/TA/forgot-password.html">Forgot password?</a>
+<a class="text-xs text-gray-400 hover:text-blue-600 transition-colors" href="/MO/forgot-password.html">Forgot password?</a>
 </div>
 <div class="relative">
 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
@@ -135,10 +135,10 @@
 
 <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-4">
 <span class="text-xs text-gray-400">Other methods:</span>
-<button class="text-gray-400 hover:text-green-500 transition-colors" type="button">
+<button class="text-gray-400 hover:text-green-500 transition-colors" type="button" onclick="showAlert('error', 'WeChat login is not connected in this version. Please use teacher ID/email login.')">
 <span class="iconify text-xl" data-icon="mdi:wechat"></span>
 </button>
-<button class="text-gray-400 hover:text-blue-400 transition-colors" type="button">
+<button class="text-gray-400 hover:text-blue-400 transition-colors" type="button" onclick="showAlert('error', 'QQ login is not connected in this version. Please use teacher ID/email login.')">
 <span class="iconify text-xl" data-icon="mdi:qqchat"></span>
 </button>
 </div>

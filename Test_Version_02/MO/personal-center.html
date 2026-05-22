@@ -37,9 +37,10 @@
 <span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
 <span>Statistics</span>
 </a>
-<a class="nav-link inactive" href="notifications-messages.html">
+<a class="nav-link inactive relative" href="notifications-messages.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
 <span>Notifications</span>
+<span class="hidden ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-black leading-5 text-center" data-notification-badge></span>
 </a>
 <a class="nav-link active" href="personal-center.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
@@ -166,7 +167,7 @@ Back to Admin
 <p class="text-xs text-slate-400">Receive summaries daily</p>
 </div>
 <label class="relative inline-flex items-center cursor-pointer">
-<input checked="" class="sr-only peer" type="checkbox"/>
+<input checked="" class="sr-only peer" id="emailNotificationsToggle" type="checkbox"/>
 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
 </label>
 </div>
@@ -176,17 +177,9 @@ Back to Admin
 <p class="text-xs text-slate-400">Browser push notifications</p>
 </div>
 <label class="relative inline-flex items-center cursor-pointer">
-<input class="sr-only peer" type="checkbox"/>
+<input class="sr-only peer" id="desktopAlertsToggle" type="checkbox"/>
 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
 </label>
-</div>
-<hr class="border-slate-50"/>
-<div class="flex items-center justify-between">
-<div>
-<p class="text-sm font-bold text-slate-700">Two-Factor Auth</p>
-<p class="text-xs text-slate-400 italic text-blue-500">Recommended</p>
-</div>
-<button class="text-xs font-black text-blue-600 uppercase underline underline-offset-4 tracking-tight">Enable</button>
 </div>
 </div>
 </section>
@@ -220,6 +213,8 @@ Back to Admin
                     backBtn.classList.add('flex');
                 }
             }
+            applyAdminScopeLinks(user);
+            updateNotificationBadges().catch(() => {});
 
             try {
                 const profile = (user.role === 'ADMIN' && proxyUserId)
@@ -237,6 +232,7 @@ Back to Admin
 
             document.getElementById('saveProfileBtn').onclick = saveProfile;
             document.getElementById('changePasswordBtn').onclick = changePassword;
+            bindPreferences();
         })();
 
         function populateProfile(user) {
@@ -249,6 +245,16 @@ Back to Admin
             document.getElementById('email').value = user.email || '';
             document.getElementById('phone').value = user.phone || '';
             document.getElementById('gender').value = user.gender || '';
+        }
+
+        function applyAdminScopeLinks(user) {
+            if (!user || user.role !== 'ADMIN' || !proxyUserId) return;
+            document.querySelectorAll('a[href="my-job-list.html"]').forEach(a => {
+                a.href = 'my-job-list.html?postedBy=' + encodeURIComponent(proxyUserId);
+            });
+            document.querySelectorAll('a[href="statistics-analysis.html"]').forEach(a => {
+                a.href = 'statistics-analysis.html?postedBy=' + encodeURIComponent(proxyUserId);
+            });
         }
 
         async function saveProfile() {
@@ -311,6 +317,35 @@ Back to Admin
             } catch (err) {
                 showToast(err.message || 'Failed to change password', 'error');
             }
+        }
+
+        function bindPreferences() {
+            const emailToggle = document.getElementById('emailNotificationsToggle');
+            const desktopToggle = document.getElementById('desktopAlertsToggle');
+            const scope = currentPortalUser && currentPortalUser.id ? currentPortalUser.id : 'mo';
+            const emailKey = 'mo_pref_email_notifications_' + scope;
+            const desktopKey = 'mo_pref_desktop_alerts_' + scope;
+
+            if (localStorage.getItem(emailKey) != null) {
+                emailToggle.checked = localStorage.getItem(emailKey) === 'true';
+            }
+            if (localStorage.getItem(desktopKey) != null) {
+                desktopToggle.checked = localStorage.getItem(desktopKey) === 'true';
+            }
+
+            emailToggle.addEventListener('change', () => {
+                localStorage.setItem(emailKey, String(emailToggle.checked));
+                showToast('Email notification preference saved', 'success');
+            });
+
+            desktopToggle.addEventListener('change', async () => {
+                if (desktopToggle.checked && 'Notification' in window && Notification.permission === 'default') {
+                    const permission = await Notification.requestPermission();
+                    desktopToggle.checked = permission === 'granted';
+                }
+                localStorage.setItem(desktopKey, String(desktopToggle.checked));
+                showToast(desktopToggle.checked ? 'Desktop alerts enabled' : 'Desktop alerts disabled', 'success');
+            });
         }
     </script>
 </body>

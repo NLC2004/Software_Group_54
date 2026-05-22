@@ -29,6 +29,7 @@ public class DataService {
         Files.createDirectories(uploadsDir);
         this.mailService = new MailService(getSettings());
         initDefaultData();
+        reconcileNotifications();
     }
 
     // ==================== Sessions ====================
@@ -143,6 +144,10 @@ public class DataService {
         return getAllApplications().stream().filter(a -> a.applicantId.equals(applicantId)).collect(Collectors.toList());
     }
 
+    public synchronized long getApprovedApplicationCountForJob(String jobId) {
+        return getApplicationsByJob(jobId).stream().filter(a -> "APPROVED".equals(a.status)).count();
+    }
+
     public synchronized Application addApplication(Application app) {
         List<Application> apps = getAllApplications();
         app.id = UUID.randomUUID().toString().substring(0, 8);
@@ -160,6 +165,14 @@ public class DataService {
         apps.removeIf(a -> a.id.equals(app.id));
         apps.add(app);
         writeList("applications.json", apps);
+    }
+
+    public synchronized int deleteApplicationsByJob(String jobId) {
+        List<Application> apps = getAllApplications();
+        int before = apps.size();
+        apps.removeIf(a -> Objects.equals(a.jobId, jobId));
+        writeList("applications.json", apps);
+        return before - apps.size();
     }
 
     public synchronized double getWeeklyWorkloadLimit() {
@@ -331,6 +344,15 @@ public class DataService {
         writeList("application_drafts.json", drafts);
     }
 
+    public synchronized int deleteApplicationDraftsByJob(String jobId) {
+        List<ApplicationDraft> drafts = getAllApplicationDrafts();
+        String normalizedJobId = jobId == null ? "" : jobId.trim();
+        int before = drafts.size();
+        drafts.removeIf(d -> Objects.equals(d.jobId == null ? "" : d.jobId.trim(), normalizedJobId));
+        writeList("application_drafts.json", drafts);
+        return before - drafts.size();
+    }
+
     // ==================== Notifications ====================
 
     public synchronized List<Notification> getAllNotifications() {
@@ -359,6 +381,78 @@ public class DataService {
         list.removeIf(x -> x.id.equals(n.id));
         list.add(n);
         writeList("notifications.json", list);
+    }
+
+    public synchronized int deleteNotificationsRelatedToJob(Job job) {
+        if (job == null || job.title == null || job.title.trim().isEmpty()) return 0;
+        String title = job.title.trim();
+        List<Notification> list = getAllNotifications();
+        int before = list.size();
+        list.removeIf(n -> "APPLICATION".equals(n.type)
+                && n.content != null
+                && n.content.contains(title));
+        writeList("notifications.json", list);
+        return before - list.size();
+    }
+
+    public synchronized void reconcileNotifications() {
+        List<Notification> list = getAllNotifications();
+        int before = list.size();
+
+        for (Application app : getAllApplications()) {
+            Job job = getJobById(app.jobId);
+            User applicant = getUserById(app.applicantId);
+            if (job == null || applicant == null) continue;
+
+            String applicantName = applicant.fullName != null && !applicant.fullName.isBlank()
+                    ? applicant.fullName : applicant.username;
+            addNotificationIfMissing(list, job.postedBy, "New Application",
+                    applicantName + " applied for " + job.title,
+                    "APPLICATION", app.createdAt);
+
+            if ("APPROVED".equals(app.status)) {
+                addNotificationIfMissing(list, app.applicantId, "Application Approved",
+                        "Your application for " + job.title + " has been approved!",
+                        "APPLICATION", app.updatedAt > 0 ? app.updatedAt : app.createdAt);
+            } else if ("REJECTED".equals(app.status)) {
+                addNotificationIfMissing(list, app.applicantId, "Application Rejected",
+                        "Your application for " + job.title + " has been rejected.",
+                        "APPLICATION", app.updatedAt > 0 ? app.updatedAt : app.createdAt);
+            } else if ("WITHDRAWN".equals(app.status)) {
+                addNotificationIfMissing(list, app.applicantId, "Application Withdrawn",
+                        "You withdrew your application for " + job.title + ".",
+                        "APPLICATION", app.updatedAt > 0 ? app.updatedAt : app.createdAt);
+            }
+        }
+
+        for (User u : getAllUsers()) {
+            if (!"MO".equals(u.role)) continue;
+            addNotificationIfMissing(list, u.id, "Weekly Recruitment Reminder",
+                    "Please review pending TA applications and close positions that have reached quota.",
+                    "SYSTEM", System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 3);
+            addNotificationIfMissing(list, u.id, "Admin Notice",
+                    "The admin office will periodically review job postings, TA workload, and password reset requests.",
+                    "SYSTEM", System.currentTimeMillis() - 1000L * 60 * 60 * 24);
+        }
+
+        if (list.size() != before) writeList("notifications.json", list);
+    }
+
+    private void addNotificationIfMissing(List<Notification> list, String userId, String title, String content, String type, long createdAt) {
+        if (userId == null || userId.isBlank()) return;
+        boolean exists = list.stream().anyMatch(n -> Objects.equals(n.userId, userId)
+                && Objects.equals(n.title, title)
+                && Objects.equals(n.content, content)
+                && Objects.equals(n.type, type));
+        if (exists) return;
+        Notification n = new Notification();
+        n.id = UUID.randomUUID().toString().substring(0, 8);
+        n.userId = userId;
+        n.title = title;
+        n.content = content;
+        n.type = type;
+        n.createdAt = createdAt > 0 ? createdAt : System.currentTimeMillis();
+        list.add(n);
     }
 
     // ==================== Audit Logs ====================

@@ -8,6 +8,8 @@ import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -244,9 +246,20 @@ public class JobHandler extends BaseHandler {
         if (!job.postedBy.equals(user.id) && !"ADMIN".equals(user.role)) {
             sendError(ex, 403, "Not authorized"); return;
         }
+        int deletedApps = ds.deleteApplicationsByJob(jobId);
+        int deletedDrafts = ds.deleteApplicationDraftsByJob(jobId);
+        int deletedNotifications = ds.deleteNotificationsRelatedToJob(job);
         ds.deleteJob(jobId);
-        ds.addAuditLog(user.id, user.username, "DELETE_JOB", "Deleted job: " + job.title);
-        sendJson(ex, 200, Map.of("message", "Job deleted"));
+        ds.addAuditLog(user.id, user.username, "DELETE_JOB", "Deleted job: " + job.title
+                + " (applications=" + deletedApps
+                + ", drafts=" + deletedDrafts
+                + ", notifications=" + deletedNotifications + ")");
+        sendJson(ex, 200, Map.of(
+                "message", "Job deleted",
+                "deletedApplications", deletedApps,
+                "deletedDrafts", deletedDrafts,
+                "deletedNotifications", deletedNotifications
+        ));
     }
 
     private void applyForJob(HttpExchange ex, String jobId) throws IOException {
@@ -257,6 +270,12 @@ public class JobHandler extends BaseHandler {
         if (job == null) { sendError(ex, 404, "Job not found"); return; }
         if (!"OPEN".equals(job.status)) {
             sendError(ex, 400, "This position is no longer accepting applications"); return;
+        }
+        if (isDeadlinePassed(job.deadline)) {
+            sendError(ex, 400, "This position is past the application deadline"); return;
+        }
+        if (isJobFull(job)) {
+            sendError(ex, 409, "This position has reached its quota"); return;
         }
         boolean alreadyApplied = ds.getApplicationsByApplicant(user.id).stream()
                 .anyMatch(a -> a.jobId.equals(jobId) && !"WITHDRAWN".equals(a.status));
@@ -364,7 +383,12 @@ public class JobHandler extends BaseHandler {
                 m.put("applicantStudentId", applicant.studentId);
                 m.put("applicantSchool", applicant.school);
                 m.put("applicantDegree", applicant.degree);
-                m.put("aiMatch", new AiMatchingService(ds).match(job, applicant, a.coverLetter, a));
+                Object storedMatch = parseStoredAiMatch(a);
+                if (storedMatch != null) {
+                    m.put("aiMatch", storedMatch);
+                    m.put("aiMatchModel", a.aiMatchModel);
+                    m.put("aiMatchUpdatedAt", a.aiMatchUpdatedAt);
+                }
             } else {
                 m.put("applicantName", "Unknown");
             }
@@ -414,6 +438,36 @@ public class JobHandler extends BaseHandler {
         }
         if (applicant == null) { sendError(ex, 404, "Applicant not found"); return; }
 
-        sendJson(ex, 200, new AiMatchingService(ds).match(job, applicant, coverLetter, app, model));
+        Map<String, Object> result = new AiMatchingService(ds).match(job, applicant, coverLetter, app, model);
+        if (app != null) {
+            app.aiMatchJson = gson.toJson(result);
+            app.aiMatchModel = model == null || model.isBlank() ? "gpt-5-mini" : model;
+            app.aiMatchUpdatedAt = System.currentTimeMillis();
+            ds.updateApplication(app);
+        }
+        sendJson(ex, 200, result);
+    }
+
+    private Object parseStoredAiMatch(Application app) {
+        if (app == null || app.aiMatchJson == null || app.aiMatchJson.isBlank()) return null;
+        try {
+            return gson.fromJson(app.aiMatchJson, Object.class);
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    private boolean isJobFull(Job job) {
+        if (job == null) return true;
+        return job.quota <= 0 || ds.getApprovedApplicationCountForJob(job.id) >= job.quota;
+    }
+
+    private boolean isDeadlinePassed(String deadline) {
+        if (deadline == null || deadline.trim().isEmpty()) return false;
+        try {
+            return LocalDate.parse(deadline.trim()).isBefore(LocalDate.now());
+        } catch (DateTimeParseException ignored) {
+            return false;
+        }
     }
 }
