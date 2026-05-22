@@ -40,10 +40,14 @@ public class AiMatchingService {
 
     public Map<String, Object> match(Job job, User applicant, String coverLetter, Application currentApplication, String model) {
         Map<String, Object> fallback = buildLocalFallback(job, applicant, coverLetter, currentApplication);
+        fallback.put("apiCalled", false);
         System.out.println("[AiMatchingService] match() invoked, model=" + normalizeModel(model)
                 + ", jobId=" + (job != null ? job.id : "null")
                 + ", applicantId=" + (applicant != null ? applicant.id : "null")
                 + ", applicationId=" + (currentApplication != null ? currentApplication.id : "null"));
+        if (!isExternalApiEnabled()) {
+            return fallback;
+        }
         try {
             Map<String, Object> apiResult = callApi(job, applicant, coverLetter, currentApplication, fallback, model);
             if (apiResult != null && !apiResult.isEmpty()) return apiResult;
@@ -53,6 +57,12 @@ public class AiMatchingService {
         }
         System.out.println("[AiMatchingService] Falling back to local matcher.");
         return fallback;
+    }
+
+    private boolean isExternalApiEnabled() {
+        String prop = System.getProperty("ta.ai.enableApi", "");
+        String env = System.getenv("TA_AI_ENABLE_API");
+        return "true".equalsIgnoreCase(prop) || "true".equalsIgnoreCase(env);
     }
 
     private Map<String, Object> callApi(Job job, User applicant, String coverLetter, Application currentApplication,
