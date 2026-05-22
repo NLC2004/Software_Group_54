@@ -39,9 +39,10 @@
 <span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
 <span>Statistics</span>
 </a>
-<a class="nav-link inactive" id="navNotifications" href="notifications-messages.html">
+<a class="nav-link inactive relative" id="navNotifications" href="notifications-messages.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
 <span>Notifications</span>
+<span class="hidden ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-black leading-5 text-center" data-notification-badge></span>
 </a>
 <a class="nav-link inactive" id="navProfile" href="personal-center.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
@@ -188,6 +189,7 @@ Back to Admin
         let moPriority1Only = false;
         let aiMatchTargetAppId = null;
         let moPendingOnly = false;
+        let postedByOwnerId = '';
 
         (async function init() {
             const user = requireAuth(['MO', 'ADMIN']);
@@ -202,8 +204,10 @@ Back to Admin
                     backBtn.classList.add('flex');
                 }
             }
+            updateNotificationBadges().catch(() => {});
 
             jobId = getUrlParam('id');
+            postedByOwnerId = getUrlParam('postedBy') || '';
             if (!jobId) { showToast('No job ID specified', 'error'); return; }
 
             try {
@@ -211,6 +215,8 @@ Back to Admin
                     API.get('/api/jobs/' + jobId),
                     API.get('/api/jobs/' + jobId + '/applications')
                 ]);
+                postedByOwnerId = postedByOwnerId || job.postedBy || '';
+                applyAdminScopeLinks(user);
                 renderJobInfo(job);
                 renderApplicants(applications);
             } catch (err) {
@@ -270,7 +276,7 @@ Back to Admin
 
             const isOpen = job.status === 'OPEN';
             document.getElementById('headerActions').innerHTML = `
-                <a class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all" href="job-edit.html?id=${job.id}">Edit Job</a>
+                <a class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all" href="job-edit.html?id=${job.id}${getScopedPosterQuery()}">Edit Job</a>
                 <button onclick="toggleStatus('${isOpen ? 'CLOSED' : 'OPEN'}')" class="px-4 py-2 ${isOpen ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'} rounded-xl text-sm font-semibold hover:opacity-80 transition-all">${isOpen ? 'Close Recruitment' : 'Reopen Recruitment'}</button>
                 <button onclick="deleteJob()" class="px-4 py-2 bg-red-50 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-100 transition-all">Delete</button>`;
 
@@ -450,11 +456,28 @@ Back to Admin
             modal.classList.remove('flex');
         }
 
+        function getScopedPosterQuery() {
+            return postedByOwnerId ? '&postedBy=' + encodeURIComponent(postedByOwnerId) : '';
+        }
+
+        function applyAdminScopeLinks(user) {
+            if (!user || user.role !== 'ADMIN' || !postedByOwnerId) return;
+            const query = encodeURIComponent(postedByOwnerId);
+            const jobsHref = 'my-job-list.html?postedBy=' + query;
+            const statsHref = 'statistics-analysis.html?postedBy=' + query;
+            document.getElementById('breadcrumbJobsLink').href = jobsHref;
+            document.getElementById('navDashboard').href = jobsHref;
+            document.getElementById('navStatistics').href = statsHref;
+        }
+
         function renderApplicants(applications) {
             const container = document.getElementById('applicantList');
             currentApplications = applications || [];
             const visibleApplications = getFilteredApplicants(currentApplications);
             document.getElementById('applicantCount').textContent = visibleApplications.length + ' Visible';
+            const quota = Number(currentJobForSchedule && currentJobForSchedule.quota ? currentJobForSchedule.quota : 0);
+            const approvedCount = currentApplications.filter(a => a.status === 'APPROVED').length;
+            const quotaFull = quota <= 0 || approvedCount >= quota;
 
             if (visibleApplications.length === 0) {
                 container.innerHTML = '<div class="bg-white p-8 rounded-3xl border border-gray-50 card-shadow text-center text-gray-400">No applications yet</div>';
@@ -482,7 +505,7 @@ Back to Admin
                     : 'bg-gray-100 text-gray-400 border-gray-200';
                 const matchBadge = hasMatch
                     ? `AI ${matchScore}% &middot; ${esc(match.label || 'Match')}`
-                    : 'AI Match: Not run';
+                    : 'AI not run';
 
                 const cvButton = app.cvFileName
                     ? `<button onclick="event.stopPropagation(); viewCV('${safeJsStr(app.cvFileName)}')" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100" title="View CV"><span class="iconify text-xl" data-icon="solar:document-bold"></span></button>`
@@ -490,8 +513,11 @@ Back to Admin
 
                 const aiMatchButton = `<button onclick="event.stopPropagation(); openAiMatchModal('${safeJsStr(app.id)}')" class="p-2 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100" title="AI Match"><span class="iconify text-xl" data-icon="mdi:creation"></span></button>`;
 
+                const approveButton = quotaFull
+                    ? `<button class="px-3 py-2 bg-gray-100 text-gray-400 rounded-xl cursor-not-allowed text-xs font-bold" title="Quota full" disabled>Quota full</button>`
+                    : `<button onclick="updateAppStatus('${safeJsStr(app.id)}', 'APPROVED')" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100" title="Approve"><span class="iconify text-xl" data-icon="solar:check-read-bold"></span></button>`;
                 const actionButtons = app.status === 'PENDING' ? `
-                    <button onclick="updateAppStatus('${safeJsStr(app.id)}', 'APPROVED')" class="p-2 bg-green-50 text-green-600 rounded-xl hover:bg-green-100" title="Approve"><span class="iconify text-xl" data-icon="solar:check-read-bold"></span></button>
+                    ${approveButton}
                     <button onclick="updateAppStatus('${safeJsStr(app.id)}', 'REJECTED')" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-100" title="Reject"><span class="iconify text-xl" data-icon="solar:close-circle-bold"></span></button>`
                     : `<span class="px-3 py-1 text-xs font-bold rounded-full ${app.status === 'APPROVED' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}">${esc(app.status)}</span>`;
 
@@ -703,7 +729,11 @@ Back to Admin
             try {
                 await API.put('/api/applications/' + appId + '/status', { status });
                 showToast('Application ' + status.toLowerCase(), 'success');
-                const applications = await API.get('/api/jobs/' + jobId + '/applications');
+                const [job, applications] = await Promise.all([
+                    API.get('/api/jobs/' + jobId),
+                    API.get('/api/jobs/' + jobId + '/applications')
+                ]);
+                renderJobInfo(job);
                 renderApplicants(applications);
             } catch (err) {
                 showToast(err.message || 'Failed to update status', 'error');
@@ -755,8 +785,17 @@ Back to Admin
 
         function openAiMatchModal(appId) {
             aiMatchTargetAppId = appId;
-            document.getElementById('aiMatchResult').classList.add('hidden');
-            document.getElementById('aiMatchSub').textContent = 'Select a model and run analysis';
+            const app = (currentApplications || []).find(a => String(a.id) === String(appId));
+            const resultDiv = document.getElementById('aiMatchResult');
+            if (app && app.aiMatch) {
+                resultDiv.innerHTML = renderAiMatchDetail(app.aiMatch);
+                resultDiv.classList.remove('hidden');
+                document.getElementById('aiMatchSub').textContent = 'Saved result' + (app.aiMatchModel ? ': ' + app.aiMatchModel : '');
+            } else {
+                resultDiv.classList.add('hidden');
+                resultDiv.innerHTML = '';
+                document.getElementById('aiMatchSub').textContent = 'No saved result yet. Select a model and run analysis.';
+            }
             const modal = document.getElementById('aiMatchModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -784,6 +823,8 @@ Back to Admin
                 const app = (currentApplications || []).find(a => String(a.id) === String(aiMatchTargetAppId));
                 if (app) {
                     app.aiMatch = result;
+                    app.aiMatchModel = model;
+                    app.aiMatchUpdatedAt = Date.now();
                 }
 
                 const resultDiv = document.getElementById('aiMatchResult');

@@ -10,6 +10,9 @@ public class Application {
     public int priority;
     public long createdAt;
     public long updatedAt;
+    public String aiMatchJson;
+    public String aiMatchModel;
+    public Long aiMatchUpdatedAt;
 
     public Application() {}
 }

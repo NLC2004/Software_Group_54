@@ -19,7 +19,8 @@
     "status": "PENDING",
     "priority": 2,
     "createdAt": 1779167523764,
-    "updatedAt": 1779167523764
+    "updatedAt": 1779167523764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app003",
@@ -30,7 +31,8 @@
     "status": "PENDING",
     "priority": 2,
     "createdAt": 1779163923764,
-    "updatedAt": 1779163923764
+    "updatedAt": 1779163923764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app004",
@@ -41,7 +43,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779160323764,
-    "updatedAt": 1779160323764
+    "updatedAt": 1779160323764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app005",
@@ -52,18 +55,20 @@
     "status": "PENDING",
     "priority": 2,
     "createdAt": 1779156723764,
-    "updatedAt": 1779156723764
+    "updatedAt": 1779156723764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app006",
     "jobId": "job003",
     "applicantId": "ta006",
     "cvFileName": "cv_ta006.pdf",
-    "coverLetter": "[Basic Information]\nName: Zhenkun Li\nStudent ID: 231225649\nEmail: 231225649@bupt.edu.cn\nPhone: 13800006006\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Wu Tian\nSkills: Operating Systems, Middleware, Java, Python, Web Development, database, problem solving, responsibility, programming, organization, communication, teaching\nRelevant Courses: Operating Systems (A), Middleware (A-), Web Development (B+), Data Structures (A-), Database Systems (B+)\nExperience: Built a mini OS kernel implementing process scheduling, virtual memory, and file system. Full-stack developer for student information portal. Linux system administrator for lab servers.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Final Exam TA position for Personal Development Plan and Entrepreneurial Skills. As a Linux system administrator for our lab servers, I have demonstrated exceptional reliability, punctuality, and responsibility - I manage critical systems where downtime is not acceptable. I am thoroughly familiar with the school's examination regulations and understand the importance of maintaining strict exam integrity and confidentiality. I have strong problem-solving skills and remain calm under pressure - essential qualities for handling unexpected situations during exams. My experience managing user accounts and permissions on lab servers has instilled in me a meticulous attention to detail and protocol. I am fully available on the exam date (May 31) and committed to arriving early, staying throughout the entire examination, and ensuring all procedures are followed correctly.",
+    "coverLetter": "[Basic Information]\nName: Zhenkun Li\nStudent ID: 231225649\nEmail: 231225649@bupt.edu.cn\nPhone: 13800006006\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Wu Tian\nSkills: Operating Systems, Middleware, Java, Python, Web Development, database, problem solving, responsibility, programming, organization, communication, teaching\nRelevant Courses: Operating Systems (A), Middleware (A-), Web Development (B+), Data Structures (A-), Database Systems (B+)\nExperience: Built a mini OS kernel implementing process scheduling, virtual memory, and file system. Full-stack developer for student information portal. Linux system administrator for lab servers.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Final Exam TA position for Personal Development Plan and Entrepreneurial Skills. As a Linux system administrator for our lab servers, I have demonstrated exceptional reliability, punctuality, and responsibility - I manage critical systems where downtime is not acceptable. I am thoroughly familiar with the school\u0027s examination regulations and understand the importance of maintaining strict exam integrity and confidentiality. I have strong problem-solving skills and remain calm under pressure - essential qualities for handling unexpected situations during exams. My experience managing user accounts and permissions on lab servers has instilled in me a meticulous attention to detail and protocol. I am fully available on the exam date (May 31) and committed to arriving early, staying throughout the entire examination, and ensuring all procedures are followed correctly.",
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779153123764,
-    "updatedAt": 1779153123764
+    "updatedAt": 1779153123764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app007",
@@ -74,7 +79,8 @@
     "status": "PENDING",
     "priority": 3,
     "createdAt": 1779149523764,
-    "updatedAt": 1779149523764
+    "updatedAt": 1779149523764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app008",
@@ -85,7 +91,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779145923764,
-    "updatedAt": 1779145923764
+    "updatedAt": 1779145923764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app009",
@@ -96,7 +103,8 @@
     "status": "PENDING",
     "priority": 2,
     "createdAt": 1779142323764,
-    "updatedAt": 1779142323764
+    "updatedAt": 1779142323764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app010",
@@ -107,7 +115,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779138723764,
-    "updatedAt": 1779138723764
+    "updatedAt": 1779138723764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app011",
@@ -118,7 +127,8 @@
     "status": "PENDING",
     "priority": 2,
     "createdAt": 1779135123764,
-    "updatedAt": 1779135123764
+    "updatedAt": 1779135123764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app012",
@@ -129,7 +139,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779131523764,
-    "updatedAt": 1779131523764
+    "updatedAt": 1779131523764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app013",
@@ -140,7 +151,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779127923764,
-    "updatedAt": 1779127923764
+    "updatedAt": 1779127923764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app014",
@@ -151,7 +163,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779124323764,
-    "updatedAt": 1779124323764
+    "updatedAt": 1779124323764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app015",
@@ -162,7 +175,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779120723764,
-    "updatedAt": 1779120723764
+    "updatedAt": 1779120723764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app016",
@@ -173,7 +187,8 @@
     "status": "PENDING",
     "priority": 3,
     "createdAt": 1779117123764,
-    "updatedAt": 1779117123764
+    "updatedAt": 1779117123764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app017",
@@ -184,7 +199,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779113523764,
-    "updatedAt": 1779113523764
+    "updatedAt": 1779113523764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app018",
@@ -195,7 +211,8 @@
     "status": "PENDING",
     "priority": 3,
     "createdAt": 1779109923764,
-    "updatedAt": 1779109923764
+    "updatedAt": 1779109923764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app019",
@@ -206,7 +223,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779106323764,
-    "updatedAt": 1779106323764
+    "updatedAt": 1779106323764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app020",
@@ -217,51 +235,8 @@
     "status": "PENDING",
     "priority": 2,
     "createdAt": 1779102723764,
-    "updatedAt": 1779102723764
-  },
-  {
-    "id": "app021",
-    "jobId": "job011",
-    "applicantId": "ta002",
-    "cvFileName": "cv_ta002.pdf",
-    "coverLetter": "[Basic Information]\nName: Zijun Song\nStudent ID: 231225270\nEmail: 231225270@bupt.edu.cn\nPhone: 13800002002\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Li Ming\nSkills: Networking, Web Development, JavaScript, React, Node.js, database, communication, problem solving, organization, teaching, responsibility\nRelevant Courses: Computer Networks (A), Web Development (A), Database Systems (A-), Communications and Networks (B+), Software Engineering (A-)\nExperience: Frontend developer intern (2025 Summer) - built responsive UI components for e-commerce platform, collaborated with backend team. Built a course management web app with full CRUD functionality for a student club.\n\n[Cover Letter / Motivation]\nI am well-qualified for the Database Systems Final Exam TA position. I achieved an A- in this course and have extensive practical database experience from my full-stack development projects using both SQL (MySQL, PostgreSQL) and NoSQL (MongoDB) databases. I deeply understand database design, normalization (1NF to BCNF), query optimization, indexing, transaction management (ACID), and concurrency control. My course management web app involved designing a normalized database schema, writing complex SQL queries with joins and aggregations, and implementing database-backed features. I am very responsible, punctual, and committed to maintaining exam integrity. I am fully available on the exam date and will ensure all procedures are followed correctly.",
-    "status": "PENDING",
-    "priority": 1,
-    "createdAt": 1779099123764,
-    "updatedAt": 1779099123764
-  },
-  {
-    "id": "app022",
-    "jobId": "job011",
-    "applicantId": "1509be6d",
-    "cvFileName": "cv_mei.pdf",
-    "coverLetter": "[Basic Information]\nName: Mei\nStudent ID: 2023213367\nEmail: 2023213367@bupt.edu.cn\nPhone: 13800008008\nGender: Female\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Sun Hao\nSkills: Design, HCI, Database, HTML, CSS, JavaScript, communication, organization, teaching, responsibility, english, problem solving\nRelevant Courses: Human-Computer Interaction (A), Database Systems (A-), Design and Build (A), Web Development (B+), Personal Development Plan (A)\nExperience: UI/UX design intern at tech company - designed mobile app interfaces, conducted usability testing. Designed and developed official website for campus organization. Volunteer tutor for underprivileged students.\n\n[Cover Letter / Motivation]\nI am applying for the Database Systems Final Exam TA role. I achieved an A- in this course and have applied database concepts in my web development projects. I am reliable, meticulous, and committed to executing all invigilation duties with the utmost responsibility and adherence to exam regulations.",
-    "status": "PENDING",
-    "priority": 3,
-    "createdAt": 1779095523764,
-    "updatedAt": 1779095523764
-  },
-  {
-    "id": "app023",
-    "jobId": "job012",
-    "applicantId": "ta003",
-    "cvFileName": "cv_ta003.pdf",
-    "coverLetter": "[Basic Information]\nName: Siying Li\nStudent ID: 231225672\nEmail: lisiying@bupt.edu.cn\nPhone: 13931092945\nGender: Female\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Wang Liang\nSkills: Cryptography, Cyber Security, programming, algorithms, data structures, teaching, english, responsibility, communication, problem solving, organization\nRelevant Courses: Cryptography and Cyber Security (A), Data Structures (A), Software Engineering (A-), Computer Architecture (B+), Embedded Systems (B)\nExperience: TA for Programming Fundamentals (2024-2025) - guided students through programming exercises and debugging, held weekly tutorials. Published paper on lightweight encryption for IoT devices. Won 2nd prize in university security competition.\n\n[Cover Letter / Motivation]\nI am exceptionally qualified for the Data Structures Class Test TA position. I achieved an A in this course, which has been foundational to all my programming, research, and competition work. I have deep mastery of all core data structures: arrays, linked lists, stacks, queues, trees (BST, AVL, B-trees), graphs, hash tables, and heaps, as well as sorting and searching algorithms with their complexity analysis. As a TA for Programming Fundamentals, I have extensive experience helping students understand algorithmic thinking, debug data structure implementations, and analyze time/space complexity. I am very responsible, organized, and committed to maintaining test confidentiality. My teaching experience makes me well-prepared to handle student questions and ensure a fair assessment environment.",
-    "status": "PENDING",
-    "priority": 1,
-    "createdAt": 1779091923764,
-    "updatedAt": 1779091923764
-  },
-  {
-    "id": "app024",
-    "jobId": "job012",
-    "applicantId": "ta004",
-    "cvFileName": "cv_ta004.pdf",
-    "coverLetter": "[Basic Information]\nName: Lingxiang Mei\nStudent ID: 231225557\nEmail: meilx@bupt.edu.cn\nPhone: 15656360213\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Chen Yu\nSkills: Artificial Intelligence, Machine Learning, Python, TensorFlow, PyTorch, data analysis, software testing, teaching, problem solving, programming, communication, responsibility, organization\nRelevant Courses: Artificial Intelligence (A), Machine Learning (A), Software Testing (A-), Human-Computer Interaction (B+), Middleware (B+)\nExperience: Research assistant in AI lab (2024-2026) focusing on NLP models. Published 2 papers at ML conferences. TA for Machine Learning course (2025 Fall) - conducted tutorials for 50+ students, graded assignments, held office hours.\n\n[Cover Letter / Motivation]\nI am applying for the Data Structures Class Test TA role. I achieved an A- in this course, and my AI/ML research depends heavily on efficient data structures. I have practical experience implementing complex data structures in Python and Java. My TA experience has prepared me for managing assessment logistics. I am organized and committed to academic integrity.",
-    "status": "PENDING",
-    "priority": 3,
-    "createdAt": 1779088323764,
-    "updatedAt": 1779088323764
+    "updatedAt": 1779102723764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app025",
@@ -272,7 +247,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779084723764,
-    "updatedAt": 1779084723764
+    "updatedAt": 1779084723764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app026",
@@ -283,7 +259,8 @@
     "status": "PENDING",
     "priority": 3,
     "createdAt": 1779081123764,
-    "updatedAt": 1779081123764
+    "updatedAt": 1779081123764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app027",
@@ -294,7 +271,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779077523764,
-    "updatedAt": 1779077523764
+    "updatedAt": 1779077523764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app028",
@@ -305,7 +283,8 @@
     "status": "PENDING",
     "priority": 3,
     "createdAt": 1779073923764,
-    "updatedAt": 1779073923764
+    "updatedAt": 1779073923764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app029",
@@ -316,7 +295,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779070323764,
-    "updatedAt": 1779070323764
+    "updatedAt": 1779070323764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app030",
@@ -327,7 +307,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779066723764,
-    "updatedAt": 1779066723764
+    "updatedAt": 1779066723764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app031",
@@ -338,7 +319,8 @@
     "status": "PENDING",
     "priority": 3,
     "createdAt": 1779063123764,
-    "updatedAt": 1779063123764
+    "updatedAt": 1779063123764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app032",
@@ -349,7 +331,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779059523764,
-    "updatedAt": 1779059523764
+    "updatedAt": 1779059523764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app033",
@@ -360,7 +343,8 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779055923764,
-    "updatedAt": 1779055923764
+    "updatedAt": 1779055923764,
+    "aiMatchUpdatedAt": 0
   },
   {
     "id": "app034",
@@ -371,6 +355,55 @@
     "status": "PENDING",
     "priority": 1,
     "createdAt": 1779052323764,
-    "updatedAt": 1779052323764
+    "updatedAt": 1779052323764,
+    "aiMatchUpdatedAt": 0
+  },
+  {
+    "id": "app021",
+    "jobId": "job011",
+    "applicantId": "ta002",
+    "cvFileName": "cv_ta002.pdf",
+    "coverLetter": "[Basic Information]\nName: Zijun Song\nStudent ID: 231225270\nEmail: 231225270@bupt.edu.cn\nPhone: 13800002002\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Li Ming\nSkills: Networking, Web Development, JavaScript, React, Node.js, database, communication, problem solving, organization, teaching, responsibility\nRelevant Courses: Computer Networks (A), Web Development (A), Database Systems (A-), Communications and Networks (B+), Software Engineering (A-)\nExperience: Frontend developer intern (2025 Summer) - built responsive UI components for e-commerce platform, collaborated with backend team. Built a course management web app with full CRUD functionality for a student club.\n\n[Cover Letter / Motivation]\nI am well-qualified for the Database Systems Final Exam TA position. I achieved an A- in this course and have extensive practical database experience from my full-stack development projects using both SQL (MySQL, PostgreSQL) and NoSQL (MongoDB) databases. I deeply understand database design, normalization (1NF to BCNF), query optimization, indexing, transaction management (ACID), and concurrency control. My course management web app involved designing a normalized database schema, writing complex SQL queries with joins and aggregations, and implementing database-backed features. I am very responsible, punctual, and committed to maintaining exam integrity. I am fully available on the exam date and will ensure all procedures are followed correctly.",
+    "status": "APPROVED",
+    "priority": 1,
+    "createdAt": 1779099123764,
+    "updatedAt": 1779475926299,
+    "aiMatchUpdatedAt": 0
+  },
+  {
+    "id": "app022",
+    "jobId": "job011",
+    "applicantId": "1509be6d",
+    "cvFileName": "cv_mei.pdf",
+    "coverLetter": "[Basic Information]\nName: Mei\nStudent ID: 2023213367\nEmail: 2023213367@bupt.edu.cn\nPhone: 13800008008\nGender: Female\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Sun Hao\nSkills: Design, HCI, Database, HTML, CSS, JavaScript, communication, organization, teaching, responsibility, english, problem solving\nRelevant Courses: Human-Computer Interaction (A), Database Systems (A-), Design and Build (A), Web Development (B+), Personal Development Plan (A)\nExperience: UI/UX design intern at tech company - designed mobile app interfaces, conducted usability testing. Designed and developed official website for campus organization. Volunteer tutor for underprivileged students.\n\n[Cover Letter / Motivation]\nI am applying for the Database Systems Final Exam TA role. I achieved an A- in this course and have applied database concepts in my web development projects. I am reliable, meticulous, and committed to executing all invigilation duties with the utmost responsibility and adherence to exam regulations.",
+    "status": "APPROVED",
+    "priority": 3,
+    "createdAt": 1779095523764,
+    "updatedAt": 1779475929502,
+    "aiMatchUpdatedAt": 0
+  },
+  {
+    "id": "app023",
+    "jobId": "job012",
+    "applicantId": "ta003",
+    "cvFileName": "cv_ta003.pdf",
+    "coverLetter": "[Basic Information]\nName: Siying Li\nStudent ID: 231225672\nEmail: lisiying@bupt.edu.cn\nPhone: 13931092945\nGender: Female\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Wang Liang\nSkills: Cryptography, Cyber Security, programming, algorithms, data structures, teaching, english, responsibility, communication, problem solving, organization\nRelevant Courses: Cryptography and Cyber Security (A), Data Structures (A), Software Engineering (A-), Computer Architecture (B+), Embedded Systems (B)\nExperience: TA for Programming Fundamentals (2024-2025) - guided students through programming exercises and debugging, held weekly tutorials. Published paper on lightweight encryption for IoT devices. Won 2nd prize in university security competition.\n\n[Cover Letter / Motivation]\nI am exceptionally qualified for the Data Structures Class Test TA position. I achieved an A in this course, which has been foundational to all my programming, research, and competition work. I have deep mastery of all core data structures: arrays, linked lists, stacks, queues, trees (BST, AVL, B-trees), graphs, hash tables, and heaps, as well as sorting and searching algorithms with their complexity analysis. As a TA for Programming Fundamentals, I have extensive experience helping students understand algorithmic thinking, debug data structure implementations, and analyze time/space complexity. I am very responsible, organized, and committed to maintaining test confidentiality. My teaching experience makes me well-prepared to handle student questions and ensure a fair assessment environment.",
+    "status": "REJECTED",
+    "priority": 1,
+    "createdAt": 1779091923764,
+    "updatedAt": 1779475957238,
+    "aiMatchUpdatedAt": 0
+  },
+  {
+    "id": "app024",
+    "jobId": "job012",
+    "applicantId": "ta004",
+    "cvFileName": "cv_ta004.pdf",
+    "coverLetter": "[Basic Information]\nName: Lingxiang Mei\nStudent ID: 231225557\nEmail: meilx@bupt.edu.cn\nPhone: 15656360213\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Chen Yu\nSkills: Artificial Intelligence, Machine Learning, Python, TensorFlow, PyTorch, data analysis, software testing, teaching, problem solving, programming, communication, responsibility, organization\nRelevant Courses: Artificial Intelligence (A), Machine Learning (A), Software Testing (A-), Human-Computer Interaction (B+), Middleware (B+)\nExperience: Research assistant in AI lab (2024-2026) focusing on NLP models. Published 2 papers at ML conferences. TA for Machine Learning course (2025 Fall) - conducted tutorials for 50+ students, graded assignments, held office hours.\n\n[Cover Letter / Motivation]\nI am applying for the Data Structures Class Test TA role. I achieved an A- in this course, and my AI/ML research depends heavily on efficient data structures. I have practical experience implementing complex data structures in Python and Java. My TA experience has prepared me for managing assessment logistics. I am organized and committed to academic integrity.",
+    "status": "APPROVED",
+    "priority": 3,
+    "createdAt": 1779088323764,
+    "updatedAt": 1779475960212,
+    "aiMatchUpdatedAt": 0
   }
 ]
