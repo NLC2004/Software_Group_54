@@ -319,6 +319,16 @@ public class AdminHandler extends BaseHandler {
                 req.reason = body.has("reason") ? body.get("reason").getAsString() : "";
                 req.processedAt = System.currentTimeMillis();
                 ds.updatePasswordReset(req);
+                if (target != null) {
+                    Notification n = new Notification();
+                    n.userId = target.id;
+                    n.title = "Password Reset Rejected";
+                    n.content = req.reason == null || req.reason.isBlank()
+                            ? "Your password reset request was rejected. Please contact the administrator for details."
+                            : "Your password reset request was rejected. Reason: " + req.reason;
+                    n.type = "PASSWORD_RESET";
+                    ds.addNotification(n);
+                }
                 String recipientEmail = resolveResetRecipientEmail(req, target);
                 if (recipientEmail != null && !recipientEmail.isBlank()) {
                     try {
@@ -555,6 +565,13 @@ public class AdminHandler extends BaseHandler {
             return weekly;
         }
         mergeWeeklyMap(weekly, parseWeeklyHoursFromScheduleEntriesJson(grid));
+        if (weekly.isEmpty() && job.weeklyHours > 0) {
+            int start = job.courseWeekStart > 0 ? job.courseWeekStart : 1;
+            int end = job.courseWeekEnd >= start ? job.courseWeekEnd : start;
+            for (int week = start; week <= end; week++) {
+                weekly.put(week, job.weeklyHours);
+            }
+        }
         return weekly;
     }
 
