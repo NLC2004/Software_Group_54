@@ -1638,5 +1638,141 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779468576060
+  },
+  {
+    "id": "6aad6706",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779473656614
+  },
+  {
+    "id": "50221eb5",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473691133
+  },
+  {
+    "id": "c345811c",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473693225
+  },
+  {
+    "id": "2e25f138",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473694173
+  },
+  {
+    "id": "474e95d3",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473695189
+  },
+  {
+    "id": "32fce49d",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473695938
+  },
+  {
+    "id": "b59a1273",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473697126
+  },
+  {
+    "id": "ed9e5785",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473698983
+  },
+  {
+    "id": "fb8a90c1",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Lab TA: Middleware",
+    "createdAt": 1779473699712
+  },
+  {
+    "id": "c14fb3c7",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779475310253
+  },
+  {
+    "id": "447231c8",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application app021 for Final Exam TA: Database Systems",
+    "createdAt": 1779475926302
+  },
+  {
+    "id": "df5224d6",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application app022 for Final Exam TA: Database Systems",
+    "createdAt": 1779475929513
+  },
+  {
+    "id": "1ed38fe4",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "APPLICATION_REJECTED",
+    "detail": "Application app023 for Class Test TA: Data Structures",
+    "createdAt": 1779475957248
+  },
+  {
+    "id": "19020ee5",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application app024 for Class Test TA: Data Structures",
+    "createdAt": 1779475960223
+  },
+  {
+    "id": "6c519d0f",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "CREATE_JOB",
+    "detail": "Created job: teat",
+    "createdAt": 1779476398645
+  },
+  {
+    "id": "3f863f4c",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779476808041
+  },
+  {
+    "id": "f8c0aeb2",
+    "userId": "mo003",
+    "username": "teacher03",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779476822006
   }
 ]

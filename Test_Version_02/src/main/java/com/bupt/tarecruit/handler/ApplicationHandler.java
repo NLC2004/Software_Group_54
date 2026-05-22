@@ -109,8 +109,16 @@ public class ApplicationHandler extends BaseHandler {
             if (!"APPROVED".equals(newStatus) && !"REJECTED".equals(newStatus)) {
                 sendError(ex, 400, "Invalid status"); return;
             }
+            if ("APPROVED".equals(newStatus) && !"APPROVED".equals(app.status) && isJobApprovalFull(job)) {
+                sendError(ex, 409, "Cannot approve: this position has reached its quota"); return;
+            }
         } else if (!"ADMIN".equals(user.role)) {
             sendError(ex, 403, "Not authorized"); return;
+        } else if ("APPROVED".equals(newStatus) && !"APPROVED".equals(app.status)) {
+            Job job = ds.getJobById(app.jobId);
+            if (isJobApprovalFull(job)) {
+                sendError(ex, 409, "Cannot approve: this position has reached its quota"); return;
+            }
         }
 
         app.status = newStatus;
@@ -136,6 +144,11 @@ public class ApplicationHandler extends BaseHandler {
         if (n.title != null) ds.addNotification(n);
 
         sendJson(ex, 200, Map.of("message", "Status updated", "status", newStatus));
+    }
+
+    private boolean isJobApprovalFull(Job job) {
+        if (job == null) return true;
+        return job.quota <= 0 || ds.getApprovedApplicationCountForJob(job.id) >= job.quota;
     }
 
     private List<Map<String, Object>> enrichApplications(List<Application> apps) {

@@ -90,6 +90,48 @@ class TaApplicationFlowTest {
     }
 
     @Test
+    void ta12_applyShouldRejectExpiredJobDeadline() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ta_expired_deadline");
+        User mo = addMo(ds, "mo_expired_deadline");
+        Job job = addOpenJob(ds, mo, "job-expired-deadline");
+        job.deadline = "2000-01-01";
+        ds.updateJob(job);
+        String token = ds.createSession(ta.id);
+
+        JobHandler handler = new JobHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("POST", "/api/jobs/" + job.id + "/apply", null, "{\"coverLetter\":\"test\",\"priority\":1}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("past the application deadline"));
+        assertEquals(0, ds.getApplicationsByApplicant(ta.id).size());
+    }
+
+    @Test
+    void ta12_applyShouldRejectJobThatReachedQuota() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ta_full_quota");
+        User approvedTa = addTa(ds, "ta_full_quota_existing");
+        User mo = addMo(ds, "mo_full_quota");
+        Job job = addOpenJob(ds, mo, "job-full-quota");
+        persistApplication(ds, buildApplication(approvedTa.id, job.id, 1, "APPROVED"));
+        String token = ds.createSession(ta.id);
+
+        JobHandler handler = new JobHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("POST", "/api/jobs/" + job.id + "/apply", null, "{\"coverLetter\":\"test\",\"priority\":1}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(409, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("reached its quota"));
+        assertEquals(0, ds.getApplicationsByApplicant(ta.id).size());
+    }
+
+    @Test
     void ta12_applyShouldAllowReusingPriorityFromWithdrawnOrRejectedApplications() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User ta = addTa(ds, "ta_reuse_inactive_priority");

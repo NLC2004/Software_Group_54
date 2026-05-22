@@ -48,7 +48,7 @@ class AiMatchingStoriesTest {
     }
 
     @Test
-    void moApplicationListShouldIncludeAiMatchSummary() throws Exception {
+    void moApplicationListShouldOnlyIncludeSavedAiMatchAfterRun() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User ta = addTa(ds, "ai_applicant");
         User mo = addMo(ds, "ai_owner");
@@ -68,7 +68,25 @@ class AiMatchingStoriesTest {
         handler.handle(ex);
 
         assertEquals(200, ex.getResponseCode());
-        String body = ex.getResponseBodyAsString();
+        assertFalse(ex.getResponseBodyAsString().contains("\"aiMatch\""));
+
+        TestHttpExchange matchEx = new TestHttpExchange(
+                "POST",
+                "/api/jobs/" + job.id + "/match",
+                null,
+                "{\"applicationId\":\"" + app.id + "\",\"model\":\"gpt-5-mini\"}"
+        );
+        matchEx.setBearerToken(token);
+        handler.handle(matchEx);
+        assertEquals(200, matchEx.getResponseCode());
+        assertNotNull(ds.getApplicationById(app.id).aiMatchJson);
+
+        TestHttpExchange listAfterMatch = new TestHttpExchange("GET", "/api/jobs/" + job.id + "/applications", null, null);
+        listAfterMatch.setBearerToken(token);
+        handler.handle(listAfterMatch);
+
+        assertEquals(200, listAfterMatch.getResponseCode());
+        String body = listAfterMatch.getResponseBodyAsString();
         assertTrue(body.contains("\"aiMatch\""));
         assertTrue(body.contains("\"score\""));
         assertTrue(body.contains("\"workloadRisk\""));

@@ -36,9 +36,10 @@
 <span class="iconify mr-3 text-xl" data-icon="solar:chart-2-bold"></span>
 <span>Statistics</span>
 </a>
-<a class="nav-link inactive" href="notifications-messages.html">
+<a class="nav-link inactive relative" href="notifications-messages.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:bell-bing-bold"></span>
 <span>Notifications</span>
+<span class="hidden ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-black leading-5 text-center" data-notification-badge></span>
 </a>
 <a class="nav-link inactive" href="personal-center.html">
 <span class="iconify mr-3 text-xl" data-icon="solar:user-circle-bold"></span>
@@ -80,7 +81,7 @@ Back to Admin
 <div class="flex items-center space-x-6">
 <a href="notifications-messages.html" class="relative">
 <span class="iconify text-xl text-gray-400" data-icon="solar:bell-bing-linear"></span>
-<span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+<span class="hidden absolute -top-2 -right-3 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-red-500 text-white text-[10px] font-black leading-[1.1rem] text-center" data-notification-badge></span>
 </a>
 <div class="flex items-center space-x-3 border-l pl-6 border-gray-100">
 <img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-gray-100" src="https://modao.cc/agent-py/media/generated_images/2026-03-21/bc2fcb312e504b8ca61689559e7c92b5.jpg"/>
@@ -188,6 +189,8 @@ Back to Admin
                     backBtn.classList.add('flex');
                 }
             }
+            applyAdminScopeLinks(user);
+            updateNotificationBadges().catch(() => {});
             document.getElementById('searchInput').addEventListener('input', () => renderJobs());
 
             await loadJobs(user);
@@ -230,6 +233,7 @@ Back to Admin
                 return title.includes(query) || course.includes(query);
             });
             const grid = document.getElementById('jobGrid');
+            const scopeQuery = getScopedPosterQuery();
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
@@ -250,6 +254,11 @@ Back to Admin
                     : 'bg-gray-100 text-gray-500';
                 const statusText = isOpen ? 'Active' : 'Closed';
                 const deadline = job.deadline ? formatDate(job.deadline) : 'Not Set';
+                const quota = Number(job.quota || 0);
+                const approved = Number(job.approvedCount || 0);
+                const quotaLabel = quota > 0 ? `${approved}/${quota}` : `${approved}/N/A`;
+                const quotaPercent = quota > 0 ? Math.min(100, Math.round((approved / quota) * 100)) : 0;
+                const quotaFull = quota > 0 && approved >= quota;
 
                 html += `
                 <div class="bg-white rounded-[2rem] p-6 card-shadow border border-gray-50 hover:-translate-y-2 transition-all duration-300 group relative">
@@ -260,7 +269,7 @@ Back to Admin
                                 <span class="iconify text-xl" data-icon="solar:menu-dots-bold"></span>
                             </button>
                             <div class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg border border-gray-100 z-50 py-1">
-                                <a href="job-edit.html?id=${esc(job.id)}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Edit</a>
+                                <a href="job-edit.html?id=${esc(job.id)}${scopeQuery}" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">Edit</a>
                                 <button onclick="toggleJobStatus('${jid}', '${isOpen ? 'CLOSED' : 'OPEN'}')" class="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">${isOpen ? 'Close Job' : 'Reopen Job'}</button>
                                 <button onclick="deleteJob('${jid}')" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">Delete</button>
                             </div>
@@ -278,10 +287,19 @@ Back to Admin
                         <div class="flex items-center text-sm font-medium text-gray-600">
                             <span class="iconify mr-2 text-blue-500" data-icon="solar:users-group-two-rounded-linear"></span> Quota: ${job.quota || 'N/A'}
                         </div>
+                        <div>
+                            <div class="flex items-center justify-between text-xs font-bold mb-1">
+                                <span class="${quotaFull ? 'text-green-600' : 'text-gray-500'}">${quotaFull ? 'Quota full' : 'Hiring progress'}</span>
+                                <span class="text-gray-500">${esc(quotaLabel)}</span>
+                            </div>
+                            <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
+                                <div class="h-full ${quotaFull ? 'bg-green-500' : 'bg-blue-500'} rounded-full" style="width:${quotaPercent}%"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex items-center justify-between border-t border-gray-50 pt-4">
                         <span class="text-xs text-gray-400">${esc(formatJobType(job.type))}</span>
-                        <a class="text-blue-600 font-semibold text-sm hover:underline" href="job-detail.html?id=${job.id}">Manage</a>
+                        <a class="text-blue-600 font-semibold text-sm hover:underline" href="job-detail.html?id=${job.id}${scopeQuery}">Manage</a>
                     </div>
                 </div>`;
             });
@@ -300,6 +318,23 @@ Back to Admin
             menu.classList.toggle('hidden');
             if (!menu.classList.contains('hidden')) menu.setAttribute('data-menu-open', '');
             else menu.removeAttribute('data-menu-open');
+        }
+
+        function getScopedPosterQuery() {
+            const targetPoster = getUrlParam('postedBy');
+            return targetPoster ? '&postedBy=' + encodeURIComponent(targetPoster) : '';
+        }
+
+        function applyAdminScopeLinks(user) {
+            if (!user || user.role !== 'ADMIN') return;
+            const targetPoster = getUrlParam('postedBy');
+            if (!targetPoster) return;
+            document.querySelectorAll('a[href="statistics-analysis.html"]').forEach(a => {
+                a.href = 'statistics-analysis.html?postedBy=' + encodeURIComponent(targetPoster);
+            });
+            document.querySelectorAll('a[href="personal-center.html"]').forEach(a => {
+                a.href = 'personal-center.html?userId=' + encodeURIComponent(targetPoster);
+            });
         }
 
         document.addEventListener('click', (e) => {
