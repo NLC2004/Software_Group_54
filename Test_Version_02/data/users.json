@@ -357,19 +357,6 @@
     "aiMatchUsedCount": 0
   },
   {
-    "id": "c9bd960c",
-    "username": "NLC_TA",
-    "password": "Nlc141203",
-    "role": "TA",
-    "fullName": "nlc_ta",
-    "email": "ninglechen666@163.com",
-    "studentId": "2023213346",
-    "active": true,
-    "createdAt": 1779497883388,
-    "adminRoleTemplateId": "",
-    "aiMatchUsedCount": 0
-  },
-  {
     "id": "86c2bebc",
     "username": "NLC12",
     "password": "Nlc141203",
@@ -379,6 +366,25 @@
     "studentId": "231225337",
     "active": true,
     "createdAt": 1779526812956,
+    "adminRoleTemplateId": "",
+    "aiMatchUsedCount": 0
+  },
+  {
+    "id": "c9bd960c",
+    "username": "NLC_TA",
+    "password": "123456",
+    "role": "TA",
+    "fullName": "nlc_ta",
+    "email": "ninglechen666@163.com",
+    "phone": "",
+    "gender": "",
+    "studentId": "2023213347",
+    "school": "",
+    "supervisor": "",
+    "degree": "",
+    "yearOfStudy": "",
+    "active": true,
+    "createdAt": 1779497883388,
     "adminRoleTemplateId": "",
     "aiMatchUsedCount": 0
   }
