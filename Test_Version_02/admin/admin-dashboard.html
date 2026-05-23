@@ -678,6 +678,35 @@
     return dashboardDataCache;
   }
 
+  function filterLiveDashboardDataset(dataset) {
+    const faculty = DASHBOARD_FILTERS.faculty;
+    const matchesFaculty = function(bucket) {
+      return faculty === 'all' || bucket === faculty;
+    };
+    const users = (dataset.users || []).filter(function(user) {
+      return matchesFaculty(user.__facultyBucket || 'other');
+    });
+    const jobs = (dataset.jobs || []).filter(function(job) {
+      return matchesFaculty(job.__facultyBucket || 'other');
+    });
+    const workload = (dataset.workload || []).filter(function(row) {
+      return matchesFaculty(row.__facultyBucket || 'other');
+    });
+    const resets = (dataset.resets || []).filter(function(reset) {
+      if (faculty === 'all') return true;
+      const targetUser = dataset.usersById && reset && reset.userId ? dataset.usersById[reset.userId] : null;
+      return matchesFaculty(targetUser && targetUser.__facultyBucket ? targetUser.__facultyBucket : 'other');
+    });
+    return {
+      users: users,
+      jobs: jobs,
+      workload: workload,
+      resets: resets,
+      usersById: dataset.usersById || {},
+      jobsById: dataset.jobsById || {}
+    };
+  }
+
   function filterDashboardDataset(dataset) {
     const faculty = DASHBOARD_FILTERS.faculty;
     const range = getActiveDashboardWindow();
@@ -779,7 +808,9 @@
   }
 
   async function renderDashboardLive(forceRefresh) {
-    const dataset = filterDashboardDataset(await fetchDashboardDataset(forceRefresh));
+    const raw = await fetchDashboardDataset(forceRefresh);
+    const live = filterLiveDashboardDataset(raw);
+    const dataset = filterDashboardDataset(raw);
     updateDashboardSummary();
 
     const statusCounts = {
@@ -788,17 +819,18 @@
       rejected: dataset.applications.filter(function(app) { return String(app.status || '').toUpperCase() === 'REJECTED'; }).length,
       withdrawn: dataset.applications.filter(function(app) { return String(app.status || '').toUpperCase() === 'WITHDRAWN'; }).length
     };
-    const openJobs = dataset.jobs.filter(function(job) { return String(job.status || '').toUpperCase() === 'OPEN'; }).length;
-    const closedJobs = dataset.jobs.filter(function(job) { return String(job.status || '').toUpperCase() === 'CLOSED'; }).length;
-    const activeUsers = dataset.users.filter(function(user) { return !!user.active; }).length;
-    const totalTas = dataset.users.filter(function(user) { return user.role === 'TA'; }).length;
-    const overloadedCount = dataset.workload.filter(function(row) { return !!row.overloaded; }).length;
+    const openJobs = live.jobs.filter(function(job) { return String(job.status || '').toUpperCase() === 'OPEN'; }).length;
+    const closedJobs = live.jobs.filter(function(job) { return String(job.status || '').toUpperCase() === 'CLOSED'; }).length;
+    const activeUsers = live.users.filter(function(user) { return !!user.active; }).length;
+    const totalTas = live.users.filter(function(user) { return user.role === 'TA'; }).length;
+    const newUsersInPeriod = dataset.users.length;
+    const overloadedCount = live.workload.filter(function(row) { return !!row.overloaded; }).length;
 
     const usersEl = document.getElementById('adm-stat-users');
     const openJobsEl = document.getElementById('adm-stat-openjobs');
     const appsEl = document.getElementById('adm-stat-apps');
     const overloadEl = document.getElementById('adm-stat-overload');
-    if (usersEl) usersEl.textContent = dataset.users.length.toLocaleString();
+    if (usersEl) usersEl.textContent = live.users.length.toLocaleString();
     if (openJobsEl) openJobsEl.textContent = openJobs.toLocaleString();
     if (appsEl) appsEl.textContent = dataset.applications.length.toLocaleString();
     if (overloadEl) overloadEl.textContent = overloadedCount.toLocaleString();
@@ -806,8 +838,8 @@
     const subUsers = document.querySelector('[data-stat-sub="users"]');
     const subJobs = document.querySelector('[data-stat-sub="jobs"]');
     const subApps = document.querySelector('[data-stat-sub="apps"]');
-    if (subUsers) subUsers.textContent = 'Active: ' + activeUsers.toLocaleString();
-    if (subJobs) subJobs.textContent = 'Closed: ' + closedJobs.toLocaleString() + ' · Filtered jobs: ' + dataset.jobs.length.toLocaleString();
+    if (subUsers) subUsers.textContent = 'Active: ' + activeUsers.toLocaleString() + ' · New (' + DASHBOARD_FILTERS.rangeDays + 'd): ' + newUsersInPeriod.toLocaleString();
+    if (subJobs) subJobs.textContent = 'Closed: ' + closedJobs.toLocaleString() + ' · Total jobs: ' + live.jobs.length.toLocaleString();
     if (subApps) subApps.textContent = 'Pending (' + DASHBOARD_FILTERS.rangeDays + 'd): ' + statusCounts.pending.toLocaleString() + ' · Filtered total: ' + dataset.applications.length.toLocaleString();
 
     const qaOpen = document.querySelector('[data-qa="open-jobs"]');
@@ -817,7 +849,7 @@
     if (qaOverload) qaOverload.textContent = 'Overloaded: ' + overloadedCount + ' TAs';
     if (qaTas) qaTas.textContent = 'Total TAs: ' + totalTas;
     const subOverload = document.querySelector('[data-stat-sub="overload"]');
-    if (subOverload) subOverload.textContent = 'Pwd resets pending: ' + dataset.resets.length;
+    if (subOverload) subOverload.textContent = 'Pwd resets pending: ' + live.resets.length;
 
     const lineEl = document.getElementById('lineTrendChart');
     const pieEl = document.getElementById('statusPieChart');
@@ -1062,15 +1094,17 @@
     if (!reminderList || !pendingBody) return;
 
     try {
-      const dataset = filterDashboardDataset(await fetchDashboardDataset(forceRefresh));
-      const pendingResets = Array.isArray(dataset.resets) ? dataset.resets : [];
-      const overloadedTas = (Array.isArray(dataset.workload) ? dataset.workload : []).filter(x => !!x.overloaded);
+      const raw = await fetchDashboardDataset(forceRefresh);
+      const live = filterLiveDashboardDataset(raw);
+      const dataset = filterDashboardDataset(raw);
+      const pendingResets = Array.isArray(live.resets) ? live.resets : [];
+      const overloadedTas = (Array.isArray(live.workload) ? live.workload : []).filter(x => !!x.overloaded);
       const pendingApps = (Array.isArray(dataset.applications) ? dataset.applications : []).filter(a => String(a.status || '').toUpperCase() === 'PENDING');
       const longPendingApps = pendingApps.filter(a => {
         const ts = Number(a.createdAt || 0);
         return ts > 0 && (Date.now() - ts) >= 7 * 24 * 60 * 60 * 1000;
       });
-      const openJobs = (Array.isArray(dataset.jobs) ? dataset.jobs : []).filter(j => String(j.status || '').toUpperCase() === 'OPEN');
+      const openJobs = (Array.isArray(live.jobs) ? live.jobs : []).filter(j => String(j.status || '').toUpperCase() === 'OPEN');
       const pendingAppCount = pendingApps.length;
 
       const latestUsers = (Array.isArray(dataset.users) ? dataset.users : [])

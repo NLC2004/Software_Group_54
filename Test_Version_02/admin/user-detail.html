@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -73,12 +73,15 @@
 <main class="ml-64 flex-1 flex flex-col min-h-screen">
   <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
     <div>
-      <a href="user-management.html" class="text-sm text-blue-600 hover:underline mb-1 inline-block">← Back to User Management</a>
       <h1 class="text-xl font-semibold">User detail</h1>
-      <p class="text-xs text-gray-400" id="userDetailSubTitle">查看该用户的基本信息、角色与账号状态</p>
+      <p class="text-xs text-gray-400" id="userDetailSubTitle">View this user's basic information, role, and account status</p>
     </div>
   </header>
   <div class="flex-1 overflow-y-auto p-8">
+    <a href="user-management.html" class="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all">
+      <span class="iconify w-4 h-4" data-icon="heroicons:arrow-left"></span>
+      Back to User Management
+    </a>
     <div class="max-w-2xl mx-auto bg-white rounded-2xl border border-gray-200 shadow-sm p-8" id="detailCard">
       <p class="text-gray-400 text-sm" id="loadingMsg">Loading…</p>
       <div id="readonlyDetailNotice" class="hidden mb-4 p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-sm">
@@ -148,7 +151,7 @@
       const notice = document.getElementById('readonlyDetailNotice');
       if (notice) notice.classList.remove('hidden');
       const sub = document.getElementById('userDetailSubTitle');
-      if (sub) sub.textContent = '标准管理员仅可查看，修改请联系超级管理员 admin';
+      if (sub) sub.textContent = 'Standard admin accounts are read-only. Contact super admin (admin) to make changes.';
     }
     if (!userId) {
       document.getElementById('loadingMsg').textContent = 'Missing user id.';
