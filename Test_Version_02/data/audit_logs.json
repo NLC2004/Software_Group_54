@@ -2646,5 +2646,61 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779502357843
+  },
+  {
+    "id": "d08d746a",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1779503138815
+  },
+  {
+    "id": "eb538d14",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779503143076
+  },
+  {
+    "id": "96f72901",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779503149983
+  },
+  {
+    "id": "3c4a682b",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1779503172615
+  },
+  {
+    "id": "67f01ef4",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779503174330
+  },
+  {
+    "id": "1a3fbb83",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779503191950
+  },
+  {
+    "id": "1704e4d8",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779503207306
   }
 ]
