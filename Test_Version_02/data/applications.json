@@ -5,10 +5,10 @@
     "applicantId": "ta004",
     "cvFileName": "cv_ta004.pdf",
     "coverLetter": "[Basic Information]\nName: Lingxiang Mei\nStudent ID: 231225557\nEmail: meilx@bupt.edu.cn\nPhone: 15656360213\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Chen Yu\nSkills: Artificial Intelligence, Machine Learning, Python, TensorFlow, PyTorch, data analysis, software testing, teaching, problem solving, programming, communication, responsibility, organization\nRelevant Courses: Artificial Intelligence (A), Machine Learning (A), Software Testing (A-), Human-Computer Interaction (B+), Middleware (B+)\nExperience: Research assistant in AI lab (2024-2026) focusing on NLP models. Published 2 papers at ML conferences. TA for Machine Learning course (2025 Fall) - conducted tutorials for 50+ students, graded assignments, held office hours.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Machine Learning Course TA position. I achieved an A in this course and have served as the TA for Machine Learning in Fall 2025, receiving excellent feedback from both the instructor and 50+ students. My AI lab research on NLP models has given me deep hands-on experience with TensorFlow and PyTorch, which I actively use in tutorials. I am very experienced in teaching and communication - I have conducted weekly tutorial sessions, held office hours, and graded assignments with detailed constructive feedback. I understand the course syllabus thoroughly: supervised learning, neural networks, model evaluation, and I can explain complex concepts like backpropagation and gradient descent using clear analogies. I am highly organized and responsible - I always prepare tutorial materials in advance, return graded work within 3 days, and maintain clear communication with the course instructor. I also have strong Python programming skills and can help students debug their ML assignments efficiently. My research publications in ML conferences further demonstrate my depth of knowledge. I am genuinely passionate about helping students succeed in this challenging subject.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779171123764,
-    "updatedAt": 1779171123764
+    "updatedAt": 1779514327443
   },
   {
     "id": "app002",
@@ -16,10 +16,10 @@
     "applicantId": "ta001",
     "cvFileName": "cv_ta001.pdf",
     "coverLetter": "[Basic Information]\nName: Zijie Zhang\nStudent ID: 231225731\nEmail: 231225731@bupt.edu.cn\nPhone: 13800001001\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Zhang Wei\nSkills: Machine Learning, Python, Java, algorithms, data analysis, communication, teaching, responsibility, organization, problem solving\nRelevant Courses: Machine Learning (A), Operating Systems (A-), Computer Networks (B+), Data Structures (A), Computer Architecture (B)\nExperience: Python programming tutor (2025 Fall) - tutored 30+ students, held weekly office hours, graded assignments. Lab assistant for introductory CS course - set up lab environments, assisted students with debugging.\n\n[Cover Letter / Motivation]\nI am writing to apply for the Machine Learning Course TA position. I completed Machine Learning with an A grade and have a thorough understanding of the core curriculum including regression, classification, clustering, neural networks, and deep learning fundamentals. As a Python programming tutor for 30+ students, I have developed strong teaching and communication skills - I explain complex algorithms in simple, intuitive terms and am very patient with students who are struggling. I have strong programming skills in Python and Java, which enables me to help students with ML assignments involving NumPy, scikit-learn, and algorithm implementation. I am responsible and organized - I maintained regular office hours, responded to student questions promptly, and ensured all grading was completed accurately and on time. My data analysis skills and coursework in Data Structures (A) and Operating Systems (A-) also give me a solid foundation for supporting students throughout the course.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 2,
     "createdAt": 1779167523764,
-    "updatedAt": 1779167523764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -40,10 +40,10 @@
     "applicantId": "1509be6d",
     "cvFileName": "cv_mei.pdf",
     "coverLetter": "[Basic Information]\nName: Mei\nStudent ID: 2023213367\nEmail: 2023213367@bupt.edu.cn\nPhone: 13800008008\nGender: Female\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Sun Hao\nSkills: Design, HCI, Database, HTML, CSS, JavaScript, communication, organization, teaching, responsibility, english, problem solving\nRelevant Courses: Human-Computer Interaction (A), Database Systems (A-), Design and Build (A), Web Development (B+), Personal Development Plan (A)\nExperience: UI/UX design intern at tech company - designed mobile app interfaces, conducted usability testing. Designed and developed official website for campus organization. Volunteer tutor for underprivileged students.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Design and Build Lab TA position. I achieved an A in this course and have extensive practical design experience from my UI/UX internship at a tech company, where I designed mobile app interfaces and conducted usability testing. I am proficient with design tools including Figma and prototyping software, and have hands-on experience with the entire design thinking process: user research, ideation, prototyping, and testing. I have strong communication and teaching skills from my volunteer tutoring experience where I developed educational materials and taught computer skills to students. I am highly organized and responsible - I manage lab equipment carefully, follow all safety protocols, and maintain a clean and productive lab environment. I also have web development skills (HTML, CSS, JavaScript) that allow me to assist students with software aspects of their design projects. My experience designing and developing a campus organization website further demonstrates my ability to bridge design and implementation.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779160323764,
-    "updatedAt": 1779160323764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -52,10 +52,10 @@
     "applicantId": "ta002",
     "cvFileName": "cv_ta002.pdf",
     "coverLetter": "[Basic Information]\nName: Zijun Song\nStudent ID: 231225270\nEmail: 231225270@bupt.edu.cn\nPhone: 13800002002\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Li Ming\nSkills: Networking, Web Development, JavaScript, React, Node.js, database, communication, problem solving, organization, teaching, responsibility\nRelevant Courses: Computer Networks (A), Web Development (A), Database Systems (A-), Communications and Networks (B+), Software Engineering (A-)\nExperience: Frontend developer intern (2025 Summer) - built responsive UI components for e-commerce platform, collaborated with backend team. Built a course management web app with full CRUD functionality for a student club.\n\n[Cover Letter / Motivation]\nI am applying for the Design and Build Lab TA role. I have strong practical skills from building web applications and personal hardware projects. My frontend development experience has given me a good eye for design and user experience, and my experience building a course management web app shows my ability to take projects from concept to completion. I am organized, responsible, and quick to learn new tools and equipment. I have experience collaborating in team environments during my internship, and I am patient and communicative when helping peers solve problems. My problem-solving skills and attention to detail make me well-suited for maintaining a safe and efficient lab environment.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 2,
     "createdAt": 1779156723764,
-    "updatedAt": 1779156723764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -64,10 +64,10 @@
     "applicantId": "ta006",
     "cvFileName": "cv_ta006.pdf",
     "coverLetter": "[Basic Information]\nName: Zhenkun Li\nStudent ID: 231225649\nEmail: 231225649@bupt.edu.cn\nPhone: 13800006006\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Wu Tian\nSkills: Operating Systems, Middleware, Java, Python, Web Development, database, problem solving, responsibility, programming, organization, communication, teaching\nRelevant Courses: Operating Systems (A), Middleware (A-), Web Development (B+), Data Structures (A-), Database Systems (B+)\nExperience: Built a mini OS kernel implementing process scheduling, virtual memory, and file system. Full-stack developer for student information portal. Linux system administrator for lab servers.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Final Exam TA position for Personal Development Plan and Entrepreneurial Skills. As a Linux system administrator for our lab servers, I have demonstrated exceptional reliability, punctuality, and responsibility - I manage critical systems where downtime is not acceptable. I am thoroughly familiar with the school\u0027s examination regulations and understand the importance of maintaining strict exam integrity and confidentiality. I have strong problem-solving skills and remain calm under pressure - essential qualities for handling unexpected situations during exams. My experience managing user accounts and permissions on lab servers has instilled in me a meticulous attention to detail and protocol. I am fully available on the exam date (May 31) and committed to arriving early, staying throughout the entire examination, and ensuring all procedures are followed correctly.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779153123764,
-    "updatedAt": 1779153123764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -76,10 +76,10 @@
     "applicantId": "1509be6d",
     "cvFileName": "cv_mei.pdf",
     "coverLetter": "[Basic Information]\nName: Mei\nStudent ID: 2023213367\nEmail: 2023213367@bupt.edu.cn\nPhone: 13800008008\nGender: Female\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Sun Hao\nSkills: Design, HCI, Database, HTML, CSS, JavaScript, communication, organization, teaching, responsibility, english, problem solving\nRelevant Courses: Human-Computer Interaction (A), Database Systems (A-), Design and Build (A), Web Development (B+), Personal Development Plan (A)\nExperience: UI/UX design intern at tech company - designed mobile app interfaces, conducted usability testing. Designed and developed official website for campus organization. Volunteer tutor for underprivileged students.\n\n[Cover Letter / Motivation]\nI am applying for the Final Exam TA role for PDP. I achieved an A in this course and understand its assessment requirements well. My volunteer tutoring experience has taught me patience, composure under pressure, and the importance of reliability. I am fully available on the exam date and will execute all invigilation duties with the utmost responsibility and attention to exam regulations.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 3,
     "createdAt": 1779149523764,
-    "updatedAt": 1779149523764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -88,10 +88,10 @@
     "applicantId": "ta006",
     "cvFileName": "cv_ta006.pdf",
     "coverLetter": "[Basic Information]\nName: Zhenkun Li\nStudent ID: 231225649\nEmail: 231225649@bupt.edu.cn\nPhone: 13800006006\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Wu Tian\nSkills: Operating Systems, Middleware, Java, Python, Web Development, database, problem solving, responsibility, programming, organization, communication, teaching\nRelevant Courses: Operating Systems (A), Middleware (A-), Web Development (B+), Data Structures (A-), Database Systems (B+)\nExperience: Built a mini OS kernel implementing process scheduling, virtual memory, and file system. Full-stack developer for student information portal. Linux system administrator for lab servers.\n\n[Cover Letter / Motivation]\nI am exceptionally well-qualified for the Operating Systems Course TA position. I achieved an A in this course and have since deepened my knowledge immensely by building a mini OS kernel from scratch, implementing process scheduling (round-robin, priority), virtual memory with paging, and a simple ext2-like file system. As a Linux system administrator for our lab servers, I have daily practical experience with OS concepts: process management, memory monitoring, file permissions, and I/O scheduling. I have strong C and Java programming skills essential for helping students with pthreads, system calls, and kernel-level assignments. I have developed effective teaching and communication skills through my full-stack development work where I mentored junior developers. I am responsible, organized, and genuinely passionate about operating systems - I enjoy using concrete analogies to explain abstract concepts like concurrency, deadlock, and memory management to students.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779145923764,
-    "updatedAt": 1779145923764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -112,10 +112,10 @@
     "applicantId": "ta005",
     "cvFileName": "cv_ta005.pdf",
     "coverLetter": "[Basic Information]\nName: Lechen Ning\nStudent ID: 231225339\nEmail: 231225339@bupt.edu.cn\nPhone: 13800005005\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Huang Fei\nSkills: Embedded Systems, Networking, C, C++, Python, IoT, communication, organization, responsibility, laboratory, problem solving, teaching\nRelevant Courses: Embedded Systems (A), Communications and Networks (A-), Sensors and RFID (A), Computer Networks (B+), Artificial Intelligence (B)\nExperience: Built IoT smart home system using Raspberry Pi and Arduino - integrated sensors, won hackathon. Network lab assistant for Communications course - set up equipment, assisted students with network configuration.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Communications and Networks Lab TA position. I achieved an A- in this course and have directly applied networking knowledge in my IoT smart home project using MQTT, TCP/IP, and wireless sensor networks. I have served as a network lab assistant for the Communications course, where I set up and maintained networking equipment, configured routers and switches, and assisted students with network configuration exercises. I am proficient with Wireshark for packet analysis and Packet Tracer for network simulation, and I can effectively guide students through lab exercises involving protocol analysis and network troubleshooting. I have strong communication, organization, and teaching skills from my lab assistant experience, and I am very familiar with the lab equipment and safety procedures. I am patient, responsible, and genuinely enjoy helping students understand how network protocols work in practice.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779138723764,
-    "updatedAt": 1779138723764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -136,10 +136,10 @@
     "applicantId": "ta005",
     "cvFileName": "cv_ta005.pdf",
     "coverLetter": "[Basic Information]\nName: Lechen Ning\nStudent ID: 231225339\nEmail: 231225339@bupt.edu.cn\nPhone: 13800005005\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Huang Fei\nSkills: Embedded Systems, Networking, C, C++, Python, IoT, communication, organization, responsibility, laboratory, problem solving, teaching\nRelevant Courses: Embedded Systems (A), Communications and Networks (A-), Sensors and RFID (A), Computer Networks (B+), Artificial Intelligence (B)\nExperience: Built IoT smart home system using Raspberry Pi and Arduino - integrated sensors, won hackathon. Network lab assistant for Communications course - set up equipment, assisted students with network configuration.\n\n[Cover Letter / Motivation]\nI am exceptionally qualified for the Embedded Systems Class Test TA position. I achieved an A in this course and have extensive practical experience from my IoT projects using Raspberry Pi, Arduino, and various sensors (temperature, humidity, motion). I understand the complete exam syllabus: microcontroller architecture, interfacing, real-time operating systems, and embedded C/C++ programming. My experience as a network lab assistant has prepared me for managing structured assessment environments - I am meticulous with test materials, understand confidentiality requirements, and can handle unexpected technical issues calmly. I have strong organizational skills, attention to detail, and a proven sense of responsibility from managing lab equipment and assisting students. I am committed to ensuring a fair and professional testing environment for all students.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779131523764,
-    "updatedAt": 1779131523764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -160,10 +160,10 @@
     "applicantId": "91671c06",
     "cvFileName": "cv_nlc.pdf",
     "coverLetter": "[Basic Information]\nName: Ningle Chen\nStudent ID: 2023213346\nEmail: ninglechen666@bupt.edu.cn\nPhone: 19991219967\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Ni Cai\nSkills: Cryptography, Software Engineering, AI, Java, Python, algorithms, teaching, programming, data analysis, english, communication, responsibility, organization, problem solving\nRelevant Courses: Cryptography and Cyber Security (A), Software Engineering (A), Artificial Intelligence (A-), Machine Learning (B+), Software Testing (A-)\nExperience: Research on cryptographic protocols for secure multi-party computation - published paper. TA for Software Engineering course (2 semesters) - led tutorial groups of 30+ students. Open source contributor to crypto libraries.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Cryptography and Cyber Security Course TA position. I achieved an A in this course and have conducted research on cryptographic protocols for secure multi-party computation, publishing a paper on secure communication. I have contributed to open-source crypto libraries, giving me hands-on implementation experience with encryption algorithms and security protocols. I served as a TA for Software Engineering for two semesters, leading tutorial groups of 30+ students and developing effective methods for explaining complex technical concepts. I understand the course content deeply: symmetric/asymmetric encryption, cryptographic hash functions, digital signatures, authentication protocols, and network security applications. I am responsible, organized, and passionate about helping students develop both theoretical understanding and practical security skills.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779124323764,
-    "updatedAt": 1779124323764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -172,10 +172,10 @@
     "applicantId": "ta002",
     "cvFileName": "cv_ta002.pdf",
     "coverLetter": "[Basic Information]\nName: Zijun Song\nStudent ID: 231225270\nEmail: 231225270@bupt.edu.cn\nPhone: 13800002002\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Li Ming\nSkills: Networking, Web Development, JavaScript, React, Node.js, database, communication, problem solving, organization, teaching, responsibility\nRelevant Courses: Computer Networks (A), Web Development (A), Database Systems (A-), Communications and Networks (B+), Software Engineering (A-)\nExperience: Frontend developer intern (2025 Summer) - built responsive UI components for e-commerce platform, collaborated with backend team. Built a course management web app with full CRUD functionality for a student club.\n\n[Cover Letter / Motivation]\nI am well-qualified for the Software Engineering Final Exam TA position. I achieved an A- in this course and have substantial practical experience as a frontend developer intern and through building a full-stack course management web application. I understand the complete software development lifecycle: requirements engineering, system design, implementation, testing, and maintenance. My industry experience allows me to provide real-world context on design patterns, version control, and agile methodologies. I am very responsible, punctual, and committed to maintaining exam integrity. I understand and will strictly follow all examination regulations and confidentiality requirements. I am organized, detail-oriented, and able to handle unexpected situations professionally - qualities essential for invigilation.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779120723764,
-    "updatedAt": 1779120723764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -184,10 +184,10 @@
     "applicantId": "ta004",
     "cvFileName": "cv_ta004.pdf",
     "coverLetter": "[Basic Information]\nName: Lingxiang Mei\nStudent ID: 231225557\nEmail: meilx@bupt.edu.cn\nPhone: 15656360213\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Chen Yu\nSkills: Artificial Intelligence, Machine Learning, Python, TensorFlow, PyTorch, data analysis, software testing, teaching, problem solving, programming, communication, responsibility, organization\nRelevant Courses: Artificial Intelligence (A), Machine Learning (A), Software Testing (A-), Human-Computer Interaction (B+), Middleware (B+)\nExperience: Research assistant in AI lab (2024-2026) focusing on NLP models. Published 2 papers at ML conferences. TA for Machine Learning course (2025 Fall) - conducted tutorials for 50+ students, graded assignments, held office hours.\n\n[Cover Letter / Motivation]\nI am applying for the SWE Final Exam TA role. I achieved an A- in SWE and have applied software engineering principles in my AI research projects, including version control, testing, and documentation. My experience as a course TA has prepared me for exam supervision duties. I am responsible, detail-oriented, and committed to ensuring all exam procedures are followed meticulously.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 3,
     "createdAt": 1779117123764,
-    "updatedAt": 1779117123764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -196,10 +196,10 @@
     "applicantId": "ta005",
     "cvFileName": "cv_ta005.pdf",
     "coverLetter": "[Basic Information]\nName: Lechen Ning\nStudent ID: 231225339\nEmail: 231225339@bupt.edu.cn\nPhone: 13800005005\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Huang Fei\nSkills: Embedded Systems, Networking, C, C++, Python, IoT, communication, organization, responsibility, laboratory, problem solving, teaching\nRelevant Courses: Embedded Systems (A), Communications and Networks (A-), Sensors and RFID (A), Computer Networks (B+), Artificial Intelligence (B)\nExperience: Built IoT smart home system using Raspberry Pi and Arduino - integrated sensors, won hackathon. Network lab assistant for Communications course - set up equipment, assisted students with network configuration.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Sensors and RFID Class Test TA position. I achieved an A in this course and have directly applied sensor knowledge in my IoT smart home project where I integrated temperature, humidity, PIR motion sensors, and RFID modules with Arduino and Raspberry Pi. I understand the exam content thoroughly: sensor principles, signal conditioning, RFID technology, and sensor network applications. My experience as a network lab assistant has prepared me for managing structured assessment environments with technical equipment. I am very responsible, detail-oriented, and committed to maintaining test confidentiality and ensuring a fair testing environment. I remain calm and effective under pressure.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779113523764,
-    "updatedAt": 1779113523764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -220,10 +220,10 @@
     "applicantId": "ta006",
     "cvFileName": "cv_ta006.pdf",
     "coverLetter": "[Basic Information]\nName: Zhenkun Li\nStudent ID: 231225649\nEmail: 231225649@bupt.edu.cn\nPhone: 13800006006\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Wu Tian\nSkills: Operating Systems, Middleware, Java, Python, Web Development, database, problem solving, responsibility, programming, organization, communication, teaching\nRelevant Courses: Operating Systems (A), Middleware (A-), Web Development (B+), Data Structures (A-), Database Systems (B+)\nExperience: Built a mini OS kernel implementing process scheduling, virtual memory, and file system. Full-stack developer for student information portal. Linux system administrator for lab servers.\n\n[Cover Letter / Motivation]\nI am strongly qualified for the Middleware Lab TA position. I achieved an A- in this course and have practical experience with middleware technologies from my full-stack development work on the student information portal, which used REST APIs, message queues, and database middleware. As a Linux system administrator, I have hands-on experience configuring and troubleshooting middleware components including application servers and database connection pools. I have strong Java and Python programming skills and can effectively guide students through lab exercises involving CORBA concepts, message-oriented middleware, and service-oriented architectures. I am organized, communicative, and have developed teaching skills through mentoring junior developers. I am patient in helping students debug middleware configuration and integration issues, which are common challenges in lab sessions.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779106323764,
-    "updatedAt": 1779106323764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -256,10 +256,10 @@
     "applicantId": "ta001",
     "cvFileName": "cv_ta001.pdf",
     "coverLetter": "[Basic Information]\nName: Zijie Zhang\nStudent ID: 231225731\nEmail: 231225731@bupt.edu.cn\nPhone: 13800001001\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Zhang Wei\nSkills: Machine Learning, Python, Java, algorithms, data analysis, communication, teaching, responsibility, organization, problem solving\nRelevant Courses: Machine Learning (A), Operating Systems (A-), Computer Networks (B+), Data Structures (A), Computer Architecture (B)\nExperience: Python programming tutor (2025 Fall) - tutored 30+ students, held weekly office hours, graded assignments. Lab assistant for introductory CS course - set up lab environments, assisted students with debugging.\n\n[Cover Letter / Motivation]\nI am applying for the Computer Networks Course TA role. I achieved a B+ in this course and have a solid understanding of network protocols. My Python tutoring experience has developed my teaching and communication skills. I am committed to helping students build a strong foundation and am willing to invest extra time in preparation.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 3,
     "createdAt": 1779081123764,
-    "updatedAt": 1779081123764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -268,10 +268,10 @@
     "applicantId": "ta004",
     "cvFileName": "cv_ta004.pdf",
     "coverLetter": "[Basic Information]\nName: Lingxiang Mei\nStudent ID: 231225557\nEmail: meilx@bupt.edu.cn\nPhone: 15656360213\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Chen Yu\nSkills: Artificial Intelligence, Machine Learning, Python, TensorFlow, PyTorch, data analysis, software testing, teaching, problem solving, programming, communication, responsibility, organization\nRelevant Courses: Artificial Intelligence (A), Machine Learning (A), Software Testing (A-), Human-Computer Interaction (B+), Middleware (B+)\nExperience: Research assistant in AI lab (2024-2026) focusing on NLP models. Published 2 papers at ML conferences. TA for Machine Learning course (2025 Fall) - conducted tutorials for 50+ students, graded assignments, held office hours.\n\n[Cover Letter / Motivation]\nI am the ideal candidate for the Artificial Intelligence Lab TA position. I achieved an A in AI and have been working as a research assistant in the AI lab for two years, focusing on NLP models including text classification and sentiment analysis. I have published two papers at ML conferences and am highly proficient with TensorFlow, PyTorch, scikit-learn, and Jupyter notebooks. My experience as a TA for Machine Learning has equipped me with proven strategies for guiding students through AI lab exercises - I know the common pitfalls students face when implementing neural networks, training models, and tuning hyperparameters. I am passionate about AI education and can help students with practical aspects: data preprocessing, model selection, training/evaluation loops, and interpreting results. I have excellent communication, teaching, and problem-solving skills, and I am highly organized and responsible.",
-    "status": "PENDING",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779077523764,
-    "updatedAt": 1779077523764,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -364,10 +364,10 @@
     "applicantId": "ta002",
     "cvFileName": "cv_ta002.pdf",
     "coverLetter": "[Basic Information]\nName: Zijun Song\nStudent ID: 231225270\nEmail: 231225270@bupt.edu.cn\nPhone: 13800002002\nGender: Male\nDegree: Bachelors (BSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Dr. Li Ming\nSkills: Networking, Web Development, JavaScript, React, Node.js, database, communication, problem solving, organization, teaching, responsibility\nRelevant Courses: Computer Networks (A), Web Development (A), Database Systems (A-), Communications and Networks (B+), Software Engineering (A-)\nExperience: Frontend developer intern (2025 Summer) - built responsive UI components for e-commerce platform, collaborated with backend team. Built a course management web app with full CRUD functionality for a student club.\n\n[Cover Letter / Motivation]\nI am well-qualified for the Database Systems Final Exam TA position. I achieved an A- in this course and have extensive practical database experience from my full-stack development projects using both SQL (MySQL, PostgreSQL) and NoSQL (MongoDB) databases. I deeply understand database design, normalization (1NF to BCNF), query optimization, indexing, transaction management (ACID), and concurrency control. My course management web app involved designing a normalized database schema, writing complex SQL queries with joins and aggregations, and implementing database-backed features. I am very responsible, punctual, and committed to maintaining exam integrity. I am fully available on the exam date and will ensure all procedures are followed correctly.",
-    "status": "APPROVED",
+    "status": "WITHDRAWN",
     "priority": 1,
     "createdAt": 1779099123764,
-    "updatedAt": 1779475926299,
+    "updatedAt": 1779514327443,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -392,18 +392,6 @@
     "priority": 1,
     "createdAt": 1779091923764,
     "updatedAt": 1779475957238,
-    "aiMatchUpdatedAt": 0
-  },
-  {
-    "id": "app024",
-    "jobId": "job012",
-    "applicantId": "ta004",
-    "cvFileName": "cv_ta004.pdf",
-    "coverLetter": "[Basic Information]\nName: Lingxiang Mei\nStudent ID: 231225557\nEmail: meilx@bupt.edu.cn\nPhone: 15656360213\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Chen Yu\nSkills: Artificial Intelligence, Machine Learning, Python, TensorFlow, PyTorch, data analysis, software testing, teaching, problem solving, programming, communication, responsibility, organization\nRelevant Courses: Artificial Intelligence (A), Machine Learning (A), Software Testing (A-), Human-Computer Interaction (B+), Middleware (B+)\nExperience: Research assistant in AI lab (2024-2026) focusing on NLP models. Published 2 papers at ML conferences. TA for Machine Learning course (2025 Fall) - conducted tutorials for 50+ students, graded assignments, held office hours.\n\n[Cover Letter / Motivation]\nI am applying for the Data Structures Class Test TA role. I achieved an A- in this course, and my AI/ML research depends heavily on efficient data structures. I have practical experience implementing complex data structures in Python and Java. My TA experience has prepared me for managing assessment logistics. I am organized and committed to academic integrity.",
-    "status": "APPROVED",
-    "priority": 3,
-    "createdAt": 1779088323764,
-    "updatedAt": 1779475960212,
     "aiMatchUpdatedAt": 0
   },
   {
@@ -447,5 +435,19 @@
     "aiMatchJson": "{\"score\":21,\"label\":\"Needs review\",\"requiredSkills\":[\"laboratory\"],\"matchedSkills\":[],\"missingSkills\":[\"laboratory\"],\"applicantSkills\":[],\"profileCompleteness\":38,\"workloadRisk\":\"LOW\",\"currentPeakWeeklyHours\":0.0,\"projectedPeakWeeklyHours\":9.0,\"maxWeeklyHours\":20.0,\"recommendation\":\"Needs manual review\",\"explanation\":\"Matched 0 of 1 detected required skills. Missing: laboratory. Projected peak workload is 9.0h / 20.0h.\",\"apiCalled\":false}",
     "aiMatchModel": "qwen-plus",
     "aiMatchUpdatedAt": 1779498502665
+  },
+  {
+    "id": "app024",
+    "jobId": "job012",
+    "applicantId": "ta004",
+    "cvFileName": "cv_ta004.pdf",
+    "coverLetter": "[Basic Information]\nName: Lingxiang Mei\nStudent ID: 231225557\nEmail: meilx@bupt.edu.cn\nPhone: 15656360213\nGender: Male\nDegree: Masters (MSc)\nYear of Study: Year 3\nSchool: International School\nSupervisor: Prof. Chen Yu\nSkills: Artificial Intelligence, Machine Learning, Python, TensorFlow, PyTorch, data analysis, software testing, teaching, problem solving, programming, communication, responsibility, organization\nRelevant Courses: Artificial Intelligence (A), Machine Learning (A), Software Testing (A-), Human-Computer Interaction (B+), Middleware (B+)\nExperience: Research assistant in AI lab (2024-2026) focusing on NLP models. Published 2 papers at ML conferences. TA for Machine Learning course (2025 Fall) - conducted tutorials for 50+ students, graded assignments, held office hours.\n\n[Cover Letter / Motivation]\nI am applying for the Data Structures Class Test TA role. I achieved an A- in this course, and my AI/ML research depends heavily on efficient data structures. I have practical experience implementing complex data structures in Python and Java. My TA experience has prepared me for managing assessment logistics. I am organized and committed to academic integrity.",
+    "status": "APPROVED",
+    "priority": 3,
+    "createdAt": 1779088323764,
+    "updatedAt": 1779515580637,
+    "aiMatchJson": "{\"score\":87,\"label\":\"Strong Match\",\"requiredSkills\":[\"Adherence to regulations\",\"Meticulous work ethic\",\"Responsibility\",\"Confidentiality\",\"On-site adaptability\",\"Data Structures Knowledge\"],\"matchedSkills\":[\"Responsibility\",\"Organization\",\"Data Structures Knowledge\",\"Teaching\",\"Problem Solving\"],\"missingSkills\":[],\"applicantSkills\":[\"Artificial Intelligence\",\"Machine Learning\",\"Python\",\"TensorFlow\",\"PyTorch\",\"data analysis\",\"software testing\",\"teaching\",\"problem solving\",\"programming\",\"communication\",\"responsibility\",\"organization\"],\"profileCompleteness\":60,\"workloadRisk\":\"MEDIUM\",\"currentPeakWeeklyHours\":25.0,\"projectedPeakWeeklyHours\":35.0,\"maxWeeklyHours\":40.0,\"recommendation\":\"Approve. The applicant is a strong fit with relevant course knowledge, practical application, and prior TA experience. The unparsed resume is a minor issue as key information was provided elsewhere.\",\"explanation\":\"The applicant demonstrates excellent qualifications, having earned an A- in Data Structures and possessing prior TA experience. Their listed skills of \\u0027responsibility\\u0027 and \\u0027organization\\u0027 directly match the role\\u0027s requirements for managing tests. The workload is a moderate concern given their status as a 3rd-year MSc student and research assistant, but the sporadic nature of a \\u0027Class Test TA\\u0027 role makes it manageable. The resume failed to parse, lowering the profile completeness score.\",\"cot\":[\"Applicant has strong direct experience: A- in Data Structures and prior TA experience.\",\"Skills like \\u0027responsibility\\u0027 and \\u0027organization\\u0027 are explicitly listed and supported by their background.\",\"Workload is a moderate risk (\\u0027MEDIUM\\u0027) due to being a 3rd-year MSc student and RA, but the job\\u0027s peak-based nature mitigates this.\",\"Profile completeness is low because the resume could not be parsed, but other data sources were sufficient.\",\"Final score is high due to excellent skill match, tempered slightly by workload risk and profile issues.\"],\"requestedModel\":\"gemini-2.5-pro\",\"apiBaseUrl\":\"https://jeniya.cn\",\"apiCalled\":true}",
+    "aiMatchModel": "gemini-2.5-pro",
+    "aiMatchUpdatedAt": 1779515580636
   }
 ]

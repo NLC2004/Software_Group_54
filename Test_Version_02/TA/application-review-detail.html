@@ -94,9 +94,10 @@
 <script src="/js/api.js"></script>
 <script>
     let appId = null;
-    const MATCH_MODELS = ['deepseek-r1', 'gemini-2.5-pro', 'qwen-plus', 'gpt-5-mini'];
+    const MATCH_MODELS = ['gemini-2.5-pro', 'qwen-plus', 'gpt-5-mini'];
     let selectedModel = MATCH_MODELS[0];
     let currentMatch = null;
+    let currentJobId = null;
 
     function renderThinkingTrace(items) {
         const arr = Array.isArray(items) ? items.filter(Boolean) : [];
@@ -170,6 +171,9 @@
             const result = await API.post('/api/jobs/' + currentJobId + '/match', { applicationId: appId, model: selectedModel });
             currentMatch = result;
             mount.innerHTML = renderMatchCard(result);
+            if (result && result.aiMatchRemaining != null) {
+                showToast('AI match remaining: ' + result.aiMatchRemaining, 'info');
+            }
         } catch (err) {
             mount.innerHTML = '<div class="text-red-500 text-sm">API call failed, please try again.</div>';
             showToast(err.message || 'Match API failed', 'error');
@@ -268,6 +272,7 @@
 
         try {
             const app = await API.get('/api/applications/' + appId);
+            currentJobId = app.jobId;
             const statusColors = { PENDING: 'blue', APPROVED: 'green', REJECTED: 'red', WITHDRAWN: 'gray' };
             const c = statusColors[app.status] || 'gray';
 

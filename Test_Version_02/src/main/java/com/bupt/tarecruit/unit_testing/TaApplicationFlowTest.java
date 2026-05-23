@@ -158,6 +158,53 @@ class TaApplicationFlowTest {
     }
 
     @Test
+    void ta12_applyShouldAllowReapplyingSameJobAfterRejection() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ta_reapply_rejected_job");
+        User mo = addMo(ds, "mo_reapply_rejected_job");
+        Job job = addOpenJob(ds, mo, "job-reapply-after-reject");
+        String token = ds.createSession(ta.id);
+
+        persistApplication(ds, buildApplication(ta.id, job.id, 1, "REJECTED"));
+
+        JobHandler handler = new JobHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange("POST", "/api/jobs/" + job.id + "/apply", null, "{\"coverLetter\":\"test\",\"priority\":1}");
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(201, ex.getResponseCode());
+        assertEquals(2, ds.getApplicationsByApplicant(ta.id).size());
+        assertEquals(1, ds.getApplicationsByApplicant(ta.id).stream()
+                .filter(a -> "PENDING".equals(a.status) && a.priority == 1)
+                .count());
+    }
+
+    @Test
+    void ta12_reconcileShouldWithdrawDuplicateActivePriorityRecords() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ta_reconcile_duplicate_priority");
+        User mo = addMo(ds, "mo_reconcile_duplicate_priority");
+        Job job1 = addOpenJob(ds, mo, "job-reconcile-1");
+        Job job2 = addOpenJob(ds, mo, "job-reconcile-2");
+        Job job3 = addOpenJob(ds, mo, "job-reconcile-3");
+
+        persistApplication(ds, buildApplication(ta.id, job1.id, 1, "PENDING"));
+        persistApplication(ds, buildApplication(ta.id, job2.id, 1, "PENDING"));
+        persistApplication(ds, buildApplication(ta.id, job3.id, 2, "APPROVED"));
+
+        int changed = ds.reconcileApplicationPriorities();
+
+        assertEquals(1, changed);
+        assertEquals(2, ds.getApplicationsByApplicant(ta.id).stream()
+                .filter(a -> !"WITHDRAWN".equals(a.status) && !"REJECTED".equals(a.status))
+                .count());
+        assertEquals(1, ds.getApplicationsByApplicant(ta.id).stream()
+                .filter(a -> "WITHDRAWN".equals(a.status) && a.priority == 1)
+                .count());
+    }
+
+    @Test
     void ta11_withdrawShouldAllowOwnApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User ta = addTa(ds, "ta_withdraw_self");

@@ -18,6 +18,7 @@ public class User {
     public long createdAt;
     // Optional template for ADMIN fine-grained role labeling.
     public String adminRoleTemplateId = "";
+    public int aiMatchUsedCount = 0;
 
     public User() {}
 
