@@ -12,24 +12,6 @@
     "adminRoleTemplateId": ""
   },
   {
-    "id": "91671c06",
-    "username": "NLC",
-    "password": "Nlc141203",
-    "role": "TA",
-    "fullName": "ninglechen",
-    "email": "ninglechen666@bupt.edu.cn",
-    "phone": "19991219967",
-    "gender": "Male",
-    "studentId": "2023213346",
-    "school": "",
-    "supervisor": "Ni cai",
-    "degree": "Masters (MSc)",
-    "yearOfStudy": "Year 3",
-    "active": true,
-    "createdAt": 1774368133519,
-    "adminRoleTemplateId": ""
-  },
-  {
     "id": "b398e651",
     "username": "NLC_lecturer",
     "password": "Nlc141203",
@@ -305,6 +287,62 @@
     "yearOfStudy": "Year 3",
     "active": true,
     "createdAt": 1775365242930,
+    "adminRoleTemplateId": ""
+  },
+  {
+    "id": "ed6ef16c",
+    "username": "NLC_MO",
+    "password": "Nlc141203",
+    "role": "MO",
+    "fullName": "nlc_mo",
+    "email": "jp2023213346@qmul.uc.uk",
+    "phone": "19991219967",
+    "gender": "Male",
+    "studentId": "231225339",
+    "active": true,
+    "createdAt": 1779496736451,
+    "adminRoleTemplateId": ""
+  },
+  {
+    "id": "cbc5b39f",
+    "username": "admin_nlc",
+    "password": "Nlc141203",
+    "role": "ADMIN",
+    "fullName": "admin_nlc",
+    "email": "ninglechen666@bupt.edu.cn",
+    "studentId": "",
+    "active": true,
+    "createdAt": 1779499918044,
+    "adminRoleTemplateId": ""
+  },
+  {
+    "id": "91671c06",
+    "username": "NLC",
+    "password": "123456",
+    "role": "TA",
+    "fullName": "ninglechen",
+    "email": "ninglechen666@bupt.edu.cn",
+    "phone": "19991219967",
+    "gender": "Male",
+    "studentId": "2023213346",
+    "school": "",
+    "supervisor": "Ni cai",
+    "degree": "Masters (MSc)",
+    "yearOfStudy": "Year 3",
+    "active": true,
+    "createdAt": 1774368133519,
+    "adminRoleTemplateId": ""
+  },
+  {
+    "id": "c9bd960c",
+    "username": "NLC_TA",
+    "password": "123456",
+    "role": "TA",
+    "fullName": "nlc_ta",
+    "email": "ninglechen666@163.com",
+    "studentId": "2023213346",
+    "active": true,
+    "createdAt": 1779497883388,
     "adminRoleTemplateId": ""
   }
 ]

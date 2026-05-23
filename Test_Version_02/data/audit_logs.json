@@ -1774,5 +1774,877 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779476822006
+  },
+  {
+    "id": "9b66b7b8",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779496410175
+  },
+  {
+    "id": "2ad033b0",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779496538488
+  },
+  {
+    "id": "31614fc1",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779496551164
+  },
+  {
+    "id": "b16b2d00",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779496557374
+  },
+  {
+    "id": "e13869a3",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779496568214
+  },
+  {
+    "id": "5ed2cceb",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779496595608
+  },
+  {
+    "id": "2566b952",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779496637811
+  },
+  {
+    "id": "0487c315",
+    "userId": "b398e651",
+    "username": "NLC_lecturer",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779496677668
+  },
+  {
+    "id": "d8425565",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "REGISTER",
+    "detail": "New MO registered",
+    "createdAt": 1779496736452
+  },
+  {
+    "id": "8b971a74",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779496752319
+  },
+  {
+    "id": "5f2bc511",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779496805709
+  },
+  {
+    "id": "40d37dc0",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779496811826
+  },
+  {
+    "id": "7bfd8b45",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779496944559
+  },
+  {
+    "id": "fdffa50e",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "CREATE_JOB",
+    "detail": "Created job: asjkhk",
+    "createdAt": 1779497062782
+  },
+  {
+    "id": "b20e54ba",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779497100773
+  },
+  {
+    "id": "53d2667d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779497160486
+  },
+  {
+    "id": "4428f6c4",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "CREATE_JOB",
+    "detail": "Created job: qweeeeeeeeeeeeeeeeeee",
+    "createdAt": 1779497775658
+  },
+  {
+    "id": "02f390b5",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779497842406
+  },
+  {
+    "id": "811cd7d6",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "REGISTER",
+    "detail": "New TA registered",
+    "createdAt": 1779497883401
+  },
+  {
+    "id": "bb2f1a1a",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "WORKLOAD_BLOCK",
+    "detail": "Blocked application for job: qweeeeeeeeeeeeeeeeeee due to weekly workload limit; Week 1: 0.00 + 21.00 \u003d 21.00 / limit 20.00 (exceeds by 1.00h)",
+    "createdAt": 1779498129919
+  },
+  {
+    "id": "30d96c0d",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "CREATE_JOB",
+    "detail": "Created job: sadadadadadadada",
+    "createdAt": 1779498182432
+  },
+  {
+    "id": "3362ddc3",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "CREATE_JOB",
+    "detail": "Created job: ad",
+    "createdAt": 1779498218326
+  },
+  {
+    "id": "dde7a22f",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "APPLY",
+    "detail": "Applied for job: ad",
+    "createdAt": 1779498275394
+  },
+  {
+    "id": "a75f7d47",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "APPLY",
+    "detail": "Applied for job: sadadadadadadada",
+    "createdAt": 1779498532596
+  },
+  {
+    "id": "03aca59d",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application 6a63a3c1 for sadadadadadadada",
+    "createdAt": 1779498645967
+  },
+  {
+    "id": "a2acd8bb",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "APPLY",
+    "detail": "Applied for job: asjkhk",
+    "createdAt": 1779498702725
+  },
+  {
+    "id": "fd0dae50",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application f0ef0a0e for asjkhk",
+    "createdAt": 1779498724821
+  },
+  {
+    "id": "ad476b59",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "APPLICATION_APPROVED",
+    "detail": "Application aa00d323 for ad",
+    "createdAt": 1779498747562
+  },
+  {
+    "id": "85d48100",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "BULK_NOTIFY",
+    "detail": "Bulk notification sent roles\u003dMO,TA, recipients\u003d19",
+    "createdAt": 1779499780290
+  },
+  {
+    "id": "1322f7fe",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "SETTINGS_UPDATE",
+    "detail": "Updated system settings",
+    "createdAt": 1779499795995
+  },
+  {
+    "id": "961c7567",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "SETTINGS_UPDATE",
+    "detail": "Updated system settings",
+    "createdAt": 1779499799706
+  },
+  {
+    "id": "3f1259c7",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "ADMIN_ROLE_TEMPLATE_CREATE",
+    "detail": "Created template: asds",
+    "createdAt": 1779499824786
+  },
+  {
+    "id": "6034d0d4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499835414
+  },
+  {
+    "id": "d60b637f",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499843456
+  },
+  {
+    "id": "2b554cf9",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499845190
+  },
+  {
+    "id": "ca44e966",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499845906
+  },
+  {
+    "id": "31771ccd",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499846378
+  },
+  {
+    "id": "a29bd536",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499846747
+  },
+  {
+    "id": "475136b0",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499847556
+  },
+  {
+    "id": "720d1d36",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779499849469
+  },
+  {
+    "id": "171a2411",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_CREATE",
+    "detail": "Created user: admin_nlc (ADMIN)",
+    "createdAt": 1779499918055
+  },
+  {
+    "id": "ce917ff0",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779499931547
+  },
+  {
+    "id": "fc88643d",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779499954907
+  },
+  {
+    "id": "539d1da9",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779500133615
+  },
+  {
+    "id": "9a957a43",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779500145919
+  },
+  {
+    "id": "04093464",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779500146954
+  },
+  {
+    "id": "5d1d1f83",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "EXPORT_CORE_DATA",
+    "detail": "Exported core data CSV task\u003daa183e5a",
+    "createdAt": 1779500287882
+  },
+  {
+    "id": "a2b88b06",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779500306849
+  },
+  {
+    "id": "83309188",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779500507667
+  },
+  {
+    "id": "6bacb2d5",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779500516872
+  },
+  {
+    "id": "d9f0a3c6",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "SETTINGS_UPDATE",
+    "detail": "Updated system settings",
+    "createdAt": 1779500551481
+  },
+  {
+    "id": "3e9e328b",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779500568290
+  },
+  {
+    "id": "ae7e0452",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779500608650
+  },
+  {
+    "id": "f3f41977",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779500618978
+  },
+  {
+    "id": "4e111282",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779500665984
+  },
+  {
+    "id": "02ae0a20",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779500709018
+  },
+  {
+    "id": "2fb24425",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779500721774
+  },
+  {
+    "id": "aecedf9c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779500769963
+  },
+  {
+    "id": "7b17fe7c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779500795745
+  },
+  {
+    "id": "cb636048",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779500820398
+  },
+  {
+    "id": "2f08645e",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779500839954
+  },
+  {
+    "id": "cd403219",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779500842795
+  },
+  {
+    "id": "e9986ae5",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779500867902
+  },
+  {
+    "id": "737126ed",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: NLC (TA)",
+    "createdAt": 1779500871634
+  },
+  {
+    "id": "3f1bef70",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779500957427
+  },
+  {
+    "id": "4b3229eb",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779501025720
+  },
+  {
+    "id": "7d84be98",
+    "userId": "",
+    "username": "qwe",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from qweqe",
+    "createdAt": 1779501169388
+  },
+  {
+    "id": "e526171e",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779501185777
+  },
+  {
+    "id": "ea582e05",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779501199001
+  },
+  {
+    "id": "d9f3e2bc",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "PASSWORD_RESET_REQUEST_ESCALATE",
+    "detail": "Escalated reset request id\u003db7bf9acf for qweqe",
+    "createdAt": 1779501204090
+  },
+  {
+    "id": "050d9fa4",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779501212508
+  },
+  {
+    "id": "975dfcdb",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779501227548
+  },
+  {
+    "id": "80c70f0d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_EMAIL_FAILED",
+    "detail": "Approved reset for: qweqe, but email failed: SMTP error: 550 Invalid User: weq",
+    "createdAt": 1779501236608
+  },
+  {
+    "id": "90d1b67c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: qweqe",
+    "createdAt": 1779501236618
+  },
+  {
+    "id": "fa84fc5d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_EMAIL_FAILED",
+    "detail": "Approved reset for: qweqe, but email failed: SMTP error: 550 Invalid User: weq",
+    "createdAt": 1779501236661
+  },
+  {
+    "id": "5059324b",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: qweqe",
+    "createdAt": 1779501236671
+  },
+  {
+    "id": "c86b7743",
+    "userId": "",
+    "username": "s",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from qs",
+    "createdAt": 1779501320183
+  },
+  {
+    "id": "c02ff616",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_EMAIL_FAILED",
+    "detail": "Approved reset for: qs, but email failed: SMTP error: 550 Invalid User: qwq",
+    "createdAt": 1779501343573
+  },
+  {
+    "id": "3c7bf83d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: qs",
+    "createdAt": 1779501343583
+  },
+  {
+    "id": "260e5f1f",
+    "userId": "",
+    "username": "2023213346",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from ninglechen",
+    "createdAt": 1779501391313
+  },
+  {
+    "id": "63e80bd4",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: ninglechen",
+    "createdAt": 1779501399928
+  },
+  {
+    "id": "7c10f43c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: ninglechen",
+    "createdAt": 1779501402051
+  },
+  {
+    "id": "d14f9071",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_ESCALATE",
+    "detail": "Escalated password reset for user: Mei (TA)",
+    "createdAt": 1779501486244
+  },
+  {
+    "id": "64053496",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779501576885
+  },
+  {
+    "id": "b0882c56",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1779501606119
+  },
+  {
+    "id": "1c44ebd1",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779501609052
+  },
+  {
+    "id": "d921483d",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779501617230
+  },
+  {
+    "id": "df5e3540",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "PASSWORD_CHANGE",
+    "detail": "User changed password",
+    "createdAt": 1779501647216
+  },
+  {
+    "id": "aaecd65d",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779501651141
+  },
+  {
+    "id": "bb57906d",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779501659412
+  },
+  {
+    "id": "954504ca",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779501691310
+  },
+  {
+    "id": "975590fe",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779502010540
+  },
+  {
+    "id": "986fcb1d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779502034495
+  },
+  {
+    "id": "dcdc6b14",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779502041599
+  },
+  {
+    "id": "2c086090",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779502088294
+  },
+  {
+    "id": "4f210bd0",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779502092417
+  },
+  {
+    "id": "38f9209c",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779502119619
+  },
+  {
+    "id": "f4c697e8",
+    "userId": "",
+    "username": "wqw",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from qweqe",
+    "createdAt": 1779502155314
+  },
+  {
+    "id": "02b2c15b",
+    "userId": "91671c06",
+    "username": "NLC",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779502173944
+  },
+  {
+    "id": "ee8f6387",
+    "userId": "",
+    "username": "2023213346",
+    "action": "PASSWORD_RESET_REQUEST",
+    "detail": "Reset request from ninglechen",
+    "createdAt": 1779502194633
+  },
+  {
+    "id": "939ae033",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: ninglechen",
+    "createdAt": 1779502203805
+  },
+  {
+    "id": "7f5831f1",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "PASSWORD_RESET_APPROVE",
+    "detail": "Approved reset for: ninglechen",
+    "createdAt": 1779502203890
+  },
+  {
+    "id": "22862a50",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "EXPORT_CORE_DATA",
+    "detail": "Exported core data CSV task\u003d975a38ec",
+    "createdAt": 1779502256504
+  },
+  {
+    "id": "bf7ce4e5",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "SETTINGS_UPDATE",
+    "detail": "Updated system settings",
+    "createdAt": 1779502279160
+  },
+  {
+    "id": "f1ecb9b2",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "SETTINGS_UPDATE",
+    "detail": "Updated system settings",
+    "createdAt": 1779502280769
+  },
+  {
+    "id": "fe0733c3",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "SETTINGS_UPDATE",
+    "detail": "Updated system settings",
+    "createdAt": 1779502286811
+  },
+  {
+    "id": "6b0c0f4f",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "EXPORT_CORE_DATA",
+    "detail": "Exported core data CSV task\u003dc8a50180",
+    "createdAt": 1779502302550
+  },
+  {
+    "id": "63e4b220",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779502327129
+  },
+  {
+    "id": "1656d6c4",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779502357843
   }
 ]
