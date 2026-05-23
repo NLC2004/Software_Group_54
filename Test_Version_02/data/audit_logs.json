@@ -3062,5 +3062,21 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779526894122
+  },
+  {
+    "id": "77b55808",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779527748036
+  },
+  {
+    "id": "88f69bd4",
+    "userId": "c9bd960c",
+    "username": "NLC_TA",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779527774021
   }
 ]
