@@ -43,6 +43,49 @@ class TaAuthStoriesTest {
     }
 
     @Test
+    void ta02_loginShouldAllowTaWhenMoSharesSameStudentId() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = new User();
+        ta.username = "shared_id_ta";
+        ta.password = "ta-pass";
+        ta.role = "TA";
+        ta.fullName = "Shared TA";
+        ta.email = "shared_ta@example.com";
+        ta.studentId = "2026110123";
+        ds.addUser(ta);
+
+        User mo = new User();
+        mo.username = "shared_id_mo";
+        mo.password = "mo-pass";
+        mo.role = "MO";
+        mo.fullName = "Shared MO";
+        mo.email = "shared_mo@example.com";
+        mo.studentId = "2026110123";
+        ds.addUser(mo);
+
+        AuthHandler handler = new AuthHandler(ds);
+        TestHttpExchange taLogin = new TestHttpExchange(
+                "POST",
+                "/api/auth/login",
+                null,
+                "{\"identifier\":\"2026110123\",\"password\":\"ta-pass\",\"portalRole\":\"TA\"}"
+        );
+        handler.handle(taLogin);
+        assertEquals(200, taLogin.getResponseCode());
+        assertTrue(taLogin.getResponseBodyAsString().contains("\"role\":\"TA\""));
+
+        TestHttpExchange moLogin = new TestHttpExchange(
+                "POST",
+                "/api/auth/login",
+                null,
+                "{\"identifier\":\"2026110123\",\"password\":\"mo-pass\",\"portalRole\":\"MO\"}"
+        );
+        handler.handle(moLogin);
+        assertEquals(200, moLogin.getResponseCode());
+        assertTrue(moLogin.getResponseBodyAsString().contains("\"role\":\"MO\""));
+    }
+
+    @Test
     void ta02_loginShouldRejectWrongPortalRole() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User ta = new User();

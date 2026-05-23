@@ -41,11 +41,9 @@ public class AuthHandler extends BaseHandler {
         String password = body.get("password").getAsString();
         String portalRole = body.has("portalRole") ? body.get("portalRole").getAsString() : "";
 
-        User user = ds.getUserByStudentIdOrEmail(identifier);
-        // Allow username login as fallback (for accounts like default admin username).
-        if (user == null) user = ds.getUserByUsername(identifier);
+        User user = ds.findUserByPortalIdentifier(identifier, portalRole);
         if (user == null || !user.password.equals(password)) {
-            sendError(ex, 401, "Invalid student ID, email, or password"); return;
+            sendError(ex, 401, portalRoleMessage(portalRole)); return;
         }
         if (portalRole != null && !portalRole.trim().isEmpty()) {
             String pr = portalRole.trim().toUpperCase();
@@ -85,9 +83,9 @@ public class AuthHandler extends BaseHandler {
         }
         user.fullName = body.has("fullName") ? body.get("fullName").getAsString() : "";
         user.email = body.has("email") ? body.get("email").getAsString() : "";
-        user.studentId = body.has("studentId") ? body.get("studentId").getAsString() : "";
+        user.studentId = resolveRegistrationId(body, user.role);
         if (user.fullName.trim().isEmpty() || user.email.trim().isEmpty() || user.studentId.trim().isEmpty()) {
-            sendError(ex, 400, "Please fill in all required fields");
+            sendError(ex, 400, registrationIdMessage(user.role));
             return;
         }
         user = ds.addUser(user);
@@ -124,6 +122,9 @@ public class AuthHandler extends BaseHandler {
         if (body.has("phone")) user.phone = body.get("phone").getAsString();
         if (body.has("gender")) user.gender = body.get("gender").getAsString();
         if (body.has("studentId")) user.studentId = body.get("studentId").getAsString();
+        if (body.has("teacherId") && "MO".equalsIgnoreCase(user.role)) {
+            user.studentId = body.get("teacherId").getAsString();
+        }
         if (body.has("school")) user.school = body.get("school").getAsString();
         if (body.has("supervisor")) user.supervisor = body.get("supervisor").getAsString();
         if (body.has("degree")) user.degree = body.get("degree").getAsString();
@@ -148,7 +149,8 @@ public class AuthHandler extends BaseHandler {
     private void requestPasswordReset(HttpExchange ex) throws IOException {
         JsonObject body = parseJson(readBody(ex));
         PasswordResetRequest req = new PasswordResetRequest();
-        req.studentId = body.has("studentId") ? body.get("studentId").getAsString() : "";
+        req.role = body.has("role") ? body.get("role").getAsString().trim().toUpperCase() : "";
+        req.studentId = resolvePasswordResetId(body);
         req.fullName = body.has("fullName") ? body.get("fullName").getAsString() : "";
         req.email = body.has("email") ? body.get("email").getAsString() : "";
         req.phone = body.has("phone") ? body.get("phone").getAsString() : "";
@@ -172,9 +174,46 @@ public class AuthHandler extends BaseHandler {
         m.put("fullName", u.fullName); m.put("email", u.email);
         m.put("phone", u.phone); m.put("gender", u.gender);
         m.put("studentId", u.studentId); m.put("school", u.school);
+        if ("MO".equalsIgnoreCase(u.role)) m.put("teacherId", u.studentId);
         m.put("supervisor", u.supervisor); m.put("degree", u.degree);
         m.put("yearOfStudy", u.yearOfStudy);
         m.put("active", u.active); m.put("createdAt", u.createdAt);
         return m;
+    }
+
+    private String resolveRegistrationId(JsonObject body, String role) {
+        if ("MO".equalsIgnoreCase(role) && body.has("teacherId")) {
+            return body.get("teacherId").getAsString().trim();
+        }
+        if (body.has("studentId")) return body.get("studentId").getAsString().trim();
+        if (body.has("teacherId")) return body.get("teacherId").getAsString().trim();
+        return "";
+    }
+
+    private String resolvePasswordResetId(JsonObject body) {
+        String role = body.has("role") ? body.get("role").getAsString().trim().toUpperCase() : "";
+        if ("MO".equals(role) && body.has("teacherId")) {
+            return body.get("teacherId").getAsString().trim();
+        }
+        if (body.has("studentId")) return body.get("studentId").getAsString().trim();
+        if (body.has("teacherId")) return body.get("teacherId").getAsString().trim();
+        return "";
+    }
+
+    private String portalRoleMessage(String portalRole) {
+        if ("MO".equalsIgnoreCase(portalRole)) {
+            return "Invalid teacher ID, email, or password";
+        }
+        if ("TA".equalsIgnoreCase(portalRole)) {
+            return "Invalid student ID, email, or password";
+        }
+        return "Invalid student ID, email, or password";
+    }
+
+    private String registrationIdMessage(String role) {
+        if ("MO".equalsIgnoreCase(role)) {
+            return "Please fill in all required fields (including teacher ID)";
+        }
+        return "Please fill in all required fields";
     }
 }

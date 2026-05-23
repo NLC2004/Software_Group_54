@@ -267,9 +267,7 @@ public class AdminHandler extends BaseHandler {
 
             User target = null;
             if (req.studentId != null && !req.studentId.isEmpty()) {
-                target = ds.getAllUsers().stream()
-                        .filter(u -> req.studentId.equals(u.studentId) || req.studentId.equals(u.username))
-                        .findFirst().orElse(null);
+                target = ds.findUserByIdNumber(req.studentId, req.role);
             }
             if (target != null) {
                 String targetRole = target.role == null ? "" : target.role.toUpperCase(Locale.ROOT);
@@ -372,9 +370,7 @@ public class AdminHandler extends BaseHandler {
         if (target != null) {
             if (target.email != null && !target.email.isBlank()) return target.email.trim();
             if (target.studentId != null && !target.studentId.isBlank()) {
-                User matched = ds.getAllUsers().stream()
-                        .filter(u -> target.studentId.equals(u.studentId) || target.studentId.equals(u.username))
-                        .findFirst().orElse(null);
+                User matched = ds.findUserByIdNumber(target.studentId, target.role);
                 if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
             }
             if (target.fullName != null && !target.fullName.isBlank()) {
@@ -388,9 +384,8 @@ public class AdminHandler extends BaseHandler {
         if (req != null) {
             String sid = req.studentId == null ? "" : req.studentId.trim();
             if (!sid.isEmpty()) {
-                User matched = ds.getAllUsers().stream()
-                        .filter(u -> sid.equals(u.studentId) || sid.equals(u.username))
-                        .findFirst().orElse(null);
+                String role = req != null && req.role != null ? req.role : "";
+                User matched = ds.findUserByIdNumber(sid, role);
                 if (matched != null && matched.email != null && !matched.email.isBlank()) return matched.email.trim();
             }
             String name = req.fullName == null ? "" : req.fullName.trim().toLowerCase(Locale.ROOT);

@@ -309,7 +309,22 @@ Cancel
 <script>
     const PROFILE_RESUME_DB_NAME = 'ta_application_resume_db_v1';
     const PROFILE_RESUME_STORE_NAME = 'resume';
-    const PROFILE_RESUME_KEY = 'profile_default';
+    const PROFILE_RESUME_KEY_PREFIX = 'profile_default';
+    let currentUserScope = 'anonymous';
+
+    function normalizeScopePart(value) {
+        return String(value || 'anonymous').trim().replace(/[^a-zA-Z0-9_-]+/g, '_') || 'anonymous';
+    }
+
+    function setCurrentUserScope(user) {
+        currentUserScope = normalizeScopePart(
+            (user && (user.id || user.studentId || user.username)) || 'anonymous'
+        );
+    }
+
+    function getProfileResumeKey() {
+        return `${PROFILE_RESUME_KEY_PREFIX}_${currentUserScope}`;
+    }
 
     function getRadioValue(name) {
         const el = document.querySelector(`input[name="${name}"]:checked`);
@@ -395,7 +410,7 @@ Cancel
     async function saveProfileResumeToIndexedDb(file) {
         if (!file) return;
         const db = await openResumeDb();
-        const record = { id: PROFILE_RESUME_KEY, file, fileName: file.name, updatedAt: Date.now() };
+        const record = { id: getProfileResumeKey(), file, fileName: file.name, updatedAt: Date.now() };
         await new Promise((resolve, reject) => {
             const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readwrite');
             tx.objectStore(PROFILE_RESUME_STORE_NAME).put(record);
@@ -409,7 +424,7 @@ Cancel
         const db = await openResumeDb();
         const result = await new Promise((resolve, reject) => {
             const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readonly');
-            const req = tx.objectStore(PROFILE_RESUME_STORE_NAME).get(PROFILE_RESUME_KEY);
+            const req = tx.objectStore(PROFILE_RESUME_STORE_NAME).get(getProfileResumeKey());
             req.onsuccess = () => resolve(req.result || null);
             req.onerror = () => reject(req.error || new Error('Failed to read cached resume'));
         });
@@ -421,7 +436,7 @@ Cancel
         const db = await openResumeDb();
         await new Promise((resolve, reject) => {
             const tx = db.transaction(PROFILE_RESUME_STORE_NAME, 'readwrite');
-            tx.objectStore(PROFILE_RESUME_STORE_NAME).delete(PROFILE_RESUME_KEY);
+            tx.objectStore(PROFILE_RESUME_STORE_NAME).delete(getProfileResumeKey());
             tx.oncomplete = () => resolve();
             tx.onerror = () => reject(tx.error || new Error('Failed to clear cached resume'));
         });
@@ -501,6 +516,7 @@ Cancel
     }
 
     function populateProfile(u) {
+        setCurrentUserScope(u);
         document.getElementById('profileName').textContent = u.fullName || u.username || '--';
         document.getElementById('profileSub').textContent = (u.school || '') + (u.degree ? ' · ' + u.degree : '');
         document.getElementById('fixedStudentId').textContent = u.studentId || '--';

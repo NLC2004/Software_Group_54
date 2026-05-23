@@ -97,7 +97,7 @@
 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
 <span class="iconify" data-icon="mdi:card-account-details-outline"></span>
 </span>
-<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regStudentId" placeholder="Enter your teacher ID" type="text"/>
+<input class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none placeholder-gray-300 text-gray-600" id="regTeacherId" placeholder="Enter your teacher ID" type="text"/>
 </div>
 </div>
 <div>
@@ -243,11 +243,11 @@
             e.preventDefault();
             const fullName = document.getElementById('regFullName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
-            const studentId = document.getElementById('regStudentId').value.trim();
+            const teacherId = document.getElementById('regTeacherId').value.trim();
             const username = document.getElementById('regUsername').value.trim();
             const password = document.getElementById('regPassword').value.trim();
             const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
-            if (!fullName || !email || !studentId || !username || !password || !confirmPassword) {
+            if (!fullName || !email || !teacherId || !username || !password || !confirmPassword) {
                 showAlert('error', 'Please fill in all fields');
                 return;
             }
@@ -260,7 +260,7 @@
             btn.innerText = 'Creating...';
             icon.classList.remove('hidden');
             try {
-                const res = await API.post('/api/auth/register', { username, password, role: 'MO', fullName, email, studentId });
+                const res = await API.post('/api/auth/register', { username, password, role: 'MO', fullName, email, teacherId });
                 API.setAuth(res.token, res.user);
                 showAlert('success', 'Account created! Redirecting...');
                 setTimeout(() => { window.location.href = '/MO/my-job-list.html'; }, 600);
