@@ -322,7 +322,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     const RESUME_DB_NAME = 'ta_application_resume_db_v1';
     const RESUME_STORE_NAME = 'resume';
     const RESUME_KEY_PREFIX = 'job_';
-    const PROFILE_RESUME_KEY = 'profile_default';
+    const PROFILE_RESUME_KEY_PREFIX = 'profile_default';
     const AUTO_SAVE_DELAY_MS = 5000;
     let autoSaveTimer = null;
 
@@ -347,6 +347,8 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     document.getElementById('aiMatchRunBtn').addEventListener('click', refreshAiMatch);
     document.getElementById('aiMatchRunTextBtn').addEventListener('click', refreshAiMatch);
     let currentJob = null;
+    let currentUserScope = 'anonymous';
+    let currentUserProfile = null;
 
     function parseDeadline(deadline) {
         if (!deadline) return null;
@@ -423,12 +425,43 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         });
     }
 
+    function normalizeScopePart(value) {
+        return String(value || 'anonymous').trim().replace(/[^a-zA-Z0-9_-]+/g, '_') || 'anonymous';
+    }
+
+    function setCurrentUserContext(user) {
+        currentUserProfile = user && typeof user === 'object' ? user : null;
+        currentUserScope = normalizeScopePart(
+            (user && (user.id || user.studentId || user.username)) || 'anonymous'
+        );
+    }
+
     function getDraftKey() {
+        return `${DRAFT_KEY_PREFIX}_${currentUserScope}_${jobId || 'general'}`;
+    }
+
+    function getLegacyDraftKey() {
         return `${DRAFT_KEY_PREFIX}_${jobId || 'general'}`;
     }
 
     function getResumeKey() {
-        return `${RESUME_KEY_PREFIX}${jobId || 'general'}`;
+        return `${RESUME_KEY_PREFIX}${currentUserScope}_${jobId || 'general'}`;
+    }
+
+    function getProfileResumeKey() {
+        return `${PROFILE_RESUME_KEY_PREFIX}_${currentUserScope}`;
+    }
+
+    function draftBelongsToCurrentUser(draft) {
+        if (!draft || !currentUserProfile) return false;
+        const draftStudentId = String(draft.confirmStudentId || '').trim();
+        const currentStudentId = String(currentUserProfile.studentId || '').trim();
+        if (draftStudentId && currentStudentId) {
+            return draftStudentId === currentStudentId;
+        }
+        const draftName = String(draft.confirmFullName || '').trim().toLowerCase();
+        const currentName = String(currentUserProfile.fullName || currentUserProfile.username || '').trim().toLowerCase();
+        return !!draftName && !!currentName && draftName === currentName;
     }
 
     function setDraftStatus(message) {
@@ -456,9 +489,18 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
 
     function parseLocalDraft() {
         const raw = localStorage.getItem(getDraftKey());
-        if (!raw) return null;
+        if (raw) {
+            try {
+                return JSON.parse(raw);
+            } catch (_) {
+                return null;
+            }
+        }
+        const legacyRaw = localStorage.getItem(getLegacyDraftKey());
+        if (!legacyRaw) return null;
         try {
-            return JSON.parse(raw);
+            const parsed = JSON.parse(legacyRaw);
+            return draftBelongsToCurrentUser(parsed) ? parsed : null;
         } catch (_) {
             return null;
         }
@@ -741,7 +783,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         const db = await openResumeDb();
         const result = await new Promise((resolve, reject) => {
             const tx = db.transaction(RESUME_STORE_NAME, 'readonly');
-            const req = tx.objectStore(RESUME_STORE_NAME).get(PROFILE_RESUME_KEY);
+            const req = tx.objectStore(RESUME_STORE_NAME).get(getProfileResumeKey());
             req.onsuccess = () => resolve(req.result || null);
             req.onerror = () => reject(req.error || new Error('Failed to read cached profile resume'));
         });
@@ -1029,6 +1071,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     (async function init() {
         const user = requireAuth(['TA']);
         if (!user) return;
+        setCurrentUserContext(user);
         updateSidebarUser(user);
 
         if (jobId) {
@@ -1051,6 +1094,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
 
         try {
             const me = await API.get('/api/auth/me');
+            setCurrentUserContext(me);
             document.getElementById('infoApplicant').textContent = me.fullName || me.username || '--';
             document.getElementById('infoStudentId').textContent = me.studentId || '--';
             applyProfileDefaults(me);

@@ -3,6 +3,7 @@ package com.bupt.tarecruit.model;
 public class PasswordResetRequest {
     public String id;
     public String studentId;
+    public String role; // TA or MO — disambiguates when ID numbers overlap across portals
     public String fullName;
     public String email;
     public String phone;
