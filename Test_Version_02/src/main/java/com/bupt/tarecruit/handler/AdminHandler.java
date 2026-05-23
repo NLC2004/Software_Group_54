@@ -684,12 +684,12 @@ public class AdminHandler extends BaseHandler {
         stats.put("activePreferenceUsage", activePreferenceUsage);
 
         Map<String, Object> taPriorityDistribution = new LinkedHashMap<>();
-        List<User> taUsers = usersInRange.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList());
+        List<User> allTaUsers = allUsers.stream().filter(u -> "TA".equals(u.role)).collect(Collectors.toList());
         taPriorityDistribution.put("tasWithPriority1", countDistinctApplicantsByPriority(activeApps, 1));
         taPriorityDistribution.put("tasWithPriority2", countDistinctApplicantsByPriority(activeApps, 2));
         taPriorityDistribution.put("tasWithPriority3", countDistinctApplicantsByPriority(activeApps, 3));
-        taPriorityDistribution.put("tasWithoutActivePreference", Math.max(0, taUsers.size() - countDistinctApplicants(activeApps)));
-        taPriorityDistribution.put("totalTAsInRange", taUsers.size());
+        taPriorityDistribution.put("tasWithoutActivePreference", Math.max(0, allTaUsers.size() - countDistinctApplicants(activeApps)));
+        taPriorityDistribution.put("totalTAsInRange", allTaUsers.size());
         stats.put("taPriorityDistribution", taPriorityDistribution);
 
         stats.put("applicationsBySchool", buildApplicationsBySchool(appsInRange));

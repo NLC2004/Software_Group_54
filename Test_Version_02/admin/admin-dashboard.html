@@ -134,34 +134,40 @@
         <div>
           <h1 class="text-2xl font-bold text-slate-900 mb-1">System Overview</h1>
           <p class="text-slate-500 italic">Real-time monitoring of campus recruitment status.</p>
+          <p class="text-xs text-slate-400 mt-2" id="dashboardFilterSummary">Filtered by 2025-2026 Spring · All Faculties · Last 30 Days</p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
           <div class="flex flex-col">
             <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Semester</label>
-            <select class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer">
-              <option>2025-2026 Spring</option>
-              <option>2025-2026 Autumn</option>
-              <option>2024-2025 Spring</option>
+            <select id="dashboardSemesterSelect" class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer">
+              <option value="2025-2026 Spring">2025-2026 Spring</option>
+              <option value="2025-2026 Autumn">2025-2026 Autumn</option>
+              <option value="2024-2025 Spring">2024-2025 Spring</option>
             </select>
           </div>
           <div class="flex flex-col">
             <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Faculty</label>
-            <select class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer">
-              <option>All Faculties</option>
-              <option>School of Engineering</option>
-              <option>School of Science</option>
-              <option>School of Business</option>
-              <option>Humanities & Social Science</option>
+            <select id="dashboardFacultySelect" class="px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer">
+              <option value="all">All Faculties</option>
+              <option value="engineering">School of Engineering</option>
+              <option value="science">School of Science</option>
+              <option value="business">School of Business</option>
+              <option value="art">Art &amp; Design</option>
+              <option value="other">Other Faculties</option>
             </select>
           </div>
           <div class="flex flex-col">
             <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1">Time Range</label>
             <div class="flex items-center bg-white border border-slate-200 rounded-lg px-3 py-2 gap-2 text-sm">
               <span class="iconify w-4 h-4 text-slate-400" data-icon="heroicons:calendar-days"></span>
-              <span class="font-medium">Last 30 Days</span>
+              <select id="dashboardRangeSelect" class="bg-transparent font-medium focus:outline-none cursor-pointer">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+              </select>
             </div>
           </div>
-          <button class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md mt-auto">
+          <button id="dashboardRefreshBtn" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md mt-auto">
             <span class="iconify w-4 h-4" data-icon="heroicons:arrow-path"></span>
             Refresh Data
           </button>
@@ -499,7 +505,17 @@
   <script>
   let trendChart;
   let statusPieChart;
-  const DASHBOARD_RANGE_DAYS = 30;
+  const SEMESTER_WINDOWS = {
+    '2025-2026 Spring': { start: '2026-01-01', end: '2026-06-30' },
+    '2025-2026 Autumn': { start: '2025-09-01', end: '2025-12-31' },
+    '2024-2025 Spring': { start: '2025-01-01', end: '2025-06-30' }
+  };
+  const DASHBOARD_FILTERS = {
+    semester: '2025-2026 Spring',
+    faculty: 'all',
+    rangeDays: 30
+  };
+  let dashboardDataCache = null;
 
   function toDateInputValue(d) {
     const yyyy = d.getFullYear();
@@ -515,6 +531,187 @@
     p.set('startDate', toDateInputValue(start));
     p.set('endDate', toDateInputValue(end));
     return '?' + p.toString();
+  }
+
+  function parseIsoDate(text) {
+    if (!text) return null;
+    const d = new Date(text);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  function startOfDay(d) {
+    const v = new Date(d);
+    v.setHours(0, 0, 0, 0);
+    return v;
+  }
+
+  function endOfDay(d) {
+    const v = new Date(d);
+    v.setHours(23, 59, 59, 999);
+    return v;
+  }
+
+  function getCurrentRangeLabel() {
+    return 'Last ' + DASHBOARD_FILTERS.rangeDays + ' Days';
+  }
+
+  function getCurrentFacultyLabel() {
+    const select = document.getElementById('dashboardFacultySelect');
+    if (select && select.selectedOptions && select.selectedOptions[0]) {
+      return select.selectedOptions[0].textContent.trim();
+    }
+    return 'All Faculties';
+  }
+
+  function updateDashboardSummary() {
+    const summary = document.getElementById('dashboardFilterSummary');
+    if (!summary) return;
+    summary.textContent = 'Filtered by ' + DASHBOARD_FILTERS.semester + ' · ' + getCurrentFacultyLabel() + ' · ' + getCurrentRangeLabel();
+  }
+
+  function getActiveDashboardWindow() {
+    const semesterWindow = SEMESTER_WINDOWS[DASHBOARD_FILTERS.semester] || SEMESTER_WINDOWS['2025-2026 Spring'];
+    const now = new Date();
+    const rangeEnd = endOfDay(now);
+    const rangeStart = startOfDay(new Date(rangeEnd.getTime() - (Math.max(1, DASHBOARD_FILTERS.rangeDays) - 1) * 24 * 60 * 60 * 1000));
+    const semesterStart = startOfDay(parseIsoDate(semesterWindow.start) || now);
+    const semesterEnd = endOfDay(parseIsoDate(semesterWindow.end) || now);
+    const start = new Date(Math.max(semesterStart.getTime(), rangeStart.getTime()));
+    const end = new Date(Math.min(semesterEnd.getTime(), rangeEnd.getTime()));
+    return { start: start, end: end, empty: end.getTime() < start.getTime() };
+  }
+
+  function inferFacultyBucketFromText(text) {
+    const v = String(text || '').toLowerCase();
+    if (!v) return 'other';
+    if (/(engineer|computer|software|network|signal|communication|electronic|cyber|machine learning|operating systems|program)/.test(v)) return 'engineering';
+    if (/(science|math|physics|chem|bio|statistic)/.test(v)) return 'science';
+    if (/(business|finance|econom|management|market|account)/.test(v)) return 'business';
+    if (/(art|design|media|music|humanities|social science)/.test(v)) return 'art';
+    return 'other';
+  }
+
+  function getJobFacultyBucket(job) {
+    return inferFacultyBucketFromText((job && (job.courseName || job.title || job.description)) || '');
+  }
+
+  function getUserFacultyBucket(user, jobsByPoster) {
+    if (!user) return 'other';
+    const schoolBucket = inferFacultyBucketFromText(user.school || '');
+    if (schoolBucket !== 'other') return schoolBucket;
+    if (user.role === 'MO') {
+      const jobs = jobsByPoster[user.id] || [];
+      for (let i = 0; i < jobs.length; i++) {
+        const bucket = getJobFacultyBucket(jobs[i]);
+        if (bucket !== 'other') return bucket;
+      }
+    }
+    return inferFacultyBucketFromText((user.fullName || '') + ' ' + (user.email || ''));
+  }
+
+  function isTimestampInWindow(ts, windowRange) {
+    if (!ts || !windowRange || windowRange.empty) return false;
+    return ts >= windowRange.start.getTime() && ts <= windowRange.end.getTime();
+  }
+
+  function buildDashboardDataset(raw) {
+    const users = Array.isArray(raw.users) ? raw.users : [];
+    const jobs = Array.isArray(raw.jobs) ? raw.jobs : [];
+    const applications = Array.isArray(raw.applications) ? raw.applications : [];
+    const resets = Array.isArray(raw.resets) ? raw.resets : [];
+    const workload = Array.isArray(raw.workload) ? raw.workload : [];
+    const jobsById = {};
+    const jobsByPoster = {};
+    jobs.forEach(function(job) {
+      if (job && job.id) jobsById[job.id] = job;
+      const postedBy = job && job.postedBy ? job.postedBy : '';
+      if (!jobsByPoster[postedBy]) jobsByPoster[postedBy] = [];
+      jobsByPoster[postedBy].push(job);
+    });
+    const usersById = {};
+    users.forEach(function(user) {
+      if (!user || !user.id) return;
+      user.__facultyBucket = getUserFacultyBucket(user, jobsByPoster);
+      usersById[user.id] = user;
+    });
+    jobs.forEach(function(job) {
+      if (job) job.__facultyBucket = getJobFacultyBucket(job);
+    });
+    applications.forEach(function(app) {
+      const applicant = app && app.applicantId ? usersById[app.applicantId] : null;
+      const job = app && app.jobId ? jobsById[app.jobId] : null;
+      const applicantBucket = applicant ? applicant.__facultyBucket : 'other';
+      const jobBucket = job ? job.__facultyBucket : 'other';
+      app.__facultyBucket = jobBucket !== 'other' ? jobBucket : applicantBucket;
+    });
+    workload.forEach(function(row) {
+      if (!row) return;
+      row.__facultyBucket = inferFacultyBucketFromText(row.faculty || '');
+    });
+    return {
+      users: users,
+      jobs: jobs,
+      applications: applications,
+      resets: resets,
+      workload: workload,
+      usersById: usersById,
+      jobsById: jobsById
+    };
+  }
+
+  async function fetchDashboardDataset(forceRefresh) {
+    if (dashboardDataCache && !forceRefresh) return dashboardDataCache;
+    const [users, resets, workload, applications, jobs] = await Promise.all([
+      API.get('/api/admin/users'),
+      API.get('/api/admin/password-resets?status=PENDING'),
+      API.get('/api/admin/workload'),
+      API.get('/api/applications'),
+      API.get('/api/jobs')
+    ]);
+    dashboardDataCache = buildDashboardDataset({
+      users: users,
+      resets: resets,
+      workload: workload,
+      applications: applications,
+      jobs: jobs
+    });
+    return dashboardDataCache;
+  }
+
+  function filterDashboardDataset(dataset) {
+    const faculty = DASHBOARD_FILTERS.faculty;
+    const range = getActiveDashboardWindow();
+    const matchesFaculty = function(bucket) {
+      return faculty === 'all' || bucket === faculty;
+    };
+    const users = (dataset.users || []).filter(function(user) {
+      return matchesFaculty(user.__facultyBucket || 'other') && isTimestampInWindow(user.createdAt, range);
+    });
+    const jobs = (dataset.jobs || []).filter(function(job) {
+      return matchesFaculty(job.__facultyBucket || 'other') && isTimestampInWindow(job.createdAt, range);
+    });
+    const applications = (dataset.applications || []).filter(function(app) {
+      return matchesFaculty(app.__facultyBucket || 'other') && isTimestampInWindow(app.createdAt, range);
+    });
+    const resets = (dataset.resets || []).filter(function(reset) {
+      if (!isTimestampInWindow(reset.createdAt, range)) return false;
+      if (faculty === 'all') return true;
+      const targetUser = dataset.usersById && reset && reset.userId ? dataset.usersById[reset.userId] : null;
+      return matchesFaculty(targetUser && targetUser.__facultyBucket ? targetUser.__facultyBucket : 'other');
+    });
+    const workload = (dataset.workload || []).filter(function(row) {
+      return matchesFaculty(row.__facultyBucket || 'other');
+    });
+    return {
+      range: range,
+      users: users,
+      jobs: jobs,
+      applications: applications,
+      resets: resets,
+      workload: workload,
+      usersById: dataset.usersById || {},
+      jobsById: dataset.jobsById || {}
+    };
   }
 
   function formatDashboardTrendLabels(trend) {
@@ -555,100 +752,125 @@
     el.textContent = now.toISOString().slice(0, 10) + ' ' + now.toTimeString().slice(0, 8);
   }
 
-  async function renderDashboardLive() {
-    const stats = await API.get('/api/admin/stats' + buildLastNDaysStatsQuery(DASHBOARD_RANGE_DAYS));
-    if (!stats) return;
+  function buildDailyApplicationTrendFromFiltered(applications, range) {
+    if (!range || range.empty) return [];
+    const buckets = [];
+    for (let cursor = new Date(range.start); cursor.getTime() <= range.end.getTime(); cursor.setDate(cursor.getDate() + 1)) {
+      buckets.push({
+        date: toDateInputValue(cursor),
+        submitted: 0,
+        approved: 0
+      });
+    }
+    const index = {};
+    buckets.forEach(function(row, idx) { index[row.date] = idx; });
+    (applications || []).forEach(function(app) {
+      if (app.createdAt) {
+        const createdKey = toDateInputValue(new Date(app.createdAt));
+        if (index[createdKey] != null) buckets[index[createdKey]].submitted += 1;
+      }
+      if (String(app.status || '').toUpperCase() === 'APPROVED') {
+        const approvedTs = app.updatedAt || app.createdAt;
+        const approvedKey = approvedTs ? toDateInputValue(new Date(approvedTs)) : '';
+        if (index[approvedKey] != null) buckets[index[approvedKey]].approved += 1;
+      }
+    });
+    return buckets;
+  }
+
+  async function renderDashboardLive(forceRefresh) {
+    const dataset = filterDashboardDataset(await fetchDashboardDataset(forceRefresh));
+    updateDashboardSummary();
 
     const statusCounts = {
-      pending: Number(stats.pendingApplications || 0),
-      approved: Number(stats.approvedApplications || 0),
-      rejected: Number(stats.rejectedApplications || 0),
-      withdrawn: Number(stats.withdrawnApplications || 0)
+      pending: dataset.applications.filter(function(app) { return String(app.status || '').toUpperCase() === 'PENDING'; }).length,
+      approved: dataset.applications.filter(function(app) { return String(app.status || '').toUpperCase() === 'APPROVED'; }).length,
+      rejected: dataset.applications.filter(function(app) { return String(app.status || '').toUpperCase() === 'REJECTED'; }).length,
+      withdrawn: dataset.applications.filter(function(app) { return String(app.status || '').toUpperCase() === 'WITHDRAWN'; }).length
     };
+    const openJobs = dataset.jobs.filter(function(job) { return String(job.status || '').toUpperCase() === 'OPEN'; }).length;
+    const closedJobs = dataset.jobs.filter(function(job) { return String(job.status || '').toUpperCase() === 'CLOSED'; }).length;
+    const activeUsers = dataset.users.filter(function(user) { return !!user.active; }).length;
+    const totalTas = dataset.users.filter(function(user) { return user.role === 'TA'; }).length;
+    const overloadedCount = dataset.workload.filter(function(row) { return !!row.overloaded; }).length;
 
     const usersEl = document.getElementById('adm-stat-users');
     const openJobsEl = document.getElementById('adm-stat-openjobs');
     const appsEl = document.getElementById('adm-stat-apps');
     const overloadEl = document.getElementById('adm-stat-overload');
-    if (usersEl) usersEl.textContent = (stats.totalUsersAll ?? stats.totalUsers ?? 0).toLocaleString();
-    if (openJobsEl) openJobsEl.textContent = (stats.openJobs || 0).toLocaleString();
-    if (appsEl) appsEl.textContent = (stats.totalApplications ?? 0).toLocaleString();
-    if (overloadEl) overloadEl.textContent = (stats.overloadedTAs || 0).toLocaleString();
+    if (usersEl) usersEl.textContent = dataset.users.length.toLocaleString();
+    if (openJobsEl) openJobsEl.textContent = openJobs.toLocaleString();
+    if (appsEl) appsEl.textContent = dataset.applications.length.toLocaleString();
+    if (overloadEl) overloadEl.textContent = overloadedCount.toLocaleString();
 
     const subUsers = document.querySelector('[data-stat-sub="users"]');
     const subJobs = document.querySelector('[data-stat-sub="jobs"]');
     const subApps = document.querySelector('[data-stat-sub="apps"]');
-    if (subUsers) subUsers.textContent = 'Active: ' + (stats.activeUsersAll ?? stats.activeUsers ?? 0).toLocaleString();
-    if (subJobs) subJobs.textContent = 'Closed: ' + (stats.closedJobs || 0).toLocaleString() + ' · All jobs: ' + (stats.totalJobsAll ?? stats.totalJobs ?? 0);
-    if (subApps) subApps.textContent = 'Pending (30d): ' + statusCounts.pending.toLocaleString() + ' · All: ' + (stats.totalApplicationsAll ?? 0);
+    if (subUsers) subUsers.textContent = 'Active: ' + activeUsers.toLocaleString();
+    if (subJobs) subJobs.textContent = 'Closed: ' + closedJobs.toLocaleString() + ' · Filtered jobs: ' + dataset.jobs.length.toLocaleString();
+    if (subApps) subApps.textContent = 'Pending (' + DASHBOARD_FILTERS.rangeDays + 'd): ' + statusCounts.pending.toLocaleString() + ' · Filtered total: ' + dataset.applications.length.toLocaleString();
 
     const qaOpen = document.querySelector('[data-qa="open-jobs"]');
     const qaOverload = document.querySelector('[data-qa="overload"]');
     const qaTas = document.querySelector('[data-qa="tas"]');
-    if (qaOpen) qaOpen.textContent = 'Open: ' + (stats.openJobs || 0) + ' positions';
-    if (qaOverload) qaOverload.textContent = 'Overloaded: ' + (stats.overloadedTAs || 0) + ' TAs';
-    if (qaTas) qaTas.textContent = 'Total TAs: ' + (stats.totalTAsAll ?? stats.totalTAs ?? 0);
+    if (qaOpen) qaOpen.textContent = 'Open: ' + openJobs + ' positions';
+    if (qaOverload) qaOverload.textContent = 'Overloaded: ' + overloadedCount + ' TAs';
+    if (qaTas) qaTas.textContent = 'Total TAs: ' + totalTas;
     const subOverload = document.querySelector('[data-stat-sub="overload"]');
-    if (subOverload) subOverload.textContent = 'Pwd resets pending: ' + (stats.pendingPasswordResets || 0);
+    if (subOverload) subOverload.textContent = 'Pwd resets pending: ' + dataset.resets.length;
 
     const lineEl = document.getElementById('lineTrendChart');
     const pieEl = document.getElementById('statusPieChart');
     if (typeof echarts === 'undefined') {
       throw new Error('ECharts library failed to load');
     }
-    if (lineEl) {
-      trendChart = echarts.getInstanceByDom(lineEl) || echarts.init(lineEl);
-    }
-    if (pieEl) {
-      statusPieChart = echarts.getInstanceByDom(pieEl) || echarts.init(pieEl);
-    }
+    if (lineEl) trendChart = echarts.getInstanceByDom(lineEl) || echarts.init(lineEl);
+    if (pieEl) statusPieChart = echarts.getInstanceByDom(pieEl) || echarts.init(pieEl);
 
-    let trend = Array.isArray(stats.dailyApplicationTrend) ? stats.dailyApplicationTrend : [];
+    let trend = buildDailyApplicationTrendFromFiltered(dataset.applications, dataset.range);
     if (!trend.length) {
-      trend = buildFallbackDailyTrend(DASHBOARD_RANGE_DAYS);
+      trend = buildFallbackDailyTrend(Math.max(1, DASHBOARD_FILTERS.rangeDays));
     }
     const labels = formatDashboardTrendLabels(trend);
     const submittedSeries = trend.map(function(r) { return Number(r.submitted || 0); });
     const approvedSeries = trend.map(function(r) { return Number(r.approved || 0); });
 
-    if (!trendChart) {
-      console.warn('lineTrendChart container not found');
-    } else {
-    trendChart.setOption({
-      grid: { top: 36, left: 44, right: 16, bottom: 40, containLabel: true },
-      tooltip: { trigger: 'axis' },
-      legend: { top: 0, data: ['Submitted (TA)', 'Approved (MO)'] },
-      xAxis: {
-        type: 'category',
-        data: labels,
-        axisLabel: { color: '#64748b', fontSize: 10 }
-      },
-      yAxis: {
-        type: 'value',
-        minInterval: 1,
-        axisLabel: { color: '#64748b', fontSize: 10 },
-        splitLine: { lineStyle: { color: '#f1f5f9' } }
-      },
-      series: [
-        {
-          name: 'Submitted (TA)',
-          type: 'line',
-          smooth: true,
-          data: submittedSeries,
-          lineStyle: { color: '#3b82f6', width: 3 },
-          itemStyle: { color: '#3b82f6' },
-          areaStyle: { color: 'rgba(59,130,246,0.12)' }
+    if (trendChart) {
+      trendChart.setOption({
+        grid: { top: 36, left: 44, right: 16, bottom: 40, containLabel: true },
+        tooltip: { trigger: 'axis' },
+        legend: { top: 0, data: ['Submitted (TA)', 'Approved (MO)'] },
+        xAxis: {
+          type: 'category',
+          data: labels,
+          axisLabel: { color: '#64748b', fontSize: 10 }
         },
-        {
-          name: 'Approved (MO)',
-          type: 'line',
-          smooth: true,
-          data: approvedSeries,
-          lineStyle: { color: '#10b981', width: 2 },
-          itemStyle: { color: '#10b981' }
-        }
-      ]
-    }, true);
+        yAxis: {
+          type: 'value',
+          minInterval: 1,
+          axisLabel: { color: '#64748b', fontSize: 10 },
+          splitLine: { lineStyle: { color: '#f1f5f9' } }
+        },
+        series: [
+          {
+            name: 'Submitted (TA)',
+            type: 'line',
+            smooth: true,
+            data: submittedSeries,
+            lineStyle: { color: '#3b82f6', width: 3 },
+            itemStyle: { color: '#3b82f6' },
+            areaStyle: { color: 'rgba(59,130,246,0.12)' }
+          },
+          {
+            name: 'Approved (MO)',
+            type: 'line',
+            smooth: true,
+            data: approvedSeries,
+            lineStyle: { color: '#10b981', width: 2 },
+            itemStyle: { color: '#10b981' }
+          }
+        ]
+      }, true);
     }
 
     const pieData = [
@@ -663,7 +885,7 @@
         statusPieChart.clear();
         statusPieChart.setOption({
           title: {
-            text: 'No applications in last 30 days',
+            text: 'No applications in current filter',
             left: 'center',
             top: 'middle',
             textStyle: { color: '#94a3b8', fontSize: 13, fontWeight: 'normal' }
@@ -688,11 +910,21 @@
       }
       statusPieChart.resize();
     }
-    if (trendChart) {
-      trendChart.resize();
-    }
+    if (trendChart) trendChart.resize();
     updateDashboardSyncTime();
     scheduleChartResize();
+    return dataset;
+  }
+
+  async function applyDashboardFilters(forceRefresh, showErrorToast) {
+    try {
+      await Promise.all([renderDashboardLive(forceRefresh), loadDashboardPanels(forceRefresh)]);
+    } catch (e) {
+      if (showErrorToast !== false) {
+        showToast('Failed to load dashboard data: ' + e.message, 'error');
+      }
+      throw e;
+    }
   }
 
   (async function() {
@@ -701,35 +933,56 @@
     updateSidebarUser(user);
     const dateEl = document.getElementById('headerCurrentDate');
     if (dateEl) dateEl.textContent = new Date().toISOString().slice(0, 10);
+    const semesterSelect = document.getElementById('dashboardSemesterSelect');
+    const facultySelect = document.getElementById('dashboardFacultySelect');
+    const rangeSelect = document.getElementById('dashboardRangeSelect');
+    if (semesterSelect) semesterSelect.value = DASHBOARD_FILTERS.semester;
+    if (facultySelect) facultySelect.value = DASHBOARD_FILTERS.faculty;
+    if (rangeSelect) rangeSelect.value = String(DASHBOARD_FILTERS.rangeDays);
+    updateDashboardSummary();
     document.getElementById('btnHeaderBell')?.addEventListener('click', function() {
       window.location.href = 'password-reset-requests.html';
     });
     await refreshHeaderBellDot();
     try {
-      await Promise.all([renderDashboardLive(), loadDashboardPanels()]);
+      await applyDashboardFilters();
     } catch (e) {
-      showToast('Failed to load dashboard data: ' + e.message, 'error');
+      /* toast already shown */
     }
 
     window.addEventListener('resize', scheduleChartResize);
 
-    const refreshBtn = document.querySelector('button.bg-blue-600');
+    const refreshBtn = document.getElementById('dashboardRefreshBtn');
     if (refreshBtn) {
       refreshBtn.addEventListener('click', async function() {
         this.classList.add('opacity-75');
         const icon = this.querySelector('.iconify');
-        icon.classList.add('animate-spin');
+        if (icon) icon.classList.add('animate-spin');
         try {
-          await Promise.all([renderDashboardLive(), loadDashboardPanels()]);
+          dashboardDataCache = null;
+          await applyDashboardFilters(true, false);
           await refreshHeaderBellDot();
           showToast('Dashboard data refreshed', 'success');
         } catch(e) {
           showToast('Refresh failed: ' + e.message, 'error');
         }
         this.classList.remove('opacity-75');
-        icon.classList.remove('animate-spin');
+        if (icon) icon.classList.remove('animate-spin');
       });
     }
+
+    semesterSelect?.addEventListener('change', async function() {
+      DASHBOARD_FILTERS.semester = this.value;
+      try { await applyDashboardFilters(); } catch (e) {}
+    });
+    facultySelect?.addEventListener('change', async function() {
+      DASHBOARD_FILTERS.faculty = this.value;
+      try { await applyDashboardFilters(); } catch (e) {}
+    });
+    rangeSelect?.addEventListener('change', async function() {
+      DASHBOARD_FILTERS.rangeDays = Math.max(1, parseInt(this.value, 10) || 30);
+      try { await applyDashboardFilters(); } catch (e) {}
+    });
   })();
 
   async function refreshHeaderBellDot() {
@@ -802,33 +1055,25 @@
     reminderList.insertAdjacentHTML('beforeend', html);
   }
 
-  async function loadDashboardPanels() {
+  async function loadDashboardPanels(forceRefresh) {
     const reminderList = document.getElementById('reminderList');
     const pendingBody = document.getElementById('pendingRequestsBody');
     const actionBadge = document.getElementById('reminderActionBadge');
     if (!reminderList || !pendingBody) return;
 
     try {
-      const [users, resets, workload, stats, applications, jobs] = await Promise.all([
-        API.get('/api/admin/users'),
-        API.get('/api/admin/password-resets?status=PENDING'),
-        API.get('/api/admin/workload'),
-        API.get('/api/admin/stats' + buildLastNDaysStatsQuery(DASHBOARD_RANGE_DAYS)),
-        API.get('/api/applications'),
-        API.get('/api/jobs')
-      ]);
-
-      const pendingResets = Array.isArray(resets) ? resets : [];
-      const overloadedTas = (Array.isArray(workload) ? workload : []).filter(x => !!x.overloaded);
-      const pendingApps = (Array.isArray(applications) ? applications : []).filter(a => String(a.status || '').toUpperCase() === 'PENDING');
+      const dataset = filterDashboardDataset(await fetchDashboardDataset(forceRefresh));
+      const pendingResets = Array.isArray(dataset.resets) ? dataset.resets : [];
+      const overloadedTas = (Array.isArray(dataset.workload) ? dataset.workload : []).filter(x => !!x.overloaded);
+      const pendingApps = (Array.isArray(dataset.applications) ? dataset.applications : []).filter(a => String(a.status || '').toUpperCase() === 'PENDING');
       const longPendingApps = pendingApps.filter(a => {
         const ts = Number(a.createdAt || 0);
         return ts > 0 && (Date.now() - ts) >= 7 * 24 * 60 * 60 * 1000;
       });
-      const openJobs = (Array.isArray(jobs) ? jobs : []).filter(j => String(j.status || '').toUpperCase() === 'OPEN');
-      const pendingAppCount = Number(stats && stats.pendingApplications != null ? stats.pendingApplications : pendingApps.length);
+      const openJobs = (Array.isArray(dataset.jobs) ? dataset.jobs : []).filter(j => String(j.status || '').toUpperCase() === 'OPEN');
+      const pendingAppCount = pendingApps.length;
 
-      const latestUsers = (Array.isArray(users) ? users : [])
+      const latestUsers = (Array.isArray(dataset.users) ? dataset.users : [])
         .slice()
         .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
         .slice(0, 4);
