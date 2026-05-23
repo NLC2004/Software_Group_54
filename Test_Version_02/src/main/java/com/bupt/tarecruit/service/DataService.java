@@ -29,6 +29,7 @@ public class DataService {
         Files.createDirectories(uploadsDir);
         this.mailService = new MailService(getSettings());
         initDefaultData();
+        reconcileApplicationPriorities();
         reconcileNotifications();
     }
 
@@ -173,6 +174,42 @@ public class DataService {
         apps.removeIf(a -> Objects.equals(a.jobId, jobId));
         writeList("applications.json", apps);
         return before - apps.size();
+    }
+
+    public synchronized int reconcileApplicationPriorities() {
+        List<Application> apps = getAllApplications();
+        int changed = 0;
+        Map<String, List<Application>> byApplicant = apps.stream()
+                .filter(a -> a.applicantId != null && isActiveApplicationStatus(a.status))
+                .collect(Collectors.groupingBy(a -> a.applicantId));
+
+        long now = System.currentTimeMillis();
+        for (List<Application> applicantApps : byApplicant.values()) {
+            applicantApps.sort(Comparator
+                    .comparingInt((Application a) -> normalizePriority(a.priority))
+                    .thenComparingLong(a -> a.createdAt));
+            Set<Integer> usedPriorities = new HashSet<>();
+            for (Application app : applicantApps) {
+                int priority = normalizePriority(app.priority);
+                if (priority < 1 || priority > 3 || usedPriorities.contains(priority)) {
+                    app.status = "WITHDRAWN";
+                    app.updatedAt = now;
+                    changed++;
+                    continue;
+                }
+                usedPriorities.add(priority);
+            }
+        }
+        if (changed > 0) writeList("applications.json", apps);
+        return changed;
+    }
+
+    private boolean isActiveApplicationStatus(String status) {
+        return !"WITHDRAWN".equals(status) && !"REJECTED".equals(status);
+    }
+
+    private int normalizePriority(int priority) {
+        return priority >= 1 && priority <= 3 ? priority : 99;
     }
 
     public synchronized double getWeeklyWorkloadLimit() {
@@ -722,11 +759,12 @@ public class DataService {
         }
 
         String[] moLastNames = new String[]{"Zhang", "Song", "Li", "Mei", "Ning", "Li"};
+        String[] moAccountIds = new String[]{"231225731", "231225270", "231225672", "231225557", "231225339", "231225649"};
         for (int i = 0; i < 6; i++) {
             String teacherId = String.format("teacher%02d", i + 1);
             User mo = new User(String.format("mo%03d", i + 1), teacherId, "123456", "MO");
             mo.fullName = moLastNames[i];
-            mo.studentId = teacherId;
+            mo.studentId = moAccountIds[i];
             mo.email = teacherId + "@bupt.edu.cn";
             usersChanged |= upsertUser.apply(mo);
         }

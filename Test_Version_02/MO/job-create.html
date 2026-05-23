@@ -457,9 +457,48 @@ Back to Admin
             return ranges;
         }
 
-        function buildCourseWeekOptions(selected) {
+        function usedCourseWeeksExcept(entryIdx) {
+            const used = new Set();
+            (courseScheduleEntries || []).forEach((entry, idx) => {
+                if (idx === entryIdx) return;
+                const week = Number(entry && entry.week);
+                if (week >= 1 && week <= 17) used.add(week);
+            });
+            return used;
+        }
+
+        function firstAvailableCourseWeek() {
+            const used = usedCourseWeeksExcept(-1);
+            for (let week = 1; week <= 17; week++) {
+                if (!used.has(week)) return week;
+            }
+            return null;
+        }
+
+        function findDuplicateCourseWeeks() {
+            const seen = new Set();
+            const duplicates = new Set();
+            (courseScheduleEntries || []).forEach(entry => {
+                const week = Number(entry && entry.week);
+                if (!(week >= 1 && week <= 17)) return;
+                if (seen.has(week)) duplicates.add(week);
+                seen.add(week);
+            });
+            return Array.from(duplicates).sort((a, b) => a - b);
+        }
+
+        function validateUniqueCourseWeeks() {
+            if (!(currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA')) return true;
+            const duplicates = findDuplicateCourseWeeks();
+            if (duplicates.length === 0) return true;
+            showToast('Course Week must be unique. Duplicate week(s): ' + duplicates.join(', '), 'warning');
+            return false;
+        }
+
+        function buildCourseWeekOptions(selected, entryIdx) {
+            const used = usedCourseWeeksExcept(entryIdx);
             return Array.from({ length: 17 }, (_, i) => i + 1)
-                .map(w => `<option value="${w}" ${String(w) === String(selected) ? 'selected' : ''}>${w}</option>`)
+                .map(w => `<option value="${w}" ${used.has(w) ? 'disabled' : ''} ${String(w) === String(selected) ? 'selected' : ''}>${w}</option>`)
                 .join('');
         }
 
@@ -500,7 +539,7 @@ Back to Admin
             const container = document.getElementById('courseScheduleEntries');
             if (!container) return;
             container.innerHTML = (courseScheduleEntries || []).map((e, idx) => {
-                const weekOpts = buildCourseWeekOptions(e.week || 1);
+                const weekOpts = buildCourseWeekOptions(e.week || 1, idx);
                 return `
                     <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                         <div class="flex items-center justify-between mb-3">
@@ -528,6 +567,7 @@ Back to Admin
                 sel.addEventListener('change', () => {
                     const idx = Number(sel.getAttribute('data-course-entry-week'));
                     if (!Number.isNaN(idx) && courseScheduleEntries[idx]) courseScheduleEntries[idx].week = Number(sel.value || 1);
+                    syncCourseScheduleEntriesUI();
                     updateCourseScheduleDerivedFields();
                 });
             });
@@ -710,7 +750,9 @@ Back to Admin
             if (addEntryBtn && !addEntryBtn.__bound) {
                 addEntryBtn.__bound = true;
                 addEntryBtn.addEventListener('click', () => {
-                    courseScheduleEntries.push({ week: 1, selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] } });
+                    const nextWeek = firstAvailableCourseWeek();
+                    if (nextWeek == null) { showToast('All course weeks have already been used.', 'warning'); return; }
+                    courseScheduleEntries.push({ week: nextWeek, selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] } });
                     syncCourseScheduleEntriesUI();
                 });
             }
@@ -871,6 +913,7 @@ Back to Admin
 
             const dl = parseDeadlineField(document.getElementById('deadline').value);
             if (!dl.ok) { showToast(dl.message, 'warning'); return; }
+            if (!validateUniqueCourseWeeks()) return;
 
             const btn = document.getElementById('publishBtn');
             btn.disabled = true;

@@ -261,7 +261,7 @@ Back to Admin
                 const quotaFull = quota > 0 && approved >= quota;
 
                 html += `
-                <div class="bg-white rounded-[2rem] p-6 card-shadow border border-gray-50 hover:-translate-y-2 transition-all duration-300 group relative">
+                <div class="bg-white rounded-[2rem] p-6 card-shadow border border-gray-50 hover:-translate-y-2 transition-all duration-300 group relative h-[350px] flex flex-col">
                     <div class="flex justify-between items-start mb-4">
                         <div class="px-3 py-1 ${statusClass} text-[10px] font-bold uppercase tracking-wider rounded-full">${statusText}</div>
                         <div class="relative">
@@ -275,9 +275,11 @@ Back to Admin
                             </div>
                         </div>
                     </div>
-                    <h4 class="text-lg font-bold text-gray-800 leading-tight mb-2">${esc(job.title || '')}</h4>
-                    <p class="text-gray-400 text-xs mb-4 flex items-center"><span class="iconify mr-1" data-icon="solar:notebook-linear"></span> ${esc(job.courseName || '')}</p>
-                    <div class="space-y-3 mb-6">
+                    <div class="h-[76px] mb-4">
+                        <h4 class="text-lg font-bold text-gray-800 leading-tight line-clamp-2">${esc(job.title || '')}</h4>
+                        <p class="text-gray-400 text-xs mt-2 flex items-center truncate"><span class="iconify mr-1 shrink-0" data-icon="solar:notebook-linear"></span> ${esc(job.courseName || '')}</p>
+                    </div>
+                    <div class="space-y-3 h-[112px]">
                         <div class="flex items-center text-sm font-medium text-gray-600">
                             <span class="iconify mr-2 text-blue-500" data-icon="solar:users-group-rounded-linear"></span> ${job.applicationCount || 0} Applicants (${job.approvedCount || 0} approved)
                         </div>
@@ -287,17 +289,17 @@ Back to Admin
                         <div class="flex items-center text-sm font-medium text-gray-600">
                             <span class="iconify mr-2 text-blue-500" data-icon="solar:users-group-two-rounded-linear"></span> Quota: ${job.quota || 'N/A'}
                         </div>
-                        <div>
-                            <div class="flex items-center justify-between text-xs font-bold mb-1">
-                                <span class="${quotaFull ? 'text-green-600' : 'text-gray-500'}">${quotaFull ? 'Quota full' : 'Hiring progress'}</span>
-                                <span class="text-gray-500">${esc(quotaLabel)}</span>
-                            </div>
-                            <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
-                                <div class="h-full ${quotaFull ? 'bg-green-500' : 'bg-blue-500'} rounded-full" style="width:${quotaPercent}%"></div>
-                            </div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between text-xs font-bold mb-1">
+                            <span class="${quotaFull ? 'text-green-600' : 'text-gray-500'}">${quotaFull ? 'Quota full' : 'Hiring progress'}</span>
+                            <span class="text-gray-500">${esc(quotaLabel)}</span>
+                        </div>
+                        <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
+                            <div class="h-full ${quotaFull ? 'bg-green-500' : 'bg-blue-500'} rounded-full" style="width:${quotaPercent}%"></div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between border-t border-gray-50 pt-4">
+                    <div class="flex items-center justify-between border-t border-gray-50 pt-4 mt-auto">
                         <span class="text-xs text-gray-400">${esc(formatJobType(job.type))}</span>
                         <a class="text-blue-600 font-semibold text-sm hover:underline" href="job-detail.html?id=${job.id}${scopeQuery}">Manage</a>
                     </div>

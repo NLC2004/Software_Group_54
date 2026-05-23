@@ -70,6 +70,49 @@ class MoJobManagementStoriesTest {
     }
 
     @Test
+    void mo01_createJobShouldRejectDuplicateCourseScheduleWeeks() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User mo = addMo(ds, "teacher_duplicate_week_create");
+        String token = ds.createSession(mo.id);
+
+        JobHandler handler = new JobHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange(
+                "POST",
+                "/api/jobs",
+                null,
+                "{\"title\":\"Duplicate Week Job\",\"type\":\"COURSE_TA\",\"courseName\":\"Software Engineering\",\"description\":\"Need support\",\"quota\":2,\"deadline\":\"2099-12-31\",\"courseScheduleGrid\":\"[{\\\"week\\\":1,\\\"selection\\\":{\\\"Mon\\\":[1]}},{\\\"week\\\":1,\\\"selection\\\":{\\\"Tue\\\":[2]}}]\"}"
+        );
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("Course Week must be unique"));
+    }
+
+    @Test
+    void mo01_updateJobShouldRejectDuplicateCourseScheduleWeeks() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User mo = addMo(ds, "teacher_duplicate_week_update");
+        Job job = addJob(ds, mo, "Schedule Job", "COURSE_TA");
+        String token = ds.createSession(mo.id);
+
+        JobHandler handler = new JobHandler(ds);
+        TestHttpExchange ex = new TestHttpExchange(
+                "PUT",
+                "/api/jobs/" + job.id,
+                null,
+                "{\"title\":\"Schedule Job\",\"type\":\"COURSE_TA\",\"courseScheduleGrid\":\"[{\\\"week\\\":3,\\\"selection\\\":{\\\"Wed\\\":[1]}},{\\\"week\\\":3,\\\"selection\\\":{\\\"Thu\\\":[2]}}]\"}"
+        );
+        ex.setBearerToken(token);
+
+        handler.handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("Course Week must be unique"));
+    }
+
+    @Test
     void mo01_deleteJobShouldRejectNonOwner() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User owner = addMo(ds, "teacher_owner");
