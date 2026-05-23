@@ -2862,5 +2862,181 @@
     "action": "UPDATE_JOB",
     "detail": "Updated job: asjkhk",
     "createdAt": 1779509846306
+  },
+  {
+    "id": "e97a3b20",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779513446298
+  },
+  {
+    "id": "048a820d",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779513520800
+  },
+  {
+    "id": "74eadbb8",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779514545381
+  },
+  {
+    "id": "6a523d2b",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779515142215
+  },
+  {
+    "id": "e77e5e2f",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779515197935
+  },
+  {
+    "id": "a84302c8",
+    "userId": "6e6df15f",
+    "username": "Siying Li",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779515250023
+  },
+  {
+    "id": "e948400a",
+    "userId": "ta003",
+    "username": "231225672",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779515257087
+  },
+  {
+    "id": "fdf4c810",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: Siying Li",
+    "createdAt": 1779515297119
+  },
+  {
+    "id": "b361929a",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: Mei",
+    "createdAt": 1779515317471
+  },
+  {
+    "id": "4f827eca",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: teacher1",
+    "createdAt": 1779515741399
+  },
+  {
+    "id": "0297b4b8",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779515876212
+  },
+  {
+    "id": "6249d11d",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC",
+    "createdAt": 1779515878395
+  },
+  {
+    "id": "9b9a4f2e",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_lecturer",
+    "createdAt": 1779515885027
+  },
+  {
+    "id": "d350aecc",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_MO",
+    "createdAt": 1779515898154
+  },
+  {
+    "id": "af50e187",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: NLC_TA",
+    "createdAt": 1779515961315
+  },
+  {
+    "id": "4e9884a2",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779516282784
+  },
+  {
+    "id": "1b059e10",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779516433625
+  },
+  {
+    "id": "ec0bc9b3",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "DELETE_JOB",
+    "detail": "Deleted job: teat (applications\u003d0, drafts\u003d0, notifications\u003d0)",
+    "createdAt": 1779516945925
+  },
+  {
+    "id": "86d4b94e",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779517050303
+  },
+  {
+    "id": "4c1198f0",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779517060516
+  },
+  {
+    "id": "d3890aab",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779517062755
+  },
+  {
+    "id": "bea2f7b9",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779517068572
   }
 ]

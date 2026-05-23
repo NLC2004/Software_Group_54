@@ -5,6 +5,8 @@ import com.bupt.tarecruit.model.Application;
 import com.bupt.tarecruit.model.Job;
 import com.bupt.tarecruit.model.User;
 import com.bupt.tarecruit.service.DataService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,6 +19,16 @@ class AiMatchingStoriesTest {
 
     @TempDir
     Path tempDir;
+
+    @BeforeEach
+    void enableMockAiApi() {
+        System.setProperty("ta.ai.mockApi", "true");
+    }
+
+    @AfterEach
+    void clearMockAiApi() {
+        System.clearProperty("ta.ai.mockApi");
+    }
 
     @Test
     void aiMatchShouldExplainMatchedAndMissingSkillsForTa() throws Exception {
@@ -90,6 +102,61 @@ class AiMatchingStoriesTest {
         assertTrue(body.contains("\"aiMatch\""));
         assertTrue(body.contains("\"score\""));
         assertTrue(body.contains("\"workloadRisk\""));
+    }
+
+    @Test
+    void taAiMatchShouldBeLimitedToThreeSuccessfulCalls() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ai_limited_ta");
+        User mo = addMo(ds, "ai_limited_mo");
+        Job job = addSkillJob(ds, mo);
+        String token = ds.createSession(ta.id);
+        JobHandler handler = new JobHandler(ds);
+
+        for (int i = 0; i < 3; i++) {
+            TestHttpExchange ok = new TestHttpExchange(
+                    "POST",
+                    "/api/jobs/" + job.id + "/match",
+                    null,
+                    "{\"coverLetter\":\"Java programming and communication.\",\"model\":\"qwen-plus\"}"
+            );
+            ok.setBearerToken(token);
+            handler.handle(ok);
+            assertEquals(200, ok.getResponseCode());
+        }
+
+        TestHttpExchange blocked = new TestHttpExchange(
+                "POST",
+                "/api/jobs/" + job.id + "/match",
+                null,
+                "{\"coverLetter\":\"Try one more time.\",\"model\":\"qwen-plus\"}"
+        );
+        blocked.setBearerToken(token);
+        handler.handle(blocked);
+
+        assertEquals(429, blocked.getResponseCode());
+        assertTrue(blocked.getResponseBodyAsString().contains("AI match limit reached"));
+    }
+
+    @Test
+    void aiMatchShouldRejectUnsupportedModel() throws Exception {
+        DataService ds = new DataService(tempDir.toString());
+        User ta = addTa(ds, "ai_bad_model_ta");
+        User mo = addMo(ds, "ai_bad_model_mo");
+        Job job = addSkillJob(ds, mo);
+        String token = ds.createSession(ta.id);
+
+        TestHttpExchange ex = new TestHttpExchange(
+                "POST",
+                "/api/jobs/" + job.id + "/match",
+                null,
+                "{\"coverLetter\":\"test\",\"model\":\"deepseek-r1\"}"
+        );
+        ex.setBearerToken(token);
+        new JobHandler(ds).handle(ex);
+
+        assertEquals(400, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("Invalid AI model"));
     }
 
     private User addTa(DataService ds, String username) {

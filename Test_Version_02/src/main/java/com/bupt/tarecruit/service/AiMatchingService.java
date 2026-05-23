@@ -20,6 +20,7 @@ public class AiMatchingService {
     private static final String API_BASE_URL = "https://jeniya.cn";
     private static final String API_KEY = "sk-RyysKIhqi4L2XiqvCPfMxAg3Ae0ygYYLfTGb5drCghmfsUy8";
     private static final String DEFAULT_MODEL = "gpt-5-mini";
+    private static final Set<String> ALLOWED_MODELS = Set.of("gemini-2.5-pro", "qwen-plus", "gpt-5-mini");
     private static final Duration TIMEOUT = Duration.ofSeconds(120);
     private static final double HOURS_PER_PERIOD = 0.75;
     private static final Map<String, List<String>> SKILL_ALIASES = createSkillAliases();
@@ -39,35 +40,40 @@ public class AiMatchingService {
     }
 
     public Map<String, Object> match(Job job, User applicant, String coverLetter, Application currentApplication, String model) {
-        Map<String, Object> fallback = buildLocalFallback(job, applicant, coverLetter, currentApplication);
-        fallback.put("apiCalled", false);
-        System.out.println("[AiMatchingService] match() invoked, model=" + normalizeModel(model)
+        String resolvedModel = normalizeModel(model);
+        System.out.println("[AiMatchingService] match() invoked, model=" + resolvedModel
                 + ", jobId=" + (job != null ? job.id : "null")
                 + ", applicantId=" + (applicant != null ? applicant.id : "null")
                 + ", applicationId=" + (currentApplication != null ? currentApplication.id : "null"));
-        if (!isExternalApiEnabled()) {
-            return fallback;
+        if (isMockApiEnabled()) {
+            return buildMockApiResult(resolvedModel);
         }
         try {
-            Map<String, Object> apiResult = callApi(job, applicant, coverLetter, currentApplication, fallback, model);
+            Map<String, Object> apiResult = callApi(job, applicant, coverLetter, currentApplication, resolvedModel);
             if (apiResult != null && !apiResult.isEmpty()) return apiResult;
         } catch (Exception ex) {
             System.out.println("[AiMatchingService] API call failed: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
             ex.printStackTrace();
         }
-        System.out.println("[AiMatchingService] Falling back to local matcher.");
-        return fallback;
+        throw new IllegalStateException("AI API call failed. Please try again later.");
     }
 
-    private boolean isExternalApiEnabled() {
-        String prop = System.getProperty("ta.ai.enableApi", "");
-        String env = System.getenv("TA_AI_ENABLE_API");
+    public boolean isAllowedModel(String model) {
+        return ALLOWED_MODELS.contains(normalizeModel(model));
+    }
+
+    public String getDefaultModel() {
+        return DEFAULT_MODEL;
+    }
+
+    private boolean isMockApiEnabled() {
+        String prop = System.getProperty("ta.ai.mockApi", "");
+        String env = System.getenv("TA_AI_MOCK_API");
         return "true".equalsIgnoreCase(prop) || "true".equalsIgnoreCase(env);
     }
 
     private Map<String, Object> callApi(Job job, User applicant, String coverLetter, Application currentApplication,
-                                        Map<String, Object> fallback, String model) throws Exception {
-        String resolvedModel = normalizeModel(model);
+                                        String resolvedModel) throws Exception {
         JsonObject payload = new JsonObject();
         payload.addProperty("model", resolvedModel);
         payload.addProperty("temperature", 0.2);
@@ -83,7 +89,7 @@ public class AiMatchingService {
 
         JsonObject user = new JsonObject();
         user.addProperty("role", "user");
-        user.addProperty("content", buildPrompt(job, applicant, coverLetter, currentApplication, fallback));
+        user.addProperty("content", buildPrompt(job, applicant, coverLetter, currentApplication));
         messages.add(user);
         payload.add("messages", messages);
 
@@ -105,61 +111,77 @@ public class AiMatchingService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("[AiMatchingService] Response status=" + response.statusCode());
         System.out.println("[AiMatchingService] Response body length=" + (response.body() == null ? 0 : response.body().length()));
-        if (response.statusCode() < 200 || response.statusCode() >= 300) return fallback;
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IllegalStateException("AI API returned HTTP " + response.statusCode());
+        }
 
         JsonObject root = gson.fromJson(response.body(), JsonObject.class);
-        if (root == null || !root.has("choices") || !root.get("choices").isJsonArray()) return fallback;
+        if (root == null || !root.has("choices") || !root.get("choices").isJsonArray()) {
+            throw new IllegalStateException("AI API response did not include choices");
+        }
         JsonArray choices = root.getAsJsonArray("choices");
-        if (choices.isEmpty()) return fallback;
+        if (choices.isEmpty()) throw new IllegalStateException("AI API returned no choices");
 
         JsonObject first = choices.get(0).getAsJsonObject();
-        if (!first.has("message") || !first.get("message").isJsonObject()) return fallback;
+        if (!first.has("message") || !first.get("message").isJsonObject()) {
+            throw new IllegalStateException("AI API response did not include a message");
+        }
         JsonObject message = first.getAsJsonObject("message");
         String content = message.has("content") && !message.get("content").isJsonNull() ? message.get("content").getAsString() : "";
-        if (content.isBlank()) return fallback;
+        if (content.isBlank()) throw new IllegalStateException("AI API returned empty content");
 
         JsonObject parsed = extractJsonObject(content);
-        if (parsed == null) return fallback;
+        if (parsed == null) throw new IllegalStateException("AI API did not return valid JSON");
 
-        Map<String, Object> out = normalizeApiResult(parsed, fallback);
+        Map<String, Object> out = normalizeApiResult(parsed, buildBaseResult(job, applicant, coverLetter, currentApplication));
         out.put("requestedModel", resolvedModel);
         out.put("apiBaseUrl", API_BASE_URL);
         out.put("apiCalled", true);
-        return out != null && !out.isEmpty() ? out : fallback;
+        return out;
     }
 
-    private Map<String, Object> buildLocalFallback(Job job, User applicant, String coverLetter, Application currentApplication) {
-        Set<String> required = inferRequiredSkills(job);
-        Set<String> applicantSkills = inferApplicantSkills(applicant, coverLetter);
-        Set<String> matched = new TreeSet<>(required);
-        matched.retainAll(applicantSkills);
-        Set<String> missing = new TreeSet<>(required);
-        missing.removeAll(applicantSkills);
-
-        double skillScore = required.isEmpty() ? (applicantSkills.isEmpty() ? 45 : 65) : (matched.size() * 100.0) / required.size();
-        double profileScore = profileCompleteness(applicant);
+    private Map<String, Object> buildBaseResult(Job job, User applicant, String coverLetter, Application currentApplication) {
         WorkloadSignal workload = workloadSignal(applicant, job, currentApplication);
-        int finalScore = (int) Math.round(skillScore * 0.70 + profileScore * 0.15 + workload.score * 0.15);
-        finalScore = Math.max(0, Math.min(100, finalScore));
-
         Map<String, Object> result = new LinkedHashMap<>();
-        result.put("score", finalScore);
-        result.put("label", labelForScore(finalScore, workload.risk));
-        result.put("requiredSkills", new ArrayList<>(required));
-        result.put("matchedSkills", new ArrayList<>(matched));
-        result.put("missingSkills", new ArrayList<>(missing));
-        result.put("applicantSkills", new ArrayList<>(applicantSkills));
-        result.put("profileCompleteness", Math.round(profileScore));
+        result.put("score", 0);
+        result.put("label", "AI match result");
+        result.put("requiredSkills", new ArrayList<>());
+        result.put("matchedSkills", new ArrayList<>());
+        result.put("missingSkills", new ArrayList<>());
+        result.put("applicantSkills", new ArrayList<>());
+        result.put("profileCompleteness", Math.round(profileCompleteness(applicant)));
         result.put("workloadRisk", workload.risk);
         result.put("currentPeakWeeklyHours", workload.currentPeak);
         result.put("projectedPeakWeeklyHours", workload.projectedPeak);
         result.put("maxWeeklyHours", workload.maxWeeklyHours);
-        result.put("recommendation", recommendation(finalScore, missing, workload));
-        result.put("explanation", explanation(required, matched, missing, workload));
+        result.put("recommendation", "Review the AI-generated report.");
+        result.put("explanation", "");
         return result;
     }
 
-    private String buildPrompt(Job job, User applicant, String coverLetter, Application currentApplication, Map<String, Object> fallback) {
+    private Map<String, Object> buildMockApiResult(String resolvedModel) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("score", 82);
+        result.put("label", "Strong match");
+        result.put("requiredSkills", List.of("programming", "communication", "laboratory"));
+        result.put("matchedSkills", List.of("programming", "communication"));
+        result.put("missingSkills", List.of("laboratory"));
+        result.put("applicantSkills", List.of("programming", "communication"));
+        result.put("profileCompleteness", 90);
+        result.put("workloadRisk", "LOW");
+        result.put("currentPeakWeeklyHours", 0);
+        result.put("projectedPeakWeeklyHours", 4);
+        result.put("maxWeeklyHours", 20);
+        result.put("recommendation", "API mock: suitable candidate; verify lab experience.");
+        result.put("explanation", "Mocked API response for tests. Production calls the configured AI gateway.");
+        result.put("cot", List.of("Compared job requirements with applicant materials.", "Identified matching communication and programming evidence."));
+        result.put("requestedModel", resolvedModel);
+        result.put("apiBaseUrl", API_BASE_URL);
+        result.put("apiCalled", true);
+        return result;
+    }
+
+    private String buildPrompt(Job job, User applicant, String coverLetter, Application currentApplication) {
         StringBuilder sb = new StringBuilder();
         sb.append("Evaluate the TA match and return JSON only.\n\n");
 
@@ -170,6 +192,7 @@ public class AiMatchingService {
         sb.append("\"courseName\":\"").append(job.courseName != null ? job.courseName : "").append("\",");
         sb.append("\"description\":\"").append(job.description != null ? job.description : "").append("\",");
         sb.append("\"requirements\":").append(gson.toJson(job.requirements));
+        sb.append(",\"quota\":").append(job.quota);
         sb.append("}\n\n");
 
         // Only send essential applicant fields
@@ -181,8 +204,31 @@ public class AiMatchingService {
         sb.append("}\n\n");
 
         sb.append("CoverLetter: ").append(coverLetter == null ? "" : coverLetter).append("\n\n");
+        if (currentApplication != null && currentApplication.cvFileName != null && !currentApplication.cvFileName.isBlank()) {
+            sb.append("ResumeFileName: ").append(currentApplication.cvFileName).append("\n");
+            String resumeSnippet = readResumeTextSnippet(currentApplication.cvFileName);
+            if (!resumeSnippet.isBlank()) {
+                sb.append("ResumeExtractedText: ").append(resumeSnippet).append("\n\n");
+            } else {
+                sb.append("ResumeContentNote: The submitted PDF resume is attached in the system as this file; text extraction was unavailable, so use the cover letter and structured applicant fields as resume evidence.\n\n");
+            }
+        }
         sb.append("Rules: score should reflect skill fit, profile completeness, and workload risk. If workloadRisk is HIGH, recommendation should warn about workload before approval.");
         return sb.toString();
+    }
+
+    private String readResumeTextSnippet(String fileName) {
+        try {
+            byte[] bytes = ds.getUpload(fileName);
+            String raw = new String(bytes, java.nio.charset.StandardCharsets.ISO_8859_1);
+            String printable = raw.replaceAll("[^\\p{Print}\\s]", " ")
+                    .replaceAll("\\s+", " ")
+                    .trim();
+            if (printable.length() > 6000) return printable.substring(0, 6000);
+            return printable;
+        } catch (Exception ignored) {
+            return "";
+        }
     }
 
     private JsonObject extractJsonObject(String content) {
@@ -453,7 +499,6 @@ public class AiMatchingService {
         String m = model == null ? "" : model.trim();
         if (m.isEmpty()) return DEFAULT_MODEL;
         return switch (m.toLowerCase(Locale.ROOT)) {
-            case "deepseek", "deepseek-r1", "deepseekr1" -> "deepseek-r1";
             case "gemini", "gemini-2.5-pro", "gemini2.5pro" -> "gemini-2.5-pro";
             case "qwen", "qwen-plus" -> "qwen-plus";
             case "gpt-5", "gpt-5-mini", "gpt5mini" -> "gpt-5-mini";

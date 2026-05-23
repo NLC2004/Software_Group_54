@@ -459,28 +459,6 @@
     "createdAt": 1778220538843
   },
   {
-    "id": "2a0530ad",
-    "postedBy": "mo004",
-    "title": "teat",
-    "type": "COURSE_TA",
-    "courseName": "Operating Systems",
-    "description": "teat",
-    "requirements": [
-      "I have taken the corresponding courses, achieved excellent grades, and have a solid grasp of the core knowledge points and syllabus of the courses"
-    ],
-    "quota": 3,
-    "schedule": "Week 13 Monday：11:30-13:45",
-    "weeklyHours": 0.0,
-    "deadline": "2026-05-31",
-    "courseScheduleGrid": "[{\"week\":13,\"selection\":{\"Mon\":[5,6],\"Tue\":[],\"Wed\":[],\"Thu\":[],\"Fri\":[]}}]",
-    "courseWeekStart": 0,
-    "courseWeekEnd": 0,
-    "labSessionCount": 0,
-    "examDuration": 0.0,
-    "status": "OPEN",
-    "createdAt": 1779476398643
-  },
-  {
     "id": "eadcba07",
     "postedBy": "ed6ef16c",
     "title": "qweeeeeeeeeeeeeeeeeee",

@@ -200,7 +200,6 @@
 </div>
 <div class="flex items-center gap-2">
 <select class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500" id="aiModelSelect">
-<option value="deepseek-r1">deepseek-r1</option>
 <option value="gemini-2.5-pro">gemini-2.5-pro</option>
 <option value="qwen-plus">qwen-plus</option>
 <option value="gpt-5-mini">gpt-5-mini</option>
@@ -345,10 +344,8 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     let hasUnsavedChanges = false;
     let activeApplications = [];
     let occupiedPriorities = new Map();
-    let aiMatchTimer = null;
     document.getElementById('aiMatchRunBtn').addEventListener('click', refreshAiMatch);
     document.getElementById('aiMatchRunTextBtn').addEventListener('click', refreshAiMatch);
-    document.getElementById('aiModelSelect').addEventListener('change', scheduleAiMatchRefresh);
     let currentJob = null;
 
     function parseDeadline(deadline) {
@@ -375,7 +372,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         return Date.now() > ts;
     }
 
-    function setFormDisabled(disabled) {
+    function setFormDisabled(disabled, label = 'Submit') {
         const form = document.getElementById('applicationForm');
         if (!form) return;
         form.querySelectorAll('input, select, textarea, button').forEach(el => {
@@ -385,7 +382,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         const submitBtn = document.getElementById('submitBtn');
         if (submitBtn) {
             submitBtn.disabled = !!disabled;
-            if (disabled) submitBtn.innerHTML = 'Recruitment expired';
+            submitBtn.innerHTML = disabled ? label : 'Submit';
         }
         const previewBtn = document.getElementById('previewBtn');
         if (previewBtn && disabled) previewBtn.disabled = true;
@@ -393,6 +390,24 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         if (chooseFileBtn && disabled) chooseFileBtn.disabled = true;
         const saveDraftBtn = document.getElementById('saveDraftBtn');
         if (saveDraftBtn && disabled) saveDraftBtn.disabled = true;
+    }
+
+    function getApplyBlockReason() {
+        if (!currentJob) return '';
+        if (isRecruitmentExpired(currentJob)) return 'Recruitment expired';
+        const quota = Number(currentJob.quota || 0);
+        const approved = Number(currentJob.approvedCount || 0);
+        if (quota > 0 && approved >= quota) return 'Position quota is full';
+        if (activeApplications.some(app => app.jobId === jobId)) {
+            return 'You already have an active application for this position';
+        }
+        const used = new Set(activeApplications
+            .map(app => Number(app.priority))
+            .filter(priority => priority >= 1 && priority <= 3));
+        if ([1, 2, 3].every(priority => used.has(priority))) {
+            return 'All 3 priorities are already used';
+        }
+        return '';
     }
     let serverDraftResumeFileName = '';
     let profileDefaults = null;
@@ -859,7 +874,6 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
     coverLetterInput.addEventListener('input', () => {
         markDirty();
         scheduleAutoSave();
-        scheduleAiMatchRefresh();
     });
 
     prioritySelect.addEventListener('change', () => {
@@ -981,11 +995,6 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         }
     }
 
-    function scheduleAiMatchRefresh() {
-        clearTimeout(aiMatchTimer);
-        aiMatchTimer = setTimeout(refreshAiMatch, 700);
-    }
-
     async function refreshAiMatch() {
         if (!jobId || !currentJob) return;
         const text = coverLetterInput.value.trim();
@@ -1007,9 +1016,13 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
             const model = document.getElementById('aiModelSelect').value;
             const match = await API.post('/api/jobs/' + jobId + '/match', { coverLetter: buildApplicationCoverLetter(), model });
             renderAiMatch(match);
-        } catch (_) {
+            if (match && match.aiMatchRemaining != null) {
+                showToast('AI match remaining: ' + match.aiMatchRemaining, 'info');
+            }
+        } catch (err) {
             titleEl.textContent = 'AI match unavailable';
-            summaryEl.textContent = 'You can still submit normally; the matching assistant is optional.';
+            summaryEl.textContent = err.message || 'You can still submit normally; the matching assistant is optional.';
+            showToast(err.message || 'AI match failed', 'error');
         }
     }
 
@@ -1026,7 +1039,7 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
                 document.getElementById('infoTitle').textContent = job.title || job.courseName || 'TA Position';
                 document.getElementById('infoInstructor').textContent = job.posterName || 'N/A';
                 if (isRecruitmentExpired(job)) {
-                    setFormDisabled(true);
+                    setFormDisabled(true, 'Recruitment expired');
                     showToast('Recruitment expired', 'warning');
                     setDraftStatus('Recruitment expired. You can view details but cannot apply.');
                     return;
@@ -1045,6 +1058,14 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
 
         try {
             await loadExistingApplications();
+            const blockReason = getApplyBlockReason();
+            if (blockReason) {
+                setFormDisabled(true, blockReason);
+                priorityHint.textContent = blockReason + '. Withdraw a pending application or wait for a rejection before applying again.';
+                priorityHint.className = 'text-[11px] text-amber-600';
+                setDraftStatus(blockReason + '.');
+                return;
+            }
         } catch (err) {
             priorityHint.textContent = 'Failed to load existing preferences. Priority validation will be limited.';
             priorityHint.className = 'text-[11px] text-red-500';
@@ -1066,7 +1087,6 @@ Preview opens in a popup window, consistent with the MO side. If you uploaded a 
         }
         applyProfileDefaults(profileDefaults);
         updatePriorityUi();
-        scheduleAiMatchRefresh();
         try {
             const savedResume = await getResumeFromIndexedDb();
             if (savedResume && savedResume.file) {
