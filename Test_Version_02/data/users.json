@@ -316,9 +316,21 @@
     "adminRoleTemplateId": ""
   },
   {
+    "id": "c9bd960c",
+    "username": "NLC_TA",
+    "password": "Nlc141203",
+    "role": "TA",
+    "fullName": "nlc_ta",
+    "email": "ninglechen666@163.com",
+    "studentId": "2023213346",
+    "active": true,
+    "createdAt": 1779497883388,
+    "adminRoleTemplateId": ""
+  },
+  {
     "id": "91671c06",
     "username": "NLC",
-    "password": "123456",
+    "password": "Nlc141203",
     "role": "TA",
     "fullName": "ninglechen",
     "email": "ninglechen666@bupt.edu.cn",
@@ -331,18 +343,6 @@
     "yearOfStudy": "Year 3",
     "active": true,
     "createdAt": 1774368133519,
-    "adminRoleTemplateId": ""
-  },
-  {
-    "id": "c9bd960c",
-    "username": "NLC_TA",
-    "password": "123456",
-    "role": "TA",
-    "fullName": "nlc_ta",
-    "email": "ninglechen666@163.com",
-    "studentId": "2023213346",
-    "active": true,
-    "createdAt": 1779497883388,
     "adminRoleTemplateId": ""
   }
 ]
