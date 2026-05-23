@@ -3040,59 +3040,35 @@
     "createdAt": 1779517068572
   },
   {
-    "id": "76c2da42",
-    "userId": "86c2bebc",
-    "username": "NLC12",
-    "action": "REGISTER",
-    "detail": "New MO registered",
-    "createdAt": 1779526812958
+    "id": "971ef9ea",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779528830188
   },
   {
-    "id": "e3f72996",
-    "userId": "86c2bebc",
-    "username": "NLC12",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1779526849389
+    "id": "78c00e7b",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779531757752
   },
   {
-    "id": "8b3f0c9e",
+    "id": "ffc5976a",
     "userId": "admin001",
     "username": "admin",
     "action": "LOGIN",
     "detail": "User logged in",
-    "createdAt": 1779526894122
+    "createdAt": 1779531959177
   },
   {
-    "id": "77b55808",
-    "userId": "c9bd960c",
-    "username": "NLC_TA",
-    "action": "LOGIN",
-    "detail": "User logged in",
-    "createdAt": 1779527748036
-  },
-  {
-    "id": "88f69bd4",
-    "userId": "c9bd960c",
-    "username": "NLC_TA",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1779527774021
-  },
-  {
-    "id": "d4ccb848",
+    "id": "5652d41e",
     "userId": "ta001",
     "username": "231225731",
-    "action": "LOGOUT",
-    "detail": "User logged out",
-    "createdAt": 1779532324669
-  },
-  {
-    "id": "5d20aca8",
-    "userId": "ta004",
-    "username": "231225557",
     "action": "LOGIN",
     "detail": "User logged in",
-    "createdAt": 1779532389194
+    "createdAt": 1779532034239
   }
 ]
