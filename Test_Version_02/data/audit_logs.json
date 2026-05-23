@@ -2846,5 +2846,21 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779506980161
+  },
+  {
+    "id": "e66cfe07",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779509813036
+  },
+  {
+    "id": "61ba95d3",
+    "userId": "ed6ef16c",
+    "username": "NLC_MO",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: asjkhk",
+    "createdAt": 1779509846306
   }
 ]
