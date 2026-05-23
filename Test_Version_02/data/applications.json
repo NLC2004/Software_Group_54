@@ -405,5 +405,47 @@
     "createdAt": 1779088323764,
     "updatedAt": 1779475960212,
     "aiMatchUpdatedAt": 0
+  },
+  {
+    "id": "6a63a3c1",
+    "jobId": "929a15cb",
+    "applicantId": "c9bd960c",
+    "cvFileName": "1779498532574_Lecture_2_RFID_Components_-_Part_2.pdf",
+    "coverLetter": "[Basic Information]\nFull Name: nlc_ta\nStudent ID: 2023213346\nPhone: 19991219967\nGender: \nSchool: \nYear of Study: \n\n[Cover Letter / Motivation]\nasda",
+    "status": "APPROVED",
+    "priority": 2,
+    "createdAt": 1779498532585,
+    "updatedAt": 1779498645952,
+    "aiMatchJson": "{\"score\":21,\"label\":\"Needs review\",\"requiredSkills\":[\"communication\",\"teaching\"],\"matchedSkills\":[],\"missingSkills\":[\"communication\",\"teaching\"],\"applicantSkills\":[],\"profileCompleteness\":38,\"workloadRisk\":\"LOW\",\"currentPeakWeeklyHours\":0.0,\"projectedPeakWeeklyHours\":10.5,\"maxWeeklyHours\":20.0,\"recommendation\":\"Needs manual review\",\"explanation\":\"Matched 0 of 2 detected required skills. Missing: communication, teaching. Projected peak workload is 10.5h / 20.0h.\",\"apiCalled\":false}",
+    "aiMatchModel": "gemini-2.5-pro",
+    "aiMatchUpdatedAt": 1779498551556
+  },
+  {
+    "id": "f0ef0a0e",
+    "jobId": "9230ae41",
+    "applicantId": "c9bd960c",
+    "cvFileName": "1779498702713_Lecture_4_Checksum__Coding_and_Modulation.pdf",
+    "coverLetter": "[Basic Information]\nFull Name: nlc_ta\nStudent ID: 2023213346\nPhone: qwq\nGender: \nSchool: \nYear of Study: \n\n[Cover Letter / Motivation]\nwqw",
+    "status": "APPROVED",
+    "priority": 3,
+    "createdAt": 1779498702724,
+    "updatedAt": 1779498724805,
+    "aiMatchJson": "{\"score\":21,\"label\":\"Needs review\",\"requiredSkills\":[\"communication\",\"teaching\"],\"matchedSkills\":[],\"missingSkills\":[\"communication\",\"teaching\"],\"applicantSkills\":[],\"profileCompleteness\":38,\"workloadRisk\":\"LOW\",\"currentPeakWeeklyHours\":10.5,\"projectedPeakWeeklyHours\":12.75,\"maxWeeklyHours\":20.0,\"recommendation\":\"Needs manual review\",\"explanation\":\"Matched 0 of 2 detected required skills. Missing: communication, teaching. Projected peak workload is 12.8h / 20.0h.\",\"apiCalled\":false}",
+    "aiMatchModel": "gemini-2.5-pro",
+    "aiMatchUpdatedAt": 1779498721680
+  },
+  {
+    "id": "aa00d323",
+    "jobId": "7282161b",
+    "applicantId": "c9bd960c",
+    "cvFileName": "1779498275370_Lecture_2_RFID_Components_-_Part_3.pdf",
+    "coverLetter": "[Basic Information]\nFull Name: nlc_ta\nStudent ID: 2023213346\nPhone: 19991219967\nGender: Male\nSchool: School of Electronic Engineering\nYear of Study: Year 1\n\n[Cover Letter / Motivation]\nad",
+    "status": "APPROVED",
+    "priority": 1,
+    "createdAt": 1779498275380,
+    "updatedAt": 1779498747551,
+    "aiMatchJson": "{\"score\":21,\"label\":\"Needs review\",\"requiredSkills\":[\"laboratory\"],\"matchedSkills\":[],\"missingSkills\":[\"laboratory\"],\"applicantSkills\":[],\"profileCompleteness\":38,\"workloadRisk\":\"LOW\",\"currentPeakWeeklyHours\":0.0,\"projectedPeakWeeklyHours\":9.0,\"maxWeeklyHours\":20.0,\"recommendation\":\"Needs manual review\",\"explanation\":\"Matched 0 of 1 detected required skills. Missing: laboratory. Projected peak workload is 9.0h / 20.0h.\",\"apiCalled\":false}",
+    "aiMatchModel": "qwen-plus",
+    "aiMatchUpdatedAt": 1779498502665
   }
 ]

@@ -252,24 +252,6 @@
     "createdAt": 1779052323764
   },
   {
-    "id": "2d55f87b",
-    "userId": "b398e651",
-    "title": "Weekly Recruitment Reminder",
-    "content": "Please review pending TA applications and close positions that have reached quota.",
-    "type": "SYSTEM",
-    "read": false,
-    "createdAt": 1779216613896
-  },
-  {
-    "id": "86701f8f",
-    "userId": "b398e651",
-    "title": "Admin Notice",
-    "content": "The admin office will periodically review job postings, TA workload, and password reset requests.",
-    "type": "SYSTEM",
-    "read": false,
-    "createdAt": 1779389413896
-  },
-  {
     "id": "20dbdfa9",
     "userId": "7067ef7b",
     "title": "Weekly Recruitment Reminder",
@@ -484,5 +466,482 @@
     "type": "SYSTEM",
     "read": true,
     "createdAt": 1779216613896
+  },
+  {
+    "id": "86701f8f",
+    "userId": "b398e651",
+    "title": "Admin Notice",
+    "content": "The admin office will periodically review job postings, TA workload, and password reset requests.",
+    "type": "SYSTEM",
+    "read": true,
+    "createdAt": 1779389413896
+  },
+  {
+    "id": "2d55f87b",
+    "userId": "b398e651",
+    "title": "Weekly Recruitment Reminder",
+    "content": "Please review pending TA applications and close positions that have reached quota.",
+    "type": "SYSTEM",
+    "read": true,
+    "createdAt": 1779216613896
+  },
+  {
+    "id": "c4e5c060",
+    "userId": "ed6ef16c",
+    "title": "New Application",
+    "content": "nlc_ta applied for sadadadadadadada",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1779498532599
+  },
+  {
+    "id": "c87e6872",
+    "userId": "ed6ef16c",
+    "title": "New Application",
+    "content": "nlc_ta applied for ad",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1779498275395
+  },
+  {
+    "id": "08a78621",
+    "userId": "ed6ef16c",
+    "title": "New Application",
+    "content": "nlc_ta applied for asjkhk",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1779498702726
+  },
+  {
+    "id": "4b19c2a8",
+    "userId": "91671c06",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780115
+  },
+  {
+    "id": "9003f888",
+    "userId": "b398e651",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780127
+  },
+  {
+    "id": "ecc22dbb",
+    "userId": "1509be6d",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780138
+  },
+  {
+    "id": "f30f13bb",
+    "userId": "7067ef7b",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780148
+  },
+  {
+    "id": "8936ddd0",
+    "userId": "ta001",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780158
+  },
+  {
+    "id": "f27b0100",
+    "userId": "ta005",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780166
+  },
+  {
+    "id": "76c4951e",
+    "userId": "ta006",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780176
+  },
+  {
+    "id": "4968c45f",
+    "userId": "mo001",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780187
+  },
+  {
+    "id": "ac50a04d",
+    "userId": "mo002",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780196
+  },
+  {
+    "id": "6887c6d2",
+    "userId": "mo003",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780207
+  },
+  {
+    "id": "76f69712",
+    "userId": "mo004",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780216
+  },
+  {
+    "id": "b98797e4",
+    "userId": "mo005",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780224
+  },
+  {
+    "id": "f3297630",
+    "userId": "mo006",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780233
+  },
+  {
+    "id": "6f916f51",
+    "userId": "ta003",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780242
+  },
+  {
+    "id": "e868b5bc",
+    "userId": "ta002",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780251
+  },
+  {
+    "id": "a7650592",
+    "userId": "ta004",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780259
+  },
+  {
+    "id": "a2755bbe",
+    "userId": "6e6df15f",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": false,
+    "createdAt": 1779499780268
+  },
+  {
+    "id": "c1c790a8",
+    "userId": "ed6ef16c",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": true,
+    "createdAt": 1779499780279
+  },
+  {
+    "id": "1bc3e300",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499835403
+  },
+  {
+    "id": "1c3a5b94",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499843444
+  },
+  {
+    "id": "d65527a4",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499845180
+  },
+  {
+    "id": "a7949b1f",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499845896
+  },
+  {
+    "id": "8af5de19",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499846369
+  },
+  {
+    "id": "79c17ab2",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499846737
+  },
+  {
+    "id": "cf693692",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499847545
+  },
+  {
+    "id": "6fd967aa",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779499849460
+  },
+  {
+    "id": "30c0607c",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin_nlc requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779500133613
+  },
+  {
+    "id": "d52690c0",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin_nlc requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779500145909
+  },
+  {
+    "id": "6686323c",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin_nlc requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779500146944
+  },
+  {
+    "id": "9b93776d",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin_nlc requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779500306837
+  },
+  {
+    "id": "c7b8922c",
+    "userId": "c9bd960c",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": true,
+    "createdAt": 1779499780287
+  },
+  {
+    "id": "43c23f13",
+    "userId": "c9bd960c",
+    "title": "Application Approved",
+    "content": "Your application for ad has been approved!",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1779498747564
+  },
+  {
+    "id": "9ea6bfe5",
+    "userId": "c9bd960c",
+    "title": "Application Approved",
+    "content": "Your application for asjkhk has been approved!",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1779498724822
+  },
+  {
+    "id": "30b00e4c",
+    "userId": "c9bd960c",
+    "title": "Application Approved",
+    "content": "Your application for sadadadadadadada has been approved!",
+    "type": "APPLICATION",
+    "read": true,
+    "createdAt": 1779498645970
+  },
+  {
+    "id": "0bd78703",
+    "userId": "c9bd960c",
+    "title": "Application blocked by weekly workload limit",
+    "content": "Week 1: 0.00 + 21.00 \u003d 21.00 / limit 20.00 (exceeds by 1.00h)",
+    "type": "WORKLOAD",
+    "read": true,
+    "createdAt": 1779498129906
+  },
+  {
+    "id": "53871333",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779500795734
+  },
+  {
+    "id": "7eeba19b",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: ninglechen (TA, id\u003d91671c06).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779500871620
+  },
+  {
+    "id": "9e577d50",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User qweqe (ID: qwe) requested a password reset.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779501169377
+  },
+  {
+    "id": "0e5aba8a",
+    "userId": "admin001",
+    "title": "Password Reset Request Escalation",
+    "content": "Admin admin_nlc escalated reset request: qweqe (studentId\u003dqwe).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779501204079
+  },
+  {
+    "id": "320f246c",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User qs (ID: s) requested a password reset.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779501320170
+  },
+  {
+    "id": "1aabe8ff",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User ninglechen (ID: 2023213346) requested a password reset.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779501391301
+  },
+  {
+    "id": "5f2a19d1",
+    "userId": "91671c06",
+    "title": "Password Reset Approved",
+    "content": "Your password has been reset to the initial password. Please change it after login.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779501398404
+  },
+  {
+    "id": "1eab3c95",
+    "userId": "admin001",
+    "title": "Password Reset Escalation",
+    "content": "Admin admin requested super-admin password reset for user: Mei (TA, id\u003d1509be6d).",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779501486233
+  },
+  {
+    "id": "83ca7e84",
+    "userId": "c9bd960c",
+    "title": "Password Reset Approved",
+    "content": "Your password has been reset to the initial password. Please change it after login.",
+    "type": "PASSWORD_RESET",
+    "read": true,
+    "createdAt": 1779501399399
+  },
+  {
+    "id": "13ed65af",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User qweqe (ID: wqw) requested a password reset.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779502155304
+  },
+  {
+    "id": "664ff329",
+    "userId": "admin001",
+    "title": "New Password Reset Request",
+    "content": "User ninglechen (ID: 2023213346) requested a password reset.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779502194632
+  },
+  {
+    "id": "b1a5235f",
+    "userId": "91671c06",
+    "title": "Password Reset Approved",
+    "content": "Your password has been reset to the initial password. Please change it after login.",
+    "type": "PASSWORD_RESET",
+    "read": false,
+    "createdAt": 1779502200917
+  },
+  {
+    "id": "6421f469",
+    "userId": "c9bd960c",
+    "title": "Password Reset Approved",
+    "content": "Your password has been reset to the initial password. Please change it after login.",
+    "type": "PASSWORD_RESET",
+    "read": true,
+    "createdAt": 1779502203319
   }
 ]
