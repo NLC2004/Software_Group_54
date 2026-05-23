@@ -1114,5 +1114,23 @@
     "type": "APPLICATION",
     "read": false,
     "createdAt": 1779514327443
+  },
+  {
+    "id": "78ba4c35",
+    "userId": "86c2bebc",
+    "title": "Weekly Recruitment Reminder",
+    "content": "Please review pending TA applications and close positions that have reached quota.",
+    "type": "SYSTEM",
+    "read": false,
+    "createdAt": 1779268509649
+  },
+  {
+    "id": "88c0df8d",
+    "userId": "86c2bebc",
+    "title": "Admin Notice",
+    "content": "The admin office will periodically review job postings, TA workload, and password reset requests.",
+    "type": "SYSTEM",
+    "read": false,
+    "createdAt": 1779441309710
   }
 ]
