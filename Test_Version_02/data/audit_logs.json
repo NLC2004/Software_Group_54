@@ -2718,5 +2718,69 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779503867904
+  },
+  {
+    "id": "7cf3b2d2",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin",
+    "createdAt": 1779504892602
+  },
+  {
+    "id": "157c28ba",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin1",
+    "createdAt": 1779504899487
+  },
+  {
+    "id": "dce5d9be",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin2",
+    "createdAt": 1779504903707
+  },
+  {
+    "id": "d68ddcb0",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin3",
+    "createdAt": 1779504918048
+  },
+  {
+    "id": "b6342a22",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "ADMIN_ROLE_TEMPLATE_DELETE",
+    "detail": "Deleted template id: f297d6dd",
+    "createdAt": 1779504931501
+  },
+  {
+    "id": "8f1c1ae3",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin_nlc",
+    "createdAt": 1779504935986
+  },
+  {
+    "id": "65b295ef",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin",
+    "createdAt": 1779504943557
+  },
+  {
+    "id": "7dd1510f",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin1",
+    "createdAt": 1779504977040
   }
 ]

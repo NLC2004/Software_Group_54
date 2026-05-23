@@ -1,17 +1,5 @@
 [
   {
-    "id": "admin001",
-    "username": "admin",
-    "password": "admin123",
-    "role": "ADMIN",
-    "fullName": "System Administrator",
-    "email": "admin@bupt.edu.cn",
-    "studentId": "admin",
-    "active": true,
-    "createdAt": 1774368072206,
-    "adminRoleTemplateId": ""
-  },
-  {
     "id": "b398e651",
     "username": "NLC_lecturer",
     "password": "Nlc141203",
@@ -53,42 +41,6 @@
     "studentId": "teacher001",
     "active": true,
     "createdAt": 1775373757612,
-    "adminRoleTemplateId": ""
-  },
-  {
-    "id": "admin002",
-    "username": "admin1",
-    "password": "admin123",
-    "role": "ADMIN",
-    "fullName": "Administrator 1",
-    "email": "admin1@bupt.edu.cn",
-    "studentId": "admin1",
-    "active": true,
-    "createdAt": 1775380087787,
-    "adminRoleTemplateId": ""
-  },
-  {
-    "id": "admin003",
-    "username": "admin2",
-    "password": "admin123",
-    "role": "ADMIN",
-    "fullName": "Administrator 2",
-    "email": "admin2@bupt.edu.cn",
-    "studentId": "admin2",
-    "active": true,
-    "createdAt": 1775380087787,
-    "adminRoleTemplateId": ""
-  },
-  {
-    "id": "admin004",
-    "username": "admin3",
-    "password": "admin123",
-    "role": "ADMIN",
-    "fullName": "Administrator 3",
-    "email": "admin3@bupt.edu.cn",
-    "studentId": "admin3",
-    "active": true,
-    "createdAt": 1775380087787,
     "adminRoleTemplateId": ""
   },
   {
@@ -304,18 +256,6 @@
     "adminRoleTemplateId": ""
   },
   {
-    "id": "cbc5b39f",
-    "username": "admin_nlc",
-    "password": "Nlc141203",
-    "role": "ADMIN",
-    "fullName": "admin_nlc",
-    "email": "ninglechen666@bupt.edu.cn",
-    "studentId": "",
-    "active": true,
-    "createdAt": 1779499918044,
-    "adminRoleTemplateId": ""
-  },
-  {
     "id": "c9bd960c",
     "username": "NLC_TA",
     "password": "Nlc141203",
@@ -344,5 +284,65 @@
     "active": true,
     "createdAt": 1774368133519,
     "adminRoleTemplateId": ""
+  },
+  {
+    "id": "admin003",
+    "username": "admin2",
+    "password": "admin123",
+    "role": "ADMIN",
+    "fullName": "Administrator 2",
+    "email": "admin2@bupt.edu.cn",
+    "studentId": "admin2",
+    "active": true,
+    "createdAt": 1775380087787,
+    "adminRoleTemplateId": "tpl-adm01"
+  },
+  {
+    "id": "admin004",
+    "username": "admin3",
+    "password": "admin123",
+    "role": "ADMIN",
+    "fullName": "Administrator 3",
+    "email": "admin3@bupt.edu.cn",
+    "studentId": "admin3",
+    "active": true,
+    "createdAt": 1775380087787,
+    "adminRoleTemplateId": "tpl-adm01"
+  },
+  {
+    "id": "cbc5b39f",
+    "username": "admin_nlc",
+    "password": "Nlc141203",
+    "role": "ADMIN",
+    "fullName": "admin_nlc",
+    "email": "ninglechen666@bupt.edu.cn",
+    "studentId": "",
+    "active": true,
+    "createdAt": 1779499918044,
+    "adminRoleTemplateId": "tpl-adm01"
+  },
+  {
+    "id": "admin001",
+    "username": "admin",
+    "password": "admin123",
+    "role": "ADMIN",
+    "fullName": "System Administrator",
+    "email": "admin@bupt.edu.cn",
+    "studentId": "admin",
+    "active": true,
+    "createdAt": 1774368072206,
+    "adminRoleTemplateId": "tpl-adm01"
+  },
+  {
+    "id": "admin002",
+    "username": "admin1",
+    "password": "admin123",
+    "role": "ADMIN",
+    "fullName": "Administrator 1",
+    "email": "admin1@bupt.edu.cn",
+    "studentId": "admin1",
+    "active": true,
+    "createdAt": 1775380087787,
+    "adminRoleTemplateId": "tpl-adm01"
   }
 ]
