@@ -3078,5 +3078,21 @@
     "action": "LOGOUT",
     "detail": "User logged out",
     "createdAt": 1779527774021
+  },
+  {
+    "id": "d4ccb848",
+    "userId": "ta001",
+    "username": "231225731",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779532324669
+  },
+  {
+    "id": "5d20aca8",
+    "userId": "ta004",
+    "username": "231225557",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779532389194
   }
 ]
