@@ -481,28 +481,6 @@
     "createdAt": 1779476398643
   },
   {
-    "id": "9230ae41",
-    "postedBy": "ed6ef16c",
-    "title": "asjkhk",
-    "type": "COURSE_TA",
-    "courseName": "ASJ",
-    "description": "qw",
-    "requirements": [
-      "I have taken the corresponding courses, achieved excellent grades, and have a solid grasp of the core knowledge points and syllabus of the courses"
-    ],
-    "quota": 3,
-    "schedule": "Week 1 Thursday：14:45-15:30\nWeek 1 Thursday：13:50-14:35\nWeek 1 Thursday：14:45-15:30",
-    "weeklyHours": 0.0,
-    "deadline": "2026-05-31",
-    "courseScheduleGrid": "[{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[],\"Wed\":[],\"Thu\":[8],\"Fri\":[]}},{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[],\"Wed\":[],\"Thu\":[7],\"Fri\":[]}},{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[],\"Wed\":[],\"Thu\":[8],\"Fri\":[]}}]",
-    "courseWeekStart": 0,
-    "courseWeekEnd": 0,
-    "labSessionCount": 0,
-    "examDuration": 0.0,
-    "status": "OPEN",
-    "createdAt": 1779497062765
-  },
-  {
     "id": "eadcba07",
     "postedBy": "ed6ef16c",
     "title": "qweeeeeeeeeeeeeeeeeee",
@@ -567,5 +545,27 @@
     "examDuration": 0.0,
     "status": "OPEN",
     "createdAt": 1779498218324
+  },
+  {
+    "id": "9230ae41",
+    "postedBy": "ed6ef16c",
+    "title": "asjkhk",
+    "type": "COURSE_TA",
+    "courseName": "ASJ",
+    "description": "qw",
+    "requirements": [
+      "I have taken the corresponding courses, achieved excellent grades, and have a solid grasp of the core knowledge points and syllabus of the courses"
+    ],
+    "quota": 3,
+    "schedule": "Week 1 Thursday：14:45-15:30\nWeek 1 Thursday：13:50-14:35",
+    "weeklyHours": 0.0,
+    "deadline": "2026-05-31",
+    "courseScheduleGrid": "[{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[],\"Wed\":[],\"Thu\":[8],\"Fri\":[]}},{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[],\"Wed\":[],\"Thu\":[7],\"Fri\":[]}}]",
+    "courseWeekStart": 0,
+    "courseWeekEnd": 0,
+    "labSessionCount": 0,
+    "examDuration": 0.0,
+    "status": "OPEN",
+    "createdAt": 1779497062765
   }
 ]

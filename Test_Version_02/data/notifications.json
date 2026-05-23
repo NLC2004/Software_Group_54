@@ -945,21 +945,21 @@
     "createdAt": 1779502203319
   },
   {
-    "id": "b09203e9",
-    "userId": "ed6ef16c",
-    "title": "Weekly Recruitment Reminder",
-    "content": "Please review pending TA applications and close positions that have reached quota.",
-    "type": "SYSTEM",
-    "read": false,
-    "createdAt": 1779244655986
-  },
-  {
     "id": "7c5d1088",
     "userId": "ed6ef16c",
     "title": "Admin Notice",
     "content": "The admin office will periodically review job postings, TA workload, and password reset requests.",
     "type": "SYSTEM",
-    "read": false,
+    "read": true,
     "createdAt": 1779417456134
+  },
+  {
+    "id": "b09203e9",
+    "userId": "ed6ef16c",
+    "title": "Weekly Recruitment Reminder",
+    "content": "Please review pending TA applications and close positions that have reached quota.",
+    "type": "SYSTEM",
+    "read": true,
+    "createdAt": 1779244655986
   }
 ]
