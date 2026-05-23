@@ -59,17 +59,63 @@ public class DataService {
     }
 
     public synchronized User getUserByUsername(String username) {
-        return getAllUsers().stream().filter(u -> u.username.equals(username)).findFirst().orElse(null);
+        return getUserByUsername(username, null);
+    }
+
+    public synchronized User getUserByUsername(String username, String role) {
+        if (username == null) return null;
+        String roleFilter = normalizeRoleFilter(role);
+        return getAllUsers().stream()
+                .filter(u -> u.username != null && u.username.equals(username))
+                .filter(u -> matchesRoleFilter(u, roleFilter))
+                .findFirst()
+                .orElse(null);
     }
 
     public synchronized User getUserByStudentIdOrEmail(String identifier) {
+        return getUserByStudentIdOrEmail(identifier, null);
+    }
+
+    public synchronized User getUserByStudentIdOrEmail(String identifier, String role) {
         String normalized = identifier == null ? "" : identifier.trim();
         if (normalized.isEmpty()) return null;
+        String roleFilter = normalizeRoleFilter(role);
         return getAllUsers().stream()
+                .filter(u -> matchesRoleFilter(u, roleFilter))
                 .filter(u -> normalized.equalsIgnoreCase(u.studentId == null ? "" : u.studentId.trim())
                         || normalized.equalsIgnoreCase(u.email == null ? "" : u.email.trim()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /** Resolve login identifier (student/teacher ID, email, or username) scoped to a portal role. */
+    public synchronized User findUserByPortalIdentifier(String identifier, String role) {
+        String normalized = identifier == null ? "" : identifier.trim();
+        if (normalized.isEmpty()) return null;
+        User byIdOrEmail = getUserByStudentIdOrEmail(normalized, role);
+        if (byIdOrEmail != null) return byIdOrEmail;
+        return getUserByUsername(normalized, role);
+    }
+
+    /** Match student/teacher ID or username, optionally scoped by role (TA/MO). */
+    public synchronized User findUserByIdNumber(String idNumber, String role) {
+        String normalized = idNumber == null ? "" : idNumber.trim();
+        if (normalized.isEmpty()) return null;
+        String roleFilter = normalizeRoleFilter(role);
+        return getAllUsers().stream()
+                .filter(u -> matchesRoleFilter(u, roleFilter))
+                .filter(u -> normalized.equals(u.studentId) || normalized.equals(u.username))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static String normalizeRoleFilter(String role) {
+        return role == null ? "" : role.trim().toUpperCase(Locale.ROOT);
+    }
+
+    private static boolean matchesRoleFilter(User user, String roleFilter) {
+        if (roleFilter == null || roleFilter.isEmpty()) return true;
+        return roleFilter.equalsIgnoreCase(user.role == null ? "" : user.role);
     }
 
     public synchronized User addUser(User user) {

@@ -3038,5 +3038,29 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779517068572
+  },
+  {
+    "id": "76c2da42",
+    "userId": "86c2bebc",
+    "username": "NLC12",
+    "action": "REGISTER",
+    "detail": "New MO registered",
+    "createdAt": 1779526812958
+  },
+  {
+    "id": "e3f72996",
+    "userId": "86c2bebc",
+    "username": "NLC12",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779526849389
+  },
+  {
+    "id": "8b3f0c9e",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779526894122
   }
 ]
