@@ -2782,5 +2782,69 @@
     "action": "USER_UPDATE",
     "detail": "Updated user: admin1",
     "createdAt": 1779504977040
+  },
+  {
+    "id": "d6e5c429",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin2",
+    "createdAt": 1779506705626
+  },
+  {
+    "id": "f6fd3c36",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "ADMIN_ROLE_TEMPLATE_CREATE",
+    "detail": "Created template: Head teacher",
+    "createdAt": 1779506832135
+  },
+  {
+    "id": "76d12240",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin3",
+    "createdAt": 1779506837676
+  },
+  {
+    "id": "569a08a1",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "ADMIN_ROLE_TEMPLATE_CREATE",
+    "detail": "Created template: Password resetter",
+    "createdAt": 1779506930298
+  },
+  {
+    "id": "a82447db",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin2",
+    "createdAt": 1779506936597
+  },
+  {
+    "id": "d903ab0e",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "USER_UPDATE",
+    "detail": "Updated user: admin1",
+    "createdAt": 1779506943685
+  },
+  {
+    "id": "e256bd94",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGOUT",
+    "detail": "User logged out",
+    "createdAt": 1779506958991
+  },
+  {
+    "id": "2eb4fb79",
+    "userId": "cbc5b39f",
+    "username": "admin_nlc",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779506980161
   }
 ]

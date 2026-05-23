@@ -537,9 +537,19 @@ async function loadRoleTemplates() {
         const list = await API.get('/api/admin/role-templates');
         window.roleTemplatesCache = Array.isArray(list) ? list : [];
         renderAdminRoleTemplates(window.roleTemplatesCache);
+        if (Array.isArray(allUsers) && allUsers.length) {
+            renderUsers(getFilteredUsers());
+        }
     } catch (e) {
         if (container) container.innerHTML = '<p class="text-xs text-red-500">Failed to load role templates. Check your network or the server.</p>';
     }
+}
+
+function getAdminTemplateLabel(templateId) {
+    if (!templateId) return '';
+    const list = Array.isArray(window.roleTemplatesCache) ? window.roleTemplatesCache : [];
+    const match = list.find(function(t) { return t && t.id === templateId; });
+    return match && match.name ? match.name : '';
 }
 
 window.onclick = function(event) {
@@ -860,8 +870,14 @@ function renderUsers(users) {
         const initials = (u.fullName || u.username || '??').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
         const statusClass = u.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
         const statusText = u.active ? 'ACTIVE' : 'DISABLED';
+        const templateLabel = u.role === 'ADMIN' ? getAdminTemplateLabel(u.adminRoleTemplateId) : '';
         const roleBadge = u.role === 'ADMIN'
-            ? '<span class="text-xs text-blue-600 font-bold border border-blue-200 px-2 py-0.5 rounded">' + esc(u.role) + '</span>'
+            ? '<div class="flex flex-wrap items-center gap-2">'
+                + '<span class="text-xs text-blue-600 font-bold border border-blue-200 px-2 py-0.5 rounded">' + esc(u.role) + '</span>'
+                + (templateLabel
+                    ? '<span class="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full" title="Assigned admin template">' + esc(templateLabel) + '</span>'
+                    : '<span class="text-[10px] text-gray-400" title="No admin template assigned">No template</span>')
+                + '</div>'
             : '<span class="text-xs text-gray-600">' + esc(u.role) + '</span>';
         const readOnly = !isSuperAdminAccount();
         const resetLocked = readOnly || (u.role === 'TA' || u.role === 'MO');
