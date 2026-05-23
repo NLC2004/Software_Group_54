@@ -603,15 +603,6 @@
     "createdAt": 1779499780207
   },
   {
-    "id": "76f69712",
-    "userId": "mo004",
-    "title": "as",
-    "content": "sa",
-    "type": "BULK_ANNOUNCEMENT",
-    "read": false,
-    "createdAt": 1779499780216
-  },
-  {
     "id": "b98797e4",
     "userId": "mo005",
     "title": "as",
@@ -961,5 +952,167 @@
     "type": "SYSTEM",
     "read": true,
     "createdAt": 1779244655986
+  },
+  {
+    "id": "76f69712",
+    "userId": "mo004",
+    "title": "as",
+    "content": "sa",
+    "type": "BULK_ANNOUNCEMENT",
+    "read": true,
+    "createdAt": 1779499780216
+  },
+  {
+    "id": "8c625ba3",
+    "userId": "ta004",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Course TA: Machine Learning.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "02db89eb",
+    "userId": "ta001",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Course TA: Machine Learning.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "2700e7ae",
+    "userId": "1509be6d",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Lab TA: Design and Build.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "38ad28c5",
+    "userId": "ta002",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Lab TA: Design and Build.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "a1c0df3f",
+    "userId": "ta006",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Final Exam TA: Personal Development Plan and Entrepreneurial Skills.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "fb1df7e2",
+    "userId": "1509be6d",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Final Exam TA: Personal Development Plan and Entrepreneurial Skills.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "d74aec19",
+    "userId": "ta006",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Course TA: Operating Systems.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "bcbe365b",
+    "userId": "ta005",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Lab TA: Communications and Networks.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "22d24f59",
+    "userId": "ta005",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Class Test TA: Embedded Systems.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "16354827",
+    "userId": "91671c06",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Course TA: Cryptography and Cyber Security.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "eaf9d8ed",
+    "userId": "ta002",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Final Exam TA: Software Engineering.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "18b395ff",
+    "userId": "ta004",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Final Exam TA: Software Engineering.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "a6b34b66",
+    "userId": "ta005",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Class Test TA: Sensors and Radio Frequency Identification.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "986cfea7",
+    "userId": "ta006",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Lab TA: Middleware.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "88435c99",
+    "userId": "ta001",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Course TA: Computer Networks.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "39af3bdf",
+    "userId": "ta004",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Lab TA: Artificial Intelligence.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
+  },
+  {
+    "id": "ef48b1d8",
+    "userId": "ta002",
+    "title": "Application Withdrawn",
+    "content": "You withdrew your application for Final Exam TA: Database Systems.",
+    "type": "APPLICATION",
+    "read": false,
+    "createdAt": 1779514327443
   }
 ]

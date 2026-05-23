@@ -188,6 +188,9 @@ public class JobHandler extends BaseHandler {
             job.requirements = new ArrayList<>();
             for (int i = 0; i < arr.size(); i++) job.requirements.add(arr.get(i).getAsString());
         }
+        if (requiresUniqueScheduleWeeks(job.type) && hasDuplicateScheduleWeeks(job.courseScheduleGrid)) {
+            sendError(ex, 400, "Course Week must be unique across schedule entries"); return;
+        }
         Job saved = ds.addJob(job);
         ds.addAuditLog(user.id, user.username, "CREATE_JOB", "Created job: " + saved.title);
         sendJson(ex, 201, saved);
@@ -232,6 +235,9 @@ public class JobHandler extends BaseHandler {
             JsonArray arr = body.getAsJsonArray("requirements");
             job.requirements = new ArrayList<>();
             for (int i = 0; i < arr.size(); i++) job.requirements.add(arr.get(i).getAsString());
+        }
+        if (requiresUniqueScheduleWeeks(job.type) && hasDuplicateScheduleWeeks(job.courseScheduleGrid)) {
+            sendError(ex, 400, "Course Week must be unique across schedule entries"); return;
         }
         ds.updateJob(job);
         ds.addAuditLog(user.id, user.username, "UPDATE_JOB", "Updated job: " + job.title);
@@ -278,7 +284,9 @@ public class JobHandler extends BaseHandler {
             sendError(ex, 409, "This position has reached its quota"); return;
         }
         boolean alreadyApplied = ds.getApplicationsByApplicant(user.id).stream()
-                .anyMatch(a -> a.jobId.equals(jobId) && !"WITHDRAWN".equals(a.status));
+                .anyMatch(a -> a.jobId.equals(jobId)
+                        && !"WITHDRAWN".equals(a.status)
+                        && !"REJECTED".equals(a.status));
         if (alreadyApplied) {
             sendError(ex, 409, "You have already applied for this position"); return;
         }
@@ -438,10 +446,31 @@ public class JobHandler extends BaseHandler {
         }
         if (applicant == null) { sendError(ex, 404, "Applicant not found"); return; }
 
-        Map<String, Object> result = new AiMatchingService(ds).match(job, applicant, coverLetter, app, model);
+        AiMatchingService ai = new AiMatchingService(ds);
+        if (!ai.isAllowedModel(model)) {
+            sendError(ex, 400, "Invalid AI model. Allowed models: gemini-2.5-pro, qwen-plus, gpt-5-mini"); return;
+        }
+        String resolvedModel = (model == null || model.isBlank()) ? ai.getDefaultModel() : model.trim();
+        boolean taConsumesQuota = "TA".equals(user.role);
+        if (taConsumesQuota && user.aiMatchUsedCount >= 3) {
+            sendError(ex, 429, "AI match limit reached: each TA can use AI match at most 3 times"); return;
+        }
+
+        Map<String, Object> result;
+        try {
+            result = ai.match(job, applicant, coverLetter, app, resolvedModel);
+        } catch (IllegalStateException exn) {
+            sendError(ex, 502, exn.getMessage()); return;
+        }
+        if (taConsumesQuota) {
+            user.aiMatchUsedCount++;
+            ds.updateUser(user);
+            result.put("aiMatchUsedCount", user.aiMatchUsedCount);
+            result.put("aiMatchRemaining", Math.max(0, 3 - user.aiMatchUsedCount));
+        }
         if (app != null) {
             app.aiMatchJson = gson.toJson(result);
-            app.aiMatchModel = model == null || model.isBlank() ? "gpt-5-mini" : model;
+            app.aiMatchModel = resolvedModel;
             app.aiMatchUpdatedAt = System.currentTimeMillis();
             ds.updateApplication(app);
         }
@@ -460,6 +489,31 @@ public class JobHandler extends BaseHandler {
     private boolean isJobFull(Job job) {
         if (job == null) return true;
         return job.quota <= 0 || ds.getApprovedApplicationCountForJob(job.id) >= job.quota;
+    }
+
+    private boolean requiresUniqueScheduleWeeks(String type) {
+        String tv = type == null ? "" : type.trim();
+        return "COURSE_TA".equals(tv) || "CLASS_TEST_TA".equals(tv) || "LAB_TA".equals(tv);
+    }
+
+    private boolean hasDuplicateScheduleWeeks(String scheduleJson) {
+        if (scheduleJson == null || scheduleJson.trim().isEmpty()) return false;
+        try {
+            JsonArray arr = gson.fromJson(scheduleJson, JsonArray.class);
+            if (arr == null) return false;
+            Set<Integer> weeks = new HashSet<>();
+            for (int i = 0; i < arr.size(); i++) {
+                if (arr.get(i) == null || !arr.get(i).isJsonObject()) continue;
+                JsonObject entry = arr.get(i).getAsJsonObject();
+                if (!entry.has("week") || entry.get("week").isJsonNull()) continue;
+                int week = entry.get("week").getAsInt();
+                if (week < 1 || week > 17) continue;
+                if (!weeks.add(week)) return true;
+            }
+        } catch (Exception ignored) {
+            return false;
+        }
+        return false;
     }
 
     private boolean isDeadlinePassed(String deadline) {

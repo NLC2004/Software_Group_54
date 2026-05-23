@@ -170,6 +170,41 @@ Browse positions
     let allRecords = [];
     let currentFilter = 'all';
 
+    function applicationStateMeta(status) {
+        const map = {
+            PENDING: {
+                icon: 'mdi:clock-outline',
+                label: 'Pending review',
+                hint: 'Priority locked until you withdraw or MO rejects it',
+                cls: 'bg-amber-50 text-amber-700 border-amber-100'
+            },
+            APPROVED: {
+                icon: 'mdi:check-circle-outline',
+                label: 'Approved',
+                hint: 'Position confirmed; quota has been allocated',
+                cls: 'bg-green-50 text-green-700 border-green-100'
+            },
+            REJECTED: {
+                icon: 'mdi:close-circle-outline',
+                label: 'Rejected',
+                hint: 'Priority released and can be reused',
+                cls: 'bg-red-50 text-red-700 border-red-100'
+            },
+            WITHDRAWN: {
+                icon: 'mdi:undo',
+                label: 'Withdrawn by you',
+                hint: 'Priority released and can be reused',
+                cls: 'bg-gray-50 text-gray-600 border-gray-100'
+            }
+        };
+        return map[status] || {
+            icon: 'mdi:help-circle-outline',
+            label: status || 'Unknown',
+            hint: '',
+            cls: 'bg-gray-50 text-gray-600 border-gray-100'
+        };
+    }
+
     function renderRecords(filter) {
         const container = document.getElementById('records-container');
         const empty = document.getElementById('empty-state');
@@ -185,9 +220,13 @@ Browse positions
         filtered.forEach(rec => {
             const tr = document.createElement('tr');
             tr.className = "group hover:bg-blue-50/30 transition-colors";
+            const meta = applicationStateMeta(rec.status);
+            const priorityReleased = ['REJECTED', 'WITHDRAWN'].includes(rec.status);
             const priorityText = rec.priority && Number(rec.priority) > 0 ? `Priority ${Number(rec.priority)}` : 'Not set';
             const priorityClass = rec.priority && Number(rec.priority) > 0
-                ? 'inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold'
+                ? (priorityReleased
+                    ? 'inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-bold'
+                    : 'inline-flex px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold')
                 : 'inline-flex px-3 py-1 rounded-full bg-gray-100 text-gray-500 text-xs font-medium';
             tr.innerHTML = `
                 <td class="py-4 pl-2">
@@ -195,9 +234,18 @@ Browse positions
                     <div class="text-xs text-gray-400 mt-1">${esc(rec.jobCourseName || '')}</div>
                 </td>
                 <td class="py-4 text-sm text-gray-600">${esc(formatJobType(rec.jobType))}</td>
-                <td class="py-4"><span class="${priorityClass}">${esc(priorityText)}</span></td>
+                <td class="py-4">
+                    <span class="${priorityClass}">${esc(priorityText)}</span>
+                    <div class="text-[10px] ${priorityReleased ? 'text-gray-400' : 'text-blue-500'} mt-1">${priorityReleased ? 'Released' : 'Locked'}</div>
+                </td>
                 <td class="py-4 text-sm text-gray-600">${rec.createdAt ? formatDateTime(rec.createdAt) : ''}</td>
-                <td class="py-4">${statusBadge(rec.status)}</td>
+                <td class="py-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold ${meta.cls}">
+                        <span class="iconify text-base" data-icon="${meta.icon}"></span>
+                        ${esc(meta.label)}
+                    </div>
+                    <div class="text-[10px] text-gray-400 mt-1">${esc(meta.hint)}</div>
+                </td>
                 <td class="py-4 text-right pr-2">
                     <div class="flex justify-end gap-3">
                         <a href="application-review-detail.html?id=${rec.id}" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">
@@ -250,11 +298,18 @@ Browse positions
             await API.put('/api/applications/' + id + '/status', { status: 'WITHDRAWN' });
             const rec = allRecords.find(r => r.id === id);
             if (rec) rec.status = 'WITHDRAWN';
+            updateSummary(allRecords);
+            document.getElementById('headerSub').textContent = buildHeaderSub(allRecords);
             renderRecords(currentFilter);
             showToast('Application withdrawn successfully.', 'success');
         } catch (err) {
             showToast(err.message || 'Failed to withdraw application', 'error');
         }
+    }
+
+    function buildHeaderSub(records) {
+        const active = records.filter(r => !['WITHDRAWN', 'REJECTED'].includes(r.status)).length;
+        return 'You have ' + active + '/3 active priority slot(s) in use, and ' + records.length + ' total application record(s).';
     }
 
     (async function init() {
@@ -264,8 +319,8 @@ Browse positions
 
         try {
             allRecords = await API.get('/api/applications');
-            document.getElementById('headerSub').textContent =
-                'You have submitted ' + allRecords.length + ' TA application(s).';
+            allRecords.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            document.getElementById('headerSub').textContent = buildHeaderSub(allRecords);
             updateSummary(allRecords);
             renderRecords('all');
         } catch (err) {
