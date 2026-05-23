@@ -479,5 +479,93 @@
     "examDuration": 0.0,
     "status": "OPEN",
     "createdAt": 1779476398643
+  },
+  {
+    "id": "eadcba07",
+    "postedBy": "ed6ef16c",
+    "title": "qweeeeeeeeeeeeeeeeeee",
+    "type": "COURSE_TA",
+    "courseName": "",
+    "description": "qw",
+    "requirements": [
+      "Possess excellent communication and expression skills, capable of clearly answering student questions about the course, and assisting in classroom teaching and group discussions"
+    ],
+    "quota": 3,
+    "schedule": "Week 1 Monday：08:00-20:55\nWeek 1 Tuesday：08:00-20:55",
+    "weeklyHours": 0.0,
+    "deadline": "2026-05-31",
+    "courseScheduleGrid": "[{\"week\":1,\"selection\":{\"Mon\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],\"Tue\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],\"Wed\":[],\"Thu\":[],\"Fri\":[]}}]",
+    "courseWeekStart": 0,
+    "courseWeekEnd": 0,
+    "labSessionCount": 0,
+    "examDuration": 0.0,
+    "status": "OPEN",
+    "createdAt": 1779497775656
+  },
+  {
+    "id": "929a15cb",
+    "postedBy": "ed6ef16c",
+    "title": "sadadadadadadada",
+    "type": "COURSE_TA",
+    "courseName": "EBU4201 Data Structures",
+    "description": "adadad",
+    "requirements": [
+      "I have taken the corresponding courses, achieved excellent grades, and have a solid grasp of the core knowledge points and syllabus of the courses"
+    ],
+    "quota": 3,
+    "schedule": "Week 1 Tuesday：08:00-20:55",
+    "weeklyHours": 0.0,
+    "deadline": "2026-05-29",
+    "courseScheduleGrid": "[{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14],\"Wed\":[],\"Thu\":[],\"Fri\":[]}}]",
+    "courseWeekStart": 0,
+    "courseWeekEnd": 0,
+    "labSessionCount": 0,
+    "examDuration": 0.0,
+    "status": "OPEN",
+    "createdAt": 1779498182430
+  },
+  {
+    "id": "7282161b",
+    "postedBy": "ed6ef16c",
+    "title": "ad",
+    "type": "LAB_TA",
+    "courseName": "ad",
+    "description": "ad",
+    "requirements": [
+      "The corresponding experimental course has been taken"
+    ],
+    "quota": 1,
+    "schedule": "Week 1 Monday：08:00-19:15",
+    "weeklyHours": 0.0,
+    "deadline": "2026-05-31",
+    "courseScheduleGrid": "[{\"week\":1,\"selection\":{\"Mon\":[1,2,3,4,5,6,7,8,9,10,11,12],\"Tue\":[],\"Wed\":[],\"Thu\":[],\"Fri\":[]}}]",
+    "courseWeekStart": 0,
+    "courseWeekEnd": 0,
+    "labSessionCount": 0,
+    "examDuration": 0.0,
+    "status": "OPEN",
+    "createdAt": 1779498218324
+  },
+  {
+    "id": "9230ae41",
+    "postedBy": "ed6ef16c",
+    "title": "asjkhk",
+    "type": "COURSE_TA",
+    "courseName": "ASJ",
+    "description": "qw",
+    "requirements": [
+      "I have taken the corresponding courses, achieved excellent grades, and have a solid grasp of the core knowledge points and syllabus of the courses"
+    ],
+    "quota": 3,
+    "schedule": "Week 1 Thursday：14:45-15:30\nWeek 1 Thursday：13:50-14:35",
+    "weeklyHours": 0.0,
+    "deadline": "2026-05-31",
+    "courseScheduleGrid": "[{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[],\"Wed\":[],\"Thu\":[8],\"Fri\":[]}},{\"week\":1,\"selection\":{\"Mon\":[],\"Tue\":[],\"Wed\":[],\"Thu\":[7],\"Fri\":[]}}]",
+    "courseWeekStart": 0,
+    "courseWeekEnd": 0,
+    "labSessionCount": 0,
+    "examDuration": 0.0,
+    "status": "OPEN",
+    "createdAt": 1779497062765
   }
 ]
