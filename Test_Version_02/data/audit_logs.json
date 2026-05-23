@@ -2702,5 +2702,21 @@
     "action": "LOGOUT",
     "detail": "User logged out",
     "createdAt": 1779503207306
+  },
+  {
+    "id": "f1598e2a",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779503798200
+  },
+  {
+    "id": "0faff6e8",
+    "userId": "admin001",
+    "username": "admin",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779503867904
   }
 ]
