@@ -14,11 +14,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Exercises advanced administrative functions that extend the original
+ * dashboard stories: templates, asynchronous file tasks and reset escalation.
+ */
 class AdminAdvancedOperationsStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Runs the full administrator-role-template lifecycle and confirms that
+     * the detail response reports how many admin accounts use the template.
+     */
     @Test
     void adminRoleTemplatesShouldSupportCreateListDetailUpdateDeleteAndAssignedCount() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -72,6 +80,10 @@ class AdminAdvancedOperationsStoriesTest {
         assertNull(ds.getAdminRoleTemplateById(template.id));
     }
 
+    /**
+     * Creates, lists and downloads a backup ZIP, then simulates a failed task
+     * and verifies that retry returns it to a completed state.
+     */
     @Test
     void backupTasksShouldCreateListDownloadAndRetryBackupZip() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -118,6 +130,10 @@ class AdminAdvancedOperationsStoriesTest {
         assertEquals("COMPLETED", ds.getExportTaskById(backup.id).status);
     }
 
+    /**
+     * Starts with a failed export task and verifies filtering, retry generation
+     * and download of the newly completed CSV evidence file.
+     */
     @Test
     void exportTasksShouldListDownloadAndRetryFailedExports() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -159,6 +175,10 @@ class AdminAdvancedOperationsStoriesTest {
         assertTrue(download.getResponseBodyAsString().contains("=== USERS ==="));
     }
 
+    /**
+     * Rejects one recovery request with a reason, then escalates another,
+     * verifying persistence of the reason and notification to super admin.
+     */
     @Test
     void passwordResetRejectAndEscalateShouldPersistReasonAndNotifySuperAdmin() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -196,6 +216,10 @@ class AdminAdvancedOperationsStoriesTest {
         assertTrue(ds.getNotificationsByUser(admin.id).stream().anyMatch(n -> n.title.contains("Escalation")));
     }
 
+    /**
+     * Confirms an ordinary administrator cannot alter system settings or send
+     * bulk notifications reserved for the named super-administrator account.
+     */
     @Test
     void standardAdminShouldBeBlockedFromSuperAdminOperations() throws Exception {
         DataService ds = new DataService(tempDir.toString());

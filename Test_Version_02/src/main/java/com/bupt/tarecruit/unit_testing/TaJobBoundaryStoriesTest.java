@@ -16,11 +16,19 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Covers important TA vacancy boundaries introduced beyond basic submission:
+ * uploaded CV linkage, role separation, filtering and workload protection.
+ */
 class TaJobBoundaryStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Uploads a PDF, submits its stored filename with an application and
+     * verifies both the persistent CV link and the organiser notification.
+     */
     @Test
     void applicationShouldLinkUploadedCvAndNotifyJobOwner() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -54,6 +62,10 @@ class TaJobBoundaryStoriesTest {
                 .anyMatch(n -> "New Application".equals(n.title) && n.content.contains(job.title)));
     }
 
+    /**
+     * Confirms that an explicitly closed vacancy cannot accept new
+     * applications, even if other eligibility conditions are satisfied.
+     */
     @Test
     void taShouldNotApplyForClosedPosition() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -72,6 +84,10 @@ class TaJobBoundaryStoriesTest {
         assertTrue(ds.getApplicationsByApplicant(ta.id).isEmpty());
     }
 
+    /**
+     * Confirms that vacancy browsing supports type and status filters while
+     * exposing the correct application count for matching results.
+     */
     @Test
     void vacancyListShouldFilterTypeAndStatusAndExposeApplicationCounts() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -96,6 +112,10 @@ class TaJobBoundaryStoriesTest {
         assertFalse(list.getResponseBodyAsString().contains("Open Lab Excluded"));
     }
 
+    /**
+     * Attempts to exceed an approved weekly workload limit and verifies the
+     * rejection response, explanatory notification and audit record.
+     */
     @Test
     void applicationShouldBeBlockedWhenApprovedWorkloadWouldExceedWeeklyLimit() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -130,6 +150,10 @@ class TaJobBoundaryStoriesTest {
         assertTrue(ds.getAllAuditLogs().stream().anyMatch(l -> "WORKLOAD_BLOCK".equals(l.action)));
     }
 
+    /**
+     * Confirms role separation by rejecting vacancy creation from a TA
+     * account.
+     */
     @Test
     void taShouldNotCreateVacancyPosting() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -145,6 +169,10 @@ class TaJobBoundaryStoriesTest {
         assertTrue(ds.getAllJobs().stream().noneMatch(j -> "Forbidden Position".equals(j.title)));
     }
 
+    /**
+     * Confirms role separation by rejecting application submission from an MO
+     * account.
+     */
     @Test
     void moShouldNotSubmitTaApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());

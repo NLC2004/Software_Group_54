@@ -13,11 +13,19 @@ import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Provides shared endpoint coverage for security-sensitive behaviors spanning
+ * account creation, session logout, uploaded document retrieval and drafts.
+ */
 class AuthUploadDraftCoverageTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Confirms that administrator accounts cannot be created through the
+     * unauthenticated public registration operation.
+     */
     @Test
     void authShouldRejectSelfRegisteredAdminAccounts() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -36,6 +44,10 @@ class AuthUploadDraftCoverageTest {
         assertTrue(ex.getResponseBodyAsString().contains("Admin accounts cannot be registered"));
     }
 
+    /**
+     * Logs out an authenticated user and then reuses the old bearer token to
+     * verify that the session has been invalidated.
+     */
     @Test
     void authLogoutShouldInvalidateSessionToken() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -56,6 +68,10 @@ class AuthUploadDraftCoverageTest {
         assertEquals(401, me.getResponseCode());
     }
 
+    /**
+     * Uploads and subsequently downloads a PDF as an authenticated user,
+     * verifying response media type and byte-for-byte document integrity.
+     */
     @Test
     void uploadDownloadShouldReturnStoredPdfBytesForAuthenticatedUser() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -81,6 +97,10 @@ class AuthUploadDraftCoverageTest {
         assertArrayEquals("%PDF test".getBytes(), download.getResponseBodyAsString().getBytes());
     }
 
+    /**
+     * Verifies draft API behavior for a missing draft and for a subsequent
+     * upsert/retrieval round trip containing application fields.
+     */
     @Test
     void draftHandlerShouldReturnEmptyDraftAndAllowUpsertThenGet() throws Exception {
         DataService ds = new DataService(tempDir.toString());

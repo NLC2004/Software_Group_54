@@ -15,11 +15,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Exercises TA-facing persisted data, including profile information,
+ * password-reset requests, application drafts and uploaded CV documents.
+ */
 class TaDataServiceStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Submits editable personal information and verifies that every profile
+     * attribute can be retrieved after the update has been persisted.
+     */
     @Test
     void ta01_profileUpdateShouldPersistPersonalInformation() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -52,6 +60,10 @@ class TaDataServiceStoriesTest {
         assertEquals("Year 2", saved.yearOfStudy);
     }
 
+    /**
+     * Submits a forgot-password request and verifies that it enters the
+     * administrator workflow as a pending record.
+     */
     @Test
     void ta05_passwordResetRequestShouldBeStoredAsPending() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -75,6 +87,10 @@ class TaDataServiceStoriesTest {
         assertEquals("PENDING", stored.status);
     }
 
+    /**
+     * Saves two drafts for one TA and one vacancy and confirms the newer
+     * version overwrites the prior draft instead of creating duplicates.
+     */
     @Test
     void ta09_saveDraftShouldOverwriteExistingDraftForSameUserAndJob() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -109,6 +125,10 @@ class TaDataServiceStoriesTest {
         assertFalse(stored.id.isBlank());
     }
 
+    /**
+     * Confirms that draft deletion uses a normalized vacancy identifier so
+     * surrounding whitespace cannot leave an obsolete draft behind.
+     */
     @Test
     void ta09_deleteDraftShouldRespectNormalizedJobId() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -125,6 +145,10 @@ class TaDataServiceStoriesTest {
         assertNull(ds.getApplicationDraft("ta002", "job-delete"));
     }
 
+    /**
+     * Ensures the draft dashboard is user-scoped and returns useful posting
+     * context only for the authenticated TA's saved applications.
+     */
     @Test
     void ta09_dashboardShouldListOnlyCurrentUsersDraftsWithJobInfo() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -160,6 +184,10 @@ class TaDataServiceStoriesTest {
         assertFalse(body.contains("hidden"));
     }
 
+    /**
+     * Stores a CV with an unsafe original name and verifies that storage
+     * sanitizes the filename while retaining the uploaded file bytes.
+     */
     @Test
     void ta03_uploadStorageShouldSanitizeFileNameAndKeepBytes() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -171,6 +199,10 @@ class TaDataServiceStoriesTest {
         assertArrayEquals(content, ds.getUpload(savedName));
     }
 
+    /**
+     * Verifies that resume upload validation rejects document types other than
+     * PDF, matching the supported application-submission contract.
+     */
     @Test
     void ta03_uploadApiShouldRejectNonPdfFile() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -188,6 +220,10 @@ class TaDataServiceStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("only PDF files are allowed"));
     }
 
+    /**
+     * Verifies that malformed Base64 content is rejected as an invalid upload
+     * rather than being written into the uploads area.
+     */
     @Test
     void ta03_uploadApiShouldRejectInvalidBase64() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -204,6 +240,9 @@ class TaDataServiceStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("Upload failed"));
     }
 
+    /**
+     * Verifies that a named PDF with empty content is refused before storage.
+     */
     @Test
     void ta03_uploadApiShouldRejectEmptyFile() throws Exception {
         DataService ds = new DataService(tempDir.toString());

@@ -13,11 +13,19 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies service-level integrity rules that support several stories:
+ * notification repair/idempotence and workload calculations from job data.
+ */
 class DataServiceIntegrityCoverageTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Reconciles an approved application twice and proves workflow
+     * notifications are backfilled when needed without being duplicated.
+     */
     @Test
     void notificationReconciliationShouldBackfillApplicationEventsOnlyOnce() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -41,6 +49,10 @@ class DataServiceIntegrityCoverageTest {
                 .filter(n -> "Application Approved".equals(n.title) && n.content.contains(job.title)).count());
     }
 
+    /**
+     * Verifies structured course periods are converted to weekly hours using
+     * the service's period-duration rule.
+     */
     @Test
     void structuredScheduleShouldCalculateHoursPerWeekFromSelectedPeriods() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -55,6 +67,10 @@ class DataServiceIntegrityCoverageTest {
         assertEquals(0.75, hours.get(3), 0.001);
     }
 
+    /**
+     * Verifies that a final-exam assignment contributes its configured exam
+     * duration to a single workload bucket.
+     */
     @Test
     void finalExamWorkloadShouldUseExamDurationAsSingleWorkloadBucket() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -68,6 +84,10 @@ class DataServiceIntegrityCoverageTest {
         assertEquals(2.5, hours.get(0), 0.001);
     }
 
+    /**
+     * Stores a malformed workload-limit setting and confirms that calculations
+     * safely fall back to the system default rather than failing.
+     */
     @Test
     void invalidWorkloadSettingShouldFallBackToDefaultLimit() throws Exception {
         DataService ds = new DataService(tempDir.toString());

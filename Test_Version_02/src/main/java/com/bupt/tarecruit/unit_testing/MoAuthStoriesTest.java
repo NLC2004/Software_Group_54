@@ -11,11 +11,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies Module Organiser account operations exposed through the organiser
+ * portal, including registration, login and account-recovery credentials.
+ */
 class MoAuthStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Registers an MO identity and confirms that the stored user is assigned
+     * the organiser role expected by job-management endpoints.
+     */
     @Test
     void mo03_registerShouldCreateMoAccount() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -36,6 +44,10 @@ class MoAuthStoriesTest {
         assertEquals("MO", stored.role);
     }
 
+    /**
+     * Logs in with valid organiser credentials and confirms successful access
+     * through the role-specific MO portal.
+     */
     @Test
     void mo03_loginShouldAllowMoPortalAccess() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -55,6 +67,10 @@ class MoAuthStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("\"role\":\"MO\""));
     }
 
+    /**
+     * Changes an MO password with a valid current password and verifies that
+     * the new credential is persisted.
+     */
     @Test
     void mo08_changePasswordShouldUpdateStoredPassword() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -77,6 +93,10 @@ class MoAuthStoriesTest {
         assertEquals("new-pass-123", ds.getUserById(mo.id).password);
     }
 
+    /**
+     * Attempts an MO password change with an invalid current password and
+     * confirms the existing credential remains unchanged.
+     */
     @Test
     void mo08_changePasswordShouldRejectWrongOldPassword() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -99,6 +119,10 @@ class MoAuthStoriesTest {
         assertEquals("old-pass", ds.getUserById(mo.id).password);
     }
 
+    /**
+     * Submits an MO recovery request and verifies that it enters the reset
+     * approval workflow for administrator processing.
+     */
     @Test
     void mo09_forgotPasswordShouldCreateResetRequest() throws Exception {
         DataService ds = new DataService(tempDir.toString());

@@ -10,11 +10,20 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies the Teaching Assistant authentication stories and the privacy rules
+ * applied when credentials are submitted through role-specific login portals.
+ * Each test uses isolated storage so account changes do not leak between cases.
+ */
 class TaAuthStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Confirms that a TA can authenticate through the TA portal using a valid
+     * student identifier and receives a session-bearing TA response.
+     */
     @Test
     void ta02_loginShouldAllowTaUsingStudentId() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -42,6 +51,10 @@ class TaAuthStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("\"role\":\"TA\""));
     }
 
+    /**
+     * Confirms that a shared identifier can represent both a TA and an MO
+     * while the selected portal resolves only the intended account.
+     */
     @Test
     void ta02_loginShouldAllowTaWhenMoSharesSameStudentId() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -85,6 +98,10 @@ class TaAuthStoriesTest {
         assertTrue(moLogin.getResponseBodyAsString().contains("\"role\":\"MO\""));
     }
 
+    /**
+     * Ensures a wrong-portal login returns a generic failure, rather than
+     * revealing that the identifier belongs to a valid account of another role.
+     */
     @Test
     void ta02_loginShouldNotRevealAccountExistsOnAnotherPortal() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -111,6 +128,10 @@ class TaAuthStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("Invalid teacher ID, email, or password"));
     }
 
+    /**
+     * Exercises the successful password-change path and verifies that the new
+     * password replaces the current value in persisted user data.
+     */
     @Test
     void ta04_changePasswordShouldUpdateStoredPassword() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -133,6 +154,10 @@ class TaAuthStoriesTest {
         assertEquals("new-pass-123", ds.getUserById(ta.id).password);
     }
 
+    /**
+     * Protects account ownership by rejecting password changes made with an
+     * incorrect current password and preserving the original credential.
+     */
     @Test
     void ta04_changePasswordShouldRejectWrongOldPassword() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -155,6 +180,10 @@ class TaAuthStoriesTest {
         assertEquals("old-pass", ds.getUserById(ta.id).password);
     }
 
+    /**
+     * Confirms that complete TA registration stores the correct role and
+     * student identity and immediately returns an authenticated token.
+     */
     @Test
     void ta06_registerShouldCreateTaAccountAndReturnToken() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -176,6 +205,10 @@ class TaAuthStoriesTest {
         assertEquals("BUPT-REG-001", stored.studentId);
     }
 
+    /**
+     * Enforces account-name uniqueness by refusing to register a second TA
+     * under an existing username.
+     */
     @Test
     void ta06_registerShouldRejectDuplicateUsername() throws Exception {
         DataService ds = new DataService(tempDir.toString());

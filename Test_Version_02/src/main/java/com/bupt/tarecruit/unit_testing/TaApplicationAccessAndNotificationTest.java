@@ -14,11 +14,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies TA read-access boundaries for application records and the
+ * notification inbox operations used to follow application outcomes.
+ */
 class TaApplicationAccessAndNotificationTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Lists applications for an authenticated TA and confirms that records
+     * submitted by other applicants are excluded from the response.
+     */
     @Test
     void ta07_listApplicationsShouldReturnOnlyCurrentTasOwnApplications() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -45,6 +53,10 @@ class TaApplicationAccessAndNotificationTest {
         assertTrue(body.contains("Algorithms"));
     }
 
+    /**
+     * Confirms that the owner of an application is allowed to retrieve its
+     * individual detail view.
+     */
     @Test
     void ta08_getApplicationDetailShouldAllowOwnApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -67,6 +79,10 @@ class TaApplicationAccessAndNotificationTest {
         assertTrue(body.contains(ta.email));
     }
 
+    /**
+     * Confirms object-level authorization by denying access to an application
+     * record belonging to a different TA.
+     */
     @Test
     void ta08_getApplicationDetailShouldRejectOtherTasApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -87,6 +103,10 @@ class TaApplicationAccessAndNotificationTest {
         assertTrue(ex.getResponseBodyAsString().contains("Not your application"));
     }
 
+    /**
+     * Confirms that notification listing is user-scoped and that reading one
+     * owned notification persists its read state without exposing other users.
+     */
     @Test
     void ta10_notificationsShouldListOnlyUsersNotificationsAndMarkSingleAsRead() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -141,6 +161,10 @@ class TaApplicationAccessAndNotificationTest {
         assertFalse(ds.getNotificationById(oldNotif.id).read);
     }
 
+    /**
+     * Confirms that the read-all action updates each unread notification owned
+     * by the current TA.
+     */
     @Test
     void ta10_notificationsShouldMarkAllAsRead() throws Exception {
         DataService ds = new DataService(tempDir.toString());
