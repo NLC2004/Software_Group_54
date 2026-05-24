@@ -86,7 +86,7 @@ class TaAuthStoriesTest {
     }
 
     @Test
-    void ta02_loginShouldRejectWrongPortalRole() throws Exception {
+    void ta02_loginShouldNotRevealAccountExistsOnAnotherPortal() throws Exception {
         DataService ds = new DataService(tempDir.toString());
         User ta = new User();
         ta.username = "ta_portal_role";
@@ -107,8 +107,8 @@ class TaAuthStoriesTest {
 
         handler.handle(ex);
 
-        assertEquals(403, ex.getResponseCode());
-        assertTrue(ex.getResponseBodyAsString().contains("This portal is for MO accounts only"));
+        assertEquals(401, ex.getResponseCode());
+        assertTrue(ex.getResponseBodyAsString().contains("Invalid teacher ID, email, or password"));
     }
 
     @Test
