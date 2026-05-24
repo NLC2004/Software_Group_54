@@ -13,11 +13,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies the MO applicant review and decision workflow, including ownership
+ * visibility, CV information, approval/rejection and quota protection.
+ */
 class MoApplicantReviewStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Lists applicants for an owned vacancy and confirms the review response
+     * includes applicant identity and uploaded CV reference information.
+     */
     @Test
     void mo06_viewApplicantsShouldReturnCvAndApplicantInfoForOwnJob() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -46,6 +54,10 @@ class MoApplicantReviewStoriesTest {
         assertTrue(body.contains(ta.studentId));
     }
 
+    /**
+     * Confirms that an organiser cannot inspect applications submitted to a
+     * vacancy owned by a different organiser.
+     */
     @Test
     void mo06_viewApplicantsShouldRejectOtherMosJob() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -64,6 +76,10 @@ class MoApplicantReviewStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("Not authorized"));
     }
 
+    /**
+     * Approves a pending applicant and verifies both the persisted decision
+     * and the outcome notification delivered to the TA.
+     */
     @Test
     void mo07_approveApplicantShouldUpdateStatusAndNotifyTa() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -84,6 +100,10 @@ class MoApplicantReviewStoriesTest {
         assertTrue(ds.getNotificationsByUser(ta.id).stream().anyMatch(n -> "Application Approved".equals(n.title)));
     }
 
+    /**
+     * Attempts approval after a vacancy quota has already been filled and
+     * confirms the remaining application stays pending.
+     */
     @Test
     void mo07_approveApplicantShouldRejectWhenQuotaIsFull() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -108,6 +128,10 @@ class MoApplicantReviewStoriesTest {
         assertEquals("PENDING", ds.getApplicationById(pending.id).status);
     }
 
+    /**
+     * Rejects a pending applicant and verifies that the persisted status and
+     * applicant notification both reflect that result.
+     */
     @Test
     void mo07_rejectApplicantShouldUpdateStatusAndNotifyTa() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -128,6 +152,10 @@ class MoApplicantReviewStoriesTest {
         assertTrue(ds.getNotificationsByUser(ta.id).stream().anyMatch(n -> "Application Rejected".equals(n.title)));
     }
 
+    /**
+     * Attempts a status transition not permitted to an organiser and confirms
+     * the stored pending application is not altered.
+     */
     @Test
     void mo07_shouldRejectInvalidMoStatusChange() throws Exception {
         DataService ds = new DataService(tempDir.toString());

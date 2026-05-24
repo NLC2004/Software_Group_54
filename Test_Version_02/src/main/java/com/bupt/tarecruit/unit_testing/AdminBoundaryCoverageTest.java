@@ -15,11 +15,19 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Covers administrator authorization and configuration boundary cases that
+ * could otherwise permit unintended privileged actions.
+ */
 class AdminBoundaryCoverageTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Calls an administrator statistics endpoint as a TA and confirms that
+     * non-administrators cannot view system-level recruitment information.
+     */
     @Test
     void nonAdminShouldBeDeniedAdminStatistics() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -34,6 +42,10 @@ class AdminBoundaryCoverageTest {
         assertTrue(stats.getResponseBodyAsString().contains("Admin only"));
     }
 
+    /**
+     * Demonstrates standard-admin read visibility while confirming destructive
+     * user deletion remains reserved for the super administrator.
+     */
     @Test
     void standardAdminShouldReadUsersButNotDeleteAccounts() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -55,6 +67,10 @@ class AdminBoundaryCoverageTest {
         assertNotNull(ds.getUserById(target.id));
     }
 
+    /**
+     * Attempts to assign an unknown role-template identifier when creating an
+     * administrator and confirms invalid privilege metadata is rejected.
+     */
     @Test
     void superAdminShouldRejectUnknownAdminRoleTemplateAssignment() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -72,6 +88,10 @@ class AdminBoundaryCoverageTest {
         assertNull(ds.getUserByUsername("template_admin"));
     }
 
+    /**
+     * Configures an active reset template with a custom initial password and
+     * verifies approved resets honor that configured value.
+     */
     @Test
     void activePasswordResetTemplateShouldControlApprovedInitialPassword() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -100,6 +120,10 @@ class AdminBoundaryCoverageTest {
         assertEquals("Reset#2026", ds.getUserById(ta.id).password);
     }
 
+    /**
+     * Broadcasts to TAs containing active and inactive accounts and verifies
+     * only active recipients receive notices while an evidence file is saved.
+     */
     @Test
     void bulkNotificationShouldSkipInactiveRecipientsAndCreateEvidenceFile() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -124,6 +148,10 @@ class AdminBoundaryCoverageTest {
         }
     }
 
+    /**
+     * Confirms that a standard administrator cannot approve a TA recovery
+     * request or alter the applicant's stored password.
+     */
     @Test
     void standardAdminShouldNotProcessPasswordResetRequest() throws Exception {
         DataService ds = new DataService(tempDir.toString());

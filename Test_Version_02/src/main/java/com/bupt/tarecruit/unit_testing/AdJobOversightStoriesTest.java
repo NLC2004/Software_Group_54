@@ -11,11 +11,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies administrator oversight of MO-created postings, including global
+ * edit/delete authority and visibility of applications for any vacancy.
+ */
 class AdJobOversightStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Updates a posting owned by an organiser while authenticated as admin and
+     * verifies that administrative oversight can correct posting data.
+     */
     @Test
     void ad03_adminShouldUpdateAnyJobPosting() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -41,6 +49,10 @@ class AdJobOversightStoriesTest {
         assertEquals("CLOSED", updated.status);
     }
 
+    /**
+     * Deletes an organiser-owned posting as admin and verifies its removal
+     * regardless of original ownership.
+     */
     @Test
     void ad03_adminShouldDeleteAnyJobPosting() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -59,6 +71,10 @@ class AdJobOversightStoriesTest {
         assertNull(ds.getJobById(job.id));
     }
 
+    /**
+     * Lists applications under an organiser's posting as admin to verify the
+     * cross-posting monitoring permission required for oversight.
+     */
     @Test
     void ad03_adminShouldViewApplicationsForAnyJob() throws Exception {
         DataService ds = new DataService(tempDir.toString());

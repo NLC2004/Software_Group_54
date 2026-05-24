@@ -10,11 +10,20 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies the Module Organiser vacancy-management workflow, including
+ * creation, editing, filtering, ownership authorization and related-data
+ * cleanup when a vacancy is deleted.
+ */
 class MoJobManagementStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Creates a new TA vacancy as an authenticated organiser and checks that
+     * the stored posting belongs to that organiser and begins open.
+     */
     @Test
     void mo01_createJobShouldAllowMoToPostTask() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -43,6 +52,10 @@ class MoJobManagementStoriesTest {
         assertEquals("OPEN", stored.status);
     }
 
+    /**
+     * Updates an owned vacancy and verifies editable task, workload and status
+     * fields are persisted.
+     */
     @Test
     void mo01_updateJobShouldAllowOwnerToEditPostedTask() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -69,6 +82,10 @@ class MoJobManagementStoriesTest {
         assertEquals("ACTIVITY", updated.type);
     }
 
+    /**
+     * Prevents creation of a course schedule that repeats the same teaching
+     * week, avoiding inconsistent workload calculations.
+     */
     @Test
     void mo01_createJobShouldRejectDuplicateCourseScheduleWeeks() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -90,6 +107,10 @@ class MoJobManagementStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("Course Week must be unique"));
     }
 
+    /**
+     * Prevents an existing vacancy from being updated with duplicate course
+     * week entries.
+     */
     @Test
     void mo01_updateJobShouldRejectDuplicateCourseScheduleWeeks() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -112,6 +133,10 @@ class MoJobManagementStoriesTest {
         assertTrue(ex.getResponseBodyAsString().contains("Course Week must be unique"));
     }
 
+    /**
+     * Confirms that only the posting owner or an administrator may delete an
+     * MO vacancy.
+     */
     @Test
     void mo01_deleteJobShouldRejectNonOwner() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -131,6 +156,10 @@ class MoJobManagementStoriesTest {
         assertNotNull(ds.getJobById(job.id));
     }
 
+    /**
+     * Deletes an owned vacancy and verifies that dependent applications,
+     * unfinished drafts and vacancy-related notifications are removed as well.
+     */
     @Test
     void mo01_deleteJobShouldCascadeApplicationsDraftsAndApplicationNotifications() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -169,6 +198,10 @@ class MoJobManagementStoriesTest {
                 .count());
     }
 
+    /**
+     * Verifies the organiser-facing list query can narrow results by posting
+     * owner and matching text in one request.
+     */
     @Test
     void mo01_listJobsShouldSupportPostedByAndSearchFiltering() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -188,6 +221,10 @@ class MoJobManagementStoriesTest {
         assertFalse(body.contains("Networks TA"));
     }
 
+    /**
+     * Verifies that organisers can create supported non-default vacancy types
+     * used for different teaching assistance activities.
+     */
     @Test
     void mo11_createJobShouldSupportDifferentCourseTypes() throws Exception {
         DataService ds = new DataService(tempDir.toString());

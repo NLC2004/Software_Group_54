@@ -15,21 +15,37 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies deterministic AI-assisted matching behavior, including explanation
+ * output, persistence visibility, model validation and per-TA usage limits.
+ */
 class AiMatchingStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Enables deterministic mock matching so unit tests make no network calls
+     * and receive stable model responses suitable for assertions.
+     */
     @BeforeEach
     void enableMockAiApi() {
         System.setProperty("ta.ai.mockApi", "true");
     }
 
+    /**
+     * Removes the mock-system property after each test so it cannot influence
+     * other test classes executed in the same JVM.
+     */
     @AfterEach
     void clearMockAiApi() {
         System.clearProperty("ta.ai.mockApi");
     }
 
+    /**
+     * Requests a TA match result and confirms that the response explains
+     * matched skills, gaps, scoring and recommendation content.
+     */
     @Test
     void aiMatchShouldExplainMatchedAndMissingSkillsForTa() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -59,6 +75,10 @@ class AiMatchingStoriesTest {
         assertTrue(body.contains("\"recommendation\""));
     }
 
+    /**
+     * Verifies that an MO applicant list contains no artificial AI summary
+     * before matching, then displays the saved analysis after matching runs.
+     */
     @Test
     void moApplicationListShouldOnlyIncludeSavedAiMatchAfterRun() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -104,6 +124,10 @@ class AiMatchingStoriesTest {
         assertTrue(body.contains("\"workloadRisk\""));
     }
 
+    /**
+     * Invokes matching repeatedly as one TA and verifies that only three
+     * successful uses are allowed before quota enforcement occurs.
+     */
     @Test
     void taAiMatchShouldBeLimitedToThreeSuccessfulCalls() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -138,6 +162,10 @@ class AiMatchingStoriesTest {
         assertTrue(blocked.getResponseBodyAsString().contains("AI match limit reached"));
     }
 
+    /**
+     * Requests matching through an unsupported model value and verifies that
+     * model validation rejects it before any result is accepted.
+     */
     @Test
     void aiMatchShouldRejectUnsupportedModel() throws Exception {
         DataService ds = new DataService(tempDir.toString());

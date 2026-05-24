@@ -13,11 +13,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies the core TA application lifecycle: preference ranking, eligibility
+ * rules, conflict reconciliation and voluntary withdrawal behavior.
+ */
 class TaApplicationFlowTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Rejects a preference outside positions 1 through 3, proving that only
+     * valid ranked applications can be persisted.
+     */
     @Test
     void ta12_applyShouldRejectPriorityOutsideRange() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -37,6 +45,10 @@ class TaApplicationFlowTest {
         assertEquals(0, ds.getApplicationsByApplicant(ta.id).size());
     }
 
+    /**
+     * Rejects a second active application using an already occupied priority,
+     * preserving an unambiguous ordered preference list.
+     */
     @Test
     void ta12_applyShouldRejectDuplicatePriorityAmongActiveApplications() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -63,6 +75,10 @@ class TaApplicationFlowTest {
         assertEquals(1, ds.getApplicationsByApplicant(ta.id).size());
     }
 
+    /**
+     * Rejects a fourth active submission after the TA has already selected the
+     * maximum three vacancies permitted by the workflow.
+     */
     @Test
     void ta12_applyShouldRejectWhenThreeActiveApplicationsAlreadyExist() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -89,6 +105,10 @@ class TaApplicationFlowTest {
         assertEquals(3, ds.getApplicationsByApplicant(ta.id).size());
     }
 
+    /**
+     * Rejects applications submitted after a vacancy deadline, and checks that
+     * no accidental application record is written.
+     */
     @Test
     void ta12_applyShouldRejectExpiredJobDeadline() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -110,6 +130,10 @@ class TaApplicationFlowTest {
         assertEquals(0, ds.getApplicationsByApplicant(ta.id).size());
     }
 
+    /**
+     * Rejects a new submission once approved applications have filled the
+     * vacancy quota.
+     */
     @Test
     void ta12_applyShouldRejectJobThatReachedQuota() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -131,6 +155,10 @@ class TaApplicationFlowTest {
         assertEquals(0, ds.getApplicationsByApplicant(ta.id).size());
     }
 
+    /**
+     * Confirms that priorities held only by withdrawn or rejected applications
+     * become available for a new active preference.
+     */
     @Test
     void ta12_applyShouldAllowReusingPriorityFromWithdrawnOrRejectedApplications() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -157,6 +185,10 @@ class TaApplicationFlowTest {
                 .count());
     }
 
+    /**
+     * Confirms that a previous rejection does not permanently prevent a TA
+     * from submitting a fresh application to the same vacancy.
+     */
     @Test
     void ta12_applyShouldAllowReapplyingSameJobAfterRejection() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -180,6 +212,10 @@ class TaApplicationFlowTest {
                 .count());
     }
 
+    /**
+     * Runs defensive data reconciliation over conflicting stored priorities
+     * and confirms that duplicate active rankings are withdrawn.
+     */
     @Test
     void ta12_reconcileShouldWithdrawDuplicateActivePriorityRecords() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -204,6 +240,10 @@ class TaApplicationFlowTest {
                 .count());
     }
 
+    /**
+     * Confirms the normal cancellation workflow by allowing the application
+     * owner to withdraw a submission while it remains pending.
+     */
     @Test
     void ta11_withdrawShouldAllowOwnApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -224,6 +264,10 @@ class TaApplicationFlowTest {
         assertEquals("WITHDRAWN", ds.getApplicationById(app.id).status);
     }
 
+    /**
+     * Protects completed decisions by preventing withdrawal after an
+     * application is no longer pending.
+     */
     @Test
     void ta11_withdrawShouldRejectNonPendingApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -244,6 +288,10 @@ class TaApplicationFlowTest {
         assertEquals("APPROVED", ds.getApplicationById(app.id).status);
     }
 
+    /**
+     * Protects ownership by refusing an attempt to withdraw another TA's
+     * application.
+     */
     @Test
     void ta11_withdrawShouldRejectOtherUsersApplication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
