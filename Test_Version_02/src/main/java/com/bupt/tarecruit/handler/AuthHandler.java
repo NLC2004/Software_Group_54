@@ -11,10 +11,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents the auth handler component of the TA recruitment system.
+ */
 public class AuthHandler extends BaseHandler {
 
+    /**
+     * Creates a new auth handler instance.
+     */
     public AuthHandler(DataService ds) { super(ds); }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;

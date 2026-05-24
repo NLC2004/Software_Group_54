@@ -3070,5 +3070,69 @@
     "action": "LOGIN",
     "detail": "User logged in",
     "createdAt": 1779532034239
+  },
+  {
+    "id": "e8247fb9",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779598005510
+  },
+  {
+    "id": "c618ad50",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Class Test TA: Data Structures",
+    "createdAt": 1779598326948
+  },
+  {
+    "id": "bcba7cf3",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Class Test TA: Data Structures",
+    "createdAt": 1779598361314
+  },
+  {
+    "id": "566795f2",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779599006979
+  },
+  {
+    "id": "b424f867",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Class Test TA: Data Structures",
+    "createdAt": 1779600704909
+  },
+  {
+    "id": "dc59f9e6",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Class Test TA: Data Structures",
+    "createdAt": 1779600713814
+  },
+  {
+    "id": "3c87c280",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "LOGIN",
+    "detail": "User logged in",
+    "createdAt": 1779602591927
+  },
+  {
+    "id": "3a9a3916",
+    "userId": "mo004",
+    "username": "teacher04",
+    "action": "UPDATE_JOB",
+    "detail": "Updated job: Final Exam TA: Database Systems",
+    "createdAt": 1779602599650
   }
 ]

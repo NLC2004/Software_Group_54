@@ -16,6 +16,9 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
 
+/**
+ * Represents the ai matching service component of the TA recruitment system.
+ */
 public class AiMatchingService {
     private static final String API_BASE_URL = "https://jeniya.cn";
     private static final String API_KEY = "sk-RyysKIhqi4L2XiqvCPfMxAg3Ae0ygYYLfTGb5drCghmfsUy8";
@@ -31,14 +34,23 @@ public class AiMatchingService {
             .connectTimeout(Duration.ofSeconds(15))
             .build();
 
+    /**
+     * Creates a new ai matching service instance.
+     */
     public AiMatchingService(DataService ds) {
         this.ds = ds;
     }
 
+    /**
+     * Handles the match operation.
+     */
     public Map<String, Object> match(Job job, User applicant, String coverLetter, Application currentApplication) {
         return match(job, applicant, coverLetter, currentApplication, DEFAULT_MODEL);
     }
 
+    /**
+     * Handles the match operation.
+     */
     public Map<String, Object> match(Job job, User applicant, String coverLetter, Application currentApplication, String model) {
         String resolvedModel = normalizeModel(model);
         System.out.println("[AiMatchingService] match() invoked, model=" + resolvedModel
@@ -58,10 +70,16 @@ public class AiMatchingService {
         throw new IllegalStateException("AI API call failed. Please try again later.");
     }
 
+    /**
+     * Handles the is allowed model operation.
+     */
     public boolean isAllowedModel(String model) {
         return ALLOWED_MODELS.contains(normalizeModel(model));
     }
 
+    /**
+     * Handles the get default model operation.
+     */
     public String getDefaultModel() {
         return DEFAULT_MODEL;
     }
@@ -390,6 +408,9 @@ public class AiMatchingService {
         return signal;
     }
 
+    /**
+     * Handles the compute job weekly hours operation.
+     */
     public Map<Integer, Double> computeJobWeeklyHours(Job job) {
         if (job == null) return Collections.emptyMap();
         String tv = normalizeJobType(job.type);

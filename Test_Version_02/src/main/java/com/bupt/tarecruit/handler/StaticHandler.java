@@ -6,11 +6,20 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.nio.file.*;
 
+/**
+ * Represents the static handler component of the TA recruitment system.
+ */
 public class StaticHandler implements HttpHandler {
     private final String baseDir;
 
+    /**
+     * Creates a new static handler instance.
+     */
     public StaticHandler(String baseDir) { this.baseDir = baseDir; }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         String path = ex.getRequestURI().getPath();

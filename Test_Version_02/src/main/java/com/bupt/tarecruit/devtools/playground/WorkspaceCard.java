@@ -10,7 +10,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Represents the workspace card component of the TA recruitment system.
+ */
 public final class WorkspaceCard {
+    /**
+     * Enumerates the supported priority values.
+     */
     public enum Priority {
         LOW,
         MEDIUM,
@@ -18,6 +24,9 @@ public final class WorkspaceCard {
         CRITICAL
     }
 
+    /**
+     * Enumerates the supported state values.
+     */
     public enum State {
         TODO,
         ACTIVE,
@@ -38,6 +47,9 @@ public final class WorkspaceCard {
     private final Map<String, String> attributes;
     private final List<ChecklistItem> checklist;
 
+    /**
+     * Creates a new workspace card instance.
+     */
     public WorkspaceCard(String id, String title) {
         this.id = requireText(id, "id");
         this.title = requireText(title, "title");
@@ -52,64 +64,103 @@ public final class WorkspaceCard {
         this.checklist = new ArrayList<>();
     }
 
+    /**
+     * Handles the get id operation.
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Handles the get title operation.
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Handles the rename operation.
+     */
     public WorkspaceCard rename(String newTitle) {
         this.title = requireText(newTitle, "newTitle");
         touch();
         return this;
     }
 
+    /**
+     * Handles the get summary operation.
+     */
     public String getSummary() {
         return summary;
     }
 
+    /**
+     * Handles the update summary operation.
+     */
     public WorkspaceCard updateSummary(String newSummary) {
         this.summary = safeText(newSummary);
         touch();
         return this;
     }
 
+    /**
+     * Handles the get owner operation.
+     */
     public String getOwner() {
         return owner;
     }
 
+    /**
+     * Handles the assign owner operation.
+     */
     public WorkspaceCard assignOwner(String newOwner) {
         this.owner = safeText(newOwner).isEmpty() ? "Unassigned" : newOwner.trim();
         touch();
         return this;
     }
 
+    /**
+     * Handles the get priority operation.
+     */
     public Priority getPriority() {
         return priority;
     }
 
+    /**
+     * Handles the set priority operation.
+     */
     public WorkspaceCard setPriority(Priority priority) {
         this.priority = Objects.requireNonNull(priority, "priority");
         touch();
         return this;
     }
 
+    /**
+     * Handles the get state operation.
+     */
     public State getState() {
         return state;
     }
 
+    /**
+     * Handles the set state operation.
+     */
     public WorkspaceCard setState(State state) {
         this.state = Objects.requireNonNull(state, "state");
         touch();
         return this;
     }
 
+    /**
+     * Handles the get created at operation.
+     */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * Handles the set created at operation.
+     */
     public WorkspaceCard setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt");
         if (updatedAt.isBefore(this.createdAt)) {
@@ -118,19 +169,31 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the get updated at operation.
+     */
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
+    /**
+     * Handles the set updated at operation.
+     */
     public WorkspaceCard setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt");
         return this;
     }
 
+    /**
+     * Handles the get tags operation.
+     */
     public List<String> getTags() {
         return Collections.unmodifiableList(new ArrayList<>(tags));
     }
 
+    /**
+     * Handles the add tag operation.
+     */
     public WorkspaceCard addTag(String tag) {
         String normalized = safeText(tag).toLowerCase();
         if (!normalized.isEmpty()) {
@@ -140,6 +203,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the add tags operation.
+     */
     public WorkspaceCard addTags(List<String> values) {
         if (values == null) {
             return this;
@@ -150,6 +216,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the remove tag operation.
+     */
     public WorkspaceCard removeTag(String tag) {
         String normalized = safeText(tag).toLowerCase();
         if (tags.remove(normalized)) {
@@ -158,6 +227,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the clear tags operation.
+     */
     public WorkspaceCard clearTags() {
         if (!tags.isEmpty()) {
             tags.clear();
@@ -166,14 +238,23 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the has tag operation.
+     */
     public boolean hasTag(String tag) {
         return tags.contains(safeText(tag).toLowerCase());
     }
 
+    /**
+     * Handles the get attributes operation.
+     */
     public Map<String, String> getAttributes() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(attributes));
     }
 
+    /**
+     * Handles the put attribute operation.
+     */
     public WorkspaceCard putAttribute(String key, String value) {
         String normalizedKey = requireText(key, "key");
         attributes.put(normalizedKey, safeText(value));
@@ -181,6 +262,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the put attributes operation.
+     */
     public WorkspaceCard putAttributes(Map<String, String> values) {
         if (values == null) {
             return this;
@@ -191,6 +275,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the remove attribute operation.
+     */
     public WorkspaceCard removeAttribute(String key) {
         if (key != null && attributes.remove(key.trim()) != null) {
             touch();
@@ -198,16 +285,25 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the get checklist operation.
+     */
     public List<ChecklistItem> getChecklist() {
         return Collections.unmodifiableList(new ArrayList<>(checklist));
     }
 
+    /**
+     * Handles the add checklist item operation.
+     */
     public WorkspaceCard addChecklistItem(String label) {
         checklist.add(new ChecklistItem(label));
         touch();
         return this;
     }
 
+    /**
+     * Handles the add checklist item operation.
+     */
     public WorkspaceCard addChecklistItem(String label, boolean done, String note) {
         ChecklistItem item = new ChecklistItem(label);
         if (done) {
@@ -219,6 +315,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the remove checklist item operation.
+     */
     public WorkspaceCard removeChecklistItem(int index) {
         if (index >= 0 && index < checklist.size()) {
             checklist.remove(index);
@@ -227,6 +326,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the mark checklist item done operation.
+     */
     public WorkspaceCard markChecklistItemDone(int index) {
         if (index >= 0 && index < checklist.size()) {
             checklist.get(index).markDone();
@@ -235,6 +337,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the reopen checklist item operation.
+     */
     public WorkspaceCard reopenChecklistItem(int index) {
         if (index >= 0 && index < checklist.size()) {
             checklist.get(index).reopen();
@@ -243,6 +348,9 @@ public final class WorkspaceCard {
         return this;
     }
 
+    /**
+     * Handles the get completion percent operation.
+     */
     public double getCompletionPercent() {
         if (checklist.isEmpty()) {
             return 0.0;
@@ -256,6 +364,9 @@ public final class WorkspaceCard {
         return done * 100.0 / checklist.size();
     }
 
+    /**
+     * Handles the matches keyword operation.
+     */
     public boolean matchesKeyword(String keyword) {
         String probe = safeText(keyword).toLowerCase();
         if (probe.isEmpty()) {
@@ -288,6 +399,9 @@ public final class WorkspaceCard {
         return false;
     }
 
+    /**
+     * Handles the copy operation.
+     */
     public WorkspaceCard copy() {
         WorkspaceCard copy = new WorkspaceCard(id, title);
         copy.summary = summary;
@@ -304,6 +418,9 @@ public final class WorkspaceCard {
         return copy;
     }
 
+    /**
+     * Handles the to summary line operation.
+     */
     public String toSummaryLine() {
         return "[" + id + "] " + title + " | " + state + " | " + priority + " | " + owner;
     }
@@ -324,49 +441,79 @@ public final class WorkspaceCard {
         return value == null ? "" : value.trim();
     }
 
+    /**
+     * Represents the checklist item component of the TA recruitment system.
+     */
     public static final class ChecklistItem {
         private String label;
         private boolean done;
         private String note;
 
+        /**
+         * Creates a new checklist item instance.
+         */
         public ChecklistItem(String label) {
             this.label = requireText(label, "label");
             this.done = false;
             this.note = "";
         }
 
+        /**
+         * Handles the get label operation.
+         */
         public String getLabel() {
             return label;
         }
 
+        /**
+         * Handles the rename operation.
+         */
         public ChecklistItem rename(String newLabel) {
             this.label = requireText(newLabel, "newLabel");
             return this;
         }
 
+        /**
+         * Handles the is done operation.
+         */
         public boolean isDone() {
             return done;
         }
 
+        /**
+         * Handles the mark done operation.
+         */
         public ChecklistItem markDone() {
             this.done = true;
             return this;
         }
 
+        /**
+         * Handles the reopen operation.
+         */
         public ChecklistItem reopen() {
             this.done = false;
             return this;
         }
 
+        /**
+         * Handles the get note operation.
+         */
         public String getNote() {
             return note;
         }
 
+        /**
+         * Handles the set note operation.
+         */
         public ChecklistItem setNote(String note) {
             this.note = safeText(note);
             return this;
         }
 
+        /**
+         * Handles the copy operation.
+         */
         public ChecklistItem copy() {
             ChecklistItem copy = new ChecklistItem(label);
             copy.done = done;
@@ -374,6 +521,9 @@ public final class WorkspaceCard {
             return copy;
         }
 
+        /**
+         * Handles the to display line operation.
+         */
         public String toDisplayLine() {
             String marker = done ? "[x] " : "[ ] ";
             if (note.isEmpty()) {

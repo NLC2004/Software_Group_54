@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the text snapshot renderer component of the TA recruitment system.
+ */
 public final class TextSnapshotRenderer {
     private TextSnapshotRenderer() {
     }
 
+    /**
+     * Handles the render workspace operation.
+     */
     public static String renderWorkspace(PlaygroundWorkspace workspace) {
         StringBuilder builder = new StringBuilder();
         builder.append(boxTitle("Playground Workspace"));
@@ -55,6 +61,9 @@ public final class TextSnapshotRenderer {
         return builder.toString();
     }
 
+    /**
+     * Handles the render lane operation.
+     */
     public static String renderLane(WorkspaceLane lane) {
         StringBuilder builder = new StringBuilder();
         builder.append(lane.getName())
@@ -82,6 +91,9 @@ public final class TextSnapshotRenderer {
         return builder.toString();
     }
 
+    /**
+     * Handles the render card operation.
+     */
     public static String renderCard(WorkspaceCard card) {
         StringBuilder builder = new StringBuilder();
         builder.append("  - ").append(card.toSummaryLine()).append(System.lineSeparator());
@@ -103,6 +115,9 @@ public final class TextSnapshotRenderer {
         return builder.toString();
     }
 
+    /**
+     * Handles the render timeline operation.
+     */
     public static String renderTimeline(TimelineSketch timeline) {
         StringBuilder builder = new StringBuilder();
         builder.append("Name: ").append(timeline.getTitle()).append(System.lineSeparator());
@@ -120,6 +135,9 @@ public final class TextSnapshotRenderer {
         return builder.toString();
     }
 
+    /**
+     * Handles the render metrics operation.
+     */
     public static String renderMetrics(MetricNotebook notebook) {
         StringBuilder builder = new StringBuilder();
         if (notebook.getSeriesNames().isEmpty()) {
@@ -139,6 +157,9 @@ public final class TextSnapshotRenderer {
         return builder.toString();
     }
 
+    /**
+     * Handles the render validation operation.
+     */
     public static String renderValidation(WorkspaceRules.ValidationResult validationResult) {
         if (validationResult.isValid()) {
             return "Workspace passes all local playground checks." + System.lineSeparator();
@@ -150,6 +171,9 @@ public final class TextSnapshotRenderer {
         return builder.toString();
     }
 
+    /**
+     * Handles the render table operation.
+     */
     public static List<String> renderTable(Map<String, String> values) {
         List<String> lines = new ArrayList<>();
         int width = 0;
@@ -162,6 +186,9 @@ public final class TextSnapshotRenderer {
         return lines;
     }
 
+    /**
+     * Handles the box title operation.
+     */
     public static String boxTitle(String title) {
         String body = " " + title + " ";
         String edge = repeat("=", body.length());

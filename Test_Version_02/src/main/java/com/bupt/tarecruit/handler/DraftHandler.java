@@ -14,10 +14,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the draft handler component of the TA recruitment system.
+ */
 public class DraftHandler extends BaseHandler {
 
+    /**
+     * Creates a new draft handler instance.
+     */
     public DraftHandler(DataService ds) { super(ds); }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;

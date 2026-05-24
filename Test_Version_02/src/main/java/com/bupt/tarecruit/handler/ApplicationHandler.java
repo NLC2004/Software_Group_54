@@ -9,10 +9,19 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the application handler component of the TA recruitment system.
+ */
 public class ApplicationHandler extends BaseHandler {
 
+    /**
+     * Creates a new application handler instance.
+     */
     public ApplicationHandler(DataService ds) { super(ds); }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;

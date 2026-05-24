@@ -1,7 +1,7 @@
 /**
- * AD_04：基础统计指标的数据结构（由申请 applications 等记录聚合）。
- * 页面加载后由 /api/admin/stats 返回的 JSON 覆盖；此处提供默认占位，便于离线预览与对照需求「记录成 js 文件」。
- */
+ * AD_04: Data structure of basic statistical indicators (aggregated from records such as applications).
+ * The JSON returned by /api/admin/stats after page loading will overwrite this content; a default placeholder is provided here for offline preview and comparison purposes, which needs to be "recorded into a JavaScript file".
+*/
 window.BASIC_STATS_DATA = {
   source: 'aggregated_from_application_records',
   totalUsers: 0,

@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Represents the playground workspace component of the TA recruitment system.
+ */
 public final class PlaygroundWorkspace {
     private String title;
     private final LocalDateTime createdAt;
@@ -19,6 +22,9 @@ public final class PlaygroundWorkspace {
     private final List<String> notes;
     private final Map<String, String> metadata;
 
+    /**
+     * Creates a new playground workspace instance.
+     */
     public PlaygroundWorkspace(String title) {
         this.title = requireText(title, "title");
         this.createdAt = LocalDateTime.now();
@@ -29,45 +35,72 @@ public final class PlaygroundWorkspace {
         this.metadata = new LinkedHashMap<>();
     }
 
+    /**
+     * Handles the get title operation.
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Handles the rename operation.
+     */
     public PlaygroundWorkspace rename(String title) {
         this.title = requireText(title, "title");
         return this;
     }
 
+    /**
+     * Handles the get created at operation.
+     */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * Handles the create lane operation.
+     */
     public PlaygroundWorkspace createLane(String laneName) {
         lanes.putIfAbsent(requireText(laneName, "laneName"), new WorkspaceLane(laneName));
         return this;
     }
 
+    /**
+     * Handles the add lane operation.
+     */
     public PlaygroundWorkspace addLane(WorkspaceLane lane) {
         WorkspaceLane copy = Objects.requireNonNull(lane, "lane").copy();
         lanes.put(copy.getName(), copy);
         return this;
     }
 
+    /**
+     * Handles the get lane operation.
+     */
     public WorkspaceLane getLane(String laneName) {
         WorkspaceLane lane = lanes.get(safeText(laneName));
         return lane == null ? null : lane.copy();
     }
 
+    /**
+     * Handles the get lane names operation.
+     */
     public List<String> getLaneNames() {
         return Collections.unmodifiableList(new ArrayList<>(lanes.keySet()));
     }
 
+    /**
+     * Handles the add card to lane operation.
+     */
     public PlaygroundWorkspace addCardToLane(String laneName, WorkspaceCard card) {
         WorkspaceLane lane = lanes.computeIfAbsent(requireText(laneName, "laneName"), WorkspaceLane::new);
         lane.addCard(Objects.requireNonNull(card, "card"));
         return this;
     }
 
+    /**
+     * Handles the move card operation.
+     */
     public PlaygroundWorkspace moveCard(String fromLane, String toLane, String cardId) {
         WorkspaceLane source = lanes.get(safeText(fromLane));
         if (source == null) {
@@ -81,6 +114,9 @@ public final class PlaygroundWorkspace {
         return this;
     }
 
+    /**
+     * Handles the find card operation.
+     */
     public WorkspaceCard findCard(String cardId) {
         for (WorkspaceLane lane : lanes.values()) {
             WorkspaceCard card = lane.findCard(cardId);
@@ -91,6 +127,9 @@ public final class PlaygroundWorkspace {
         return null;
     }
 
+    /**
+     * Handles the locate card operation.
+     */
     public CardLocation locateCard(String cardId) {
         for (Map.Entry<String, WorkspaceLane> entry : lanes.entrySet()) {
             WorkspaceCard card = entry.getValue().findCard(cardId);
@@ -101,6 +140,9 @@ public final class PlaygroundWorkspace {
         return null;
     }
 
+    /**
+     * Handles the remove card operation.
+     */
     public boolean removeCard(String cardId) {
         for (WorkspaceLane lane : lanes.values()) {
             if (lane.removeCardById(cardId)) {
@@ -110,6 +152,9 @@ public final class PlaygroundWorkspace {
         return false;
     }
 
+    /**
+     * Handles the total cards operation.
+     */
     public int totalCards() {
         int total = 0;
         for (WorkspaceLane lane : lanes.values()) {
@@ -132,6 +177,9 @@ public final class PlaygroundWorkspace {
         return Collections.unmodifiableMap(counts);
     }
 
+    /**
+     * Handles the tag frequency operation.
+     */
     public Map<String, Integer> tagFrequency() {
         Map<String, Integer> counts = new LinkedHashMap<>();
         for (WorkspaceLane lane : lanes.values()) {
@@ -144,6 +192,9 @@ public final class PlaygroundWorkspace {
         return Collections.unmodifiableMap(counts);
     }
 
+    /**
+     * Handles the owner load operation.
+     */
     public Map<String, Integer> ownerLoad() {
         Map<String, Integer> counts = new LinkedHashMap<>();
         for (WorkspaceLane lane : lanes.values()) {
@@ -154,6 +205,9 @@ public final class PlaygroundWorkspace {
         return Collections.unmodifiableMap(counts);
     }
 
+    /**
+     * Handles the search operation.
+     */
     public List<WorkspaceCard> search(String keyword) {
         List<WorkspaceCard> result = new ArrayList<>();
         for (WorkspaceLane lane : lanes.values()) {
@@ -166,6 +220,9 @@ public final class PlaygroundWorkspace {
         return Collections.unmodifiableList(result);
     }
 
+    /**
+     * Handles the all tags operation.
+     */
     public Set<String> allTags() {
         Set<String> result = new LinkedHashSet<>();
         for (WorkspaceLane lane : lanes.values()) {
@@ -174,6 +231,9 @@ public final class PlaygroundWorkspace {
         return Collections.unmodifiableSet(result);
     }
 
+    /**
+     * Handles the add note operation.
+     */
     public PlaygroundWorkspace addNote(String note) {
         String normalized = safeText(note);
         if (!normalized.isEmpty()) {
@@ -182,41 +242,68 @@ public final class PlaygroundWorkspace {
         return this;
     }
 
+    /**
+     * Handles the get notes operation.
+     */
     public List<String> getNotes() {
         return Collections.unmodifiableList(new ArrayList<>(notes));
     }
 
+    /**
+     * Handles the put metadata operation.
+     */
     public PlaygroundWorkspace putMetadata(String key, String value) {
         metadata.put(requireText(key, "key"), safeText(value));
         return this;
     }
 
+    /**
+     * Handles the get metadata operation.
+     */
     public Map<String, String> getMetadata() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(metadata));
     }
 
+    /**
+     * Handles the get notebook operation.
+     */
     public MetricNotebook getNotebook() {
         return notebook.copy();
     }
 
+    /**
+     * Handles the get timeline operation.
+     */
     public TimelineSketch getTimeline() {
         return timeline.copy();
     }
 
+    /**
+     * Handles the add metric point operation.
+     */
     public PlaygroundWorkspace addMetricPoint(String seriesName, java.time.LocalDate day, double value) {
         notebook.addPoint(seriesName, day, value);
         return this;
     }
 
+    /**
+     * Handles the add milestone operation.
+     */
     public PlaygroundWorkspace addMilestone(String name, java.time.LocalDate day, String detail) {
         timeline.addMilestone(name, day, detail);
         return this;
     }
 
+    /**
+     * Handles the summary line operation.
+     */
     public String summaryLine() {
         return title + " | lanes=" + lanes.size() + " | cards=" + totalCards() + " | notes=" + notes.size();
     }
 
+    /**
+     * Handles the snapshot lanes operation.
+     */
     public Map<String, WorkspaceLane> snapshotLanes() {
         Map<String, WorkspaceLane> copy = new LinkedHashMap<>();
         for (Map.Entry<String, WorkspaceLane> entry : lanes.entrySet()) {
@@ -225,6 +312,9 @@ public final class PlaygroundWorkspace {
         return Collections.unmodifiableMap(copy);
     }
 
+    /**
+     * Handles the copy operation.
+     */
     public PlaygroundWorkspace copy() {
         PlaygroundWorkspace copy = new PlaygroundWorkspace(title);
         for (Map.Entry<String, WorkspaceLane> entry : lanes.entrySet()) {
@@ -251,19 +341,31 @@ public final class PlaygroundWorkspace {
         return value == null ? "" : value.trim();
     }
 
+    /**
+     * Represents the card location component of the TA recruitment system.
+     */
     public static final class CardLocation {
         private final String laneName;
         private final WorkspaceCard card;
 
+        /**
+         * Creates a new card location instance.
+         */
         public CardLocation(String laneName, WorkspaceCard card) {
             this.laneName = requireText(laneName, "laneName");
             this.card = Objects.requireNonNull(card, "card").copy();
         }
 
+        /**
+         * Handles the get lane name operation.
+         */
         public String getLaneName() {
             return laneName;
         }
 
+        /**
+         * Handles the get card operation.
+         */
         public WorkspaceCard getCard() {
             return card.copy();
         }

@@ -12,20 +12,41 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+/**
+ * Represents the base handler component of the TA recruitment system.
+ */
 public abstract class BaseHandler implements HttpHandler {
+    /**
+     * Stores the ds value.
+     */
     protected final DataService ds;
+    /**
+     * Stores the gson value.
+     */
     protected final Gson gson = new GsonBuilder().serializeNulls().create();
 
+    /**
+     * Creates a new base handler instance.
+     */
     public BaseHandler(DataService ds) { this.ds = ds; }
 
+    /**
+     * Handles the read body operation.
+     */
     protected String readBody(HttpExchange ex) throws IOException {
         return new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
     }
 
+    /**
+     * Handles the parse json operation.
+     */
     protected JsonObject parseJson(String body) {
         return gson.fromJson(body, JsonObject.class);
     }
 
+    /**
+     * Handles the send json operation.
+     */
     protected void sendJson(HttpExchange ex, int code, Object data) throws IOException {
         byte[] bytes = gson.toJson(data).getBytes(StandardCharsets.UTF_8);
         ex.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
@@ -34,16 +55,25 @@ public abstract class BaseHandler implements HttpHandler {
         try (var os = ex.getResponseBody()) { os.write(bytes); }
     }
 
+    /**
+     * Handles the send error operation.
+     */
     protected void sendError(HttpExchange ex, int code, String msg) throws IOException {
         sendJson(ex, code, Map.of("error", msg));
     }
 
+    /**
+     * Handles the authenticate operation.
+     */
     protected User authenticate(HttpExchange ex) {
         String auth = ex.getRequestHeaders().getFirst("Authorization");
         if (auth == null || !auth.startsWith("Bearer ")) return null;
         return ds.getSessionUser(auth.substring(7));
     }
 
+    /**
+     * Handles the get query param operation.
+     */
     protected String getQueryParam(HttpExchange ex, String key) {
         String query = ex.getRequestURI().getQuery();
         if (query == null) return null;
@@ -54,6 +84,9 @@ public abstract class BaseHandler implements HttpHandler {
         return null;
     }
 
+    /**
+     * Handles the add cors headers operation.
+     */
     protected void addCorsHeaders(HttpExchange ex) {
         var h = ex.getResponseHeaders();
         h.set("Access-Control-Allow-Origin", "*");
@@ -61,6 +94,9 @@ public abstract class BaseHandler implements HttpHandler {
         h.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     }
 
+    /**
+     * Handles the handle cors operation.
+     */
     protected boolean handleCors(HttpExchange ex) throws IOException {
         if ("OPTIONS".equals(ex.getRequestMethod())) {
             addCorsHeaders(ex);
