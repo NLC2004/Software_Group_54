@@ -238,7 +238,7 @@ Key management pages auto-refresh periodically when the browser tab is visible, 
 
 ### 3.5 Run Unit Tests (Optional)
 
-Unit tests use JUnit 5 and do not require the HTTP server to be running. Full commands and expected output (`70 tests successful`) are documented in [`UNIT_TEST_EVIDENCE.md`](UNIT_TEST_EVIDENCE.md).
+Unit tests use JUnit 5 and do not require the HTTP server to be running. Full commands and expected output (`103 tests successful`) are documented in [`Test_Version_02/UNIT_TEST_EVIDENCE.md`](Test_Version_02/UNIT_TEST_EVIDENCE.md).
 
 Quick summary from the project root (PowerShell on Windows):
 
@@ -287,6 +287,9 @@ Test_Version_02/
 | **Login fails for seeded accounts** | Use student ID / teacher ID or email; default password is `123456` (admin: `admin123`) |
 | **Password-reset email not sent** | Configure SMTP (Section 2.3); approval still works without email |
 | **Stale demo data** | Stop server, delete `data/` and `uploads/`, restart |
+| **Save / login fails after server restart** | Login sessions are in-memory; log in again at the correct portal (TA / MO / Admin) |
+| **Job detail shows updates but Edit page looks old** | Hard-refresh the edit page (`Ctrl+F5`), or open **Edit Job** again from the detail page |
+| **Wrong port in browser** | If you started with `.\run.bat 9090`, use `http://localhost:9090/...` in the browser |
 
 ---
 
@@ -297,4 +300,4 @@ Test_Version_02/
 - Three role-based web portals (TA, MO, Admin) with REST API backend.
 - Supports iterative Agile delivery with traceable user stories.
 
-For module-specific UI notes, see [`TA/README.md`](TA/README.md) and [`admin/README.md`](admin/README.md).
+For module-specific UI notes, see [`Test_Version_02/TA/README.md`](Test_Version_02/TA/README.md), [`Test_Version_02/MO/README.md`](Test_Version_02/MO/README.md), and [`Test_Version_02/admin/README.md`](Test_Version_02/admin/README.md).
