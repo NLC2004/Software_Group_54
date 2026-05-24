@@ -10,11 +10,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies administrator user-management stories, distinguishing privileged
+ * super-admin writes from searchable administrative visibility.
+ */
 class AdUserManagementStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Creates a user through the super-admin endpoint and confirms the account
+     * is stored with its supplied identity and role.
+     */
     @Test
     void ad02_superAdminShouldCreateUser() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -38,6 +46,10 @@ class AdUserManagementStoriesTest {
         assertEquals("MO", created.role);
     }
 
+    /**
+     * Attempts user creation as an ordinary administrator and verifies the
+     * super-admin-only write restriction.
+     */
     @Test
     void ad02_nonSuperAdminShouldNotCreateUser() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -60,6 +72,10 @@ class AdUserManagementStoriesTest {
         assertNull(ds.getUserByUsername("blocked_user"));
     }
 
+    /**
+     * Updates role and active status as super admin and checks that both
+     * account-control fields are persisted.
+     */
     @Test
     void ad09_superAdminShouldUpdateRoleAndActiveStatus() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -84,6 +100,10 @@ class AdUserManagementStoriesTest {
         assertFalse(updated.active);
     }
 
+    /**
+     * Searches and filters the administrative user list to verify efficient,
+     * role-aware user lookup behavior.
+     */
     @Test
     void ad11_userListShouldSupportSearchAndRoleFilter() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -104,6 +124,10 @@ class AdUserManagementStoriesTest {
         assertFalse(body.contains("bob_mo"));
     }
 
+    /**
+     * Retrieves one user's administrative detail record and verifies that
+     * identifying and account-state fields are visible to admin.
+     */
     @Test
     void ad13_shouldViewIndividualUserDetails() throws Exception {
         DataService ds = new DataService(tempDir.toString());

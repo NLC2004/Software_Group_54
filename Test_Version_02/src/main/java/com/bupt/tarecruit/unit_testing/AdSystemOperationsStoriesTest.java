@@ -13,11 +13,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies system-operation capabilities available through the administration
+ * panel: exports, audit review, announcements, settings and password resets.
+ */
 class AdSystemOperationsStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Requests an administrative core-data export and confirms both a
+     * completed export task record and its persisted CSV output file.
+     */
     @Test
     void ad05_exportShouldCreateExportTaskAndCsvFile() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -38,6 +46,10 @@ class AdSystemOperationsStoriesTest {
         assertTrue(Files.exists(ds.getUploadsDir().resolve(task.fileName)));
     }
 
+    /**
+     * Records distinguishable audit entries and verifies administrative search
+     * returns the matching event without unrelated audit noise.
+     */
     @Test
     void ad06_auditLogsShouldSupportSearch() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -58,6 +70,10 @@ class AdSystemOperationsStoriesTest {
         assertFalse(body.contains("Another log"));
     }
 
+    /**
+     * Sends a bulk administrative announcement targeted at TA and MO roles
+     * and verifies delivery to representative recipients.
+     */
     @Test
     void ad07_bulkNotificationShouldSendToTargetRoles() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -83,6 +99,10 @@ class AdSystemOperationsStoriesTest {
         assertTrue(ds.getNotificationsByUser(mo.id).stream().anyMatch(n -> "System Notice".equals(n.title)));
     }
 
+    /**
+     * Updates system configuration as super admin and verifies workload and
+     * recruitment-cycle settings are persisted for later use.
+     */
     @Test
     void ad08_superAdminShouldUpdateSystemSettings() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -105,6 +125,10 @@ class AdSystemOperationsStoriesTest {
         assertEquals("2026-01-01", ds.getSettings().get("applicationStartDate"));
     }
 
+    /**
+     * Approves a password-reset request and verifies the reset credential and
+     * applicant-facing notification are both created.
+     */
     @Test
     void ad10_approvePasswordResetShouldResetPasswordAndNotifyUser() throws Exception {
         DataService ds = new DataService(tempDir.toString());
