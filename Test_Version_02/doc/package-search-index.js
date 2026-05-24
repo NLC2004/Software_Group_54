@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.bupt.tarecruit"},{"l":"com.bupt.tarecruit.handler"},{"l":"com.bupt.tarecruit.model"},{"l":"com.bupt.tarecruit.service"}];updateSearchResults();
