@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Represents the workspace seed factory component of the TA recruitment system.
+ */
 public final class WorkspaceSeedFactory {
     private static final List<String> ADJECTIVES = List.of(
             "Quiet", "Curious", "Bright", "Open", "Warm", "Crisp", "Clear", "Soft", "Brisk", "Vivid"
@@ -28,6 +31,9 @@ public final class WorkspaceSeedFactory {
     private WorkspaceSeedFactory() {
     }
 
+    /**
+     * Handles the create workspace operation.
+     */
     public static PlaygroundWorkspace createWorkspace(long seed) {
         Random random = new Random(seed);
         PlaygroundWorkspace workspace = new PlaygroundWorkspace(buildTitle(random));
@@ -48,6 +54,9 @@ public final class WorkspaceSeedFactory {
         return workspace;
     }
 
+    /**
+     * Handles the create workspace operation.
+     */
     public static PlaygroundWorkspace createWorkspace(long seed, int cardsPerLane) {
         PlaygroundWorkspace workspace = createWorkspace(seed);
         Random random = new Random(seed * 31 + 7);
@@ -62,6 +71,9 @@ public final class WorkspaceSeedFactory {
         return workspace;
     }
 
+    /**
+     * Handles the render seed preview operation.
+     */
     public static String renderSeedPreview(long seed) {
         PlaygroundWorkspace workspace = createWorkspace(seed);
         return TextSnapshotRenderer.renderWorkspace(workspace);

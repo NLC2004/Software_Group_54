@@ -7,10 +7,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the workspace archive component of the TA recruitment system.
+ */
 public final class WorkspaceArchive {
     private WorkspaceArchive() {
     }
 
+    /**
+     * Handles the export workspace operation.
+     */
     public static List<String> exportWorkspace(PlaygroundWorkspace workspace) {
         List<String> lines = new ArrayList<>();
         lines.add("WORKSPACE|" + escape(workspace.getTitle()));
@@ -74,6 +80,9 @@ public final class WorkspaceArchive {
         return Collections.unmodifiableList(lines);
     }
 
+    /**
+     * Handles the import workspace operation.
+     */
     public static PlaygroundWorkspace importWorkspace(List<String> lines) {
         if (lines == null || lines.isEmpty()) {
             throw new IllegalArgumentException("lines must not be empty");
@@ -160,6 +169,9 @@ public final class WorkspaceArchive {
         return workspace;
     }
 
+    /**
+     * Handles the export bundle operation.
+     */
     public static ArchiveBundle exportBundle(PlaygroundWorkspace workspace) {
         return new ArchiveBundle(exportWorkspace(workspace), TextSnapshotRenderer.renderWorkspace(workspace));
     }
@@ -224,6 +236,9 @@ public final class WorkspaceArchive {
         return parts;
     }
 
+    /**
+     * Immutable data record for archive bundle.
+     */
     public record ArchiveBundle(List<String> lines, String preview) {
     }
 }

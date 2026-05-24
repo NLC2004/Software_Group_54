@@ -10,10 +10,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the notification handler component of the TA recruitment system.
+ */
 public class NotificationHandler extends BaseHandler {
 
+    /**
+     * Creates a new notification handler instance.
+     */
     public NotificationHandler(DataService ds) { super(ds); }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;

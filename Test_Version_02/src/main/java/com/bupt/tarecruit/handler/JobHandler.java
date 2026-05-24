@@ -13,10 +13,19 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the job handler component of the TA recruitment system.
+ */
 public class JobHandler extends BaseHandler {
 
+    /**
+     * Creates a new job handler instance.
+     */
     public JobHandler(DataService ds) { super(ds); }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;
