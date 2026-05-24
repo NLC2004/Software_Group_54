@@ -1,106 +1,106 @@
-# Admin (Static Admin Pages)
+# Admin Portal — System Administration
 
-This folder contains a **static (plain HTML)** admin dashboard UI:
+This folder contains the **Administrator** web portal for the BUPT International School TA Recruitment System (`Test_Version_02`). Admins monitor recruitment activity, manage users and workload, process password-reset requests, configure system settings, and review audit logs.
 
-- Pages are provided as `*.html` files
-- Navigation is done via relative links between pages (no SPA router)
-- Styling/icons/charts are loaded via CDN (no npm, no build step)
+All pages are served by the Java backend together with the REST API. **Do not use a standalone static server** — dashboards, user management, and settings require the main application server.
 
-## Tech Stack & External Dependencies
+---
 
-- **TailwindCSS** (CDN) for layout and styling
-- **Iconify** (CDN) for icons
-- **ECharts** (CDN) for charts on selected pages
-- **Google Fonts - Inter** for typography
+## Prerequisites
 
-Note: the JavaScript in these pages is primarily **UI demo interactions** (modals, drawers, tabs, alerts, etc.). There is currently no real backend API integration or authentication/authorization logic.
+1. Build and start the server from the project root (`Test_Version_02/`). See the main [README](../README.md).
+2. Open the Admin login page:
 
-## Pages (Entry & Navigation)
+   `http://localhost:8080/admin/index.html`
 
-Recommended entry page: `admin-dashboard.html`.
+3. Log in with the default admin account: `admin` / `admin123` (or another ADMIN user created in the system).
 
-- `admin-dashboard.html`
-  - System overview dashboard
-  - Includes an ECharts trend chart and a “Refresh Data” demo action
-- `job-supervision.html`
-  - Job / recruitment post supervision list
-  - Filters + bulk action bar (demo logic)
-  - Contains a small amount of Chinese UI text (e.g., delete confirmation)
-- `workload-overview.html`
-  - TA workload monitoring and statistics
-  - Includes ECharts pie/line charts and export/filter demo actions
-- `user-management.html`
-  - User management (students / teachers / administrators)
-  - Includes “Add user” and “Permissions” modals (demo logic)
-- `basic-statistics.html`
-  - Basic statistics and export center
-  - Includes ECharts charts and an export history table
-- `system-settings.html`
-  - System configuration (parameters, SMTP, email templates, admin/privileges, backup & recovery, etc.)
-  - Includes “Restore” modal demo logic
-- `audit-logs.html`
-  - Audit log list
-  - Includes a log details drawer (right side panel)
+Shared frontend utilities: [`../js/api.js`](../js/api.js).
 
-## How to Run / Preview
+---
 
-### Option 1: Open directly in a browser
+## Pages
 
-Since these are static pages, you can open `admin-dashboard.html` directly.
+Recommended entry: `admin-dashboard.html` (after login via `index.html`).
 
-- Chrome / Edge recommended
-- If you later add `fetch()` calls or other features that require an `http(s)` context, the `file://` approach may hit browser restrictions
+| Page | Description |
+|------|-------------|
+| `index.html` | Admin login |
+| `admin-dashboard.html` | System overview dashboard |
+| `job-supervision.html` | Supervise MO job postings across the system |
+| `workload-overview.html` | TA workload monitoring and charts |
+| `user-management.html` | Manage TA, MO, and admin accounts |
+| `user-detail.html` | Single-user detail and edits |
+| `password-reset-requests.html` | Approve or reject password-reset requests |
+| `basic-statistics.html` | Recruitment statistics and export |
+| `system-settings.html` | Recruitment window, workload limits, SMTP, email templates |
+| `audit-logs.html` | Audit log viewer |
 
-### Option 2: Start a local static server (recommended)
+Admins can also open MO or TA pages in **proxy view** (via user-management links) to inspect another user's portal with admin credentials.
 
-Run a static server in this folder and visit:
+---
 
-- `http://localhost:<port>/admin-dashboard.html`
+## Tech Stack & Dependencies
 
-Windows (PowerShell) examples:
+- **Tailwind CSS** (CDN) — layout and styling
+- **Iconify** (CDN) — icons
+- **ECharts** (CDN) — charts on dashboard, workload, and statistics pages
+- **Google Fonts — Inter**
+- **Java backend** — `/api/admin/*` and shared `/api/*` endpoints
 
-- Python 3:
-  - `python -m http.server 5173`
-- Node (if installed):
-  - `npx serve -l 5173`
+---
 
-## Folder Structure
+## API Integration
 
-This folder currently contains only page files:
+Admin pages use authenticated REST calls, including:
 
-- `admin-dashboard.html`
-- `audit-logs.html`
-- `basic-statistics.html`
-- `job-supervision.html`
-- `system-settings.html`
-- `user-management.html`
-- `workload-overview.html`
+- `/api/auth/login` with `portalRole: 'ADMIN'`
+- `/api/admin/users`, `/api/admin/settings`, `/api/admin/password-resets`
+- `/api/admin/audit-logs`, statistics and export endpoints
+- Shared resources: jobs, applications, notifications
 
-Not included:
+Portal-scoped auth tokens are stored in `localStorage` via `api.js` (key suffix `_admin`).
 
-- A dedicated `assets/` folder (CSS/JS/images)
-- Shared layout/components (sidebar and base styles are duplicated per page)
-- Real backend API endpoints, request wrappers, login, or access control
+---
 
-## Common Maintenance Notes
+## How to Run
 
-- **Unify sidebar/header**: each page embeds its own sidebar/styles. Consider extracting a shared template/component to avoid repeated edits.
-- **CDN dependencies**:
-  - CDN may be unreachable in intranet/offline environments
-  - For production, consider self-hosting static assets (or serving from your own static domain)
-- **Authentication & authorization**: currently there is no login state or permission checks. When integrating with a backend, you typically need:
-  - A login page (token/session acquisition)
-  - A guard on page load (redirect to login when unauthenticated)
-  - Role-based UI gating (hide menus/actions) plus server-side enforcement as the final authority
-- **Data integration**: current charts and tables use static/demo data. When wiring up real data, consider:
-  - Centralizing HTTP calls into a single `api.js` (or TypeScript) module
-  - Standardizing error handling, timeouts, retries, and loading states
+From `Test_Version_02/`:
 
-## Known Issue
+```powershell
+.\build.bat
+.\run.bat
+```
 
-- `workload-overview.html` contains a small piece of corrupted/extra text near the end of the sidebar markup (similar to `</aside>te-100"&gt;`).
-  - It does not change the overall intent of the page, but should be cleaned up to improve readability and reduce layout risk.
+Then visit `http://localhost:8080/admin/index.html`.
 
-## Notes
+Custom port example: `.\run.bat 9090` → use `http://localhost:9090/admin/index.html`.
 
-This README **only documents the admin static pages in this folder**. If your repository also contains a backend, a non-admin user portal, or other modules, document those modules separately in their own directories.
+---
+
+## Maintenance Notes
+
+- **Sidebar/layout**: each page embeds its own sidebar; consider extracting shared markup if you add many new pages.
+- **CDN**: Tailwind, Iconify, and ECharts require network access unless you self-host assets.
+- **Security**: UI role checks are for convenience only; the Java handlers enforce authorization on every API request.
+- **SMTP**: optional; configure in System Settings or `data/settings.json` (see main [README](../README.md)).
+
+---
+
+## Folder Contents
+
+```
+admin/
+├── index.html
+├── admin-dashboard.html
+├── audit-logs.html
+├── basic-statistics.html
+├── job-supervision.html
+├── password-reset-requests.html
+├── system-settings.html
+├── user-detail.html
+├── user-management.html
+└── workload-overview.html
+```
+
+For project-wide setup, troubleshooting, and course alignment, see the main [README](../README.md).
