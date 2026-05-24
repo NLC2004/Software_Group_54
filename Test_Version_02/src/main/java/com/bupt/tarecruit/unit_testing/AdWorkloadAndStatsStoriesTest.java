@@ -15,11 +15,19 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Verifies the administrative monitoring dashboard calculations for TA
+ * workload and recruitment statistics.
+ */
 class AdWorkloadAndStatsStoriesTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Builds an overloaded TA workload and confirms the admin report detects
+     * that condition while respecting its filtering options.
+     */
     @Test
     void ad01_workloadShouldShowOverloadedTaAndSupportStatusFilter() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -48,6 +56,10 @@ class AdWorkloadAndStatsStoriesTest {
         assertTrue(body.contains("\"overloaded\":true"));
     }
 
+    /**
+     * Stores representative applications and users then verifies that the
+     * aggregate administration summary reports their totals.
+     */
     @Test
     void ad04_statsShouldReturnApplicationAndUserSummary() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -77,6 +89,10 @@ class AdWorkloadAndStatsStoriesTest {
         assertTrue(body.contains("pendingPasswordResets"));
     }
 
+    /**
+     * Confirms that dashboard statistics include ranking and vacancy-capacity
+     * measures required for monitoring the recruitment cycle.
+     */
     @Test
     void ad12_statsShouldIncludePriorityAndQuotaSummary() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -107,6 +123,10 @@ class AdWorkloadAndStatsStoriesTest {
         assertTrue(body.contains("openJobs"));
     }
 
+    /**
+     * Ensures an already-live open vacancy remains counted even when date
+     * filters apply to newly created activity in the report period.
+     */
     @Test
     void ad04_statsOpenJobsShouldReflectAllLiveJobsNotOnlyCreatedInPeriod() throws Exception {
         DataService ds = new DataService(tempDir.toString());

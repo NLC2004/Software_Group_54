@@ -16,11 +16,19 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Adds cross-role and negative-path authorization coverage for authentication,
+ * password recovery, notifications, drafts and CV file access.
+ */
 class ExtendedAuthenticationAndAccessTest {
 
     @TempDir
     Path tempDir;
 
+    /**
+     * Confirms that correct credentials cannot produce a session once an
+     * administrator has deactivated the account.
+     */
     @Test
     void loginShouldRejectDeactivatedAccountWithoutIssuingAccess() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -38,6 +46,10 @@ class ExtendedAuthenticationAndAccessTest {
         assertFalse(login.getResponseBodyAsString().contains("\"token\""));
     }
 
+    /**
+     * Confirms that MO registration maps its portal-facing teacher identifier
+     * to storage and returns it under the MO response contract.
+     */
     @Test
     void moRegistrationShouldPersistTeacherIdAndExposeItFromCurrentUser() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -55,6 +67,10 @@ class ExtendedAuthenticationAndAccessTest {
         assertTrue(register.getResponseBodyAsString().contains("\"teacherId\":\"T-9021\""));
     }
 
+    /**
+     * Creates TA and MO users sharing an identifier and verifies an approved
+     * MO-specific recovery request changes only the organiser password.
+     */
     @Test
     void passwordResetRoleShouldTargetMoWhenTaAndMoShareIdentifier() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -90,6 +106,10 @@ class ExtendedAuthenticationAndAccessTest {
         assertEquals("123456", ds.getUserById(mo.id).password);
     }
 
+    /**
+     * Attempts to acknowledge another user's notification and verifies that
+     * authorization denial leaves its unread state intact.
+     */
     @Test
     void notificationShouldRejectReadingAnotherUsersItem() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -111,6 +131,10 @@ class ExtendedAuthenticationAndAccessTest {
         assertFalse(ds.getNotificationById(notification.id).read);
     }
 
+    /**
+     * Ensures that application draft endpoints are TA-only and cannot be used
+     * by an organiser to create draft data.
+     */
     @Test
     void draftEndpointsShouldBeRestrictedToTaUsers() throws Exception {
         DataService ds = new DataService(tempDir.toString());
@@ -126,6 +150,10 @@ class ExtendedAuthenticationAndAccessTest {
         assertNull(ds.getApplicationDraft(mo.id, "job-private"));
     }
 
+    /**
+     * Calls both directions of the CV file endpoint without a session and
+     * verifies that uploads and downloads require authentication.
+     */
     @Test
     void uploadAndDownloadShouldRequireAuthentication() throws Exception {
         DataService ds = new DataService(tempDir.toString());
