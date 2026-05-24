@@ -839,34 +839,34 @@ Back to Admin
 
         const REQUIREMENT_PRESETS = {
             COURSE_TA: [
-                '已修读对应课程，成绩优异，扎实掌握课程核心知识点与教学大纲',
-                '具备良好的沟通表达能力，能够清晰解答学生课程疑问、辅助课堂教学与小组讨论',
-                '工作认真负责，按时完成日常任务',
-                '能够配合主讲教师完成课件整理、学习资料汇总等辅助工作',
-                '有耐心、责任心强，严格遵守课程教学规范',
-                '有相关课程助教经验'
+                'I have taken the corresponding courses, achieved excellent grades, and have a solid grasp of the core knowledge points and syllabus of the courses',
+                'Possess excellent communication and expression skills, capable of clearly answering student questions about the course, and assisting in classroom teaching and group discussions',
+                'Work with a serious and responsible attitude, and complete daily tasks on time',
+                'Able to assist the lead teacher in completing auxiliary tasks such as organizing courseware and compiling learning materials',
+                'Have patience, a strong sense of responsibility, and strictly adhere to the teaching norms of the course',
+                'Have experience as a teaching assistant for related courses'
             ],
             LAB_TA: [
-                '已修读对应实验课程',
-                '熟练掌握实验原理、操作流程，以及相关实验软件 / 仪器的使用',
-                '能够指导学生完成实验操作、解答实验原理与操作疑问、规范批改实验报告',
-                '有相关实验助教经验'
+                'The corresponding experimental course has been taken',
+                'Proficient in experimental principles, operational procedures, and the use of relevant experimental software/instruments',
+                'Capable of guiding students to complete experimental operations, answering questions about experimental principles and operations, and standardizing the marking of experimental reports',
+                'Have relevant experience as an experimental teaching assistant'
             ],
             FINAL_EXAM_TA: [
-                '严格遵守学校期末考试考务管理规定，无任何考试违纪、作弊记录',
-                '工作严谨细致、责任心极强，能够全程规范完成监考、试卷收发等工作',
-                '具备严格的保密意识',
-                '时间观念极强，能够按时到岗、全程坚守岗位，不擅自离岗、不做与考务无关的事',
-                '具备良好的现场应变能力，能够按照规范处理考试过程中的突发情况',
-                '有期末考务工作经验、熟悉学校考务流程'
+                'strictly abide by the school\'s regulations on the administration of final exams, with no records of exam violations or cheating',
+                'With rigorous and meticulous work ethic and a strong sense of responsibility, I am capable of completing tasks such as invigilating and distributing/collecting examination papers in a standardized manner throughout the entire process',
+                'Possess a strict confidentiality awareness',
+                'Have a strong sense of time, be able to arrive at work on time, stay at work throughout the entire process, not leave work without authorization, and not do anything unrelated to the examination administration',
+                'Possess excellent on-site adaptability and be capable of handling unexpected situations during the examination process in accordance with the regulations',
+                'Have experience in final exam administration and be familiar with school examination procedures'
             ],
             CLASS_TEST_TA: [
-                '严格遵守学校考试考务管理规定，无任何考试违纪、作弊记录',
-                '工作严谨细致、责任心极强，能够全程规范完成监考工作',
-                '具备严格的保密意识',
-                '时间观念极强，能够按时到岗、全程坚守岗位，不擅自离岗、不做与考务无关的事',
-                '具备良好的现场应变能力，能够按照规范处理考试过程中的突发情况',
-                '有相关工作经验、熟悉学校考务流程'
+                'strictly abide by the school\'s examination management regulations, with no records of examination violations or cheating',
+                'Meticulous and rigorous in work, with a strong sense of responsibility, capable of completing the invigilation work in a standardized manner throughout the entire process',
+                'Possess a strict confidentiality awareness',
+                'Have a strong sense of time management, be able to arrive at work on time, stay at work throughout the entire process, not leave work without authorization, and not do anything unrelated to the examination administration',
+                'Possess strong on-site adaptability and be capable of handling unexpected situations during the examination process in accordance with regulations',
+                'Have relevant work experience and be familiar with school examination procedures'
             ]
         };
 
@@ -1034,10 +1034,16 @@ Back to Admin
             }
 
             try {
-                await API.put('/api/jobs/' + jobId, body);
+                const updated = await API.put('/api/jobs/' + jobId, body);
+                if (!updated) {
+                    btn.disabled = false;
+                    btn.textContent = 'Update Information';
+                    return;
+                }
                 showToast('Job updated successfully!', 'success');
+                const currentUser = API.getUser();
                 setTimeout(() => {
-                    window.location.href = user.role === 'ADMIN'
+                    window.location.href = currentUser && currentUser.role === 'ADMIN'
                         ? ('my-job-list.html' + (postedByOwnerId ? ('?postedBy=' + encodeURIComponent(postedByOwnerId)) : ''))
                         : ('job-detail.html?id=' + jobId);
                 }, 800);
