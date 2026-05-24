@@ -9,10 +9,19 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 
+/**
+ * Represents the upload handler component of the TA recruitment system.
+ */
 public class UploadHandler extends BaseHandler {
 
+    /**
+     * Creates a new upload handler instance.
+     */
     public UploadHandler(DataService ds) { super(ds); }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;

@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"com.bupt.tarecruit"},{"l":"com.bupt.tarecruit.devtools"},{"l":"com.bupt.tarecruit.handler"},{"l":"com.bupt.tarecruit.model"},{"l":"com.bupt.tarecruit.service"},{"l":"所有程序包","u":"allpackages-index.html"}];updateSearchResults();
