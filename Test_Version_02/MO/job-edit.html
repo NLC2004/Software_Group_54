@@ -17,6 +17,8 @@
         .form-input { display: block; width: 100%; background-color: white; border: 1px solid rgb(229 231 235); border-radius: 1rem; padding: 0.75rem 1rem; transition: all 0.3s ease; outline: none; }
         .form-input:focus { border-color: rgb(59 130 246); box-shadow: 0 0 0 3px rgba(59 130 246, 0.1); }
         .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .schedule-time-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: white; border: 1px solid rgb(229 231 235); border-radius: 0.875rem; color: rgb(55 65 81); font-size: 0.875rem; font-weight: 600; }
+        .schedule-time-row .dot { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: rgb(37 99 235); flex: 0 0 auto; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -169,7 +171,7 @@ Back to Admin
 <label class="text-sm font-semibold text-gray-600 ml-1">Quota</label>
 <input class="form-input" id="quota" type="number" min="1"/>
 </div>
-<div class="space-y-2" id="scheduleFieldWrapper">
+<div class="space-y-2 md:col-span-2" id="scheduleFieldWrapper">
 <input id="schedule" type="hidden" />
 <div class="mt-3 space-y-3" id="courseScheduleEntriesWrapper">
 <div class="space-y-3" id="courseScheduleEntries"></div>
@@ -200,6 +202,7 @@ Back to Admin
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <input id="weeklyHours" type="hidden" />
+<div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4" id="detailsPreview"></div>
 </div>
 </section>
 <div class="flex items-center justify-end space-x-4">
@@ -473,7 +476,7 @@ Back to Admin
                     const st = PERIOD_TIME[s];
                     const et = PERIOD_TIME[e];
                     if (!st || !et) return;
-                    lines.push(`${(dayLabelMap && dayLabelMap[d]) || d}：${st.start}-${et.end}`);
+                    lines.push(`${(dayLabelMap && dayLabelMap[d]) || d}: ${st.start}-${et.end}`);
                 });
             });
             return lines;
@@ -496,14 +499,44 @@ Back to Admin
             el.textContent = `Total Working Hours: ${hours.toFixed(2)} hours`;
         }
 
-        function syncCourseEntryTextareas() {
+        function renderDetailsPreview(job = {}) {
+            const el = document.getElementById('detailsPreview');
+            if (!el) return;
+            const scheduleText = buildCourseScheduleSummaryText() || String(job.schedule || '').trim();
+            const totalHours = currentType === 'FINAL_EXAM_TA'
+                ? (Number(document.getElementById('examDuration') && document.getElementById('examDuration').value) || Number(job.examDuration) || 0)
+                : calcCourseWeeklyHoursFromEntries();
+            const items = [
+                ['TA Type', document.getElementById('jobType').value || currentType || 'Not set'],
+                ['Total Working Hours', `${Number(totalHours || 0).toFixed(2)} hours`]
+            ];
+            if (currentType === 'FINAL_EXAM_TA') {
+                const examTime = (document.getElementById('examDateTime') && document.getElementById('examDateTime').value) || job.examDateTime || '';
+                const examLocation = (document.getElementById('examLocation') && document.getElementById('examLocation').value) || job.examLocation || '';
+                items.push(['Exam Time', examTime ? String(examTime).replace('T', ' ') : 'Not set']);
+                items.push(['Exam Location', examLocation || 'Not set']);
+            } else {
+                items.push(['Schedule Summary', scheduleText || 'No schedule was provided.']);
+            }
+            el.innerHTML = items.map(([label, value]) => `
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <p class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">${esc(label)}</p>
+                    <p class="text-sm text-gray-700 font-semibold whitespace-pre-wrap">${esc(value)}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderCourseEntryTimeBlocks() {
             const container = document.getElementById('courseScheduleEntries');
             if (!container) return;
-            container.querySelectorAll('textarea[data-course-entry-time]').forEach(ta => {
-                const idx = Number(ta.getAttribute('data-course-entry-time'));
+            container.querySelectorAll('[data-course-entry-time]').forEach(box => {
+                const idx = Number(box.getAttribute('data-course-entry-time'));
                 const entry = courseScheduleEntries[idx];
                 if (!entry) return;
-                ta.value = buildScheduleLinesFromSelection(entry.selection, DAY_LABEL).join('\n');
+                const lines = buildScheduleLinesFromSelection(entry.selection, DAY_LABEL);
+                box.innerHTML = lines.length
+                    ? lines.map(line => `<div class="schedule-time-row"><span class="dot"></span><span>${esc(line)}</span></div>`).join('')
+                    : '<div class="text-sm text-gray-400 bg-white border border-dashed border-gray-200 rounded-xl p-4">No time selected.</div>';
             });
         }
 
@@ -518,10 +551,37 @@ Back to Admin
 
         function updateCourseScheduleDerivedFields() {
             if (!(currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA')) return;
-            syncCourseEntryTextareas();
+            renderCourseEntryTimeBlocks();
             const weekly = document.getElementById('weeklyHours');
             if (weekly) weekly.value = calcCourseWeeklyHoursFromEntries().toFixed(2);
             updateScheduleTotalHours();
+            renderDetailsPreview();
+        }
+
+        function normalizeSelection(selection) {
+            const normalized = { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] };
+            DAYS.forEach(d => {
+                const raw = selection && Array.isArray(selection[d]) ? selection[d] : [];
+                normalized[d] = Array.from(new Set(raw.map(Number).filter(n => Number.isFinite(n)))).sort((a, b) => a - b);
+            });
+            return normalized;
+        }
+
+        function normalizeCourseScheduleEntries(rawGrid) {
+            if (!rawGrid) return [];
+            try {
+                const parsed = typeof rawGrid === 'string' ? JSON.parse(rawGrid) : rawGrid;
+                if (Array.isArray(parsed)) {
+                    return parsed.map((e, idx) => ({
+                        week: Number(e && e.week) || (idx + 1),
+                        selection: normalizeSelection((e && e.selection) || {})
+                    }));
+                }
+                if (parsed && typeof parsed === 'object') {
+                    return [{ week: 1, selection: normalizeSelection(parsed.selection || parsed) }];
+                }
+            } catch (_) {}
+            return [];
         }
 
         function syncCourseScheduleEntriesUI() {
@@ -537,7 +597,7 @@ Back to Admin
                             <p class="font-bold text-gray-800">Schedule ${idx + 1}</p>
                             <button type="button" class="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-red-50 hover:text-red-600 transition-all" data-course-entry-del="${idx}">&times;</button>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-[0.24fr_0.76fr] gap-4">
                             <div class="space-y-2">
                                 <label class="text-sm font-semibold text-gray-600 ml-1">Course Week (1-17)</label>
                                 <select class="form-input" data-course-entry-week="${idx}">${weekOpts}</select>
@@ -546,7 +606,7 @@ Back to Admin
                                 <label class="text-sm font-semibold text-gray-600 ml-1">Course Time</label>
                                 <div class="space-y-2">
                                     <button type="button" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all text-sm font-semibold text-gray-700" data-course-entry-open="${idx}">Select Course Time</button>
-                                    <textarea class="form-input" rows="3" readonly placeholder="No time selected" data-course-entry-time="${idx}"></textarea>
+                                    <div class="space-y-2" data-course-entry-time="${idx}"></div>
                                 </div>
                             </div>
                         </div>
@@ -583,7 +643,7 @@ Back to Admin
                 });
             });
 
-            syncCourseEntryTextareas();
+            renderCourseEntryTimeBlocks();
             updateCourseScheduleDerivedFields();
         }
 
@@ -741,6 +801,11 @@ Back to Admin
                         if (!dl.ok) showToast(dl.message, 'warning');
                     });
                 }
+                ['examDateTime', 'examDuration', 'examLocation'].forEach(id => {
+                    const field = document.getElementById(id);
+                    if (field) field.addEventListener('input', () => renderDetailsPreview());
+                    if (field) field.addEventListener('change', () => renderDetailsPreview());
+                });
 
                 populateForm(job);
             } catch (err) {
@@ -773,19 +838,7 @@ Back to Admin
             document.getElementById('weeklyHours').value = job.weeklyHours || '';
             document.getElementById('description').value = job.description || '';
 
-            if (job.courseScheduleGrid) {
-                try {
-                    const parsed = JSON.parse(job.courseScheduleGrid);
-                    if (Array.isArray(parsed)) {
-                        courseScheduleEntries = parsed.map(e => ({
-                            week: Number(e.week || 1),
-                            selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], ...((e && e.selection) || {}) }
-                        }));
-                    } else if (parsed && typeof parsed === 'object') {
-                        courseScheduleEntries = [{ week: 1, selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], ...(parsed || {}) } }];
-                    }
-                } catch (_) {}
-            }
+            courseScheduleEntries = normalizeCourseScheduleEntries(job.courseScheduleGrid);
 
             if (courseScheduleEntries.length === 0) {
                 courseScheduleEntries = [{ week: 1, selection: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [] } }];
@@ -810,6 +863,7 @@ Back to Admin
             }
             document.getElementById('examDuration').value = job.examDuration || '';
             document.getElementById('examLocation').value = job.examLocation || '';
+            renderDetailsPreview(job);
 
             const badge = document.getElementById('statusBadge');
             if (job.status === 'OPEN') {
@@ -821,10 +875,8 @@ Back to Admin
             }
 
             requirements.length = 0;
-            if (Array.isArray(job.requirements)) {
-                job.requirements.forEach(r => requirements.push(r));
-            }
-            setRequirementsUI(requirements);
+            normalizeRequirementValues(job.requirements).forEach(r => requirements.push(r));
+            setRequirementsUI(job.requirements);
         }
 
         function applyAdminScopeLinks(user) {
@@ -886,30 +938,41 @@ Back to Admin
             if (!list) return;
             const row = document.createElement('div');
             row.className = 'flex items-center gap-2';
-            row.innerHTML = `
-                <input class="form-input flex-1 req-item" type="text" value="${esc(value)}" placeholder="Enter requirement..."/>
-                <button type="button" class="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-red-50 hover:text-red-600 transition-all req-del">&times;</button>
-            `;
-            const input = row.querySelector('input.req-item');
-            const delBtn = row.querySelector('button.req-del');
-            if (input) {
-                input.addEventListener('focus', () => {
-                    activeReqInput = input;
-                    renderReqPresetPanel();
-                });
-                input.addEventListener('input', () => syncRequirementsFromUI());
-            }
-            if (delBtn) {
-                delBtn.addEventListener('click', () => {
-                    row.remove();
-                    if (activeReqInput === input) activeReqInput = null;
-                    syncRequirementsFromUI();
-                    ensureAtLeastOneRequirementRow();
-                });
-            }
+            const input = document.createElement('input');
+            input.className = 'form-input flex-1 req-item';
+            input.type = 'text';
+            input.placeholder = 'Enter requirement...';
+            input.value = String(value || '');
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-red-50 hover:text-red-600 transition-all req-del';
+            delBtn.innerHTML = '&times;';
+            input.addEventListener('focus', () => {
+                activeReqInput = input;
+                renderReqPresetPanel();
+            });
+            input.addEventListener('input', () => syncRequirementsFromUI());
+            delBtn.addEventListener('click', () => {
+                row.remove();
+                if (activeReqInput === input) activeReqInput = null;
+                syncRequirementsFromUI();
+                ensureAtLeastOneRequirementRow();
+            });
+            row.appendChild(input);
+            row.appendChild(delBtn);
             list.appendChild(row);
             syncRequirementsFromUI();
             return input;
+        }
+
+        function normalizeRequirementValues(values) {
+            if (Array.isArray(values)) {
+                return values.map(v => String(v || '').trim()).filter(Boolean);
+            }
+            if (values && typeof values === 'object') {
+                return Object.values(values).map(v => String(v || '').trim()).filter(Boolean);
+            }
+            return String(values || '').split(/\r?\n/).map(v => v.trim()).filter(Boolean);
         }
 
         function ensureAtLeastOneRequirementRow() {
@@ -922,7 +985,7 @@ Back to Admin
 
         function setRequirementsUI(values) {
             clearRequirementsUI();
-            const arr = Array.isArray(values) ? values : [];
+            const arr = normalizeRequirementValues(values);
             if (arr.length === 0) {
                 addRequirementRow('');
             } else {

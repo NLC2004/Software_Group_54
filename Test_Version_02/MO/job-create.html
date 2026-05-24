@@ -17,6 +17,8 @@
         .form-input { display: block; width: 100%; background-color: white; border: 1px solid rgb(229 231 235); border-radius: 1rem; padding: 0.75rem 1rem; transition: all 0.3s ease; outline: none; }
         .form-input:focus { border-color: rgb(59 130 246); box-shadow: 0 0 0 3px rgba(59 130 246, 0.1); }
         .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .schedule-time-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: white; border: 1px solid rgb(229 231 235); border-radius: 0.875rem; color: rgb(55 65 81); font-size: 0.875rem; font-weight: 600; }
+        .schedule-time-row .dot { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: rgb(37 99 235); flex: 0 0 auto; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -510,7 +512,7 @@ Back to Admin
                     const st = PERIOD_TIME[s];
                     const et = PERIOD_TIME[e];
                     if (!st || !et) return;
-                    lines.push(`${(dayLabelMap && dayLabelMap[d]) || d}：${st.start}-${et.end}`);
+                    lines.push(`${(dayLabelMap && dayLabelMap[d]) || d}: ${st.start}-${et.end}`);
                 });
             });
             return lines;
@@ -546,7 +548,7 @@ Back to Admin
                             <p class="font-bold text-gray-800">Schedule ${idx + 1}</p>
                             <button type="button" class="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-bold hover:bg-red-50 hover:text-red-600 transition-all" data-course-entry-del="${idx}">&times;</button>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-[0.24fr_0.76fr] gap-4">
                             <div class="space-y-2">
                                 <label class="text-sm font-semibold text-gray-600 ml-1">Course Week (1-17)</label>
                                 <select class="form-input" data-course-entry-week="${idx}">${weekOpts}</select>
@@ -555,7 +557,7 @@ Back to Admin
                                 <label class="text-sm font-semibold text-gray-600 ml-1">Course Time</label>
                                 <div class="space-y-2">
                                     <button type="button" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-all text-sm font-semibold text-gray-700" data-course-entry-open="${idx}">Select Course Time</button>
-                                    <textarea class="form-input" rows="3" readonly placeholder="No time selected" data-course-entry-time="${idx}"></textarea>
+                                    <div class="space-y-2" data-course-entry-time="${idx}"></div>
                                 </div>
                             </div>
                         </div>
@@ -592,18 +594,21 @@ Back to Admin
                 });
             });
 
-            syncCourseEntryTextareas();
+            renderCourseEntryTimeBlocks();
             updateCourseScheduleDerivedFields();
         }
 
-        function syncCourseEntryTextareas() {
+        function renderCourseEntryTimeBlocks() {
             const container = document.getElementById('courseScheduleEntries');
             if (!container) return;
-            container.querySelectorAll('textarea[data-course-entry-time]').forEach(ta => {
-                const idx = Number(ta.getAttribute('data-course-entry-time'));
+            container.querySelectorAll('[data-course-entry-time]').forEach(box => {
+                const idx = Number(box.getAttribute('data-course-entry-time'));
                 const entry = courseScheduleEntries[idx];
                 if (!entry) return;
-                ta.value = buildScheduleLinesFromSelection(entry.selection, DAY_LABEL).join('\n');
+                const lines = buildScheduleLinesFromSelection(entry.selection, DAY_LABEL);
+                box.innerHTML = lines.length
+                    ? lines.map(line => `<div class="schedule-time-row"><span class="dot"></span><span>${esc(line)}</span></div>`).join('')
+                    : '<div class="text-sm text-gray-400 bg-white border border-dashed border-gray-200 rounded-xl p-4">No time selected.</div>';
             });
         }
 
@@ -618,7 +623,7 @@ Back to Admin
 
         function updateCourseScheduleDerivedFields() {
             if (!(currentType === 'COURSE_TA' || currentType === 'CLASS_TEST_TA' || currentType === 'LAB_TA')) return;
-            syncCourseEntryTextareas();
+            renderCourseEntryTimeBlocks();
             const weekly = document.getElementById('weeklyHours');
             if (weekly) weekly.value = calcCourseWeeklyHoursFromEntries().toFixed(2);
             updateScheduleTotalHours();

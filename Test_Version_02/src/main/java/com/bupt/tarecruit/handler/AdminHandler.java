@@ -21,10 +21,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the admin handler component of the TA recruitment system.
+ */
 public class AdminHandler extends BaseHandler {
 
     private static final double HOURS_PER_PERIOD = 0.75;
 
+    /**
+     * Creates a new admin handler instance.
+     */
     public AdminHandler(DataService ds) { super(ds); }
 
     private boolean isSuperAdmin(User user) {
@@ -40,6 +46,9 @@ public class AdminHandler extends BaseHandler {
         return false;
     }
 
+    /**
+     * Handles the handle operation.
+     */
     @Override
     public void handle(HttpExchange ex) throws IOException {
         if (handleCors(ex)) return;

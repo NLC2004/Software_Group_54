@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Properties;
 import javax.net.ssl.SSLSocketFactory;
 
+/**
+ * Represents the mail service component of the TA recruitment system.
+ */
 public class MailService {
     private String host;
     private int port;
@@ -20,10 +23,16 @@ public class MailService {
     private String fromName;
     private boolean enabled;
 
+    /**
+     * Creates a new mail service instance.
+     */
     public MailService(Map<String, String> settings) {
         refresh(settings);
     }
 
+    /**
+     * Handles the refresh operation.
+     */
     public final void refresh(Map<String, String> settings) {
         Properties p = new Properties();
         if (settings != null) p.putAll(settings);
@@ -45,13 +54,22 @@ public class MailService {
         try { return Integer.parseInt(v.trim()); } catch (Exception ignored) { return fallback; }
     }
 
+    /**
+     * Handles the is enabled operation.
+     */
     public boolean isEnabled() { return enabled; }
 
+    /**
+     * Handles the send password reset approved operation.
+     */
     public void sendPasswordResetApproved(String to, String fullName, String newPassword,
                                           String subject, String bodyTemplate) throws IOException {
         sendMail(to, subject, render(bodyTemplate, fullName, newPassword, null));
     }
 
+    /**
+     * Handles the send password reset rejected operation.
+     */
     public void sendPasswordResetRejected(String to, String fullName, String reason,
                                           String subject, String bodyTemplate) throws IOException {
         sendMail(to, subject, render(bodyTemplate, fullName, null, reason));

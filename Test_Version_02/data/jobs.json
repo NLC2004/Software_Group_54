@@ -230,57 +230,6 @@
     "createdAt": 1778134138843
   },
   {
-    "id": "job011",
-    "postedBy": "mo004",
-    "title": "Final Exam TA: Database Systems",
-    "type": "FINAL_EXAM_TA",
-    "courseName": "Database Systems",
-    "description": "Support invigilation and exam logistics.",
-    "requirements": [
-      "Strictly abide by the school\u0027s regulations on the administration of final exams.",
-      "Possess a strong sense of responsibility and confidentiality awareness.",
-      "Arrive on time and stay throughout the entire process.",
-      "Capable of handling unexpected situations according to regulations."
-    ],
-    "quota": 2,
-    "schedule": "2026-06-02 14:00 (2.5 hours) @ Teaching Building A-104",
-    "weeklyHours": 2.5,
-    "deadline": "2026-06-05",
-    "courseWeekStart": 0,
-    "courseWeekEnd": 0,
-    "labSessionCount": 0,
-    "examDateTime": "2026-06-02T14:00",
-    "examDuration": 2.5,
-    "examLocation": "Teaching Building A-104",
-    "status": "OPEN",
-    "createdAt": 1778306938843
-  },
-  {
-    "id": "job012",
-    "postedBy": "mo004",
-    "title": "Class Test TA: Data Structures",
-    "type": "CLASS_TEST_TA",
-    "courseName": "Data Structures",
-    "description": "Support quizzes and in-class tests.",
-    "requirements": [
-      "Strictly abide by the school\u0027s examination management regulations.",
-      "Meticulous and rigorous in work, with a strong sense of responsibility.",
-      "Possess confidentiality awareness.",
-      "Have strong on-site adaptability for in-class tests."
-    ],
-    "quota": 3,
-    "schedule": "Week 6 Monday：09:50-11:25\nWeek 6 Wednesday：15:40-17:20\nWeek 12 Tuesday：17:25-19:15\nWeek 12 Thursday：11:30-13:45",
-    "weeklyHours": 6.0,
-    "deadline": "2026-06-06",
-    "courseScheduleGrid": "[\n  {\n    \"week\": 6,\n    \"selection\": {\n      \"Mon\": [\n        3,\n        4\n      ],\n      \"Tue\": [],\n      \"Wed\": [\n        9,\n        10\n      ],\n      \"Thu\": [],\n      \"Fri\": []\n    }\n  },\n  {\n    \"week\": 12,\n    \"selection\": {\n      \"Mon\": [],\n      \"Tue\": [\n        11,\n        12\n      ],\n      \"Wed\": [],\n      \"Thu\": [\n        5,\n        6\n      ],\n      \"Fri\": []\n    }\n  }\n]",
-    "courseWeekStart": 0,
-    "courseWeekEnd": 0,
-    "labSessionCount": 0,
-    "examDuration": 0.0,
-    "status": "OPEN",
-    "createdAt": 1778393338843
-  },
-  {
     "id": "job013",
     "postedBy": "mo005",
     "title": "Course TA: Computer Networks",
@@ -545,5 +494,56 @@
     "examDuration": 0.0,
     "status": "OPEN",
     "createdAt": 1779497062765
+  },
+  {
+    "id": "job012",
+    "postedBy": "mo004",
+    "title": "Class Test TA: Data Structures",
+    "type": "CLASS_TEST_TA",
+    "courseName": "Data Structures",
+    "description": "Support quizzes and in-class tests.",
+    "requirements": [
+      "Strictly abide by the school\u0027s examination management regulations.",
+      "Have a strong sense of time management, be able to arrive at work on time, stay at work throughout the entire process, not leave work without authorization, and not do anything unrelated to the examination administration",
+      "Possess strong on-site adaptability and be capable of handling unexpected situations during the examination process in accordance with regulations",
+      "Have relevant work experience and be familiar with school examination procedures"
+    ],
+    "quota": 3,
+    "schedule": "Week 6 Monday: 09:50-11:25\nWeek 6 Wednesday: 15:40-17:20\nWeek 12 Tuesday: 17:25-19:15\nWeek 12 Thursday: 11:30-13:45",
+    "weeklyHours": 6.0,
+    "deadline": "2026-06-06",
+    "courseScheduleGrid": "[{\"week\":6,\"selection\":{\"Mon\":[3,4],\"Tue\":[],\"Wed\":[9,10],\"Thu\":[],\"Fri\":[]}},{\"week\":12,\"selection\":{\"Mon\":[],\"Tue\":[11,12],\"Wed\":[],\"Thu\":[5,6],\"Fri\":[]}}]",
+    "courseWeekStart": 0,
+    "courseWeekEnd": 0,
+    "labSessionCount": 0,
+    "examDuration": 0.0,
+    "status": "OPEN",
+    "createdAt": 1778393338843
+  },
+  {
+    "id": "job011",
+    "postedBy": "mo004",
+    "title": "Final Exam TA: Database Systems",
+    "type": "FINAL_EXAM_TA",
+    "courseName": "Database Systems",
+    "description": "Support invigilation and exam logistics.",
+    "requirements": [
+      "Strictly abide by the school\u0027s regulations on the administration of final exams.",
+      "Possess a strong sense of responsibility and confidentiality awareness.",
+      "Arrive on time and stay throughout the entire process.",
+      "Capable of handling unexpected situations according to regulations."
+    ],
+    "quota": 2,
+    "schedule": "2026-06-02 14:00 (2.5 hours) @ Teaching Building A-104",
+    "weeklyHours": 2.5,
+    "deadline": "2026-06-05",
+    "courseWeekStart": 0,
+    "courseWeekEnd": 0,
+    "labSessionCount": 0,
+    "examDateTime": "2026-06-02T14:00",
+    "examDuration": 2.5,
+    "examLocation": "Teaching Building A-104",
+    "status": "OPEN",
+    "createdAt": 1778306938843
   }
 ]

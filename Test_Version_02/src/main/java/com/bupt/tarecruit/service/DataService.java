@@ -15,6 +15,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the data service component of the TA recruitment system.
+ */
 public class DataService {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Path dataDir;
@@ -22,6 +25,9 @@ public class DataService {
     private final Map<String, String> sessions = new ConcurrentHashMap<>();
     private final MailService mailService;
 
+    /**
+     * Creates a new data service instance.
+     */
     public DataService(String baseDir) throws IOException {
         this.dataDir = Paths.get(baseDir, "data");
         this.uploadsDir = Paths.get(baseDir, "uploads");
@@ -35,14 +41,23 @@ public class DataService {
 
     // ==================== Sessions ====================
 
+    /**
+     * Handles the create session operation.
+     */
     public String createSession(String userId) {
         String token = UUID.randomUUID().toString();
         sessions.put(token, userId);
         return token;
     }
 
+    /**
+     * Handles the remove session operation.
+     */
     public void removeSession(String token) { sessions.remove(token); }
 
+    /**
+     * Handles the get session user operation.
+     */
     public User getSessionUser(String token) {
         String userId = sessions.get(token);
         return userId == null ? null : getUserById(userId);
@@ -50,18 +65,30 @@ public class DataService {
 
     // ==================== Users ====================
 
+    /**
+     * Handles the get all users operation.
+     */
     public synchronized List<User> getAllUsers() {
         return readList("users.json", new TypeToken<List<User>>(){}.getType());
     }
 
+    /**
+     * Handles the get user by id operation.
+     */
     public synchronized User getUserById(String id) {
         return getAllUsers().stream().filter(u -> u.id.equals(id)).findFirst().orElse(null);
     }
 
+    /**
+     * Handles the get user by username operation.
+     */
     public synchronized User getUserByUsername(String username) {
         return getUserByUsername(username, null);
     }
 
+    /**
+     * Handles the get user by username operation.
+     */
     public synchronized User getUserByUsername(String username, String role) {
         if (username == null) return null;
         String roleFilter = normalizeRoleFilter(role);
@@ -72,10 +99,16 @@ public class DataService {
                 .orElse(null);
     }
 
+    /**
+     * Handles the get user by student id or email operation.
+     */
     public synchronized User getUserByStudentIdOrEmail(String identifier) {
         return getUserByStudentIdOrEmail(identifier, null);
     }
 
+    /**
+     * Handles the get user by student id or email operation.
+     */
     public synchronized User getUserByStudentIdOrEmail(String identifier, String role) {
         String normalized = identifier == null ? "" : identifier.trim();
         if (normalized.isEmpty()) return null;
@@ -89,6 +122,9 @@ public class DataService {
     }
 
     /** Resolve login identifier (student/teacher ID, email, or username) scoped to a portal role. */
+    /**
+     * Handles the find user by portal identifier operation.
+     */
     public synchronized User findUserByPortalIdentifier(String identifier, String role) {
         String normalized = identifier == null ? "" : identifier.trim();
         if (normalized.isEmpty()) return null;
@@ -98,6 +134,9 @@ public class DataService {
     }
 
     /** Match student/teacher ID or username, optionally scoped by role (TA/MO). */
+    /**
+     * Handles the find user by id number operation.
+     */
     public synchronized User findUserByIdNumber(String idNumber, String role) {
         String normalized = idNumber == null ? "" : idNumber.trim();
         if (normalized.isEmpty()) return null;
@@ -118,6 +157,9 @@ public class DataService {
         return roleFilter.equalsIgnoreCase(user.role == null ? "" : user.role);
     }
 
+    /**
+     * Handles the add user operation.
+     */
     public synchronized User addUser(User user) {
         List<User> users = getAllUsers();
         user.id = UUID.randomUUID().toString().substring(0, 8);
@@ -127,6 +169,9 @@ public class DataService {
         return user;
     }
 
+    /**
+     * Handles the update user operation.
+     */
     public synchronized void updateUser(User user) {
         List<User> users = getAllUsers();
         users.removeIf(u -> u.id.equals(user.id));
@@ -134,6 +179,9 @@ public class DataService {
         writeList("users.json", users);
     }
 
+    /**
+     * Handles the delete user operation.
+     */
     public synchronized void deleteUser(String id) {
         List<User> users = getAllUsers();
         users.removeIf(u -> u.id.equals(id));
@@ -142,14 +190,23 @@ public class DataService {
 
     // ==================== Jobs ====================
 
+    /**
+     * Handles the get all jobs operation.
+     */
     public synchronized List<Job> getAllJobs() {
         return readList("jobs.json", new TypeToken<List<Job>>(){}.getType());
     }
 
+    /**
+     * Handles the get job by id operation.
+     */
     public synchronized Job getJobById(String id) {
         return getAllJobs().stream().filter(j -> j.id.equals(id)).findFirst().orElse(null);
     }
 
+    /**
+     * Handles the add job operation.
+     */
     public synchronized Job addJob(Job job) {
         List<Job> jobs = getAllJobs();
         job.id = UUID.randomUUID().toString().substring(0, 8);
@@ -160,6 +217,9 @@ public class DataService {
         return job;
     }
 
+    /**
+     * Handles the update job operation.
+     */
     public synchronized void updateJob(Job job) {
         List<Job> jobs = getAllJobs();
         jobs.removeIf(j -> j.id.equals(job.id));
@@ -167,6 +227,9 @@ public class DataService {
         writeList("jobs.json", jobs);
     }
 
+    /**
+     * Handles the delete job operation.
+     */
     public synchronized void deleteJob(String id) {
         List<Job> jobs = getAllJobs();
         jobs.removeIf(j -> j.id.equals(id));
@@ -175,26 +238,44 @@ public class DataService {
 
     // ==================== Applications ====================
 
+    /**
+     * Handles the get all applications operation.
+     */
     public synchronized List<Application> getAllApplications() {
         return readList("applications.json", new TypeToken<List<Application>>(){}.getType());
     }
 
+    /**
+     * Handles the get application by id operation.
+     */
     public synchronized Application getApplicationById(String id) {
         return getAllApplications().stream().filter(a -> a.id.equals(id)).findFirst().orElse(null);
     }
 
+    /**
+     * Handles the get applications by job operation.
+     */
     public synchronized List<Application> getApplicationsByJob(String jobId) {
         return getAllApplications().stream().filter(a -> a.jobId.equals(jobId)).collect(Collectors.toList());
     }
 
+    /**
+     * Handles the get applications by applicant operation.
+     */
     public synchronized List<Application> getApplicationsByApplicant(String applicantId) {
         return getAllApplications().stream().filter(a -> a.applicantId.equals(applicantId)).collect(Collectors.toList());
     }
 
+    /**
+     * Handles the get approved application count for job operation.
+     */
     public synchronized long getApprovedApplicationCountForJob(String jobId) {
         return getApplicationsByJob(jobId).stream().filter(a -> "APPROVED".equals(a.status)).count();
     }
 
+    /**
+     * Handles the add application operation.
+     */
     public synchronized Application addApplication(Application app) {
         List<Application> apps = getAllApplications();
         app.id = UUID.randomUUID().toString().substring(0, 8);
@@ -206,6 +287,9 @@ public class DataService {
         return app;
     }
 
+    /**
+     * Handles the update application operation.
+     */
     public synchronized void updateApplication(Application app) {
         List<Application> apps = getAllApplications();
         app.updatedAt = System.currentTimeMillis();
@@ -214,6 +298,9 @@ public class DataService {
         writeList("applications.json", apps);
     }
 
+    /**
+     * Handles the delete applications by job operation.
+     */
     public synchronized int deleteApplicationsByJob(String jobId) {
         List<Application> apps = getAllApplications();
         int before = apps.size();
@@ -222,6 +309,9 @@ public class DataService {
         return before - apps.size();
     }
 
+    /**
+     * Handles the reconcile application priorities operation.
+     */
     public synchronized int reconcileApplicationPriorities() {
         List<Application> apps = getAllApplications();
         int changed = 0;
@@ -258,6 +348,9 @@ public class DataService {
         return priority >= 1 && priority <= 3 ? priority : 99;
     }
 
+    /**
+     * Handles the get weekly workload limit operation.
+     */
     public synchronized double getWeeklyWorkloadLimit() {
         Map<String, String> settings = getSettings();
         double maxHours = 20;
@@ -269,6 +362,9 @@ public class DataService {
         return maxHours;
     }
 
+    /**
+     * Handles the get job weekly hours operation.
+     */
     public synchronized Map<Integer, Double> getJobWeeklyHours(Job job) {
         if (job == null) return Collections.emptyMap();
         String type = job.type == null ? "" : job.type.trim().toUpperCase(Locale.ROOT);
@@ -301,6 +397,9 @@ public class DataService {
         return weekly;
     }
 
+    /**
+     * Handles the get ta weekly hours operation.
+     */
     public synchronized Map<Integer, Double> getTAWeeklyHours(String taId) {
         Map<Integer, Double> weekly = new TreeMap<>();
         if (taId == null || taId.isBlank()) return weekly;
@@ -313,6 +412,9 @@ public class DataService {
         return weekly;
     }
 
+    /**
+     * Handles the get overloaded weeks operation.
+     */
     public synchronized Set<Integer> getOverloadedWeeks(String taId) {
         double maxHours = getWeeklyWorkloadLimit();
         Set<Integer> overloaded = new TreeSet<>();
@@ -323,6 +425,9 @@ public class DataService {
         return overloaded;
     }
 
+    /**
+     * Handles the would exceed weekly workload operation.
+     */
     public synchronized boolean wouldExceedWeeklyWorkload(String taId, Job job) {
         if (taId == null || job == null) return false;
         double limit = getWeeklyWorkloadLimit();
@@ -336,6 +441,9 @@ public class DataService {
         return false;
     }
 
+    /**
+     * Handles the get weeks that would exceed weekly workload operation.
+     */
     public synchronized List<Integer> getWeeksThatWouldExceedWeeklyWorkload(String taId, Job job) {
         if (taId == null || job == null) return Collections.emptyList();
         double limit = getWeeklyWorkloadLimit();
@@ -391,10 +499,16 @@ public class DataService {
     }
 
 
+    /**
+     * Handles the get all application drafts operation.
+     */
     public synchronized List<ApplicationDraft> getAllApplicationDrafts() {
         return readList("application_drafts.json", new TypeToken<List<ApplicationDraft>>(){}.getType());
     }
 
+    /**
+     * Handles the get application draft operation.
+     */
     public synchronized ApplicationDraft getApplicationDraft(String userId, String jobId) {
         String normalizedJobId = jobId == null ? "" : jobId.trim();
         return getAllApplicationDrafts().stream()
@@ -404,6 +518,9 @@ public class DataService {
                 .orElse(null);
     }
 
+    /**
+     * Handles the save application draft operation.
+     */
     public synchronized ApplicationDraft saveApplicationDraft(ApplicationDraft draft) {
         List<ApplicationDraft> drafts = getAllApplicationDrafts();
         long now = System.currentTimeMillis();
@@ -419,6 +536,9 @@ public class DataService {
         return draft;
     }
 
+    /**
+     * Handles the delete application draft operation.
+     */
     public synchronized void deleteApplicationDraft(String userId, String jobId) {
         List<ApplicationDraft> drafts = getAllApplicationDrafts();
         String normalizedJobId = jobId == null ? "" : jobId.trim();
@@ -427,6 +547,9 @@ public class DataService {
         writeList("application_drafts.json", drafts);
     }
 
+    /**
+     * Handles the delete application drafts by job operation.
+     */
     public synchronized int deleteApplicationDraftsByJob(String jobId) {
         List<ApplicationDraft> drafts = getAllApplicationDrafts();
         String normalizedJobId = jobId == null ? "" : jobId.trim();
@@ -438,18 +561,30 @@ public class DataService {
 
     // ==================== Notifications ====================
 
+    /**
+     * Handles the get all notifications operation.
+     */
     public synchronized List<Notification> getAllNotifications() {
         return readList("notifications.json", new TypeToken<List<Notification>>(){}.getType());
     }
 
+    /**
+     * Handles the get notifications by user operation.
+     */
     public synchronized List<Notification> getNotificationsByUser(String userId) {
         return getAllNotifications().stream().filter(n -> n.userId.equals(userId)).collect(Collectors.toList());
     }
 
+    /**
+     * Handles the get notification by id operation.
+     */
     public synchronized Notification getNotificationById(String id) {
         return getAllNotifications().stream().filter(n -> n.id.equals(id)).findFirst().orElse(null);
     }
 
+    /**
+     * Handles the add notification operation.
+     */
     public synchronized Notification addNotification(Notification n) {
         List<Notification> list = getAllNotifications();
         n.id = UUID.randomUUID().toString().substring(0, 8);
@@ -459,6 +594,9 @@ public class DataService {
         return n;
     }
 
+    /**
+     * Handles the update notification operation.
+     */
     public synchronized void updateNotification(Notification n) {
         List<Notification> list = getAllNotifications();
         list.removeIf(x -> x.id.equals(n.id));
@@ -466,6 +604,9 @@ public class DataService {
         writeList("notifications.json", list);
     }
 
+    /**
+     * Handles the delete notifications related to job operation.
+     */
     public synchronized int deleteNotificationsRelatedToJob(Job job) {
         if (job == null || job.title == null || job.title.trim().isEmpty()) return 0;
         String title = job.title.trim();
@@ -478,6 +619,9 @@ public class DataService {
         return before - list.size();
     }
 
+    /**
+     * Handles the reconcile notifications operation.
+     */
     public synchronized void reconcileNotifications() {
         List<Notification> list = getAllNotifications();
         int before = list.size();
@@ -540,10 +684,16 @@ public class DataService {
 
     // ==================== Audit Logs ====================
 
+    /**
+     * Handles the get all audit logs operation.
+     */
     public synchronized List<AuditLog> getAllAuditLogs() {
         return readList("audit_logs.json", new TypeToken<List<AuditLog>>(){}.getType());
     }
 
+    /**
+     * Handles the add audit log operation.
+     */
     public synchronized void addAuditLog(String userId, String username, String action, String detail) {
         List<AuditLog> logs = getAllAuditLogs();
         AuditLog log = new AuditLog();
@@ -559,14 +709,23 @@ public class DataService {
 
     // ==================== Password Reset Requests ====================
 
+    /**
+     * Handles the get all password resets operation.
+     */
     public synchronized List<PasswordResetRequest> getAllPasswordResets() {
         return readList("password_resets.json", new TypeToken<List<PasswordResetRequest>>(){}.getType());
     }
 
+    /**
+     * Handles the get password reset by id operation.
+     */
     public synchronized PasswordResetRequest getPasswordResetById(String id) {
         return getAllPasswordResets().stream().filter(r -> r.id.equals(id)).findFirst().orElse(null);
     }
 
+    /**
+     * Handles the add password reset operation.
+     */
     public synchronized PasswordResetRequest addPasswordReset(PasswordResetRequest req) {
         List<PasswordResetRequest> list = getAllPasswordResets();
         req.id = UUID.randomUUID().toString().substring(0, 8);
@@ -577,6 +736,9 @@ public class DataService {
         return req;
     }
 
+    /**
+     * Handles the update password reset operation.
+     */
     public synchronized void updatePasswordReset(PasswordResetRequest req) {
         List<PasswordResetRequest> list = getAllPasswordResets();
         list.removeIf(r -> r.id.equals(req.id));
@@ -586,10 +748,16 @@ public class DataService {
 
     // ==================== Admin Role Templates ====================
 
+    /**
+     * Handles the get all admin role templates operation.
+     */
     public synchronized List<AdminRoleTemplate> getAllAdminRoleTemplates() {
         return readList("admin_role_templates.json", new TypeToken<List<AdminRoleTemplate>>(){}.getType());
     }
 
+    /**
+     * Handles the get admin role template by id operation.
+     */
     public synchronized AdminRoleTemplate getAdminRoleTemplateById(String id) {
         return getAllAdminRoleTemplates().stream()
                 .filter(t -> Objects.equals(t.id, id))
@@ -597,6 +765,9 @@ public class DataService {
                 .orElse(null);
     }
 
+    /**
+     * Handles the add admin role template operation.
+     */
     public synchronized AdminRoleTemplate addAdminRoleTemplate(AdminRoleTemplate template) {
         List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
         template.id = UUID.randomUUID().toString().substring(0, 8);
@@ -607,6 +778,9 @@ public class DataService {
         return template;
     }
 
+    /**
+     * Handles the update admin role template operation.
+     */
     public synchronized void updateAdminRoleTemplate(AdminRoleTemplate template) {
         List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
         if (template.tags == null) template.tags = new ArrayList<>();
@@ -615,6 +789,9 @@ public class DataService {
         writeList("admin_role_templates.json", list);
     }
 
+    /**
+     * Handles the delete admin role template operation.
+     */
     public synchronized void deleteAdminRoleTemplate(String id) {
         List<AdminRoleTemplate> list = getAllAdminRoleTemplates();
         list.removeIf(t -> Objects.equals(t.id, id));
@@ -623,10 +800,16 @@ public class DataService {
 
     // ==================== Export Tasks ====================
 
+    /**
+     * Handles the get all export tasks operation.
+     */
     public synchronized List<ExportTask> getAllExportTasks() {
         return readList("export_tasks.json", new TypeToken<List<ExportTask>>(){}.getType());
     }
 
+    /**
+     * Handles the get export task by id operation.
+     */
     public synchronized ExportTask getExportTaskById(String id) {
         return getAllExportTasks().stream()
                 .filter(t -> Objects.equals(t.id, id))
@@ -634,6 +817,9 @@ public class DataService {
                 .orElse(null);
     }
 
+    /**
+     * Handles the add export task operation.
+     */
     public synchronized ExportTask addExportTask(ExportTask task) {
         List<ExportTask> list = getAllExportTasks();
         long now = System.currentTimeMillis();
@@ -645,6 +831,9 @@ public class DataService {
         return task;
     }
 
+    /**
+     * Handles the update export task operation.
+     */
     public synchronized void updateExportTask(ExportTask task) {
         List<ExportTask> list = getAllExportTasks();
         task.updatedAt = System.currentTimeMillis();
@@ -653,6 +842,9 @@ public class DataService {
         writeList("export_tasks.json", list);
     }
 
+    /**
+     * Handles the save backup file operation.
+     */
     public synchronized String saveBackupFile(String fileName, byte[] data) throws IOException {
         String safeName = System.currentTimeMillis() + "_" + fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
         Files.write(uploadsDir.resolve(safeName), data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -661,6 +853,9 @@ public class DataService {
 
     // ==================== Settings ====================
 
+    /**
+     * Handles the get settings operation.
+     */
     public synchronized Map<String, String> getSettings() {
         Path file = dataDir.resolve("settings.json");
         if (!Files.exists(file)) return new HashMap<>();
@@ -672,6 +867,9 @@ public class DataService {
         } catch (Exception e) { return new HashMap<>(); }
     }
 
+    /**
+     * Handles the update settings operation.
+     */
     public synchronized void updateSettings(Map<String, String> settings) {
         try {
             Files.writeString(dataDir.resolve("settings.json"), gson.toJson(settings));
@@ -681,30 +879,48 @@ public class DataService {
     }
 
 
+    /**
+     * Handles the get mail service operation.
+     */
     public MailService getMailService() {
         return mailService;
     }
 
     // ==================== File Uploads ====================
 
+    /**
+     * Handles the save upload operation.
+     */
     public String saveUpload(String fileName, byte[] data) throws IOException {
         String safeName = System.currentTimeMillis() + "_" + fileName.replaceAll("[^a-zA-Z0-9._-]", "_");
         Files.write(uploadsDir.resolve(safeName), data);
         return safeName;
     }
 
+    /**
+     * Handles the get upload operation.
+     */
     public byte[] getUpload(String fileName) throws IOException {
         return Files.readAllBytes(uploadsDir.resolve(fileName));
     }
 
+    /**
+     * Handles the get uploads dir operation.
+     */
     public Path getUploadsDir() { return uploadsDir; }
 
     // ==================== Export ====================
 
+    /**
+     * Handles the export all data csv operation.
+     */
     public String exportAllDataCsv() {
         return exportAllDataCsv(null, null);
     }
 
+    /**
+     * Handles the export all data csv operation.
+     */
     public String exportAllDataCsv(Long startMs, Long endMs) {
         StringBuilder sb = new StringBuilder();
 

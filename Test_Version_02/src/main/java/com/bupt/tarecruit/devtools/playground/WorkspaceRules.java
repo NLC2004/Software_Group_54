@@ -5,10 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents the workspace rules component of the TA recruitment system.
+ */
 public final class WorkspaceRules {
     private WorkspaceRules() {
     }
 
+    /**
+     * Handles the sanitize card operation.
+     */
     public static WorkspaceCard sanitizeCard(WorkspaceCard source) {
         WorkspaceCard card = source.copy();
         card.rename(normalizeTitle(card.getTitle()));
@@ -37,6 +43,9 @@ public final class WorkspaceRules {
         return card;
     }
 
+    /**
+     * Handles the sanitize lane operation.
+     */
     public static WorkspaceLane sanitizeLane(WorkspaceLane source) {
         WorkspaceLane lane = new WorkspaceLane(normalizeTitle(source.getName()));
         lane.setDescription(normalizeParagraph(source.getDescription()));
@@ -47,6 +56,9 @@ public final class WorkspaceRules {
         return lane;
     }
 
+    /**
+     * Handles the sanitize workspace operation.
+     */
     public static PlaygroundWorkspace sanitizeWorkspace(PlaygroundWorkspace source) {
         PlaygroundWorkspace workspace = new PlaygroundWorkspace(normalizeTitle(source.getTitle()));
         for (Map.Entry<String, WorkspaceLane> entry : source.snapshotLanes().entrySet()) {
@@ -72,6 +84,9 @@ public final class WorkspaceRules {
         return workspace;
     }
 
+    /**
+     * Handles the validate card operation.
+     */
     public static ValidationResult validateCard(WorkspaceCard card) {
         ValidationResult result = new ValidationResult();
         if (card.getTitle().isBlank()) {
@@ -115,6 +130,9 @@ public final class WorkspaceRules {
         return result;
     }
 
+    /**
+     * Handles the validate lane operation.
+     */
     public static ValidationResult validateLane(WorkspaceLane lane) {
         ValidationResult result = new ValidationResult();
         if (lane.getName().isBlank()) {
@@ -138,6 +156,9 @@ public final class WorkspaceRules {
         return result;
     }
 
+    /**
+     * Handles the validate workspace operation.
+     */
     public static ValidationResult validateWorkspace(PlaygroundWorkspace workspace) {
         ValidationResult result = new ValidationResult();
         if (workspace.getTitle().isBlank()) {
@@ -165,6 +186,9 @@ public final class WorkspaceRules {
         return result;
     }
 
+    /**
+     * Handles the normalize title operation.
+     */
     public static String normalizeTitle(String value) {
         String normalized = collapseSpaces(value);
         if (normalized.isEmpty()) {
@@ -173,19 +197,31 @@ public final class WorkspaceRules {
         return Character.toUpperCase(normalized.charAt(0)) + normalized.substring(1);
     }
 
+    /**
+     * Handles the normalize paragraph operation.
+     */
     public static String normalizeParagraph(String value) {
         return collapseSpaces(value).replace(" .", ".").replace(" ,", ",");
     }
 
+    /**
+     * Handles the normalize tag operation.
+     */
     public static String normalizeTag(String value) {
         return collapseSpaces(value).toLowerCase().replace(' ', '-');
     }
 
+    /**
+     * Handles the normalize owner operation.
+     */
     public static String normalizeOwner(String value) {
         String normalized = collapseSpaces(value);
         return normalized.isEmpty() ? "Unassigned" : normalized;
     }
 
+    /**
+     * Handles the normalize key operation.
+     */
     public static String normalizeKey(String value) {
         return collapseSpaces(value).toLowerCase().replace(' ', '_');
     }
@@ -197,18 +233,30 @@ public final class WorkspaceRules {
         return value.trim().replaceAll("\\s+", " ");
     }
 
+    /**
+     * Represents the validation result component of the TA recruitment system.
+     */
     public static final class ValidationResult {
         private final List<RuleIssue> issues;
 
+        /**
+         * Creates a new validation result instance.
+         */
         public ValidationResult() {
             this.issues = new ArrayList<>();
         }
 
+        /**
+         * Handles the add issue operation.
+         */
         public ValidationResult addIssue(String field, String message) {
             issues.add(new RuleIssue(field, message));
             return this;
         }
 
+        /**
+         * Handles the merge operation.
+         */
         public ValidationResult merge(ValidationResult other) {
             if (other != null) {
                 issues.addAll(other.issues);
@@ -216,14 +264,23 @@ public final class WorkspaceRules {
             return this;
         }
 
+        /**
+         * Handles the is valid operation.
+         */
         public boolean isValid() {
             return issues.isEmpty();
         }
 
+        /**
+         * Handles the get issues operation.
+         */
         public List<RuleIssue> getIssues() {
             return Collections.unmodifiableList(new ArrayList<>(issues));
         }
 
+        /**
+         * Handles the to multiline text operation.
+         */
         public String toMultilineText() {
             if (issues.isEmpty()) {
                 return "No issues";
@@ -239,6 +296,9 @@ public final class WorkspaceRules {
         }
     }
 
+    /**
+     * Immutable data record for rule issue.
+     */
     public record RuleIssue(String field, String message) {
     }
 }

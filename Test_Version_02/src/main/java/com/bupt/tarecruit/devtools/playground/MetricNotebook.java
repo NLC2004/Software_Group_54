@@ -9,36 +9,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Represents the metric notebook component of the TA recruitment system.
+ */
 public final class MetricNotebook {
     private final Map<String, MetricSeries> seriesMap;
 
+    /**
+     * Creates a new metric notebook instance.
+     */
     public MetricNotebook() {
         this.seriesMap = new LinkedHashMap<>();
     }
 
+    /**
+     * Handles the register series operation.
+     */
     public MetricSeries registerSeries(String name) {
         String normalized = requireText(name, "name");
         return seriesMap.computeIfAbsent(normalized, MetricSeries::new);
     }
 
+    /**
+     * Handles the contains series operation.
+     */
     public boolean containsSeries(String name) {
         return seriesMap.containsKey(safeText(name));
     }
 
+    /**
+     * Handles the get series operation.
+     */
     public MetricSeries getSeries(String name) {
         MetricSeries series = seriesMap.get(safeText(name));
         return series == null ? null : series.copy();
     }
 
+    /**
+     * Handles the get series names operation.
+     */
     public List<String> getSeriesNames() {
         return Collections.unmodifiableList(new ArrayList<>(seriesMap.keySet()));
     }
 
+    /**
+     * Handles the add point operation.
+     */
     public MetricNotebook addPoint(String seriesName, LocalDate day, double value) {
         registerSeries(seriesName).addPoint(day, value);
         return this;
     }
 
+    /**
+     * Handles the fill sequence operation.
+     */
     public MetricNotebook fillSequence(String seriesName, LocalDate start, int length, double firstValue, double step) {
         MetricSeries series = registerSeries(seriesName);
         for (int i = 0; i < Math.max(0, length); i++) {
@@ -47,6 +71,9 @@ public final class MetricNotebook {
         return this;
     }
 
+    /**
+     * Handles the build summary operation.
+     */
     public MetricSummary buildSummary(String seriesName) {
         MetricSeries series = seriesMap.get(safeText(seriesName));
         if (series == null) {
@@ -55,6 +82,9 @@ public final class MetricNotebook {
         return series.buildSummary();
     }
 
+    /**
+     * Handles the moving average operation.
+     */
     public List<MetricPoint> movingAverage(String seriesName, int window) {
         MetricSeries series = seriesMap.get(safeText(seriesName));
         if (series == null) {
@@ -63,6 +93,9 @@ public final class MetricNotebook {
         return series.movingAverage(window);
     }
 
+    /**
+     * Handles the overall summary operation.
+     */
     public Map<String, MetricSummary> overallSummary() {
         Map<String, MetricSummary> result = new LinkedHashMap<>();
         for (Map.Entry<String, MetricSeries> entry : seriesMap.entrySet()) {
@@ -71,6 +104,9 @@ public final class MetricNotebook {
         return Collections.unmodifiableMap(result);
     }
 
+    /**
+     * Handles the merge operation.
+     */
     public MetricNotebook merge(MetricNotebook other) {
         if (other == null) {
             return this;
@@ -84,6 +120,9 @@ public final class MetricNotebook {
         return this;
     }
 
+    /**
+     * Handles the render mini summary operation.
+     */
     public String renderMiniSummary() {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, MetricSummary> entry : overallSummary().entrySet()) {
@@ -98,11 +137,17 @@ public final class MetricNotebook {
         return builder.toString();
     }
 
+    /**
+     * Handles the clear operation.
+     */
     public MetricNotebook clear() {
         seriesMap.clear();
         return this;
     }
 
+    /**
+     * Handles the copy operation.
+     */
     public MetricNotebook copy() {
         MetricNotebook copy = new MetricNotebook();
         for (Map.Entry<String, MetricSeries> entry : seriesMap.entrySet()) {
@@ -127,31 +172,49 @@ public final class MetricNotebook {
         return String.format("%.2f", value);
     }
 
+    /**
+     * Represents the metric series component of the TA recruitment system.
+     */
     public static final class MetricSeries {
         private final String name;
         private final List<MetricPoint> points;
 
+        /**
+         * Creates a new metric series instance.
+         */
         public MetricSeries(String name) {
             this.name = requireText(name, "name");
             this.points = new ArrayList<>();
         }
 
+        /**
+         * Handles the get name operation.
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Handles the get points operation.
+         */
         public List<MetricPoint> getPoints() {
             List<MetricPoint> copy = new ArrayList<>(points);
             copy.sort(Comparator.comparing(MetricPoint::getDay));
             return Collections.unmodifiableList(copy);
         }
 
+        /**
+         * Handles the add point operation.
+         */
         public MetricSeries addPoint(LocalDate day, double value) {
             points.add(new MetricPoint(day, value));
             points.sort(Comparator.comparing(MetricPoint::getDay));
             return this;
         }
 
+        /**
+         * Handles the latest operation.
+         */
         public MetricPoint latest() {
             if (points.isEmpty()) {
                 return null;
@@ -159,6 +222,9 @@ public final class MetricNotebook {
             return getPoints().get(getPoints().size() - 1);
         }
 
+        /**
+         * Handles the values operation.
+         */
         public List<Double> values() {
             List<Double> values = new ArrayList<>();
             for (MetricPoint point : getPoints()) {
@@ -167,6 +233,9 @@ public final class MetricNotebook {
             return Collections.unmodifiableList(values);
         }
 
+        /**
+         * Handles the build summary operation.
+         */
         public MetricSummary buildSummary() {
             if (points.isEmpty()) {
                 return MetricSummary.empty();
@@ -186,6 +255,9 @@ public final class MetricNotebook {
             return new MetricSummary(ordered.size(), min, max, average, first, last);
         }
 
+        /**
+         * Handles the moving average operation.
+         */
         public List<MetricPoint> movingAverage(int window) {
             int safeWindow = Math.max(1, window);
             List<MetricPoint> ordered = getPoints();
@@ -203,6 +275,9 @@ public final class MetricNotebook {
             return Collections.unmodifiableList(result);
         }
 
+        /**
+         * Handles the copy operation.
+         */
         public MetricSeries copy() {
             MetricSeries copy = new MetricSeries(name);
             for (MetricPoint point : points) {
@@ -212,28 +287,46 @@ public final class MetricNotebook {
         }
     }
 
+    /**
+     * Represents the metric point component of the TA recruitment system.
+     */
     public static final class MetricPoint {
         private final LocalDate day;
         private final double value;
 
+        /**
+         * Creates a new metric point instance.
+         */
         public MetricPoint(LocalDate day, double value) {
             this.day = Objects.requireNonNull(day, "day");
             this.value = value;
         }
 
+        /**
+         * Handles the get day operation.
+         */
         public LocalDate getDay() {
             return day;
         }
 
+        /**
+         * Handles the get value operation.
+         */
         public double getValue() {
             return value;
         }
 
+        /**
+         * Handles the copy operation.
+         */
         public MetricPoint copy() {
             return new MetricPoint(day, value);
         }
     }
 
+    /**
+     * Represents the metric summary component of the TA recruitment system.
+     */
     public static final class MetricSummary {
         private final int count;
         private final double min;
@@ -242,6 +335,9 @@ public final class MetricNotebook {
         private final double firstValue;
         private final double lastValue;
 
+        /**
+         * Creates a new metric summary instance.
+         */
         public MetricSummary(int count, double min, double max, double average, double firstValue, double lastValue) {
             this.count = count;
             this.min = min;
@@ -251,34 +347,58 @@ public final class MetricNotebook {
             this.lastValue = lastValue;
         }
 
+        /**
+         * Handles the empty operation.
+         */
         public static MetricSummary empty() {
             return new MetricSummary(0, 0.0, 0.0, 0.0, 0.0, 0.0);
         }
 
+        /**
+         * Handles the get count operation.
+         */
         public int getCount() {
             return count;
         }
 
+        /**
+         * Handles the get min operation.
+         */
         public double getMin() {
             return min;
         }
 
+        /**
+         * Handles the get max operation.
+         */
         public double getMax() {
             return max;
         }
 
+        /**
+         * Handles the get average operation.
+         */
         public double getAverage() {
             return average;
         }
 
+        /**
+         * Handles the get first value operation.
+         */
         public double getFirstValue() {
             return firstValue;
         }
 
+        /**
+         * Handles the get last value operation.
+         */
         public double getLastValue() {
             return lastValue;
         }
 
+        /**
+         * Handles the get delta operation.
+         */
         public double getDelta() {
             return lastValue - firstValue;
         }
